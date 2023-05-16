@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SGS</name>
-	<description>SGS</description>
+	<description>SGS - School Grade System</description>
 	<modules>
 		<module>Sgs-model</module>
 		<module>Sgs-server</module>

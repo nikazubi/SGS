@@ -1,6 +1,5 @@
 package mthiebi.sgs.service;
 
-import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Student;
 
 import java.util.List;
@@ -13,6 +12,13 @@ public interface StudentService {
 
     void deleteStudent(Long id);
 
-    List<Student> getStudents();
+    List<Student> getStudents(int limit,
+                              int page,
+                              Long id,
+                              String firstName,
+                              String lastName,
+                              String personalNumber);
+
+    Student findStudentById(Long studentId);
 
 }

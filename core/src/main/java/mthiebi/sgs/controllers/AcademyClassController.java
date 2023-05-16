@@ -1,8 +1,6 @@
 package mthiebi.sgs.controllers;
 
-import mthiebi.sgs.dto.AcademyClassMapper;
-import mthiebi.sgs.dto.AcademyClassDTO;
-import mthiebi.sgs.dto.StudentListDTO;
+import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.service.AcademyClassService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +38,24 @@ public class AcademyClassController {
                 .collect(Collectors.toList());
     }
 
-    @DeleteMapping("/delete-academy-class")
-    public void deleteAcademyClass(@RequestParam Long id){
+    @GetMapping("/get-academy-class/{id}")
+    public AcademyClassDTO findAcademyClassById(@PathVariable Long id){
+        return academyClassMapper.academyClassDTO(academyClassService.findAcademyClassById(id));
+    }
+
+    @DeleteMapping("/delete-academy-class/{id}")
+    public void deleteAcademyClass(@PathVariable Long id){
         academyClassService.deleteAcademyClass(id);
     }
 
     @PutMapping("/attach-students-to-academy-class")
-    public void attachStudentsToAcademyClass(@RequestParam Long academyClassCode, @RequestBody StudentListDTO studentListDTO){
-        academyClassService.attachStudentsToAcademyClass(academyClassCode, studentListDTO.getStudentIdList());
+    public void attachStudentsToAcademyClass(@RequestParam Long academyClassId, @RequestBody StudentListDTO studentListDTO){
+        academyClassService.attachStudentsToAcademyClass(academyClassId, studentListDTO.getStudentIdList());
+    }
+
+    @PutMapping("/attach-subjects-to-academy-class")
+    public void attachSubjectsToAcademyClass(@RequestParam Long academyClassId, @RequestBody SubjectListDTO subjectListDTO){
+        academyClassService.attachSubjectsToAcademyClass(academyClassId, subjectListDTO.getSubjectIdList());
     }
 
 }

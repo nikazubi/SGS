@@ -1,8 +1,10 @@
 package mthiebi.sgs.impl;
 
 import mthiebi.sgs.models.Student;
+import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.repository.AcademyClassRepository;
 import mthiebi.sgs.repository.StudentRepository;
+import mthiebi.sgs.repository.SubjectRepository;
 import mthiebi.sgs.service.AcademyClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class AcademyClassServiceImpl implements AcademyClassService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     @Override
     public AcademyClass createAcademyClass(AcademyClass academyClass) {
@@ -47,17 +52,31 @@ public class AcademyClassServiceImpl implements AcademyClassService {
     }
 
     @Override
+    public AcademyClass findAcademyClassById(Long id) {
+        return academyClassRepository.findById(id).orElseThrow();
+    }
+
+    @Override
     public void attachStudentsToAcademyClass(Long academyClassId, List<Long> studentIdList) {
         AcademyClass academyClass = academyClassRepository.findById(academyClassId).orElseThrow();
 
         List<Student> studentList = new ArrayList<>();
         for (Long studentId : studentIdList) {
-            Student student = studentRepository.findById(studentId).orElse(null);
-            if (student != null) {
-                studentList.add(student);
-            }
+            studentRepository.findById(studentId).ifPresent(studentList::add);
         }
         academyClass.setStudentList(studentList);
+        academyClassRepository.save(academyClass);
+    }
+
+    @Override
+    public void attachSubjectsToAcademyClass(Long academyClassId, List<Long> subjectIdList) {
+        AcademyClass academyClass = academyClassRepository.findById(academyClassId).orElseThrow();
+
+        List<Subject> subjectList = new ArrayList<>();
+        for (Long subjectId : subjectIdList) {
+            subjectRepository.findById(subjectId).ifPresent(subjectList::add);
+        }
+        academyClass.setSubjectList(subjectList);
         academyClassRepository.save(academyClass);
     }
 }

@@ -6,6 +6,8 @@ import mthiebi.sgs.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
@@ -13,6 +15,10 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @PersistenceContext
+    private EntityManager em;
+
 
     @Override
     public Student createStudent(Student student) {
@@ -36,7 +42,17 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudents() {
-        return studentRepository.findAll();
+    public List<Student> getStudents(int limit,
+                                     int page,
+                                     Long id,
+                                     String firstName,
+                                     String lastName,
+                                     String personalNumber) {
+        return studentRepository.findAllStudent(limit, page, id, firstName, lastName, personalNumber, em);
+    }
+
+    @Override
+    public Student findStudentById(Long studentId) {
+        return studentRepository.findById(studentId).orElseThrow();
     }
 }

@@ -8,7 +8,7 @@
   </parent>
   <artifactId>Sgs-model</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Archetype - Sgs-model</name>
+  <name>Sgs-model</name>
   <url>http://maven.apache.org</url>
 
   <dependencies>

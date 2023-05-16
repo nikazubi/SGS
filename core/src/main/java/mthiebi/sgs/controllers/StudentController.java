@@ -33,14 +33,24 @@ public class StudentController {
     }
 
     @GetMapping("/get-students")
-    public List<StudentDTO> getStudents(){
-        return studentService.getStudents().stream()
+    public List<StudentDTO> getStudents(@RequestParam int limit,
+                                        @RequestParam int page,
+                                        @RequestParam Long id,
+                                        @RequestParam String firstName,
+                                        @RequestParam String lastName,
+                                        @RequestParam String personalNumber){
+        return studentService.getStudents(limit, page, id, firstName, lastName, personalNumber).stream()
                 .map(student -> studentMapper.studentDTO(student))
                 .collect(Collectors.toList());
     }
 
-    @DeleteMapping("/delete-students")
-    public void deleteStudent(@RequestParam Long id){
+    @GetMapping("/get-student/{id}")
+    public StudentDTO getStudents(@PathVariable Long id){
+        return studentMapper.studentDTO(studentService.findStudentById(id));
+    }
+
+    @DeleteMapping("/delete-students/{id}")
+    public void deleteStudent(@PathVariable Long id){
         studentService.deleteStudent(id);
     }
 

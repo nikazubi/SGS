@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity(name = "STUDENTS")
-public class Student {
+public class Student extends Audit{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,6 +17,8 @@ public class Student {
     private String lastName;
 
     private Long age;
+
+    private String personalNumber;
 
     public void setId(Long id) {
         this.id = id;
@@ -48,5 +50,13 @@ public class Student {
 
     public void setAge(Long age) {
         this.age = age;
+    }
+
+    public String getPersonalNumber() {
+        return personalNumber;
+    }
+
+    public void setPersonalNumber(String personalNumber) {
+        this.personalNumber = personalNumber;
     }
 }

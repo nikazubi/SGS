@@ -4,17 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentDTO {
+public class SubjectListDTO {
 
-    private String firstName;
-
-    private String lastName;
-
-    private Long age;
-
-    private String personalNumber;
+    private List<Long> subjectIdList;
 
 }

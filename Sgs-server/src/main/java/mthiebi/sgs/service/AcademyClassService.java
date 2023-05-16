@@ -13,5 +13,9 @@ public interface AcademyClassService {
 
     List<AcademyClass> getAcademyClasses();
 
+    AcademyClass findAcademyClassById(Long id);
+
     void attachStudentsToAcademyClass(Long academyClassId, List<Long> studentIdList);
+
+    void attachSubjectsToAcademyClass(Long academyClassId, List<Long> subjectIdList);
 }
