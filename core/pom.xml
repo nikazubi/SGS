@@ -10,7 +10,20 @@
     <name>Archetype - core</name>
     <url>http://maven.apache.org</url>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>mthiebi</groupId>
+            <artifactId>Sgs-model</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>mthiebi</groupId>
+            <artifactId>Sgs-server</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

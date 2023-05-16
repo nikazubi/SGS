@@ -5,6 +5,13 @@ import mthiebi.sgs.models.AcademyClass;
 
 public interface AcademyClassService {
 
-    AcademyClass print();
+    AcademyClass createAcademyClass(AcademyClass academyClass);
 
+    AcademyClass updateAcademyClass(AcademyClass academyClass);
+
+    void deleteAcademyClass(Long id);
+
+    List<AcademyClass> getAcademyClasses();
+
+    void attachStudentsToAcademyClass(Long academyClassId, List<Long> studentIdList);
 }

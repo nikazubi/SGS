@@ -12,9 +12,10 @@ public class AcademyClass {
 
     private Long classLevel;
 
-    private Long classLevelIndex;
+    private String classLevelIndex;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "academy_class_id")
     private List<Student> studentList;
 
     public void setId(Long id) {
@@ -33,11 +34,11 @@ public class AcademyClass {
         this.classLevel = classLevel;
     }
 
-    public Long getClassLevelIndex() {
+    public String getClassLevelIndex() {
         return classLevelIndex;
     }
 
-    public void setClassLevelIndex(Long classLevelIndex) {
+    public void setClassLevelIndex(String classLevelIndex) {
         this.classLevelIndex = classLevelIndex;
     }
 
