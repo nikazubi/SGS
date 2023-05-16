@@ -1,0 +1,117 @@
+body {
+    font-family: "Roboto", "Dejavu Sans";
+    overflow-y: hidden;
+}
+
+.main-container {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+}
+
+.content-wrapper {
+    flex-grow: 1;
+    width: calc(100% - 250px);
+    background-color: #e3f2fa;
+}
+
+.MuiTableHead-root {
+    background-color: #e3f2fa;
+}
+
+.filter-bar > *,
+.filter-bar .MuiFormControl-root,
+.filter-bar .MuiButtonBase-root {
+    margin-right: 8px;
+}
+
+
+.page-tab:hover {
+    background-color: rgba(255, 255, 255, .03);
+}
+
+.page-tab .MuiTab-root {
+    padding: 6px 6px 6px 20px;
+}
+
+.page-tab .Mui-selected {
+    background-color: rgba(255, 255, 255, .08)
+}
+
+
+/* diff css */
+.diff-table-style-name {
+    font-size: 12px;
+    font-family: Consolas, serif;
+    margin-top: 2px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.diff-table-style-name > tbody > tr {
+    border: solid gainsboro 1px;
+}
+
+.diff-table-style-name > tbody > tr > td {
+    border-left: solid gainsboro 1px;
+    padding: 5px;
+}
+
+.diff-table-style-name > tbody > tr:first-child {
+    border-left: none;
+}
+
+.diff-table {
+    font-size: 12px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.diff-table > tbody > tr {
+    border: solid #DDDDDD 1px;
+}
+
+.diff-table > tbody > tr > td {
+    border-left: solid #DDDDDD 1px;
+    padding: 5px;
+}
+
+.diff-table > tbody > tr:first-child {
+    border-left: none;
+}
+
+.added-background {
+    background: #8AD38B;
+}
+
+.removed-background {
+    background: #E79B9B;
+}
+
+.edited-background {
+    background: #F5DE9C;
+}
+
+.column-header-background {
+    background: #E3E3E3;
+}
+
+.diff-state-header {
+    background: #B8D1E3;
+}
+
+
+
+/* Status colors */
+.status-PERFORMED {
+    color: rgb(76, 175, 80);
+}
+.status-EDITED {
+    color: rgb(255, 152, 0);
+}
+.status-REJECTED {
+    color: rgb(255, 23, 68);
+}
+.status-PENDING {
+    color: rgb(0, 136, 255);
+}

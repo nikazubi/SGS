@@ -1,0 +1,36 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'DejaVu Sans', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+    height: 100%
+}
+
+@font-face {
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.prettyScroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.prettyScroll::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+}
+
+.prettyScroll::-webkit-scrollbar-thumb {
+    background: lightgray;
+    border-radius: 5px;
+}
+
+.prettyScroll::-webkit-scrollbar-thumb:hover {
+    background: #c4c4c4;
+}
