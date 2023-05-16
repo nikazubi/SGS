@@ -1,0 +1,1 @@
+export const ENDPOINT_AUTHENTICATION_REFRESH = 'ramerume'
