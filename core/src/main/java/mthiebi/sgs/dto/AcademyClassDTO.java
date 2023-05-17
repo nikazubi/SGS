@@ -11,6 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 public class AcademyClassDTO {
 
+    private Long id;
+
     private Long classLevel;
 
     private String classLevelIndex;
