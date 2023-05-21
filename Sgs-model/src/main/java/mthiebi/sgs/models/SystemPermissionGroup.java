@@ -1,0 +1,58 @@
+package mthiebi.sgs.models;
+
+public interface SystemPermissionGroup {
+
+	String SYSTEM_PARAMETERS = "SYSTEM_PARAMETERS";
+
+	String APPLICATION_PARAMETERS = "APPLICATION_PARAMETERS";
+
+	String SYSTEM_USERS = "SYSTEM_USERS";
+
+	String SYSTEM_USER_GROUPS = "SYSTEM_USER_GROUPS";
+
+	String CHANGE_LOGS = "CHANGE_LOGS";
+
+	String AUDIT_LOGS = "AUDIT_LOGS";
+
+	String CUSTOMERS = "CUSTOMERS";
+
+    String COMPANIES = "COMPANIES";
+
+    String CARDS = "CARDS";
+
+    String CARD_TYPES = "CARD_TYPES";
+
+    String CARD_REQUESTS = "CARD_REQUESTS";
+
+    String POINT_OF_SALES = "POINT_OF_SALES";
+
+    String STANDALONE_POS_SHIFT = "STANDALONE_POS_SHIFT";
+
+    String PRODUCTS = "PRODUCTS";
+
+    String NEWS_FEED = "NEWS_FEED";
+
+    String LOCALIZATION = "LOCALIZATION";
+
+    String GIFTS = "GIFTS";
+
+    String BENEFITS = "BENEFITS";
+
+	String TAGS = "TAGS";
+
+	String SCRIPTS = "SCRIPTS";
+
+	String TRANSACTIONS = "TRANSACTIONS";
+	
+	String CAMPAIGNS = "CAMPAIGNS";
+
+	String LIABILITIES = "LIABILITIES";
+	
+	String VIRTUAL_POS = "VIRTUAL_POS";
+
+	String FILTERS = "FILTERS";
+
+	String CUSTOMER_GROUP_REGISTRATION = "CUSTOMER_GROUP_REGISTRATION";
+
+	String COUPON = "COUPON";
+}

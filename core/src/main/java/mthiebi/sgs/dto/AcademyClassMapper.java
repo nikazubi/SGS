@@ -3,7 +3,7 @@ package mthiebi.sgs.dto;
 import mthiebi.sgs.models.AcademyClass;
 import org.mapstruct.Mapper;
 
-@Mapper(imports = {StudentMapper.class, SubjectMapper.class})
+@Mapper(config = ACMapperConfig.class, imports = {StudentMapper.class, SubjectMapper.class})
 public interface AcademyClassMapper {
 
     AcademyClassDTO academyClassDTO(AcademyClass academyClass);
