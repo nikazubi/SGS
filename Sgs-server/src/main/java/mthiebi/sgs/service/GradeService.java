@@ -3,6 +3,7 @@ package mthiebi.sgs.service;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Grade;
 
+import java.util.Date;
 import java.util.List;
 
 public interface GradeService {
@@ -18,5 +19,7 @@ public interface GradeService {
     List<Grade> getStudentGradeByClassId(Long classId);
 
     List<Grade> getStudentGradeByClassAndSubjectId(Long classId, Long subjectId);
+
+    List<Grade> getStudentGradeByClassAndSubjectIdAndCreateTime(Long classId, Long subjectId, Date createTime);
 
 }
