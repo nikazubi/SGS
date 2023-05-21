@@ -12,6 +12,9 @@ import mthiebi.sgs.service.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,6 +31,9 @@ public class GradeServiceImpl implements GradeService {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public Grade insertStudentGrade(Grade grade) {
@@ -64,6 +70,11 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     public List<Grade> getStudentGradeByClassAndSubjectId(Long classId, Long studentId) {
-        return gradeRepository.findGradeByAcademyClassIdAndStudentId(classId, studentId);
+        return gradeRepository.findGradeByAcademyClassIdAndSubjectId(classId, studentId);
+    }
+
+    @Override
+    public List<Grade> getStudentGradeByClassAndSubjectIdAndCreateTime(Long classId, Long subjectId, Date createTime) {
+        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, createTime, em);
     }
 }

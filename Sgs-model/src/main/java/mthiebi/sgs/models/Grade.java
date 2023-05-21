@@ -3,7 +3,7 @@ package mthiebi.sgs.models;
 import javax.persistence.*;
 
 @Entity(name = "GRADES")
-public class Grade {
+public class Grade extends Audit{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
