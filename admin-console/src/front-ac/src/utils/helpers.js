@@ -1,5 +1,5 @@
 import { differenceInSeconds, format, getUnixTime, isAfter } from 'date-fns';
-import { v4 as generateUUID } from 'uuid';
+// import { v4 as generateUUID } from 'uuid';
 import imageCompression from 'browser-image-compression';
 
 
@@ -142,27 +142,27 @@ export const capitalizeFirstLetter = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-      resolve({
-        id: generateUniqueId(),
-        name: file.name,
-        content: reader.result,
-        action: 'CREATE'
-      });
-    };
-    reader.onerror = function (error) {
-      reject(error);
-    };
-  });
-}
-
-export function generateUniqueId() {
-  return generateUUID();
-}
+// export function fileToBase64(file) {
+//   return new Promise((resolve, reject) => {
+//     let reader = new FileReader();
+//     reader.readAsDataURL(file);
+//     reader.onload = function () {
+//       resolve({
+//         id: generateUniqueId(),
+//         name: file.name,
+//         content: reader.result,
+//         action: 'CREATE'
+//       });
+//     };
+//     reader.onerror = function (error) {
+//       reject(error);
+//     };
+//   });
+// }
+//
+// export function generateUniqueId() {
+//   return generateUUID();
+// }
 
 export const groupBy = (arr, criteria) => {
   return arr.reduce(function (obj, item) {

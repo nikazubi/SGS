@@ -20,6 +20,6 @@ public interface GradeService {
 
     List<Grade> getStudentGradeByClassAndSubjectId(Long classId, Long subjectId);
 
-    List<Grade> getStudentGradeByClassAndSubjectIdAndCreateTime(Long classId, Long subjectId, Date createTime);
+    List<Grade> getStudentGradeByClassAndSubjectIdAndCreateTime(Long classId, Long subjectId, Long studentId, Date createTime);
 
 }
