@@ -1,54 +1,54 @@
-package mthiebi.sgs.auth;
-
-import com.auth0.jwt.JWT;
-import mthiebi.sgs.models.SystemUser;
-import mthiebi.sgs.models.SystemUserGroup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-@Component
-public class AuthManager {
-
-    public static final String USERNAME_CLAIM_NAME = "username_claim";
-    public static final String EMAIL_CLAIM_NAME = "email_claim";
-    public static final String LOGIN_CHANNEL_CLAIM = "channel_claim";
-    private static final String ROLES_CLAIM_NAME = "scp";
-    private static final String CARD_TYPE_ACCESS_CLAIM_NAME = "card_type_scp";
-    private static final String CARD_TYPE_MANAGE_CLAIM_NAME = "card_type_manage_scp";
-    private static final String COMPANY_ACCESS_CLAIM_NAME = "company_scp";
-    private static final Integer consoleLifetime = 60;
-    private static final Integer consoleRefreshLifetime = 180;
-    private static final Integer portalTempLifetime = 30;
-    private static final Integer portalLifetime = 120;
-    private static final Integer portalRefreshLifetime = 120;
-
-	@Autowired
-	private RSAPublicKey publicKey;
-
-	@Autowired
-	private RSAPrivateKey privateKey;
+//package mthiebi.sgs.auth;
+//
+//import com.auth0.jwt.JWT;
+//import mthiebi.sgs.models.SystemUser;
+//import mthiebi.sgs.models.SystemUserGroup;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.stereotype.Component;
+//
+//import java.security.interfaces.RSAPrivateKey;
+//import java.security.interfaces.RSAPublicKey;
+//import java.util.*;
+//import java.util.stream.Collectors;
+//import java.util.stream.Stream;
+//
+//@Component
+//public class AuthManager {
+//
+//    public static final String USERNAME_CLAIM_NAME = "username_claim";
+//    public static final String EMAIL_CLAIM_NAME = "email_claim";
+//    public static final String LOGIN_CHANNEL_CLAIM = "channel_claim";
+//    private static final String ROLES_CLAIM_NAME = "scp";
+//    private static final String CARD_TYPE_ACCESS_CLAIM_NAME = "card_type_scp";
+//    private static final String CARD_TYPE_MANAGE_CLAIM_NAME = "card_type_manage_scp";
+//    private static final String COMPANY_ACCESS_CLAIM_NAME = "company_scp";
+//    private static final Integer consoleLifetime = 60;
+//    private static final Integer consoleRefreshLifetime = 180;
+//    private static final Integer portalTempLifetime = 30;
+//    private static final Integer portalLifetime = 120;
+//    private static final Integer portalRefreshLifetime = 120;
+//
+//	@Autowired
+//	private RSAPublicKey publicKey;
+//
+//	@Autowired
+//	private RSAPrivateKey privateKey;
 
 //	@Autowired
 //	private JwtProperties jwtProperties;
 
-	public String createAccessToken(SystemUser systemUser) {
-		Stream<String> permissionsStream = systemUser.getGroups().stream()
-													 .map(SystemUserGroup::getListPermissions)
-													 .flatMap(Collection::stream)
-													 .distinct();
-
-		String[] roles = Stream.concat(permissionsStream, Stream.of("ADMIN_CONSOLE"))
-							   .toArray(String[]::new);
-
-		return null;
+//	public String createAccessToken(SystemUser systemUser) {
+//		Stream<String> permissionsStream = systemUser.getGroups().stream()
+//													 .map(SystemUserGroup::getListPermissions)
+//													 .flatMap(Collection::stream)
+//													 .distinct();
+//
+//		String[] roles = Stream.concat(permissionsStream, Stream.of("ADMIN_CONSOLE"))
+//							   .toArray(String[]::new);
+//
+//		return null;
 //		return JWT.create()
 //				  .withIssuer(jwtProperties.getIssuer())
 //				  .withSubject(String.valueOf(systemUser.getId()))
@@ -60,7 +60,7 @@ public class AuthManager {
 //				  .withArrayClaim(CARD_TYPE_ACCESS_CLAIM_NAME, cardTypeAccessPermissions)
 //                  .withArrayClaim(CARD_TYPE_MANAGE_CLAIM_NAME, cardTypeManagePermissions)
 //				  .sign(Algorithm.RSA256(publicKey, privateKey));
-	}
+//	}
 
 //	public String createAccessToken(Customer customer) {
 //		return JWT.create()
@@ -279,4 +279,4 @@ public class AuthManager {
 //					   .map(token -> token.getClaimAsStringList(permissionType))
 //					   .orElseGet(List::of);
 //	}
-}
+//}

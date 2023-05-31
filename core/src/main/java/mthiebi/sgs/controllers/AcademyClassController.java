@@ -3,7 +3,9 @@ package mthiebi.sgs.controllers;
 import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.service.AcademyClassService;
+import mthiebi.sgs.utils.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +34,7 @@ public class AcademyClassController {
     }
 
     @GetMapping("/get-academy-class")
+    @Secured({AuthConstants.USERS_GROUPS_MANAGE})
     public List<AcademyClassDTO> getAcademyClasses(){
         return academyClassService.getAcademyClasses().stream()
                 .map(academyClass -> academyClassMapper.academyClassDTO(academyClass))

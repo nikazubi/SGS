@@ -1,37 +1,36 @@
 package mthiebi.sgs.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
+@ToString
+@Entity(name = "SYSTEM_USER_TABLE")
 public class SystemUser extends Audit {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+
 	private String username;
+
 	private String password;
+
 	private String name;
+
 	private String email;
+
 	private Boolean active;
 
-	@Builder.Default
-	private List<SystemUserGroup> groups = new ArrayList<>();
+	@ManyToMany(
+			fetch = FetchType.EAGER,
+			cascade = {CascadeType.ALL}
+	)
+	private List<SystemUserGroup> groups;
 
-
-	@Id
-	@GeneratedValue(generator = "SystemUserSequence", strategy = GenerationType.SEQUENCE)
-	@SequenceGenerator(name = "SystemUserSequence", allocationSize = 5)
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -64,7 +63,6 @@ public class SystemUser extends Audit {
 		this.name = name;
 	}
 
-	@ManyToMany(fetch = FetchType.EAGER)
 	public List<SystemUserGroup> getGroups() {
 		return groups;
 	}
@@ -79,5 +77,21 @@ public class SystemUser extends Audit {
 			return Objects.equals(id, ((SystemUser) other).id);
 		}
 		return false;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

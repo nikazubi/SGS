@@ -1,30 +1,26 @@
 package mthiebi.sgs.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(indexes = {
-        @Index(name = "nameIndex", columnList = "name", unique = true)
-})
-public class SystemUserGroup {
-
-    private Long id;
-    private String name;
-    private String permissions;
-    private Boolean active;
+@ToString
+@Entity(name = "SYSTEM_GROUPS")
+public class SystemUserGroup extends Audit{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String name;
+
+    private String permissions;
+
+    private Boolean active;
+
     public Long getId() {
         return id;
     }
