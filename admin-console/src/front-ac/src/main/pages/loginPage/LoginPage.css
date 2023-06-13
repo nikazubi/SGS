@@ -6,7 +6,8 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background: linear-gradient(to bottom right, #0e7fb7, #4AE6C1);
+    background: url('mtiebi2.jpg') no-repeat center center fixed;
+    background-size: cover;
     font-family: 'Roboto', sans-serif;
     color: #ffffff;
 }
@@ -14,17 +15,17 @@
 .login-container {
     position: relative;
     width: 300px;
-    height: 300px;
+    height: 350px;
     background-color: #ffffff;
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: #333333; /* Update label and input text color */
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.3); /* Add box-shadow */
 }
-
 .login-container h2 {
     font-size: 24px;
     font-weight: 500;
@@ -43,24 +44,31 @@
 
 .login-container form label {
     font-size: 14px;
-    font-weight: 400;
-    color: #333333; /* Update label text color */
+    font-weight: bold;
+    color: #333333;
 }
 
 .login-container form input[type="text"],
 .login-container form input[type="password"] {
     width: 100%;
     padding: 10px;
+    margin-top: 5px ;
     border: none;
     border-radius: 3px;
-    background: rgba(119, 119, 119, 0.8);
-    color: #333;
+    background: rgba(231, 229, 229, 0.8);
+    color: #0a0808; /* Update text color */
     font-size: 14px;
 }
 
 .login-container form input[type="text"]::placeholder,
 .login-container form input[type="password"]::placeholder {
     color: #999999; /* Update placeholder text color */
+}
+
+.login-container form input[type="text"]:focus,
+.login-container form input[type="password"]:focus {
+    outline: none;
+    background: rgb(222, 222, 222); /* Update background color on focus */
 }
 
 .login-container form button[type="submit"] {
@@ -90,40 +98,40 @@
     margin-bottom: 20px;
 }
 
-.login-page form label {
-    font-size: 14px;
-    font-weight: 400;
-}
+/*.login-page form label {*/
+/*    font-size: 14px;*/
+/*    font-weight: 400;*/
+/*}*/
 
-.login-page form input[type="text"],
-.login-page form input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.8);
-    color: #333;
-    font-size: 14px;
-}
+/*.login-page form input[type="text"],*/
+/*.login-page form input[type="password"] {*/
+/*    width: 100%;*/
+/*    padding: 10px;*/
+/*    border: none;*/
+/*    border-radius: 3px;*/
+/*    background: rgba(255, 255, 255, 0.8);*/
+/*    color: #333;*/
+/*    font-size: 14px;*/
+/*}*/
 
-.login-page form input[type="text"]::placeholder,
-.login-page form input[type="password"]::placeholder {
-    color: #999;
-}
+/*.login-page form input[type="text"]::placeholder,*/
+/*.login-page form input[type="password"]::placeholder {*/
+/*    color: #999;*/
+/*}*/
 
-.login-page form button[type="submit"] {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 3px;
-    background: #0e7fb7;
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s;
-}
+/*.login-page form button[type="submit"] {*/
+/*    width: 100%;*/
+/*    padding: 10px;*/
+/*    border: none;*/
+/*    border-radius: 3px;*/
+/*    background: #0e7fb7;*/
+/*    color: #ffffff;*/
+/*    font-size: 16px;*/
+/*    font-weight: 500;*/
+/*    cursor: pointer;*/
+/*    transition: background 0.3s;*/
+/*}*/
 
-.login-page form button[type="submit"]:hover {
-    background: #075675;
-}
+/*.login-page form button[type="submit"]:hover {*/
+/*    background: #075675;*/
+/*}*/

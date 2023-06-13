@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
-import axios from "./utils/axios";
-import {setAuth} from "./utils/auth";
+import axios from "../../../utils/axios";
+import {setAuth} from "../../../utils/auth";
+import imageSrc from './ib.png'; // Import the image file
 
 const LoginPage = ({setLoggedIn}) => {
     const [email, setEmail] = useState('');
@@ -48,13 +49,14 @@ const LoginPage = ({setLoggedIn}) => {
     return (
         <div className="login-page">
             <div className="login-container">
-                <h2>Login</h2>
+                <img src={imageSrc} alt="abgd" width={200} />
+                <br/>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>მომხმარებლის სახელი</label>
                         <input
                             type="text"
-                            placeholder="მიუთითეთ თქვენი მომხმარებლის სახელი"
+                            placeholder="შეიყვანეთ მომხმარებლის სახელი"
                             value={email}
                             onChange={handleEmailChange}
                             required
@@ -70,7 +72,7 @@ const LoginPage = ({setLoggedIn}) => {
                             required
                         />
                     </div>
-                    <button type="submit">Login</button>
+                    <button type="submit">შესვლა</button>
                 </form>
             </div>
         </div>

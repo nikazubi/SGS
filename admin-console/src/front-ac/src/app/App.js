@@ -6,7 +6,7 @@ import {useBackdrop} from "../contexts/backdrop-context";
 import {ErrorPage} from "../components/styles";
 import MainContainer from "../main/MainContainer";
 import Notification from '../components/notifications/Notification';
-import LoginPage from "../LoginForm";
+import LoginPage from "../main/pages/loginPage/LoginForm";
 // import MainContainer from '../main/MainContainer';
 // import CssBaseline from '@material-ui/core/CssBaseline';
 // import Backdrop from '../shared/components/Backdrop';
