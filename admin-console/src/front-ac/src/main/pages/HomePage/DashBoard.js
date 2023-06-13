@@ -1,10 +1,14 @@
 import GradeTableToolbar from "./GradeTableToolbar";
+import {useEffect, useState} from "react";
 
 const DashBoard = () => {
+    const [filters, setFilters] = useState({});
+    useEffect(() =>{
+        console.log(filters)
+    },[filters])
     return (
         <div>
-            {"hi"}
-            <GradeTableToolbar/>
+            <GradeTableToolbar filters={filters} setFilters={setFilters}/>
         </div>
     )
 }

@@ -12,7 +12,7 @@ public class AcademyClass extends Audit{
 
     private Long classLevel;
 
-    private String classLevelIndex;
+    private String className;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "academy_class_id")
@@ -40,12 +40,12 @@ public class AcademyClass extends Audit{
         this.classLevel = classLevel;
     }
 
-    public String getClassLevelIndex() {
-        return classLevelIndex;
+    public String getClassName() {
+        return className;
     }
 
-    public void setClassLevelIndex(String classLevelIndex) {
-        this.classLevelIndex = classLevelIndex;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public List<Student> getStudentList() {

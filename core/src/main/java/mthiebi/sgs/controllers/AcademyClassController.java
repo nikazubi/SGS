@@ -41,6 +41,13 @@ public class AcademyClassController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/get-academy-classes")
+    public List<AcademyClassDTO> getAcademyClasses(@RequestParam(required = false) String queryKey){
+        return academyClassService.getAcademyClasses(queryKey).stream()
+                .map(academyClass -> academyClassMapper.academyClassDTO(academyClass))
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/get-academy-class/{id}")
     public AcademyClassDTO findAcademyClassById(@PathVariable Long id){
         return academyClassMapper.academyClassDTO(academyClassService.findAcademyClassById(id));

@@ -31,7 +31,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>, Queryds
         return query.selectFrom(qSubject)
                         .where(idPredicate)
                         .where(namePredicate)
-                        .offset(converted.getOffset())
+                        //.offset(converted.getOffset())
                         .limit(converted.getPageSize())
                         .orderBy(qSubject.createTime.desc())
                         .fetch();

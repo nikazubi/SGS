@@ -15,10 +15,10 @@ public class AcademyClassDTO {
 
     private Long classLevel;
 
-    private String classLevelIndex;
-
     private List<StudentDTO> studentList;
 
     private List<SubjectDTO> subjectList;
+
+    private String className;
 
 }

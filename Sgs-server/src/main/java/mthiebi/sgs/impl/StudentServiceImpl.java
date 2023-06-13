@@ -48,7 +48,12 @@ public class StudentServiceImpl implements StudentService {
                                      String firstName,
                                      String lastName,
                                      String personalNumber) {
-        return studentRepository.findAllStudent(limit, page, id, firstName, lastName, personalNumber, em);
+        return studentRepository.findAllStudent(limit, page, id, firstName, lastName, personalNumber);
+    }
+
+    @Override
+    public List<Student> findByNameAndSurname(String queryKey) {
+        return studentRepository.findByNameAndSurname(queryKey);
     }
 
     @Override

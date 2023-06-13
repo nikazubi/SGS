@@ -44,6 +44,13 @@ public class StudentController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/get-students-by-name")
+    public List<StudentDTO> getStudents(@RequestParam String queryKey){
+        return studentService.findByNameAndSurname(queryKey).stream()
+                .map(student -> studentMapper.studentDTO(student))
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/get-student/{id}")
     public StudentDTO getStudents(@PathVariable Long id){
         return studentMapper.studentDTO(studentService.findStudentById(id));

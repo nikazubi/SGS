@@ -19,6 +19,8 @@ public interface StudentService {
                               String lastName,
                               String personalNumber);
 
+    List<Student> findByNameAndSurname(String queryKey);
+
     Student findStudentById(Long studentId);
 
 }
