@@ -6,6 +6,7 @@ import {useBackdrop} from "../contexts/backdrop-context";
 import {ErrorPage} from "../components/styles";
 import MainContainer from "../main/MainContainer";
 import Notification from '../components/notifications/Notification';
+import LoginPage from "../LoginForm";
 // import MainContainer from '../main/MainContainer';
 // import CssBaseline from '@material-ui/core/CssBaseline';
 // import Backdrop from '../shared/components/Backdrop';
@@ -22,13 +23,10 @@ import Notification from '../components/notifications/Notification';
 const loginPageLanguageStorageKey = "loginLanguage"
 
 const App = () => {
-  // const [selectedLanguage, setSelectedLanguage] = useState();
-   const {isBackdropOpen} = useBackdrop();
-   const loggedIn = true
-  // const { loggedIn, language } = useUserContext();
-  // const { managementConsoleLocales, managementConsoleDefaultLanguage } = useLocalesDataContext();
-  //
-  console.log("yoooo")
+
+  const {isBackdropOpen} = useBackdrop();
+  const [loggedIn, setLoggedIn ]= useState(false);
+
 
   return (
       <ErrorBoundary FallbackComponent={ErrorPage}>
@@ -36,14 +34,7 @@ const App = () => {
         {(loggedIn ?
                 <MainContainer/>
                 :
-                <div>
-                    {"login plz"}
-                </div>
-                // <Login
-                //     locales={managementConsoleLocales}
-                //     selectedLanguage={selectedLanguage}
-                //     loginPageLanguageStorageKey={loginPageLanguageStorageKey}
-                // />
+                <LoginPage setLoggedIn={setLoggedIn}/>
         )}
         <Notification/>
         <Backdrop open={isBackdropOpen}/>

@@ -4,7 +4,9 @@ import mthiebi.sgs.dto.SubjectDTO;
 import mthiebi.sgs.dto.SubjectMapper;
 import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.SubjectService;
+import mthiebi.sgs.utils.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -34,6 +36,7 @@ public class SubjectController {
     }
 
     @GetMapping("/get-subjects")
+    @Secured({AuthConstants.USERS_GROUPS_MANAGE})
     public List<SubjectDTO> getSubjects(@RequestParam(defaultValue = "10") int limit,
                                         @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(required = false, defaultValue = "0") Long id,

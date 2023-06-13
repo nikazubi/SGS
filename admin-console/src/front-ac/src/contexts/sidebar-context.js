@@ -19,7 +19,7 @@ export const SidebarContextProvider = ({...rest}) => {
   const getState = () => {
     const state = localStorage.getItem(sideBarStateKey);
     if (!state) {
-      setState(true)
+      setState(false)
       return true;
     }
     return JSON.parse(state)?.isSidebarExpanded;

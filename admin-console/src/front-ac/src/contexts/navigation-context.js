@@ -53,11 +53,14 @@ export const NavigationProvider = (props) => {
 
   useEffect(() => {
     const {pathname} = location;
+    console.log(pathname)
     const page = pages.find(page => !!pathname
       && (pathname.endsWith(page.id)
         || pathname.includes(`${page.id}/`))
     );
+    console.log(page)
     if (!!page) {
+      console.log('amhere')
       setTabList(prevState => {
         if (!prevState.some(tab => tab.id === page.id)) {
           return [...prevState, page];
