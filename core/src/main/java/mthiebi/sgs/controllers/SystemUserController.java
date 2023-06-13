@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import mthiebi.sgs.dto.SystemUserCreateDTO;
 import mthiebi.sgs.dto.SystemUserDTO;
 import mthiebi.sgs.dto.SystemUserMapper;
+import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.models.SystemUserGroup;
+import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.service.SystemGroupService;
 import mthiebi.sgs.service.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,31 +35,14 @@ public class SystemUserController {
     @Autowired
     private SystemGroupService systemGroupService;
 
-//    @GetMapping("/")
-//    public List<SystemUserDTO> getUsers(@RequestParam(required = false, defaultValue = "50") String limit,
-//                                        @RequestParam(required = false, defaultValue = "0") String page,
-//                                        @RequestParam(required = false, defaultValue = "") String username,
-//                                        @RequestParam(required = false, defaultValue = "") String name,
-//                                        @RequestParam(required = false, defaultValue = "") String groupName,
-//                                        @RequestParam(required = false, defaultValue = "") String active) {
-//
-//        log.info("required filtration: username=\"" + username + "\" name=\"" + name + "\" groupName=\"" + groupName + "\" active=\"" + active + "\"");
-//        return systemUserService.filterUsers(Integer.parseInt(limit),Integer.parseInt(page),username, name, groupName, active).stream()
-//                .map(SystemUserDTO::new).collect(Collectors.toList());
-//    }
-
-//    @GetMapping("/usersCounts")
-//    public int getUsersCounts(@RequestParam(required = false, defaultValue = "") String username,
-//                              @RequestParam(required = false, defaultValue = "") String name,
-//                              @RequestParam(required = false, defaultValue = "") String groupName,
-//                              @RequestParam(required = false, defaultValue = "") String active){
-//        return systemUserService.getUsersCounts(username, name, groupName, active);
-//    }
+    @Autowired
+    private AcademyClassService academyClassService;
 
     @PostMapping("/add-User")
     public ResponseEntity create(@RequestBody SystemUserCreateDTO systemUserCreateDTO) {
         SystemUser systemUser = systemUserMapper.systemUser(systemUserCreateDTO.getSystemUserDTO());
         systemUser.setGroups(adjustSystemGroup(systemUserCreateDTO.getGroupIdList()));
+        systemUser.setAcademyClassList(adjustAcademyClassList(systemUserCreateDTO.getClassIdList()));
         log.info("Add new user:" + systemUser);
         try {
             systemUser = systemUserService.createSystemUser(systemUser);
@@ -123,6 +108,12 @@ public class SystemUserController {
     private List<SystemUserGroup> adjustSystemGroup(List<Long> groupIdList) {
         return groupIdList.stream()
                 .map(id -> systemGroupService.getById(id))
+                .collect(Collectors.toList());
+    }
+
+    private List<AcademyClass> adjustAcademyClassList(List<Long> classIdList) {
+        return classIdList.stream()
+                .map(id -> academyClassService.findAcademyClassById(id))
                 .collect(Collectors.toList());
     }
 

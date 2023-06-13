@@ -1,8 +1,10 @@
 package mthiebi.sgs.repository;
 
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.models.AcademyClass;
+import mthiebi.sgs.models.QAcademyClass;
 import mthiebi.sgs.models.QSubject;
 import mthiebi.sgs.models.Subject;
 import org.springframework.data.domain.PageRequest;
@@ -20,18 +22,23 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>, Queryds
                                          int page,
                                          Long id,
                                          String name,
+                                         List<AcademyClass> academyClassList,
                                          EntityManager em){
 
         QSubject qSubject = QSubject.subject;
+        QAcademyClass qAcademyClass = QAcademyClass.academyClass;
+
         PageRequest converted = PageRequest.of(page, limit);
         Predicate idPredicate = id == 0 ? qSubject.id.isNotNull() : qSubject.id.eq(id);
         Predicate namePredicate = name != null ? qSubject.name.contains(name) : qSubject.name.isNotNull();
         final JPAQueryFactory query = new JPAQueryFactory(em);
 
-        return query.selectFrom(qSubject)
+        return query.selectDistinct(qSubject)
+                .from(qSubject)
+                .join(qSubject.academyClassList, qAcademyClass)
                         .where(idPredicate)
                         .where(namePredicate)
-                        //.offset(converted.getOffset())
+                        .where(qAcademyClass.in(academyClassList))
                         .limit(converted.getPageSize())
                         .orderBy(qSubject.createTime.desc())
                         .fetch();

@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.QAcademyClass;
 import mthiebi.sgs.models.QStudent;
 import mthiebi.sgs.models.Student;
@@ -42,10 +43,16 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     }
 
     @Override
-    public List<Student> findByNameAndSurname(String queryKey) {
+    public List<Student> findByNameAndSurname(List<AcademyClass> academyClassList, String queryKey) {
+
+        QAcademyClass qAcademyClass = QAcademyClass.academyClass;
         BooleanExpression likeNameAndSurname = qStudent.firstName.concat(" " + qStudent.lastName)
                 .likeIgnoreCase(Expressions.asString("%") + queryKey + Expressions.asString("%"));
+
         return qf.selectFrom(qStudent)
+                .join(qAcademyClass)
+                .on(qStudent.in(qAcademyClass.studentList))
+                .where(qAcademyClass.in(academyClassList))
                 .where(likeNameAndSurname)
                 .orderBy(qStudent.createTime.desc())
                 .fetch();

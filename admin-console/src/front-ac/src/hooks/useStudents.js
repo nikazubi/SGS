@@ -1,5 +1,5 @@
 import {useMutation} from "react-query";
-import axios from "../../../utils/axios";
+import axios from "../utils/axios";
 
 export const fetchStudents = async (params) => {
     const {data} = await axios.get("students/get-students-by-name", {params});

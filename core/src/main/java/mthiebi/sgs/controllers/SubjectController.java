@@ -3,8 +3,11 @@ package mthiebi.sgs.controllers;
 import mthiebi.sgs.dto.SubjectDTO;
 import mthiebi.sgs.dto.SubjectMapper;
 import mthiebi.sgs.models.Subject;
+import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.service.SubjectService;
+import mthiebi.sgs.service.SystemUserService;
 import mthiebi.sgs.utils.AuthConstants;
+import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,9 @@ public class SubjectController {
     @Autowired
     private SubjectMapper subjectMapper;
 
+    @Autowired
+    private UtilsJwt utilsJwt;
+
     @PostMapping("/create-subject")
     public SubjectDTO createSubject(@RequestBody SubjectDTO subjectDTO){
         Subject subject = subjectService.createSubject(subjectMapper.subject(subjectDTO));
@@ -37,11 +43,14 @@ public class SubjectController {
 
     @GetMapping("/get-subjects")
     @Secured({AuthConstants.USERS_GROUPS_MANAGE})
-    public List<SubjectDTO> getSubjects(@RequestParam(defaultValue = "10") int limit,
+    public List<SubjectDTO> getSubjects(@RequestHeader("Authorization") String authHeader,
+                                        @RequestParam(defaultValue = "10") int limit,
                                         @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(required = false, defaultValue = "0") Long id,
-                                        @RequestParam(required = false) String name){
-        return subjectService.getSubjects(limit, page, id, name).stream()
+                                        @RequestParam(required = false) String name) throws Exception {
+
+        String userName = utilsJwt.getUsernameFromHeader(authHeader);
+        return subjectService.getSubjects(limit, page, id, name, userName).stream()
                 .map(subject -> subjectMapper.subjectDTO(subject))
                 .collect(Collectors.toList());
     }

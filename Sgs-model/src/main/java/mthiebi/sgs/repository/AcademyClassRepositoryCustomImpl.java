@@ -18,10 +18,11 @@ public class AcademyClassRepositoryCustomImpl implements AcademyClassRepositoryC
     private JPAQueryFactory qf;
 
     @Override
-    public List<AcademyClass> getAcademyClasses(String queryKey) {
+    public List<AcademyClass> getAcademyClasses(List<AcademyClass> academyClassList, String queryKey) {
         BooleanExpression likeName = QueryUtils.stringLike(qAcademyClass.className, queryKey);
         return qf.selectFrom(qAcademyClass)
                 .where(likeName)
+                .where(qAcademyClass.in(academyClassList))
                 .orderBy(qAcademyClass.createTime.desc())
                 .fetch();
     }

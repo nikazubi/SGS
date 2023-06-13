@@ -4,6 +4,7 @@ import mthiebi.sgs.dto.StudentDTO;
 import mthiebi.sgs.dto.StudentMapper;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.service.StudentService;
+import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,9 @@ public class StudentController {
 
     @Autowired
     private StudentMapper studentMapper;
+
+    @Autowired
+    private UtilsJwt utilsJwt;
 
     @PostMapping("/create-student")
     public StudentDTO createStudent(@RequestBody StudentDTO studentDTO){
@@ -45,8 +49,10 @@ public class StudentController {
     }
 
     @GetMapping("/get-students-by-name")
-    public List<StudentDTO> getStudents(@RequestParam String queryKey){
-        return studentService.findByNameAndSurname(queryKey).stream()
+    public List<StudentDTO> getStudents(@RequestHeader("Authorization") String authHeader,
+                                        @RequestParam String queryKey) throws Exception {
+        String username = utilsJwt.getUsernameFromHeader(authHeader);
+        return studentService.findByNameAndSurname(username, queryKey).stream()
                 .map(student -> studentMapper.studentDTO(student))
                 .collect(Collectors.toList());
     }

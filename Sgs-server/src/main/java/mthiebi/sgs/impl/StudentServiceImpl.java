@@ -1,7 +1,10 @@
 package mthiebi.sgs.impl;
 
+import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Student;
+import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.repository.StudentRepository;
+import mthiebi.sgs.repository.SystemUserRepository;
 import mthiebi.sgs.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private SystemUserRepository systemUserRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -52,8 +58,10 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> findByNameAndSurname(String queryKey) {
-        return studentRepository.findByNameAndSurname(queryKey);
+    public List<Student> findByNameAndSurname(String username, String queryKey) {
+        SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
+        List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
+        return studentRepository.findByNameAndSurname(academyClassList, queryKey);
     }
 
     @Override

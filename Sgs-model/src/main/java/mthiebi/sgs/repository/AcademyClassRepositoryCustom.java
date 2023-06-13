@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface AcademyClassRepositoryCustom {
 
-    List<AcademyClass> getAcademyClasses(String queryKey);
+    List<AcademyClass> getAcademyClasses(List<AcademyClass> academyClassList, String queryKey);
 }

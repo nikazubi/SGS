@@ -15,4 +15,6 @@ public class SystemUserCreateDTO {
 
     private List<Long> groupIdList;
 
+    private List<Long> classIdList;
+
 }

@@ -1,14 +1,12 @@
 import FlexBox from "../../../components/FlexBox";
 import {Formik} from "formik";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
-import useSubjects from "../../../hooks/useSubjects";
 import useAcademyClass from "../../../hooks/useAcademyClass";
 import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useState} from "react";
 
-const GradeTableToolbar = ({setFilters, filters}) => {
-    const {mutateAsync: onFetchSubjects} = useSubjects();
+const AbsenceTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClass();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const [date, setDate] = useState(new Date())
@@ -21,7 +19,6 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                         {
                             student: '',
                             academyClass: '',
-                            subject: '',
                             date: date,
                             groupBy: 'STUDENT',
                         }
@@ -33,16 +30,6 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
-                        <div style={{marginLeft: 50, width: 300}}>
-                            <FormikAutocomplete name="subject"
-                                                multiple={false}
-                                                label={"საგანი"}
-                                // resolveData={resolveCardTypeAutocompleteData}
-                                                onFetch={onFetchSubjects}
-                                                getOptionSelected={(option, value) => option.id === value.id}
-                                                getOptionLabel={(option) => option.name}
-                                                onBlur={()=> setFilters(values)}/>
-                        </div>
                         <div style={{marginLeft: 50, width: 300}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
@@ -83,4 +70,4 @@ const GradeTableToolbar = ({setFilters, filters}) => {
     )
 }
 
-export default GradeTableToolbar;
+export default AbsenceTableToolbar;

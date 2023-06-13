@@ -63,4 +63,15 @@ public class AcademyClass extends Audit{
     public void setSubjectList(List<Subject> subjectList) {
         this.subjectList = subjectList;
     }
+
+    @Override
+    public String toString() {
+        return "AcademyClass{" +
+                "id=" + id +
+                ", classLevel=" + classLevel +
+                ", className='" + className + '\'' +
+                ", studentList=" + studentList +
+                ", subjectList=" + subjectList +
+                '}';
+    }
 }

@@ -4,6 +4,7 @@ import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.utils.AuthConstants;
+import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,9 @@ public class AcademyClassController {
 
     @Autowired
     private AcademyClassMapper academyClassMapper;
+
+    @Autowired
+    private UtilsJwt utilsJwt;
 
     @PostMapping("/create-academy-class")
     public AcademyClassDTO createAcademyClass(@RequestBody AcademyClassDTO academyClassDTO){
@@ -42,8 +46,11 @@ public class AcademyClassController {
     }
 
     @GetMapping("/get-academy-classes")
-    public List<AcademyClassDTO> getAcademyClasses(@RequestParam(required = false) String queryKey){
-        return academyClassService.getAcademyClasses(queryKey).stream()
+    public List<AcademyClassDTO> getAcademyClasses(@RequestHeader("Authorization") String authHeader,
+                                                   @RequestParam(required = false) String queryKey) throws Exception {
+
+        String username = utilsJwt.getUsernameFromHeader(authHeader);
+        return academyClassService.getAcademyClasses(username, queryKey).stream()
                 .map(academyClass -> academyClassMapper.academyClassDTO(academyClass))
                 .collect(Collectors.toList());
     }

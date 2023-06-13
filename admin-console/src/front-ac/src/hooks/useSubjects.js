@@ -1,5 +1,5 @@
 import {useMutation} from "react-query";
-import axios from "../../../utils/axios";
+import axios from "../utils/axios";
 
 export const fetchSubjects = async ({queryKey}) => {
     const params = {name: queryKey};

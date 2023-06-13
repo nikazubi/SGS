@@ -2,10 +2,13 @@ package mthiebi.sgs.impl;
 
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
+import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.repository.AcademyClassRepository;
 import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.repository.SubjectRepository;
+import mthiebi.sgs.repository.SystemUserRepository;
 import mthiebi.sgs.service.AcademyClassService;
+import mthiebi.sgs.service.SystemUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import mthiebi.sgs.models.AcademyClass;
@@ -24,6 +27,9 @@ public class AcademyClassServiceImpl implements AcademyClassService {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @Autowired
+    private SystemUserRepository systemUserRepository;
 
     @Override
     public AcademyClass createAcademyClass(AcademyClass academyClass) {
@@ -52,8 +58,11 @@ public class AcademyClassServiceImpl implements AcademyClassService {
     }
 
     @Override
-    public List<AcademyClass> getAcademyClasses(String queryKey) {
-        return academyClassRepository.getAcademyClasses(queryKey);
+    public List<AcademyClass> getAcademyClasses(String username, String queryKey) {
+        SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
+        List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
+
+        return academyClassRepository.getAcademyClasses(academyClassList, queryKey);
     }
 
     @Override

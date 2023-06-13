@@ -19,7 +19,7 @@ public interface StudentService {
                               String lastName,
                               String personalNumber);
 
-    List<Student> findByNameAndSurname(String queryKey);
+    List<Student> findByNameAndSurname(String username, String queryKey);
 
     Student findStudentById(Long studentId);
 

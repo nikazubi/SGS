@@ -38,6 +38,14 @@ public class UtilsJwt implements Serializable {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
+	public String getUsernameFromHeader(String authHeader) throws Exception {
+		if (authHeader.length() > 7) {
+			String jwtToken = authHeader.substring(7);
+			return getUsernameFromToken(jwtToken);
+		}
+
+		throw new Exception("INVALID TOKEN");
+	}
 
 	public Date getExpirationDateFromToken(String token) {
 		return getClaimFromToken(token, Claims::getExpiration);

@@ -16,7 +16,8 @@ public interface SubjectService {
     List<Subject> getSubjects(int limit,
                               int page,
                               Long id,
-                              String name);
+                              String name,
+                              String userName);
 
     Subject findSubjectById(Long id);
 

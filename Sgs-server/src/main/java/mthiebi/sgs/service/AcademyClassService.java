@@ -13,7 +13,7 @@ public interface AcademyClassService {
 
     List<AcademyClass> getAcademyClasses();
 
-    List<AcademyClass> getAcademyClasses(String queryKey);
+    List<AcademyClass> getAcademyClasses(String username, String queryKey);
 
     AcademyClass findAcademyClassById(Long id);
 

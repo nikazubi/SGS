@@ -2,6 +2,7 @@ package mthiebi.sgs.repository;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.QStudent;
 import mthiebi.sgs.models.Student;
 import org.springframework.data.domain.PageRequest;
@@ -18,5 +19,5 @@ public interface StudentRepositoryCustom {
                                  String lastName,
                                  String personalNumber);
 
-    List<Student> findByNameAndSurname(String queryKey);
+    List<Student> findByNameAndSurname(List<AcademyClass> academyClassList, String queryKey);
 }

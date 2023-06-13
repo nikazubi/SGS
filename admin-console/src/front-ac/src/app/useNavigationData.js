@@ -3,6 +3,8 @@ import {useUserContext} from "../contexts/user-context";
 import {Grading, Home} from "@mui/icons-material";
 import DashBoard from "../main/pages/HomePage/DashBoard";
 import {AssignmentLate, Grade} from "@material-ui/icons";
+import BehaviourDashBoard from "../main/pages/behaviourPage/BehaviourDashBoard";
+import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 
 
 const useNavigationData = () => {
@@ -20,7 +22,7 @@ const useNavigationData = () => {
     BEHAVIOUR: {
       id: 'BEHAVIOUR',
       name: 'ყოფაქცევის ჟურნალი',
-      component: <div>{"hey"}</div>,
+      component: <BehaviourDashBoard/>,
       icon: <Grade/>,
       show: false,
       permissions: [],
@@ -29,7 +31,7 @@ const useNavigationData = () => {
     ABSENCE: {
       id: 'ABSENCE',
       name: 'გაცდენების ჟურნალი',
-      component: <div>{"yoo"}</div>,
+      component: <AbsenceDashBoard/>,
       icon: <AssignmentLate/>,
       show: false,
       permissions: [],
