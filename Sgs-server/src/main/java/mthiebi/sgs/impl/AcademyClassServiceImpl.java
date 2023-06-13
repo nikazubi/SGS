@@ -35,7 +35,7 @@ public class AcademyClassServiceImpl implements AcademyClassService {
     public AcademyClass updateAcademyClass(AcademyClass academyClass) {
         AcademyClass oldAcademyClass = academyClassRepository.findById(academyClass.getId()).orElseThrow();
         oldAcademyClass.setClassLevel(academyClass.getClassLevel());
-        oldAcademyClass.setClassLevelIndex(academyClass.getClassLevelIndex());
+        oldAcademyClass.setClassName(academyClass.getClassName());
         oldAcademyClass.setStudentList(academyClass.getStudentList());
         academyClassRepository.save(oldAcademyClass);
         return oldAcademyClass;
@@ -49,6 +49,11 @@ public class AcademyClassServiceImpl implements AcademyClassService {
     @Override
     public List<AcademyClass> getAcademyClasses() {
         return academyClassRepository.findAll();
+    }
+
+    @Override
+    public List<AcademyClass> getAcademyClasses(String queryKey) {
+        return academyClassRepository.getAcademyClasses(queryKey);
     }
 
     @Override

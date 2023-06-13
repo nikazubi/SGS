@@ -15,7 +15,9 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
-public interface AcademyClassRepository extends JpaRepository<AcademyClass, Long>, QuerydslPredicateExecutor<AcademyClass> {
+public interface AcademyClassRepository extends JpaRepository<AcademyClass, Long>,
+                                                QuerydslPredicateExecutor<AcademyClass>,
+                                                            AcademyClassRepositoryCustom{
 
 
 }

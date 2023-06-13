@@ -36,7 +36,7 @@ public class SubjectController {
     @GetMapping("/get-subjects")
     public List<SubjectDTO> getSubjects(@RequestParam(defaultValue = "10") int limit,
                                         @RequestParam(defaultValue = "1") int page,
-                                        @RequestParam(required = false) Long id,
+                                        @RequestParam(required = false, defaultValue = "0") Long id,
                                         @RequestParam(required = false) String name){
         return subjectService.getSubjects(limit, page, id, name).stream()
                 .map(subject -> subjectMapper.subjectDTO(subject))

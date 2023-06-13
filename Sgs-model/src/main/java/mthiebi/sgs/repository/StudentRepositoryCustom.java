@@ -1,0 +1,22 @@
+package mthiebi.sgs.repository;
+
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import mthiebi.sgs.models.QStudent;
+import mthiebi.sgs.models.Student;
+import org.springframework.data.domain.PageRequest;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+public interface StudentRepositoryCustom {
+
+    List<Student> findAllStudent(int limit,
+                                 int page,
+                                 Long id,
+                                 String firstName,
+                                 String lastName,
+                                 String personalNumber);
+
+    List<Student> findByNameAndSurname(String queryKey);
+}

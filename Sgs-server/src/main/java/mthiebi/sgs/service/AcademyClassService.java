@@ -13,6 +13,8 @@ public interface AcademyClassService {
 
     List<AcademyClass> getAcademyClasses();
 
+    List<AcademyClass> getAcademyClasses(String queryKey);
+
     AcademyClass findAcademyClassById(Long id);
 
     void attachStudentsToAcademyClass(Long academyClassId, List<Long> studentIdList);

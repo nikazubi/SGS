@@ -35,6 +35,7 @@ export const FormikAutocomplete = ({
                                      getChipColor = () => 'green',
                                      imagePlacement,
                                      selectedImageViewEnabled,
+                                     onBlur = () => {},
                                      ...props
                                    }) => {
 
@@ -81,7 +82,7 @@ export const FormikAutocomplete = ({
     return () => {
       active = false;
     };
-  }, [value, inputField, query, onFetch, getOptionLabel, getOptionSelected, minLengthForSearch, resolveData, additionalOptions, setOptions]);
+  }, [value, inputField, query, onFetch, getOptionLabel, minLengthForSearch, resolveData, additionalOptions, setOptions]);
 
   useEffect(() => {
     if (value === "" && options.length !== 0 && !!setInitialVulue && typeof setInitialVulue === 'function') {
@@ -224,7 +225,10 @@ export const FormikAutocomplete = ({
                     variant={variant}
                     label={!labelDisabled ? title : null}
                     onFocus={_ => setFocused(true)}
-                    onBlur={_ => setFocused(false)}
+                    onBlur={_ => {
+                        setFocused(false)
+                        onBlur();
+                    }}
                     InputProps={{
                       ...params.InputProps,
                       readOnly,
