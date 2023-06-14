@@ -19,7 +19,11 @@ public class GradeRepositoryCustomImpl implements GradeRepositoryCustom {
     private JPAQueryFactory qf;
 
     @Override
-    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId, Long subjectId, Long studentId, Date createTime) {
+    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
+                                                                          Long subjectId,
+                                                                          Long studentId,
+                                                                          Date createTime,
+                                                                          String gradeTypePrefix) {
         Predicate academyClassIdPredicate = academyClassId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(academyClassId);
         Predicate subjectIdPredicate = subjectId != null ? qGrade.subject.id.eq(subjectId) : qGrade.subject.id.isNotNull();
         Predicate studentIdPredicate = studentId != null ? qGrade.subject.id.eq(studentId) : qGrade.student.id.isNotNull();
@@ -29,11 +33,14 @@ public class GradeRepositoryCustomImpl implements GradeRepositoryCustom {
         } else {
             datePredicate = qGrade.createTime.isNotNull();
         }
+        Predicate prefixPredicate = qGrade.gradeType.stringValue().startsWith(gradeTypePrefix);
+
         return qf.selectFrom(qGrade)
                 .where(academyClassIdPredicate)
                 .where(subjectIdPredicate)
                 .where(studentIdPredicate)
                 .where(datePredicate)
+                .where(prefixPredicate)
                 .orderBy(qGrade.createTime.desc())
                 .fetch();
     }

@@ -33,7 +33,7 @@ public class GradeController {
                                                     @RequestParam(required = false) Long subject,
                                                     @RequestParam(required = false) Long student,
                                                     @RequestParam(required = false) Date date){
-        return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date)
+        return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date, null)
                                                                                 .stream()
                                                                                 .map(gradeMapper::gradeDTO)
                                                                                 .collect(Collectors.toList());
@@ -44,14 +44,15 @@ public class GradeController {
                                                        @RequestParam(required = false) Long subject,
                                                        @RequestParam(required = false) Long student,
                                                        @RequestParam(required = false) Date date,
-                                                       @RequestParam() GradeGroupByClause groupByClause){
+                                                       @RequestParam String gradeTypePrefix,
+                                                       @RequestParam GradeGroupByClause groupByClause){
         if (groupByClause == GradeGroupByClause.STUDENT ){
-            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date)
+            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date, gradeTypePrefix)
                     .stream()
                     .map(gradeMapper::gradeDTO)
                     .collect(Collectors.groupingBy(grade -> grade.getStudent().getId()));
         } else {
-            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date)
+            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date, gradeTypePrefix)
                     .stream()
                     .map(gradeMapper::gradeDTO)
                     .collect(Collectors.groupingBy(grade -> grade.getSubject().getId()));

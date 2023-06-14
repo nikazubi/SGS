@@ -74,7 +74,11 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public List<Grade> getStudentGradeByClassAndSubjectIdAndCreateTime(Long classId, Long subjectId, Long studentId, Date createTime) {
-        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime);
+    public List<Grade> getStudentGradeByClassAndSubjectIdAndCreateTime(Long classId,
+                                                                       Long subjectId,
+                                                                       Long studentId,
+                                                                       Date createTime,
+                                                                       String gradeTypePrefix) {
+        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime, gradeTypePrefix);
     }
 }

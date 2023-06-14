@@ -1,13 +1,13 @@
 import FlexBox from "../../../components/FlexBox";
 import {Formik} from "formik";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
-import useAcademyClass from "../../../hooks/useAcademyClass";
+import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useState} from "react";
 
 const AbsenceTableToolbar = ({setFilters, filters}) => {
-    const {mutateAsync: onFetchAcademyClass} = useAcademyClass();
+    const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const [date, setDate] = useState(new Date())
 
