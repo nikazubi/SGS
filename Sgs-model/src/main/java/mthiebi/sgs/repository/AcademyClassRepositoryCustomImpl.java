@@ -4,14 +4,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.QAcademyClass;
-import mthiebi.sgs.models.QGrade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class AcademyClassRepositoryCustomImpl implements AcademyClassRepositoryCustom {
+public class AcademyClassRepositoryCustomImpl implements mthiebi.sgs.repository.AcademyClassRepositoryCustom {
 
     private static final QAcademyClass qAcademyClass = QAcademyClass.academyClass;
     @Autowired
@@ -19,7 +18,7 @@ public class AcademyClassRepositoryCustomImpl implements AcademyClassRepositoryC
 
     @Override
     public List<AcademyClass> getAcademyClasses(List<AcademyClass> academyClassList, String queryKey) {
-        BooleanExpression likeName = QueryUtils.stringLike(qAcademyClass.className, queryKey);
+        BooleanExpression likeName = mthiebi.sgs.repository.QueryUtils.stringLike(qAcademyClass.className, queryKey);
         return qf.selectFrom(qAcademyClass)
                 .where(likeName)
                 .where(qAcademyClass.in(academyClassList))

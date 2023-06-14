@@ -28,7 +28,6 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
 }));
 
 const CustomNoRowsOverlay = () => {
-  const {t} = useTranslation();
 
   return (
     <StyledGridOverlay>
@@ -71,7 +70,7 @@ const CustomNoRowsOverlay = () => {
           </g>
         </g>
       </svg>
-      <Box sx={{mt: 1}}>{t(GENERIC_TERMS + 'noData')}</Box>
+      <Box sx={{mt: 1}}>{'მონაცემები ვერ მოიძებნა'}</Box>
     </StyledGridOverlay>
   );
 };

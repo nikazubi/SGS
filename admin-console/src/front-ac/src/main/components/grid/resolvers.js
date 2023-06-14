@@ -1,6 +1,5 @@
 import renderCellExpand from "./GridCellExpand";
-import renderFormCellExpand from "./data-grid-form/FormGridCellExpand";
-import {notNullOrUndefined} from "../../../main/pages/utils";
+import renderFormCellExpand from "./FormGridCellExpand";
 
 export const resolveColumns = (columns) => {
   columns.forEach(column => {
@@ -61,7 +60,7 @@ export const resolveColumnsFormGrid = (columns, setValid) => {
 };
 
 export const resolveGridCellTextValue = (value, valueProps, translate) => {
-  let resolvedValue = notNullOrUndefined(value) ? value : '';
+  let resolvedValue = (value !== undefined && value != null) ? value : '';
   if (valueProps?.isList) {
     resolvedValue = !translate ? value : value.map(v => translate(v));
     return !!valueProps?.delimiter ? resolvedValue.join(valueProps.delimiter) : resolvedValue.join(", ");
