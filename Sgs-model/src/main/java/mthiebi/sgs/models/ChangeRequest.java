@@ -21,6 +21,9 @@ public class ChangeRequest extends Audit{
     @OneToOne(fetch = FetchType.LAZY)
     private Grade prevGrade;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private Subject subject;
+
     private Long newValue;
 
     @Enumerated(EnumType.STRING)
@@ -64,6 +67,14 @@ public class ChangeRequest extends Audit{
 
     public void setPrevGrade(Grade prevGrade) {
         this.prevGrade = prevGrade;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     public Long getNewValue() {

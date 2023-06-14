@@ -2,9 +2,10 @@ import React, {useMemo} from 'react';
 import {useUserContext} from "../contexts/user-context";
 import {Grading, Home} from "@mui/icons-material";
 import DashBoard from "../main/pages/HomePage/DashBoard";
-import {AssignmentLate, Grade} from "@material-ui/icons";
+import {AssignmentLate, ChangeHistory, ExitToApp, Grade} from "@material-ui/icons";
 import BehaviourDashBoard from "../main/pages/behaviourPage/BehaviourDashBoard";
 import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
+import ChangeRequestDashBoard from "../main/pages/changeRequestPage/ChangeRequestDashBoard";
 
 
 const useNavigationData = () => {
@@ -32,11 +33,20 @@ const useNavigationData = () => {
       id: 'ABSENCE',
       name: 'გაცდენების ჟურნალი',
       component: <AbsenceDashBoard/>,
-      icon: <AssignmentLate/>,
+      icon: <ExitToApp/>,
       show: false,
       permissions: [],
       collapsible: false
-    }
+    },
+    CHANGE_REQUEST: {
+      id: 'CHANGE_REQUEST',
+      name: 'მოთხოვნილი ცვლილებები',
+      component: <ChangeRequestDashBoard/>,
+      icon: <ChangeHistory/>,
+      show: false,
+      permissions: [],
+      collapsible: false
+    },
   }), []);
 
   return useMemo(() => {

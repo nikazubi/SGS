@@ -20,6 +20,8 @@ public class ChangeRequestDTO {
 
     private GradeDTO prevGrade;
 
+    private SubjectDTO subjectDTO;
+
     private String newValue;
 
 }

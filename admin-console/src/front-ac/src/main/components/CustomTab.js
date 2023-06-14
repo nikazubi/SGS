@@ -81,7 +81,7 @@ const initialState = {
 
 export const CustomTabComponent = ({ tab, value, onClose, onCloseAll, onCloseOthers, ...rest }) => {
   const [menuState, setMenuState] = useState(initialState);
-  const handleClose = tab.id === 'GRADES' || tab.id === 'BEHAVIOUR' || tab.id === 'ABSENCE' ? null : onClose;
+  const handleClose = tab.id === 'GRADES' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? null : onClose;
 
   const handleMenuOpen = (event) => {
     event.preventDefault();

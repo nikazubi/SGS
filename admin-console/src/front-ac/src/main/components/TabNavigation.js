@@ -16,7 +16,7 @@ const TabNavigation = () => {
 
   const handleCloseAllTabs = () => {
     setTabList(old => [...old.filter(page => page.id === 'GRADES' ||
-        page.id === 'BEHAVIOUR' || page.id === 'ABSENCE')]);
+        page.id === 'BEHAVIOUR' || page.id === 'ABSENCE' || page.id === 'CHANGE_REQUEST')]);
     changeActiveTab('');
   };
 

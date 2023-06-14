@@ -43,7 +43,7 @@ export const NavigationProvider = (props) => {
   }, [pageArray]);
 
   const [tabList, setTabList] = useState([...pages.filter(page => page.id === 'GRADES' ||
-      page.id === 'BEHAVIOUR' || page.id === 'ABSENCE')]);
+      page.id === 'BEHAVIOUR' || page.id === 'ABSENCE' || page.id === 'CHANGE_REQUEST')]);
 
   const setDocumentTitle = useCallback((pageId) => {
     const newPage = pages.find((currPage) => currPage.id === pageId);
