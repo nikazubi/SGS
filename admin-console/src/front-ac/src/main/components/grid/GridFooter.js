@@ -1,20 +1,18 @@
 import {
   GridFooterContainer, GridRowCount, GridSelectedRowCount,
   gridTopLevelRowCountSelector,
-  gridVisibleTopLevelRowCountSelector,
   selectedGridRowsCountSelector,
   useGridApiContext,
   useGridRootProps,
   useGridSelector
-} from "@mui/x-data-grid-pro";
+} from "@mui/x-data-grid";
 
 const GridFooter = ({selectedRowCount, ...props}) => {
   const apiRef = useGridApiContext();
   const rootProps = useGridRootProps();
   const totalTopLevelRowCount = useGridSelector(apiRef, gridTopLevelRowCountSelector);
   const selectedRowCountUncontrolled = useGridSelector(apiRef, selectedGridRowsCountSelector);
-  const visibleTopLevelRowCount = useGridSelector(apiRef, gridVisibleTopLevelRowCountSelector);
-
+console.log(rootProps)
   const selectedRowCountElement =
     !rootProps.hideFooterSelectedRowCount && selectedRowCountUncontrolled > 0 ? (
       <GridSelectedRowCount selectedRowCount={!!selectedRowCount ? selectedRowCount : selectedRowCountUncontrolled} />
@@ -24,12 +22,12 @@ const GridFooter = ({selectedRowCount, ...props}) => {
 
   const rowCountElement =
     !rootProps.hideFooterRowCount && !rootProps.pagination ? (
-      <GridRowCount rowCount={totalTopLevelRowCount} visibleRowCount={visibleTopLevelRowCount} />
+      <GridRowCount rowCount={totalTopLevelRowCount} />
     ) : null;
 
-  const paginationElement = rootProps.pagination &&
+  const paginationElement = rootProps?.pagination &&
     !rootProps.hideFooterPagination &&
-    rootProps.components.Pagination && (
+    rootProps?.components?.Pagination && (
       <rootProps.components.Pagination {...rootProps.componentsProps?.pagination} />
     );
 

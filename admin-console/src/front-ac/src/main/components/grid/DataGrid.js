@@ -1,16 +1,15 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {filterHttpPost} from "./useFetchGridData";
 import CustomNoRowsOverlay from "./CustomNoRowsOverlay";
 import Progress from "../Progress";
 import PropTypes from "prop-types";
 import GridFooter from "./GridFooter";
 import {DataGridStyles} from "./DataGridStyles";
-import {DataGridPro} from "@mui/x-data-grid-pro";
+import {DataGrid} from "@mui/x-data-grid";
 import {useQueryWithoutCache} from "../../../hooks/useQueryWithoutCache";
-import {resolveQueryData} from "./resolvers";
+import {resolveColumns, resolveQueryData} from "./resolvers";
 
 
-const DataGrid = ({
+const DataGridSGS = ({
                     fetchData,
                     rows,
                     queryKey,
@@ -39,13 +38,14 @@ const DataGrid = ({
   const rowsPerPageOptions = [20, 50, 70, 100];
   const [selectionModel, setSelectionModel] = useState([]);
   const [pageParams, setPageParams] = useState({page: 0, size: 20});
+  console.log(filtersData)
   const {
     data,
     isLoading,
     isSuccess,
     isFetching,
   } = useQueryWithoutCache([queryKey, filtersData, pageParams],
-    fetchData || filterHttpPost,
+    fetchData,
     {
       select: data => resolveQueryData(data, resolveQueryResult, pagination, maxPageSize),
       enabled: !rows,
@@ -85,14 +85,14 @@ const DataGrid = ({
 
   return (
     <div style={{display: 'flex', position: "relative", height: '100%', width: '100%'}}>
-      <DataGridPro
+      <DataGrid
         columns={resolvedColumns}
-        rows={!!rows ? rows : (isSuccess ? data.content : [])}
+        rows={!!rows ? rows : (isSuccess && data ? data.content : [])}
         paginationMode={"server"}
         pagination={pagination}
         rowsPerPageOptions={rowsPerPageOptions}
         pageSize={pageParams.size}
-        rowCount={isSuccess ? data.totalElements : 0}
+        rowCount={isSuccess && data? data.totalElements : 0}
         onPageChange={(page) => setPageParams((prev) => ({...prev, page}))}
         onPageSizeChange={(size) => setPageParams((prev) => ({...prev, size}))}
         loading={isLoading || isFetching || loading}
@@ -139,4 +139,4 @@ const useQueryOptions = {
   notifyOnChangeProps: 'tracked',
 };
 
-export default DataGrid;
+export default DataGridSGS;

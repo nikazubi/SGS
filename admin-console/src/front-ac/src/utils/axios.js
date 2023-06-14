@@ -89,7 +89,7 @@ const onError = async (error) => {
 axiosInstance.interceptors.request.use(
   config => {
       const jwt = getAccessToken();
-    if (!!jwt) {
+    if (!!jwt  && !config.headers.authorization) {
       config.headers.authorization = `Bearer ${jwt}`;
     }
     return config;

@@ -1,8 +1,6 @@
 package mthiebi.sgs.controllers;
 
-import mthiebi.sgs.dto.GradeDTO;
-import mthiebi.sgs.dto.GradeGroupByClause;
-import mthiebi.sgs.dto.GradeMapper;
+import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.Grade;
 import mthiebi.sgs.service.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,32 +28,46 @@ public class GradeController {
 
     @GetMapping("/get-grades")
     public List<GradeDTO> getGradeByClassAndSubject(@RequestParam(required = false) Long classId,
-                                                    @RequestParam(required = false) Long subject,
-                                                    @RequestParam(required = false) Long student,
+                                                    @RequestParam(required = false) Long subjectId,
+                                                    @RequestParam(required = false) Long studentId,
                                                     @RequestParam(required = false) Date date){
-        return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date, null)
+        return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subjectId, studentId, date, null)
                                                                                 .stream()
                                                                                 .map(gradeMapper::gradeDTO)
                                                                                 .collect(Collectors.toList());
     }
 
     @GetMapping("/get-grades-grouped")
-    public Map<Object, List<GradeDTO>> getGradeGrouped(@RequestParam(required = false) Long classId,
-                                                       @RequestParam(required = false) Long subject,
-                                                       @RequestParam(required = false) Long student,
-                                                       @RequestParam(required = false) Date date,
-                                                       @RequestParam String gradeTypePrefix,
-                                                       @RequestParam GradeGroupByClause groupByClause){
+    public List<GradeWrapperDto> getGradeGrouped(@RequestParam(required = false) Long classId,
+                                                 @RequestParam(required = false) Long subjectId,
+                                                 @RequestParam(required = false) Long studentId,
+                                                 @RequestParam(required = false) String date,
+                                                 @RequestParam GradeGroupByClause groupByClause,
+                                                 @RequestParam(defaultValue = "GENERAL") String gradeTypePrefix){
+        Date date1 = new Date();
+        date1.setTime(Long.parseLong(date));
         if (groupByClause == GradeGroupByClause.STUDENT ){
-            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date, gradeTypePrefix)
+            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subjectId, studentId, date1, gradeTypePrefix)
                     .stream()
                     .map(gradeMapper::gradeDTO)
-                    .collect(Collectors.groupingBy(grade -> grade.getStudent().getId()));
+                    .collect(Collectors.groupingBy(GradeDTO::getStudent))
+                    .entrySet().stream()
+                    .map(k -> GradeWrapperByStudent.builder()
+                                                    .student(k.getKey())
+                                                    .grades(k.getValue())
+                                                    .build())
+                    .collect(Collectors.toList());
         } else {
-            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subject, student, date, gradeTypePrefix)
+            return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subjectId, studentId, date1, gradeTypePrefix)
                     .stream()
                     .map(gradeMapper::gradeDTO)
-                    .collect(Collectors.groupingBy(grade -> grade.getSubject().getId()));
+                    .collect(Collectors.groupingBy(GradeDTO::getSubject))
+                    .entrySet().stream()
+                    .map(k -> GradeWrapperBySubject.builder()
+                            .subject(k.getKey())
+                            .grades(k.getValue())
+                            .build())
+                    .collect(Collectors.toList());
         }
     }
 

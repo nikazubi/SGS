@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -28,8 +29,10 @@ public class GradeRepositoryCustomImpl implements GradeRepositoryCustom {
         Predicate subjectIdPredicate = subjectId != null ? qGrade.subject.id.eq(subjectId) : qGrade.subject.id.isNotNull();
         Predicate studentIdPredicate = studentId != null ? qGrade.subject.id.eq(studentId) : qGrade.student.id.isNotNull();
         Predicate datePredicate;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(createTime);
         if (createTime != null) {
-            datePredicate = qGrade.createTime.month().eq(createTime.getMonth() + 1).and(qGrade.createTime.year().eq(createTime.getYear()));
+            datePredicate = qGrade.createTime.month().eq((calendar.get(Calendar.MONTH))).and(qGrade.createTime.year().eq(calendar.get(Calendar.YEAR)));
         } else {
             datePredicate = qGrade.createTime.isNotNull();
         }

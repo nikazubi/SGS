@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity(name = "ACADEMY_CLASS")
-public class AcademyClass extends Audit{
+public class AcademyClass extends mthiebi.sgs.models.Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,13 +16,13 @@ public class AcademyClass extends Audit{
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "academy_class_id")
-    private List<Student> studentList;
+    private List<mthiebi.sgs.models.Student> studentList;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "class_subject",
             joinColumns = @JoinColumn(name = "academy_class_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id"))
-    private List<Subject> subjectList;
+    private List<mthiebi.sgs.models.Subject> subjectList;
 
     public void setId(Long id) {
         this.id = id;
@@ -48,19 +48,19 @@ public class AcademyClass extends Audit{
         this.className = className;
     }
 
-    public List<Student> getStudentList() {
+    public List<mthiebi.sgs.models.Student> getStudentList() {
         return studentList;
     }
 
-    public void setStudentList(List<Student> studentList) {
+    public void setStudentList(List<mthiebi.sgs.models.Student> studentList) {
         this.studentList = studentList;
     }
 
-    public List<Subject> getSubjectList() {
+    public List<mthiebi.sgs.models.Subject> getSubjectList() {
         return subjectList;
     }
 
-    public void setSubjectList(List<Subject> subjectList) {
+    public void setSubjectList(List<mthiebi.sgs.models.Subject> subjectList) {
         this.subjectList = subjectList;
     }
 
