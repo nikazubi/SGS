@@ -24,11 +24,9 @@ const LoginPage = ({setLoggedIn}) => {
             username: email,
             password: password
         })
-        console.log(response)
         if (response?.data?.jwtToken) {
             setLoggedIn(true)
             setAuth(response?.data?.jwtToken)
-            console.log(response?.data?.jwtTokens)
         } else {
             setLoggedIn(false);
         }

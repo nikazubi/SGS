@@ -10,6 +10,5 @@ public interface GradeRepositoryCustom {
     List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
                                                                    Long subjectId,
                                                                    Long studentId,
-                                                                   Date createTim,
-                                                                   String gradeTypePrefix);
+                                                                   Date createTim);
 }

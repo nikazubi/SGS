@@ -8,25 +8,7 @@ const DashBoard = () => {
     const [filters, setFilters] = useState({groupByClause: 'STUDENT'});
     const {data, isLoading, isError, error} = useGrades(filters);
 
-    useEffect(() => {
-        console.log(filters)
-    }, [filters])
-
-    useEffect(() => {
-        console.log(data)
-    }, [data])
-
     const gradeColumns = [
-        {
-            headerName: "აიდი",
-            renderCell: ({row}) => {
-                return row.student.id;
-            },
-            field: 'id',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center'
-        },
         {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
@@ -44,12 +26,13 @@ const DashBoard = () => {
                 if(summary1.length === 0){
                     return ""
                 }
-                return summary1.get(0).value;
+                return summary1[0].value;
             },
             field: 'GENERAL_SUMMARY_ASSIGMENT_1',
             sortable: false,
             align: 'center',
-            headerAlign: 'center'
+            headerAlign: 'center',
+            editable:true
         },
         {
             headerName: "2",
@@ -58,7 +41,7 @@ const DashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2.get(0).value;
+                return summary2[0].value;
             },
             field: 'GENERAL_SUMMARY_ASSIGMENT_2',
             sortable: false,
@@ -72,23 +55,178 @@ const DashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2.get(0).value;
+                return summary2[0].value;
             },
             field: 'GENERAL_SUMMARY_ASSIGMENT_RESTORATION',
             sortable: false,
             align: 'center',
             headerAlign: 'center'
         },
-        // {
-        //     headerName: "მოსწავლის გვარი, სახელი",
-        //     renderCell: ({row}) => {
-        //         return row.student.firstName + " " + row.student.lastName;
-        //     },
-        //     field: 'firstName',
-        //     sortable: false,
-        //     align: 'center',
-        //     headerAlign: 'center'
-        // },
+        {
+            headerName: "თვის ნიშანი",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_MONTH");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SUMMARY_ASSIGMENT_MONTH',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "%",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_PERCENT");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SUMMARY_ASSIGMENT_PERCENT',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "წერილობითი დაავალება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "შემოქმედებითი დავალება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_CREATIVE_ASSIGMENT");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "1",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_SUM_1");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_SUM_1',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "2",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_SUM_2");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_SUM_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "1",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_1");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_1',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "თვის ნიშანი",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_MONTH");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_MONTH',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "%",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_PERCENT");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_PERCENT',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },{
+            headerName: "I",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_COMPONENT_1");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_COMPONENT_1',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },{
+            headerName: "II",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_COMPONENT_2");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_COMPONENT_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },{
+            headerName: "III",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_COMPONENT_3");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_COMPONENT_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
     ];
 
     if (isLoading) {
@@ -97,32 +235,35 @@ const DashBoard = () => {
 
     const columnGroupingModel = [
         {
-            groupId: 'internal_data',
-            headerName: 'Internal',
+            groupId: 'summary',
+            headerName: 'შემაჯამებელი დავალება I',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
-            children: [{ field: 'id' }],
-        },
-        {
-            groupId: 'character',
-            description: 'Information about the character',
-            headerName: 'Basic info',
+            children: [{ field: 'GENERAL_SUMMARY_ASSIGMENT_1' }, {field: 'GENERAL_SUMMARY_ASSIGMENT_2'},
+                {field: 'GENERAL_SUMMARY_ASSIGMENT_RESTORATION'}, {field: 'GENERAL_SUMMARY_ASSIGMENT_MONTH'},
+                {field: 'GENERAL_SUMMARY_ASSIGMENT_PERCENT'}],
+            align: 'center',
+            headerAlign: 'center'
+        },{
+            groupId: 'student',
+            headerName: 'მოსწავლის გვარი, სახელი',
+            description: '',
             // renderHeaderGroup: (params) => (
-            //     <HeaderWithIcon {...params} icon={<PersonIcon fontSize="small" />} />
+            //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
-            children: [
-                {
-                    groupId: 'naming',
-                    headerName: 'Names',
-                    headerClassName: 'my-super-theme--naming-group',
-                    children: [{ field: 'lastName' }, { field: 'firstName' }],
-                },
-                { field: 'age' },
-            ],
+            children: [{field: 'firstName'}],
+            align: 'center',
+            headerAlign: 'center'
         },
     ];
+
+
+    const handleEdit = (params, changedRow) => {
+        console.log(params)
+        console.log(changedRow)
+    };
 
 
 
@@ -132,12 +273,15 @@ const DashBoard = () => {
             <div style={{height: 500, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS
+                        experimentalFeatures={{ columnGrouping: true }}
+                        columnGroupingModel={columnGroupingModel}
                         // queryKey={"GRADES"}
                         columns={gradeColumns}
                         rows={data ? data : []}
                         getRowId={(row) => {
                             return row.student.id;
                         }}
+                        onCellEditCommit={handleEdit}
                         getRowHeight={() => 'auto'}
                         disableColumnMenu
                         filters={filters}
