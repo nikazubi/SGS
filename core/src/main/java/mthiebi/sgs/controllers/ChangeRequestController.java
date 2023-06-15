@@ -2,6 +2,7 @@ package mthiebi.sgs.controllers;
 
 import mthiebi.sgs.dto.ChangeRequestDTO;
 import mthiebi.sgs.dto.ChangeRequestMapper;
+import mthiebi.sgs.dto.ChangeRequestStatusChangeDTO;
 import mthiebi.sgs.models.ChangeRequest;
 import mthiebi.sgs.models.ChangeRequestStatus;
 import mthiebi.sgs.service.ChangeRequestService;
@@ -26,8 +27,7 @@ public class ChangeRequestController {
     private ChangeRequestMapper changeRequestMapper;
 
     @GetMapping("/get-change-requests")
-    public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("Authorization") String authHeader,
-                                                    @RequestBody ChangeRequestDTO changeRequestDTO) throws Exception {
+    public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("Authorization") String authHeader) throws Exception {
 
         String username = utilsJwt.getUsernameFromHeader(authHeader);
         return changeRequestService.getChangeRequests(username).stream()
@@ -44,9 +44,8 @@ public class ChangeRequestController {
     }
 
     @PutMapping("/change-request-status")
-    public void changeRequestStatus(@RequestParam Long changeRequestId,
-                                    @RequestParam ChangeRequestStatus changeRequestStatus){
-        changeRequestService.changeRequestStatus(changeRequestId, changeRequestStatus);
+    public void changeRequestStatus(@RequestBody ChangeRequestStatusChangeDTO changeRequestStatus){
+        changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(), changeRequestStatus.getChangeRequestStatus());
     }
 }
 

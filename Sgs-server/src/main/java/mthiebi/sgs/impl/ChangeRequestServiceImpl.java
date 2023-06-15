@@ -33,15 +33,14 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     @Override
     public ChangeRequest createChangeRequest(ChangeRequest changeRequest, String username) {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
-        AcademyClass academyClass = academyClassRepository.findById(changeRequest.getAcademyClass().getId()).orElseThrow();
         Student student = studentRepository.findById(changeRequest.getStudent().getId()).orElseThrow();
         Grade prevGrade = gradeRepository.findById(changeRequest.getPrevGrade().getId()).orElseThrow();
         Subject subject = subjectRepository.findById(changeRequest.getSubject().getId()).orElseThrow();
 
         changeRequest.setIssuer(systemUser);
-        changeRequest.setAcademyClass(academyClass);
         changeRequest.setStudent(student);
         changeRequest.setPrevGrade(prevGrade);
+        changeRequest.setPrevValue(prevGrade.getValue());
         changeRequest.setSubject(subject);
         changeRequest.setStatus(ChangeRequestStatus.PENDING);
         return changeRequestRepository.save(changeRequest);

@@ -13,9 +13,6 @@ public class ChangeRequest extends Audit{
     private SystemUser issuer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private AcademyClass academyClass;
-
-    @OneToOne(fetch = FetchType.LAZY)
     private Student student;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -23,6 +20,8 @@ public class ChangeRequest extends Audit{
 
     @OneToOne(fetch = FetchType.LAZY)
     private Subject subject;
+
+    private Long prevValue;
 
     private Long newValue;
 
@@ -43,14 +42,6 @@ public class ChangeRequest extends Audit{
 
     public void setIssuer(SystemUser issuer) {
         this.issuer = issuer;
-    }
-
-    public AcademyClass getAcademyClass() {
-        return academyClass;
-    }
-
-    public void setAcademyClass(AcademyClass academyClass) {
-        this.academyClass = academyClass;
     }
 
     public Student getStudent() {
@@ -75,6 +66,14 @@ public class ChangeRequest extends Audit{
 
     public void setSubject(Subject subject) {
         this.subject = subject;
+    }
+
+    public Long getPrevValue() {
+        return prevValue;
+    }
+
+    public void setPrevValue(Long prevValue) {
+        this.prevValue = prevValue;
     }
 
     public Long getNewValue() {

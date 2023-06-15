@@ -21,7 +21,7 @@ public class ChangeRequestRepositoryCustomImpl implements ChangeRequestRepositor
     @Override
     public List<ChangeRequest> getChangeRequests(List<AcademyClass> academyClassList) {
         return qf.selectFrom(qChangeRequest)
-                .where(qChangeRequest.academyClass.in(academyClassList))
+                .where(qChangeRequest.prevGrade.academyClass.in(academyClassList))
                 .orderBy(qChangeRequest.createTime.desc())
                 .fetch();
     }

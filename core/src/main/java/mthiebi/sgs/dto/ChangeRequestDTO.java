@@ -14,14 +14,16 @@ public class ChangeRequestDTO {
 
     private Long id;
 
-    private AcademyClassDTO academyClass;
-
     private StudentDTO student;
 
     private GradeDTO prevGrade;
 
-    private SubjectDTO subjectDTO;
+    private SubjectDTO subject;
 
-    private String newValue;
+    private Long prevValue;
+
+    private Long newValue;
+
+    private String status;
 
 }

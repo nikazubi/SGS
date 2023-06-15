@@ -12,6 +12,8 @@ import mthiebi.sgs.models.Subject;
 @AllArgsConstructor
 public class GradeDTO {
 
+    private Long id;
+
     private Long value;
 
     private String gradeType;
