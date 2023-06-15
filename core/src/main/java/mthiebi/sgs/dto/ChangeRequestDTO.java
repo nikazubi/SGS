@@ -14,11 +14,9 @@ public class ChangeRequestDTO {
 
     private Long id;
 
-    private StudentDTO student;
-
     private GradeDTO prevGrade;
 
-    private SubjectDTO subject;
+    private String issuerFullname;
 
     private Long prevValue;
 

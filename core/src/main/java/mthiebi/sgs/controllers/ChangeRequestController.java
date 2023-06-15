@@ -1,13 +1,16 @@
 package mthiebi.sgs.controllers;
 
 import mthiebi.sgs.dto.ChangeRequestDTO;
-import mthiebi.sgs.dto.ChangeRequestMapper;
 import mthiebi.sgs.dto.ChangeRequestStatusChangeDTO;
+import mthiebi.sgs.dto.GradeMapper;
 import mthiebi.sgs.models.ChangeRequest;
 import mthiebi.sgs.models.ChangeRequestStatus;
 import mthiebi.sgs.service.ChangeRequestService;
+import mthiebi.sgs.service.SystemUserService;
+import mthiebi.sgs.utils.AuthConstants;
 import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -25,9 +28,10 @@ public class ChangeRequestController {
     private UtilsJwt utilsJwt;
 
     @Autowired
-    private ChangeRequestMapper changeRequestMapper;
+    private GradeMapper gradeMapper;
 
     @GetMapping("/get-change-requests")
+    @Secured({AuthConstants.EDIT_GRADES})
     public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("Authorization") String authHeader,
                                                     @RequestParam(required = false) Long classId,
                                                     @RequestParam(required = false) Long studentId,
@@ -37,21 +41,47 @@ public class ChangeRequestController {
         Date date1 = new Date();
         date1.setTime(Long.parseLong(date));
         return changeRequestService.getChangeRequests(username, classId, studentId, date1).stream()
-                .map(o -> changeRequestMapper.changeRequestDto(o))
+                .map(this::adjustDTO)
                 .collect(Collectors.toList());
     }
 
     @PostMapping("/create-change-request")
+    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
     public ChangeRequestDTO createChangeRequest(@RequestHeader("Authorization") String authHeader,
                                                 @RequestBody ChangeRequestDTO changeRequestDTO) throws Exception {
         String username = utilsJwt.getUsernameFromHeader(authHeader);
-        return changeRequestMapper.changeRequestDto(changeRequestService.createChangeRequest(
-                changeRequestMapper.changeRequest(changeRequestDTO), username));
+        return adjustDTO(changeRequestService.createChangeRequest(
+                adjust(changeRequestDTO), username));
     }
 
     @PutMapping("/change-request-status")
+    @Secured({AuthConstants.EDIT_GRADES})
     public void changeRequestStatus(@RequestBody ChangeRequestStatusChangeDTO changeRequestStatus){
         changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(), changeRequestStatus.getChangeRequestStatus());
     }
+
+    ChangeRequestDTO adjustDTO(ChangeRequest changeRequest){
+        ChangeRequestDTO changeRequestDTO = new ChangeRequestDTO();
+        changeRequestDTO.setId(changeRequest.getId());
+        changeRequestDTO.setStatus(changeRequest.getStatus().toString());
+        changeRequestDTO.setNewValue(changeRequest.getNewValue());
+        changeRequestDTO.setPrevValue(changeRequest.getPrevValue());
+        changeRequestDTO.setPrevGrade(gradeMapper.gradeDTO(changeRequest.getPrevGrade()));
+        changeRequestDTO.setIssuerFullname(changeRequest.getIssuer().getName());
+
+        return changeRequestDTO;
+    }
+
+    ChangeRequest adjust(ChangeRequestDTO changeRequestDTO){
+        ChangeRequest changeRequest = new ChangeRequest();
+        changeRequest.setId(changeRequestDTO.getId());
+        changeRequest.setStatus(ChangeRequestStatus.valueOf(changeRequestDTO.getStatus()));
+        changeRequest.setNewValue(changeRequestDTO.getNewValue());
+        changeRequest.setPrevValue(changeRequestDTO.getPrevValue());
+        changeRequest.setPrevGrade(gradeMapper.grade(changeRequestDTO.getPrevGrade()));
+
+        return changeRequest;
+    }
+
 }
 

@@ -17,49 +17,49 @@ export const useUserContext = () => {
 };
 
 export const UserContextProvider = props => {
-  // const {data, refetch, isLoading, isError, error} = useLoggedInUser();
-  // const user = data?.user;
-  // const language = data?.user?.systemUserConfig?.languageTag;
-  // const updateLogin = () => refetch().then(auth => {
-  //   setAuth({
-  //     accessToken: auth.data.accessToken,
-  //     refreshToken: auth.data.refreshToken
-  //   })
-  // });
-  //
-  // const login = (auth) => {
-  //   setAuth({accessToken: auth.accessToken, refreshToken: auth.refreshToken});
-  //   refetch();
-  // };
-  //
-  // const logout = () => {
-  //   deleteAuth();
-  //   refetch();
-  // };
-  //
-  // const userUpdated = ({id}) => {
-  //   if (user?.id && user.id === id) {
-  //     updateLogin();
-  //   }
-  // };
-  //
-  // let hasPermission = () => true;
-  // if (!!user) {
-  //   user.permissions = user.groups.flatMap(group => group?.systemPermissions ?? []);
-  //   hasPermission = (permission) => user.permissions.includes(permission);
-  // }
-  //
-  // const userGroupUpdated = ({id}) => {
-  //   if (user?.groups && user.groups.map(value => value.id).includes(id)) {
-  //     updateLogin();
-  //   }
-  // };
-  //
-  // if (isLoading) {
-  //   return <Progress/>;
-  // } else if (isError) {
-  //   return <ErrorPage error={error} logout={logout} onReload={refetch}/>;
-  // } else {
+  const {data, refetch, isLoading, isError, error} = useLoggedInUser();
+  const user = data?.user;
+  const language = data?.user?.systemUserConfig?.languageTag;
+  const updateLogin = () => refetch().then(auth => {
+    setAuth({
+      accessToken: auth.data.accessToken,
+      refreshToken: auth.data.refreshToken
+    })
+  });
+
+  const login = (auth) => {
+    setAuth({accessToken: auth.accessToken, refreshToken: auth.refreshToken});
+    refetch();
+  };
+
+  const logout = () => {
+    deleteAuth();
+    refetch();
+  };
+
+  const userUpdated = ({id}) => {
+    if (user?.id && user.id === id) {
+      updateLogin();
+    }
+  };
+
+  let hasPermission = () => true;
+  if (!!user) {
+    user.permissions = user.groups.flatMap(group => group?.systemPermissions ?? []);
+    hasPermission = (permission) => user.permissions.includes(permission);
+  }
+
+  const userGroupUpdated = ({id}) => {
+    if (user?.groups && user.groups.map(value => value.id).includes(id)) {
+      updateLogin();
+    }
+  };
+
+  if (isLoading) {
+    return <Progress/>;
+  } else if (isError) {
+    return <ErrorPage error={error} logout={logout} onReload={refetch}/>;
+  } else {
     return <UserContext.Provider
       value={{
           user: {},
@@ -70,5 +70,5 @@ export const UserContextProvider = props => {
          userGroupUpdated: () => {},
          loggedIn: true
       }} {...props}/>;
-  // }
+  }
 };
