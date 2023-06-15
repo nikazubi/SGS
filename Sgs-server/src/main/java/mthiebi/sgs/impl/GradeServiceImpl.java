@@ -1,5 +1,6 @@
 package mthiebi.sgs.impl;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Grade;
 import mthiebi.sgs.models.Student;
@@ -16,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GradeServiceImpl implements GradeService {
@@ -79,6 +81,9 @@ public class GradeServiceImpl implements GradeService {
                                                                        Long studentId,
                                                                        Date createTime,
                                                                        String gradeTypePrefix) {
-        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime, gradeTypePrefix);
+        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)
+                .stream()
+                .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
+                .collect(Collectors.toList());
     }
 }

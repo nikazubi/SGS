@@ -12,7 +12,6 @@ const GridFooter = ({selectedRowCount, ...props}) => {
   const rootProps = useGridRootProps();
   const totalTopLevelRowCount = useGridSelector(apiRef, gridTopLevelRowCountSelector);
   const selectedRowCountUncontrolled = useGridSelector(apiRef, selectedGridRowsCountSelector);
-console.log(rootProps)
   const selectedRowCountElement =
     !rootProps.hideFooterSelectedRowCount && selectedRowCountUncontrolled > 0 ? (
       <GridSelectedRowCount selectedRowCount={!!selectedRowCount ? selectedRowCount : selectedRowCountUncontrolled} />

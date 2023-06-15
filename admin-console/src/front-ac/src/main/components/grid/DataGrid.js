@@ -38,7 +38,6 @@ const DataGridSGS = ({
   const rowsPerPageOptions = [20, 50, 70, 100];
   const [selectionModel, setSelectionModel] = useState([]);
   const [pageParams, setPageParams] = useState({page: 0, size: 20});
-  console.log(filtersData)
   const {
     data,
     isLoading,
@@ -67,6 +66,7 @@ const DataGridSGS = ({
         );
     }
   const handleCellCommit = (params) => {
+    console.log(params)
     const row = data.content.find(element => element[rowIdField] === params.id);
     const field = params.field;
     const changedRow = {
