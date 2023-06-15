@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class AcademyClassRepositoryCustomImpl implements mthiebi.sgs.repository.AcademyClassRepositoryCustom {
@@ -24,5 +25,12 @@ public class AcademyClassRepositoryCustomImpl implements mthiebi.sgs.repository.
                 .where(qAcademyClass.in(academyClassList))
                 .orderBy(qAcademyClass.createTime.desc())
                 .fetch();
+    }
+
+    @Override
+    public Optional<AcademyClass> getAcademyClassByStudent(long studentId) {
+        return Optional.ofNullable(qf.selectFrom(qAcademyClass)
+                .where(qAcademyClass.studentList.any().id.eq(studentId))
+                .fetchOne());
     }
 }

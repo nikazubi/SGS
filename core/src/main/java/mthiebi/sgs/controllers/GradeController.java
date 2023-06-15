@@ -22,8 +22,8 @@ public class GradeController {
     private GradeMapper gradeMapper;
 
     @PostMapping("/insert-student-grade")
-    public Grade insertGrade(@RequestBody GradeDTO gradeDTO){
-        return gradeService.insertStudentGrade(gradeMapper.grade(gradeDTO));
+    public GradeDTO insertGrade(@RequestBody GradeDTO gradeDTO){
+        return gradeMapper.gradeDTO(gradeService.insertStudentGrade(gradeMapper.grade(gradeDTO)));
     }
 
     @GetMapping("/get-grades")

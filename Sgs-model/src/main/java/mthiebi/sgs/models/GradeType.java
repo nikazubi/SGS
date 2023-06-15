@@ -21,6 +21,7 @@ public enum GradeType {
     GENERAL_COMPONENT_1,
     GENERAL_COMPONENT_2,
     GENERAL_COMPONENT_3,
+    GENERAL_COMPLETE_MONTHLY,
 
     // ეთიკური ნორმების შეფასებების ცხრილი:
     BEHAVIOUR_APPEARING_IN_UNIFORM_1,
