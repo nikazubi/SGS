@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -60,9 +61,9 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     }
 
     @Override
-    public List<ChangeRequest> getChangeRequests(String username) {
+    public List<ChangeRequest> getChangeRequests(String username, Long classId, Long studentId, Date date) {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
         List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
-        return changeRequestRepository.getChangeRequests(academyClassList);
+        return changeRequestRepository.getChangeRequests(academyClassList, classId, studentId, date);
     }
 }

@@ -10,6 +10,7 @@ import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,10 +28,15 @@ public class ChangeRequestController {
     private ChangeRequestMapper changeRequestMapper;
 
     @GetMapping("/get-change-requests")
-    public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("Authorization") String authHeader) throws Exception {
+    public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("Authorization") String authHeader,
+                                                    @RequestParam(required = false) Long classId,
+                                                    @RequestParam(required = false) Long studentId,
+                                                    @RequestParam(required = false) String date) throws Exception {
 
         String username = utilsJwt.getUsernameFromHeader(authHeader);
-        return changeRequestService.getChangeRequests(username).stream()
+        Date date1 = new Date();
+        date1.setTime(Long.parseLong(date));
+        return changeRequestService.getChangeRequests(username, classId, studentId, date1).stream()
                 .map(o -> changeRequestMapper.changeRequestDto(o))
                 .collect(Collectors.toList());
     }

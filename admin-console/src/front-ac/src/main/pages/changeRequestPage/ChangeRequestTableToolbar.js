@@ -5,6 +5,8 @@ import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useState} from "react";
+import IconButton from "../../../components/buttons/IconButton";
+import {Search} from "@material-ui/icons";
 
 const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -34,11 +36,12 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
                                                 label={"კლასი"}
-                                // resolveData={resolveCardTypeAutocompleteData}
+                                             // resolveData={resolveCardTypeAutocompleteData}
                                                 onFetch={onFetchAcademyClass}
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.className}
-                                                onBlur={()=> setFilters(values)}/>
+                                                // onBlur={()=> setFilters(values)}
+                                                />
                         </div>
                         <div style={{marginLeft: 50, width: 300}}>
                             <FormikAutocomplete name="student"
@@ -48,7 +51,8 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                                 onFetch={onFetchStudents}
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.firstName + " " + option.lastName}
-                                                onBlur={()=> setFilters(values)}/>
+                                                //onBlur={()=> setFilters(values)}
+                             />
                         </div>
 
                         <div style={{marginLeft: 50, width: 300}}>
@@ -62,6 +66,12 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                                           return copied
                                                       })
                                                    }}/>
+                        </div>
+                        <div style={{marginLeft: 15, width: 100}}>
+                            <IconButton
+                                icon={<Search/>}
+                                onClick={() => setFilters(values)}
+                            />
                         </div>
                     </div>)}
                 </Formik>

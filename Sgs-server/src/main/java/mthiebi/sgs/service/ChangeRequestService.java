@@ -3,6 +3,7 @@ package mthiebi.sgs.service;
 import mthiebi.sgs.models.ChangeRequest;
 import mthiebi.sgs.models.ChangeRequestStatus;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ChangeRequestService {
@@ -11,6 +12,6 @@ public interface ChangeRequestService {
 
     void changeRequestStatus(Long changeRequestId, ChangeRequestStatus changeRequestStatus);
 
-    List<ChangeRequest> getChangeRequests(String username);
+    List<ChangeRequest> getChangeRequests(String username, Long classId, Long studentId, Date date);
 
 }

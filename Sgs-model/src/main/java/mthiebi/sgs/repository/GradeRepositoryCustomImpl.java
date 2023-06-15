@@ -34,12 +34,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         Predicate datePredicate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createTime);
-        if (createTime != null) {
-            datePredicate = qGrade.createTime.month().eq((calendar.get(Calendar.MONTH))).and(qGrade.createTime.year().eq(calendar.get(Calendar.YEAR)));
-        } else {
-            datePredicate = qGrade.createTime.isNotNull();
-        }
-//        StringExpression prefixPredicate = qGrade.gradeType.stringValue();
+        datePredicate = qGrade.createTime.month().eq(calendar.get(Calendar.MONTH) + 1).and(qGrade.createTime.year().eq(calendar.get(Calendar.YEAR)));
+        //        StringExpression prefixPredicate = qGrade.gradeType.stringValue();
 //        BooleanExpression booleanExpression = prefixPredicate.startsWith("GENERAL_");
 
         return qf.selectFrom(qGrade)
