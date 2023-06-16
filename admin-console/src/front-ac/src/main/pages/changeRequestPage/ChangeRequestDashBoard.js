@@ -36,7 +36,7 @@ const ChangeRequestDashBoard = () => {
         {
             headerName: "მოსწავლე",
             renderCell: ({row}) => {
-                return row.student.firstName + " " + row.student.lastName;
+                return row.prevGrade.student.firstName + " " + row.prevGrade.student.lastName;
             },
             field: 'name',
             sortable: false,
@@ -46,7 +46,7 @@ const ChangeRequestDashBoard = () => {
         {
             headerName: "საგანი",
             renderCell: ({row}) => {
-                return row.subject.name;
+                return row.prevGrade.subject.name;
             },
             field: 'subjectName',
             sortable: false,

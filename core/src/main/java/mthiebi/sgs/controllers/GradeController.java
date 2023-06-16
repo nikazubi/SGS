@@ -3,7 +3,9 @@ package mthiebi.sgs.controllers;
 import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.Grade;
 import mthiebi.sgs.service.GradeService;
+import mthiebi.sgs.utils.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -22,11 +24,13 @@ public class GradeController {
     private GradeMapper gradeMapper;
 
     @PostMapping("/insert-student-grade")
+//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
     public GradeDTO insertGrade(@RequestBody GradeDTO gradeDTO){
         return gradeMapper.gradeDTO(gradeService.insertStudentGrade(gradeMapper.grade(gradeDTO)));
     }
 
     @GetMapping("/get-grades")
+//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
     public List<GradeDTO> getGradeByClassAndSubject(@RequestParam(required = false) Long classId,
                                                     @RequestParam(required = false) Long subjectId,
                                                     @RequestParam(required = false) Long studentId,
@@ -38,6 +42,7 @@ public class GradeController {
     }
 
     @GetMapping("/get-grades-grouped")
+//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
     public List<GradeWrapperDto> getGradeGrouped(@RequestParam(required = false) Long classId,
                                                  @RequestParam(required = false) Long subjectId,
                                                  @RequestParam(required = false) Long studentId,

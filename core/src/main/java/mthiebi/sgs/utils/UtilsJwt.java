@@ -14,10 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +33,24 @@ public class UtilsJwt implements Serializable {
 
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
+	}
+
+	public List<String> getAuthoritiesFromToken(String authHeader) throws Exception {
+		String token;
+		if (authHeader.length() > 7) {
+			token = authHeader.substring(7);
+		} else {
+			throw new Exception();
+		}
+
+
+		final JwtParser jwtParser = Jwts.parser().setSigningKey(secretKey);
+
+		final Jws claimsJws = jwtParser.parseClaimsJws(token);
+		final Claims claims = (Claims) claimsJws.getBody();
+		String rolesString = claims.get(ROLES_CLAIM_NAME).toString();
+		List<String> roles = rolesString.equals("") ? new ArrayList<>() : Arrays.asList(rolesString.split(","));
+		return roles;
 	}
 
 	public String getUsernameFromHeader(String authHeader) throws Exception {

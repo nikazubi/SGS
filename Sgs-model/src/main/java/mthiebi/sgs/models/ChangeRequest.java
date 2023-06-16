@@ -13,13 +13,7 @@ public class ChangeRequest extends Audit{
     private SystemUser issuer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private Student student;
-
-    @OneToOne(fetch = FetchType.LAZY)
     private Grade prevGrade;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private Subject subject;
 
     private Long prevValue;
 
@@ -44,28 +38,12 @@ public class ChangeRequest extends Audit{
         this.issuer = issuer;
     }
 
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
     public Grade getPrevGrade() {
         return prevGrade;
     }
 
     public void setPrevGrade(Grade prevGrade) {
         this.prevGrade = prevGrade;
-    }
-
-    public Subject getSubject() {
-        return subject;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
     }
 
     public Long getPrevValue() {

@@ -44,7 +44,7 @@ const useNavigationData = () => {
       component: <ChangeRequestDashBoard/>,
       icon: <ChangeHistory/>,
       show: false,
-      permissions: [],
+      permissions: ["EDIT_GRADES"],
       collapsible: false
     },
   }), []);

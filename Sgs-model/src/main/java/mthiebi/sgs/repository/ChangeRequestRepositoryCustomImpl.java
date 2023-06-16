@@ -25,7 +25,7 @@ public class ChangeRequestRepositoryCustomImpl implements ChangeRequestRepositor
     @Override
     public List<ChangeRequest> getChangeRequests(List<AcademyClass> academyClassList, Long classId, Long StudentId, Date date) {
         Predicate classPredicate = classId != null ? qChangeRequest.prevGrade.academyClass.id.eq(classId) : qChangeRequest.prevGrade.academyClass.id.isNotNull();
-        Predicate studentPredicate = StudentId != null ? qChangeRequest.student.id.eq(StudentId) : qChangeRequest.student.id.isNotNull();
+        Predicate studentPredicate = StudentId != null ? qChangeRequest.prevGrade.student.id.eq(StudentId) : qChangeRequest.prevGrade.student.id.isNotNull();
         Predicate datePredicate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
