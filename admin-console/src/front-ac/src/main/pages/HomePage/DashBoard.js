@@ -382,7 +382,7 @@ const DashBoard = () => {
         async (newRow) => {
             const gradeType = Object.keys(newRow).filter(field => field !== "student" && field !== "grades")[0]
             const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType)
-            if (gradesOfType > 0) {
+            if (gradesOfType.length > 0) {
                 setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
                 setOpenRequestModal(true);
             } else {
