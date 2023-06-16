@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './LoginPage.css';
 import axios from "../../../utils/axios";
-import {setAuth} from "../../../utils/auth";
-import imageSrc from './ib.png'; // Import the image file
+import {getAccessToken, setAuth} from "../../../utils/auth";
+import imageSrc from './ib.png';
+import {useUserContext} from "../../../contexts/user-context"; // Import the image file
 
-const LoginPage = ({setLoggedIn}) => {
+const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { login, logout } = useUserContext();
+
+    useEffect(() =>{
+        //todo will probably fail when token expires
+        const token = getAccessToken();
+        if (token)
+            login()
+    },[])
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -25,10 +34,10 @@ const LoginPage = ({setLoggedIn}) => {
             password: password
         })
         if (response?.data?.jwtToken) {
-            setLoggedIn(true)
+            login()
             setAuth(response?.data?.jwtToken)
         } else {
-            setLoggedIn(false);
+            logout()
         }
         // then((response) => {
         //     console.log("hoii")

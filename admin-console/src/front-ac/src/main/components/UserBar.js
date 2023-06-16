@@ -85,25 +85,13 @@ const UserBar = () => {
         onClose={handleMenuClose}
       >
         <MenuItem classes={{root: classes.menuitem}} disableTouchRipple={true}>
-          <BadgeWithImageUpload inputId="user-bar-image-upload"
-                                resolveImageUpload={(img) => compressImage(img, imgZipOpts)}
-                                onImageUpload={(avatar) => {
-                                  // user.avatar = avatar;
-                                  // onUpdate(user).then(value => {
-                                  //   userUpdated(value);
-                                  // });
-                                }}>
             <Avatar classes={{root: classes.bigAvatar}} src={avatar}/>
-          </BadgeWithImageUpload>
         </MenuItem>
-        <MenuItem classes={{root: classes.menuitem}} onClick={() => {
-          handleMenuClose();
-          handleModalOpen();
-        }}>
+        <MenuItem classes={{root: classes.menuitem}}>
           <ListItemIcon>
             <Person/>
           </ListItemIcon>
-          <ListItemText primary={"პროფილის რედაქტირება"}/>
+          <ListItemText primary={user.name}/>
         </MenuItem>
         <MenuItem classes={{root: classes.menuitem}} onClick={logout}>
           <ListItemIcon>

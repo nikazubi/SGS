@@ -4,10 +4,14 @@ import DataGridSGS from "../../components/grid/DataGrid";
 import useGrades from "./useGrades";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import useUpdateGrade from "./useUpdateGrade";
+import ConfirmationModal from "../../../components/modals/ConfirmationModal";
+import axios from "../../../utils/axios";
 
 const DashBoard = () => {
     const [filters, setFilters] = useState({groupByClause: 'STUDENT'});
     const {data, isLoading, isError, error, isSuccess} = useGrades(filters);
+    const [openRequestModal, setOpenRequestModal] = useState(false);
+    const [newRowToSave, setNewRowToSave] = useState({});
     const {mutateAsync: mutateRow} = useUpdateGrade();
 
     const gradeColumns = [
@@ -39,8 +43,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "2",
@@ -57,8 +61,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "აღდგენა",
@@ -75,8 +79,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "თვის ნიშანი",
@@ -93,8 +97,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "%",
@@ -111,8 +115,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "წერილობითი დაავალება",
@@ -129,8 +133,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "შემოქმედებითი დავალება",
@@ -147,8 +151,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "1",
@@ -165,8 +169,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "2",
@@ -183,8 +187,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "1",
@@ -201,8 +205,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "თვის ნიშანი",
@@ -219,8 +223,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "%",
@@ -237,8 +241,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },{
             headerName: "I",
             renderCell: ({row}) => {
@@ -254,8 +258,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },{
             headerName: "II",
             renderCell: ({row}) => {
@@ -271,8 +275,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },{
             headerName: "III",
             renderCell: ({row}) => {
@@ -288,8 +292,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },{
             headerName: "თვის ქულა",
             renderCell: ({row}) => {
@@ -305,8 +309,8 @@ const DashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 80,
-            maxWidth: 80,
+            width: 78,
+            maxWidth: 78,
         },
     ];
 
@@ -376,8 +380,15 @@ const DashBoard = () => {
 
     const processRowUpdate = useCallback(
         async (newRow) => {
-            newRow.subject = filters.subject
-            return await mutateRow(newRow);
+            const gradeType = Object.keys(newRow).filter(field => field !== "student" && field !== "grades")[0]
+            const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType)
+            if (gradesOfType > 0) {
+                setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
+                setOpenRequestModal(true);
+            } else {
+                newRow.subject = filters.subject
+                return await mutateRow(newRow);
+            }
         },
         [mutateRow],
     );
@@ -389,9 +400,16 @@ const DashBoard = () => {
     return (
         <div>
             <GradeTableToolbar filters={filters} setFilters={setFilters}/>
-            <div style={{height: 500, width: '100%'}}>
+            <div style={{height: 560, width: '98%', marginLeft:15, marginRight:15}}>
                 <DataGridPaper>
                     <DataGridSGS
+                        sx={{
+                            '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+                                borderRight: `3px solid ${
+                                   '#f4f4f4'
+                                }`,
+                            },
+                        }}
                         experimentalFeatures={{ columnGrouping: true }}
                         columnGroupingModel={columnGroupingModel}
                         queryKey={"GRADES"}
@@ -408,6 +426,15 @@ const DashBoard = () => {
                     />
                 </DataGridPaper>
             </div>
+            <ConfirmationModal
+                open={openRequestModal}
+                title={"ნიშნის ცვლილება"}
+                onSubmit={
+                    async (options) => {
+                        await axios.post("/change-request/create-change-request", newRowToSave)
+                    }}
+                onClose={() => (setOpenRequestModal(false))}
+            />
         </div>
     )
 }

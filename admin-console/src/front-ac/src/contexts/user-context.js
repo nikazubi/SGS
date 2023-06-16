@@ -1,4 +1,4 @@
-import React, {createContext, useContext} from "react";
+import React, {createContext, useContext, useState} from "react";
 import {deleteAuth, setAuth} from "../utils/auth";
 import {useLoggedInUser} from "../hooks/useLoggedInUser";
 import ErrorPage from "../components/ErrorPage";
@@ -17,6 +17,7 @@ export const useUserContext = () => {
 };
 
 export const UserContextProvider = props => {
+    const [loggedIn, setLoggedIn ]= useState(false);
   // const {data, refetch, isLoading, isError, error} = useLoggedInUser();
   // const user = data?.user;
   // const language = data?.user?.systemUserConfig?.languageTag;
@@ -27,15 +28,17 @@ export const UserContextProvider = props => {
   //   })
   // });
   //
-  // const login = (auth) => {
-  //   setAuth({accessToken: auth.accessToken, refreshToken: auth.refreshToken});
-  //   refetch();
-  // };
-  //
-  // const logout = () => {
-  //   deleteAuth();
-  //   refetch();
-  // };
+  const login = (auth) => {
+      setLoggedIn(true)
+    // setAuth({accessToken: auth.accessToken, refreshToken: auth.refreshToken});
+    // refetch();
+  };
+
+  const logout = () => {
+    deleteAuth();
+    setLoggedIn(false)
+    // refetch();
+  };
   //
   // const userUpdated = ({id}) => {
   //   if (user?.id && user.id === id) {
@@ -63,12 +66,12 @@ export const UserContextProvider = props => {
     return <UserContext.Provider
       value={{
           user: {},
-          login: () => {},
-          logout: () => {},
+          login: () => login(),
+          logout: () => logout(),
          hasPermission: () => true,
          userUpdated: () => {},
          userGroupUpdated: () => {},
-         loggedIn: true
+         loggedIn: loggedIn
       }} {...props}/>;
   // }
 };

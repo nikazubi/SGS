@@ -6,8 +6,8 @@ export const fetchChangeRequest = async (filters) => {
     //     return [];
     // }
     const params = {
-        classId: filters.academyClass.id,
-        studentId: filters.student.id,
+        classId: filters?.academyClass?.id,
+        studentId: filters?.student?.id,
         date: Date.parse(filters.date),
     }
     const {data} = await axios.get("change-request/get-change-requests", {params} );

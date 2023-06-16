@@ -35,38 +35,47 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                     enableReinitialize
                 >
                     {({ values, setFieldValue }) => (
-                    <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
+                    <div style={{display: "flex", flexDirection: 'row', marginTop: 25, marginBottom:25}}>
                             <div style={{marginLeft: 15, width: 300}}>
                                 <FormikAutocomplete name="academyClass"
                                                     multiple={false}
                                                     label={"კლასი"}
-                                                    //resolveData={resolveCardTypeAutocompleteData}
                                                     onFetch={onFetchAcademyClass}
                                                     getOptionSelected={(option, value) => option.id === value.id}
                                                     getOptionLabel={(option) => option.className}
-                                                    // onBlur={()=> setFilters(values)}
+                                                    setInitialVulue={(options) =>{
+                                                        if(options.length === 1){
+                                                          return options[0]
+                                                        }
+                                                    }}
                                 />
                             </div>
                         <div style={{marginLeft: 15, width: 300}}>
                             <FormikAutocomplete name="subject"
                                                 multiple={false}
                                                 label={"საგანი"}
-                                // resolveData={resolveCardTypeAutocompleteData}
                                                 onFetch={onFetchSubjects}
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.name}
-                                                // onBlur={()=> setFilters(values)}
+                                                setInitialVulue={(options) =>{
+                                                    if(options.length === 1){
+                                                        return options[0]
+                                                    }
+                                                }}
                             />
                         </div>
                         <div style={{marginLeft: 15, width: 300}}>
                             <FormikAutocomplete name="student"
                                                 multiple={false}
                                                 label={"მოსწავლე"}
-                                // resolveData={resolveCardTypeAutocompleteData}
                                                 onFetch={onFetchStudents}
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.firstName + " " + option.lastName}
-                                                // onBlur={()=> setFilters(values)}
+                                                setInitialVulue={(options) =>{
+                                                    if(options.length === 1){
+                                                        return options[0]
+                                                    }
+                                                }}
                             />
                         </div>
 

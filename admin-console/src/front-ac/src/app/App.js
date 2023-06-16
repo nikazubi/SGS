@@ -8,6 +8,7 @@ import MainContainer from "../main/MainContainer";
 import Notification from '../components/notifications/Notification';
 import LoginPage from "../main/pages/loginPage/LoginForm";
 import {getAccessToken} from "../utils/auth";
+import {useUserContext} from "../contexts/user-context";
 // import MainContainer from '../main/MainContainer';
 // import CssBaseline from '@material-ui/core/CssBaseline';
 // import Backdrop from '../shared/components/Backdrop';
@@ -26,14 +27,7 @@ const loginPageLanguageStorageKey = "loginLanguage"
 const App = () => {
 
   const {isBackdropOpen} = useBackdrop();
-  const [loggedIn, setLoggedIn ]= useState(false);
-
-  useEffect(() =>{
-      //todo will probably fail when token expires
-      const token = getAccessToken();
-      if(token)
-          setLoggedIn(true)
-  },[])
+  const { loggedIn } = useUserContext();
 
 
   return (
@@ -42,7 +36,7 @@ const App = () => {
         {(loggedIn ?
                 <MainContainer/>
                 :
-                <LoginPage setLoggedIn={setLoggedIn}/>
+                <LoginPage/>
         )}
         <Notification/>
         <Backdrop open={isBackdropOpen}/>

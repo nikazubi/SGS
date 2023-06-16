@@ -48,6 +48,7 @@ const logout = (error, refreshToken) => {
 
 const onError = async (error) => {
   const originalRequest = error.config;
+  console.log(originalRequest)
   if (error.response.status === 401) {
     // const refreshToken = getRefreshToken();
     //
@@ -82,8 +83,6 @@ const onError = async (error) => {
       return Promise.reject(error);
 
   }
-    await logout(error);
-  return Promise.reject(error);
 };
 
 axiosInstance.interceptors.request.use(
@@ -94,12 +93,12 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  error =>  onError(error)
+  error =>  error
 );
 
 axiosInstance.interceptors.response.use(
   response => response,
-  error => error
+  error => onError(error)
 );
 
 export default axiosInstance;
