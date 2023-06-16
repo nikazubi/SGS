@@ -5,6 +5,8 @@ import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useState} from "react";
+import IconButton from "../../../components/buttons/IconButton";
+import {Search} from "@material-ui/icons";
 
 const BehaviourTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -29,7 +31,7 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                     enableReinitialize
                 >
                     {({ values, setFieldValue }) => (
-                    <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
+                    <div style={{display: "flex", flexDirection: 'row', marginTop: 25, marginBottom:25}}>
                         <div style={{marginLeft: 50, width: 300}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
@@ -38,7 +40,11 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                                 onFetch={onFetchAcademyClass}
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.className}
-                                                onBlur={()=> setFilters(values)}/>
+                                                setInitialVulue={(options) =>{
+                                                    if(options.length === 1){
+                                                        return options[0]
+                                                    }
+                                                }}/>
                         </div>
                         <div style={{marginLeft: 50, width: 300}}>
                             <FormikAutocomplete name="student"
@@ -48,7 +54,11 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                                 onFetch={onFetchStudents}
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.firstName + " " + option.lastName}
-                                                onBlur={()=> setFilters(values)}/>
+                                                setInitialVulue={(options) =>{
+                                                    if(options.length === 1){
+                                                        return options[0]
+                                                    }
+                                                }}/>
                         </div>
 
                         <div style={{marginLeft: 50, width: 300}}>
@@ -62,6 +72,12 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                                           return copied
                                                       })
                                                    }}/>
+                        </div>
+                        <div style={{marginLeft: 15, width: 100}}>
+                            <IconButton
+                                icon={<Search/>}
+                                onClick={() => setFilters(values)}
+                            />
                         </div>
                     </div>)}
                 </Formik>
