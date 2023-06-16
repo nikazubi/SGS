@@ -32,7 +32,7 @@ public class ChangeRequestController {
 
     @GetMapping("/get-change-requests")
     @Secured({AuthConstants.EDIT_GRADES})
-    public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("Authorization") String authHeader,
+    public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("authorization") String authHeader,
                                                     @RequestParam(required = false) Long classId,
                                                     @RequestParam(required = false) Long studentId,
                                                     @RequestParam(required = false) String date) throws Exception {
@@ -46,8 +46,8 @@ public class ChangeRequestController {
     }
 
     @PostMapping("/create-change-request")
-    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
-    public ChangeRequestDTO createChangeRequest(@RequestHeader("Authorization") String authHeader,
+//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
+    public ChangeRequestDTO createChangeRequest(@RequestHeader("authorization") String authHeader,
                                                 @RequestBody ChangeRequestDTO changeRequestDTO) throws Exception {
         String username = utilsJwt.getUsernameFromHeader(authHeader);
         return adjustDTO(changeRequestService.createChangeRequest(
@@ -55,7 +55,7 @@ public class ChangeRequestController {
     }
 
     @PutMapping("/change-request-status")
-    @Secured({AuthConstants.EDIT_GRADES})
+//    @Secured({AuthConstants.EDIT_GRADES})
     public void changeRequestStatus(@RequestBody ChangeRequestStatusChangeDTO changeRequestStatus){
         changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(), changeRequestStatus.getChangeRequestStatus());
     }

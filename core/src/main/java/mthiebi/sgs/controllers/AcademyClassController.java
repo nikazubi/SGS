@@ -26,21 +26,21 @@ public class AcademyClassController {
     private UtilsJwt utilsJwt;
 
     @PostMapping("/create-academy-class")
-    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
+//    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
     public AcademyClassDTO createAcademyClass(@RequestBody AcademyClassDTO academyClassDTO){
         AcademyClass academyClass = academyClassService.createAcademyClass(academyClassMapper.academyClass(academyClassDTO));
         return academyClassMapper.academyClassDTO(academyClass);
     }
 
     @PutMapping("/update-academy-class")
-    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
+//    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
     public AcademyClassDTO updateAcademyClass(@RequestBody AcademyClassDTO academyClassDTO){
         AcademyClass academyClass = academyClassService.updateAcademyClass(academyClassMapper.academyClass(academyClassDTO));
         return academyClassMapper.academyClassDTO(academyClass);
     }
 
     @GetMapping("/get-academy-class")
-    @Secured({AuthConstants.VIEW_ACADEMY_CLASS})
+//    @Secured({AuthConstants.VIEW_ACADEMY_CLASS})
     public List<AcademyClassDTO> getAcademyClasses(){
         return academyClassService.getAcademyClasses().stream()
                 .map(academyClass -> academyClassMapper.academyClassDTO(academyClass))
@@ -48,8 +48,8 @@ public class AcademyClassController {
     }
 
     @GetMapping("/get-academy-classes")
-    @Secured({AuthConstants.VIEW_ACADEMY_CLASS})
-    public List<AcademyClassDTO> getAcademyClasses(@RequestHeader("Authorization") String authHeader,
+//    @Secured({AuthConstants.VIEW_ACADEMY_CLASS})
+    public List<AcademyClassDTO> getAcademyClasses(@RequestHeader("authorization") String authHeader,
                                                    @RequestParam(required = false) String queryKey) throws Exception {
 
         String username = utilsJwt.getUsernameFromHeader(authHeader);
@@ -59,25 +59,25 @@ public class AcademyClassController {
     }
 
     @GetMapping("/get-academy-class/{id}")
-    @Secured({AuthConstants.VIEW_ACADEMY_CLASS})
+//    @Secured({AuthConstants.VIEW_ACADEMY_CLASS})
     public AcademyClassDTO findAcademyClassById(@PathVariable Long id){
         return academyClassMapper.academyClassDTO(academyClassService.findAcademyClassById(id));
     }
 
     @DeleteMapping("/delete-academy-class/{id}")
-    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
+//    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
     public void deleteAcademyClass(@PathVariable Long id){
         academyClassService.deleteAcademyClass(id);
     }
 
     @PutMapping("/attach-students-to-academy-class")
-    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
+//    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
     public void attachStudentsToAcademyClass(@RequestParam Long academyClassId, @RequestBody StudentListDTO studentListDTO){
         academyClassService.attachStudentsToAcademyClass(academyClassId, studentListDTO.getStudentIdList());
     }
 
     @PutMapping("/attach-subjects-to-academy-class")
-    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
+//    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
     public void attachSubjectsToAcademyClass(@RequestParam Long academyClassId, @RequestBody SubjectListDTO subjectListDTO){
         academyClassService.attachSubjectsToAcademyClass(academyClassId, subjectListDTO.getSubjectIdList());
     }

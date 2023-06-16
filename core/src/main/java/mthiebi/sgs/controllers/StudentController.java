@@ -27,21 +27,21 @@ public class StudentController {
     private UtilsJwt utilsJwt;
 
     @PostMapping("/create-student")
-    @Secured({AuthConstants.MANAGE_STUDENT})
+    //@Secured({AuthConstants.MANAGE_STUDENT})
     public StudentDTO createStudent(@RequestBody StudentDTO studentDTO){
         Student student = studentService.createStudent(studentMapper.student(studentDTO));
         return studentMapper.studentDTO(student);
     }
 
     @PutMapping("/update-student")
-    @Secured({AuthConstants.MANAGE_STUDENT})
+    //@Secured({AuthConstants.MANAGE_STUDENT})
     public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO){
         Student student = studentService.updateStudent(studentMapper.student(studentDTO));
         return studentMapper.studentDTO(student);
     }
 
     @GetMapping("/get-students")
-    @Secured({AuthConstants.VIEW_STUDENT})
+    //@Secured({AuthConstants.VIEW_STUDENT})
     public List<StudentDTO> getStudents(@RequestParam int limit,
                                         @RequestParam int page,
                                         @RequestParam Long id,
@@ -54,8 +54,8 @@ public class StudentController {
     }
 
     @GetMapping("/get-students-by-name")
-    @Secured({AuthConstants.VIEW_STUDENT})
-    public List<StudentDTO> getStudents(@RequestHeader("Authorization") String authHeader,
+    //@Secured({AuthConstants.VIEW_STUDENT})
+    public List<StudentDTO> getStudents(@RequestHeader("authorization") String authHeader,
                                         @RequestParam String queryKey) throws Exception {
         String username = utilsJwt.getUsernameFromHeader(authHeader);
         return studentService.findByNameAndSurname(username, queryKey).stream()
@@ -64,13 +64,13 @@ public class StudentController {
     }
 
     @GetMapping("/get-student/{id}")
-    @Secured({AuthConstants.VIEW_STUDENT})
+    //@Secured({AuthConstants.VIEW_STUDENT})
     public StudentDTO getStudents(@PathVariable Long id){
         return studentMapper.studentDTO(studentService.findStudentById(id));
     }
 
     @DeleteMapping("/delete-students/{id}")
-    @Secured({AuthConstants.MANAGE_STUDENT})
+    //@Secured({AuthConstants.MANAGE_STUDENT})
     public void deleteStudent(@PathVariable Long id){
         studentService.deleteStudent(id);
     }

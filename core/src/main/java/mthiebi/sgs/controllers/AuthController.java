@@ -2,6 +2,7 @@ package mthiebi.sgs.controllers;
 
 
 import lombok.extern.slf4j.Slf4j;
+import mthiebi.sgs.dto.UserAndPermissionDTO;
 import mthiebi.sgs.jwtmodels.JwtRequest;
 import mthiebi.sgs.jwtmodels.JwtResponse;
 import mthiebi.sgs.utils.UtilsJwt;
@@ -13,10 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
@@ -59,7 +57,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/refresh-token")
-	public JwtResponse refreshToken(@RequestHeader("Authorization") String authHeader) throws Exception {
+	public JwtResponse refreshToken(@RequestHeader("authorization") String authHeader) throws Exception {
 		if (authHeader.startsWith("Bearer ")) {
 			String jwtToken = authHeader.substring(7);
 			String userName = utilsJwt.getUsernameFromToken(jwtToken);
@@ -74,6 +72,14 @@ public class AuthController {
 			}
 		}
 		throw new Exception("INVALID JWT");
+	}
+
+	@GetMapping("/user-and-permissions")
+	public UserAndPermissionDTO getUserAndPermissions(@RequestHeader("authorization") String authHeader) throws Exception {
+		UserAndPermissionDTO userAndPermissionDTO = new UserAndPermissionDTO();
+		userAndPermissionDTO.setUsername(utilsJwt.getUsernameFromHeader(authHeader));
+		userAndPermissionDTO.setPermissionList(utilsJwt.getAuthoritiesFromToken(authHeader));
+		return userAndPermissionDTO;
 	}
 }
 

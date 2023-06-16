@@ -40,7 +40,7 @@ public class SystemUserController {
     private AcademyClassService academyClassService;
 
     @PostMapping("/add-User")
-    @Secured({AuthConstants.MANAGE_SYSTEM_USER})
+    ////@Secured({AuthConstants.MANAGE_SYSTEM_USER})
     public ResponseEntity create(@RequestBody SystemUserCreateDTO systemUserCreateDTO) {
         SystemUser systemUser = systemUserMapper.systemUser(systemUserCreateDTO.getSystemUserDTO());
         systemUser.setGroups(adjustSystemGroup(systemUserCreateDTO.getGroupIdList()));
@@ -58,7 +58,7 @@ public class SystemUserController {
     }
 
     @PutMapping("/statuschange/{userId}")
-    @Secured({AuthConstants.MANAGE_SYSTEM_USER})
+    ////@Secured({AuthConstants.MANAGE_SYSTEM_USER})
     public ResponseEntity changeActiveStatus(@PathVariable long userId) {
         log.info("Change user status: userId=\"" + userId + "\"");
         try {
@@ -75,7 +75,7 @@ public class SystemUserController {
     }
 
     @PutMapping("/update")
-    @Secured({AuthConstants.MANAGE_SYSTEM_USER})
+    ////@Secured({AuthConstants.MANAGE_SYSTEM_USER})
     public ResponseEntity updateUser(@RequestBody SystemUserCreateDTO systemUserCreateDTO) {
         SystemUser systemUser = systemUserMapper.systemUser(systemUserCreateDTO.getSystemUserDTO());
         systemUser.setGroups(adjustSystemGroup(systemUserCreateDTO.getGroupIdList()));
@@ -95,7 +95,7 @@ public class SystemUserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    @Secured({AuthConstants.MANAGE_SYSTEM_USER})
+    ////@Secured({AuthConstants.MANAGE_SYSTEM_USER})
     public ResponseEntity delete(@PathVariable long userId) {
         try {
             log.info("required delete user: " + systemUserService.findById(userId));
