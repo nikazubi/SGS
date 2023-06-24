@@ -54,33 +54,33 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="login-page">
-            <div className="login-container">
-                <img src={imageSrc} alt="abgd" width={200} />
-                <br/>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>მომხმარებლის სახელი</label>
-                        <input
-                            type="text"
-                            placeholder="შეიყვანეთ მომხმარებლის სახელი"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required
-                        />
+        <div className="loginCnt">
+            <div className="loginCnt__img">
+                <img src={imageSrc} alt="IB Mtiebi Logo" />
+            </div>
+            <div className="loginCnt__circleWrap">
+                <div className="loginCnt__circle img"></div>
+
+                <div className="loginCnt__circle blue">
+                    <div className="formCnt">
+                        <div className="formCnt__title">ავტორიზაცია</div>
+                        <form onSubmit={handleSubmit}>
+                            <input placeholder="ელ.ფოსტა" value={email} onChange={handleEmailChange} className="formCnt__input" type="text" />
+                            <input placeholder="პაროლი" value={password} onChange={handlePasswordChange} className="formCnt__input" type="password" />
+                            <div className="formCnt__btnCnt">
+                                <button>შესვლა</button>
+                            </div>
+                        </form>
                     </div>
-                    <div className="form-group">
-                        <label>პაროლი</label>
-                        <input
-                            type="password"
-                            placeholder="შეიყვანეთ პაროლი"
-                            value={password}
-                            onChange={handlePasswordChange}
-                            required
-                        />
-                    </div>
-                    <button type="submit">შესვლა</button>
-                </form>
+                </div>
+
+                <div className="loginCnt__circle gray"></div>
+                <div className="loginCnt__circle darkGray"></div>
+                <div className="loginCnt__circle whiteOpacity"></div>
+                <div className="loginCnt__circle purple"></div>
+
+                <div className="loginCnt__footer">მოსწავლეთა შეფასების ჟურნალი</div>
+
             </div>
         </div>
     );

@@ -135,3 +135,137 @@
 /*.login-page form button[type="submit"]:hover {*/
 /*    background: #075675;*/
 /*}*/
+
+
+/* Giorgi CSS */
+
+.loginCnt{
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    position: relative;
+    padding: 50px;
+}
+
+.loginCnt__img img{
+    max-width: 250px;
+}
+
+.loginCnt__circleWrap{
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+    position: absolute;
+    transform: translateX(-50%);
+    left: 50%;
+    top: calc(50px + 9vh);
+}
+
+.loginCnt__circle{
+    max-width: 500px;
+    height: 450px;
+    border-radius: 50%;
+    position: absolute;
+    width: 100%;
+}
+
+.loginCnt__circle.img{
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    background-image: url("../../../assets/images/loginImg.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    z-index: 3;
+}
+
+.loginCnt__circle.blue{
+    left: 0;
+    transform: translateX(-50%);
+    top: 225px;
+    background-color: #01619b;
+    z-index: 2;
+}
+
+.loginCnt__circle.gray{
+    left: 0px;
+    background-color: #f0f2f1;
+    transform: translateX(-50%);
+    top: 80px;
+    z-index: 1;
+}
+
+.loginCnt__circle.darkGray{
+    left: 64%;
+    background-color: #a2a2a2;
+    transform: translateX(-50%);
+    top: 100px;
+    z-index: 1;
+}
+
+.loginCnt__circle.whiteOpacity{
+    left: 63%;
+    background-color: #fdfdfd;
+    transform: translateX(-50%);
+    top: 152px;
+    z-index: 4;
+    opacity: 0.5;
+}
+
+.loginCnt__circle.purple{
+    left: 53%;
+    top: 25px;
+    background-color: #4c75bd;
+    z-index: 5;
+    opacity: 0.7;
+}
+
+.loginCnt__footer{
+    color: #1a3658;
+    font-size: 28px;
+    position: absolute;
+    left: 410px;
+    width: 305px;
+    text-align: center;
+    top: 565px;
+}
+
+.formCnt{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 210px;
+    transform: translate(-50%, -50%);
+}
+
+.formCnt__title{
+    color: #fff;
+    font-size: 30px;
+    letter-spacing: 2px;
+    margin-top: 80px;
+    padding: 15px 0;
+}
+
+.formCnt__input{
+    width: 100%;
+    padding: 8px 5px;
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 15px;
+}
+
+.formCnt__btnCnt{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.formCnt__btnCnt button{
+    padding: 10px 30px;
+    background: #6597ef;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
