@@ -30,7 +30,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                                                                           Date createTime) {
         Predicate academyClassIdPredicate = academyClassId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(academyClassId);
         Predicate subjectIdPredicate = subjectId != null ? qGrade.subject.id.eq(subjectId) : qGrade.subject.id.isNotNull();
-        Predicate studentIdPredicate = studentId != null ? qGrade.subject.id.eq(studentId) : qGrade.student.id.isNotNull();
+        Predicate studentIdPredicate = studentId != null ? qGrade.student.id.eq(studentId) : qGrade.student.id.isNotNull();
         Predicate datePredicate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createTime);
