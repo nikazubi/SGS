@@ -1,3 +1,4 @@
+import Chart from "./Chart";
 import Dropdown from "./Dropdown";
 import SemestruliBox from "./SemestruliBox";
 import SmallBox from "./SmallBox";
@@ -27,6 +28,8 @@ const SemestruliShefaseba = () => {
                     <SmallBox/>
                 </div>
             </div>
+
+            <Chart/>
 
         </div>
      );
