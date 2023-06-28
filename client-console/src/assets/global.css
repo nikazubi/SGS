@@ -58,6 +58,7 @@ header{
     flex-direction: column;
     width: max-content;
     margin: auto;
+    align-items: center;
 }
 
 .semestruliBox{
@@ -142,7 +143,21 @@ header{
     text-align: center;
 }
 
+.ibChart{
+    margin-top: 30px;
+}
 
+.ibChart .recharts-layer.recharts-cartesian-axis-tick{
+    cursor: pointer;
+}
+
+
+
+@media only screen and (max-width: 1240px) {
+    .ibChart{
+        overflow-x: scroll;
+    }
+}
 
 @media only screen and (max-width: 970px) {
     .boxWrap{
