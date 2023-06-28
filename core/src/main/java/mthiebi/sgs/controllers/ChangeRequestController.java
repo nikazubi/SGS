@@ -67,6 +67,7 @@ public class ChangeRequestController {
         changeRequestDTO.setId(changeRequest.getId());
         changeRequestDTO.setStatus(changeRequest.getStatus().toString());
         changeRequestDTO.setNewValue(changeRequest.getNewValue());
+        changeRequestDTO.setDescription(changeRequest.getDescription());
         changeRequestDTO.setPrevValue(changeRequest.getPrevValue());
         changeRequestDTO.setPrevGrade(gradeMapper.gradeDTO(changeRequest.getPrevGrade()));
         changeRequestDTO.setIssuerFullname(changeRequest.getIssuer().getName());
@@ -78,6 +79,7 @@ public class ChangeRequestController {
         ChangeRequest changeRequest = new ChangeRequest();
         changeRequest.setId(changeRequestDTO.getId());
         changeRequest.setStatus(ChangeRequestStatus.PENDING);
+        changeRequest.setDescription(changeRequestDTO.getDescription());
         changeRequest.setNewValue(changeRequestDTO.getNewValue());
         changeRequest.setPrevValue(changeRequestDTO.getPrevValue());
         changeRequest.setPrevGrade(gradeMapper.grade(changeRequestDTO.getPrevGrade()));

@@ -11,6 +11,8 @@ public interface ClosedPeriodService {
 
     void deleteClosedPeriod(Long closedPeriodId);
 
+    ClosedPeriod getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId);
+
     List<ClosedPeriod> getClosedPeriods();
 
 }

@@ -34,7 +34,7 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     @Override
     public ChangeRequest createChangeRequest(ChangeRequest changeRequest, String username) {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
-        Grade prevGrade = gradeRepository.findById(changeRequest.getPrevGrade().getId()).orElseThrow();
+        Grade prevGrade = gradeRepository.findById(changeRequest.getId()).orElseThrow();
 
         changeRequest.setIssuer(systemUser);
         changeRequest.setPrevGrade(prevGrade);

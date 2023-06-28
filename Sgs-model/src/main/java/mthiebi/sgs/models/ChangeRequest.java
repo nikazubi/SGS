@@ -22,6 +22,9 @@ public class ChangeRequest extends Audit{
     @Enumerated(EnumType.STRING)
     private ChangeRequestStatus status;
 
+    @Column(columnDefinition = "nvarchar(max)")
+    private String description;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -68,5 +71,13 @@ public class ChangeRequest extends Audit{
 
     public void setStatus(ChangeRequestStatus status) {
         this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

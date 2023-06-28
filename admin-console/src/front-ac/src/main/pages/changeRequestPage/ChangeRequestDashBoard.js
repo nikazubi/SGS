@@ -5,6 +5,7 @@ import DataGridSGS from "../../components/grid/DataGrid";
 import useChangeRequests from "./useChangeRequests";
 import ChangeRequestStatusChangeAction from "./ChangeRequestStatusChangeAction";
 import {Check, Close} from "@material-ui/icons";
+import {gradeTypeTranslator} from "../../../utils/gradeTypeTranslator";
 
 const ChangeRequestDashBoard = () => {
     const [filters, setFilters] = useState({});
@@ -74,6 +75,26 @@ const ChangeRequestDashBoard = () => {
             headerAlign: 'center'
         },
         {
+            headerName: "ქულის ტიპი",
+            renderCell: ({row}) => {
+                return gradeTypeTranslator(row.prevGrade.gradeType);
+            },
+            field: 'gradeType',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "ახსნა განმარტება",
+            renderCell: ({row}) => {
+                return row.description;
+            },
+            field: 'description',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
             headerName: "სტატუსი",
             renderCell: ({row}) => {
                 if (row.status === "PENDING") return "მოთხოვნა მოლოდინშია"
@@ -82,7 +103,7 @@ const ChangeRequestDashBoard = () => {
             },
             field: 'status',
             sortable: false,
-            align: 'center',
+            align: 'left',
             headerAlign: 'center'
         },
         {
