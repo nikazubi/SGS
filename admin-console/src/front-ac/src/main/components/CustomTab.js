@@ -67,7 +67,8 @@ const TabComponent = React.forwardRef((props, ref) => {
             props.onClose();
           }}
         >
-          {props.onClose && <CloseIcon/>}
+          {/* {props.onClose && <CloseIcon/>} */}
+          <CloseIcon/>
         </IconButton>
       </div>
     </div>
@@ -81,7 +82,7 @@ const initialState = {
 
 export const CustomTabComponent = ({ tab, value, onClose, onCloseAll, onCloseOthers, ...rest }) => {
   const [menuState, setMenuState] = useState(initialState);
-  const handleClose = tab.id === 'GRADES' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? null : onClose;
+  const handleClose = tab.id === 'GRADES' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? onClose : null;
 
   const handleMenuOpen = (event) => {
     event.preventDefault();
