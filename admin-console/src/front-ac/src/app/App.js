@@ -33,12 +33,11 @@ const App = () => {
   return (
       <ErrorBoundary FallbackComponent={ErrorPage}>
         <CssBaseline/>
-        {/* {(loggedIn ?
+         {(loggedIn ?
                 <MainContainer/>
                 :
-                <LoginPage/> TEST123 */}
-                <MainContainer/>
-        {/* )} */}
+                <LoginPage/>
+         )}
         <Notification/>
         <Backdrop open={isBackdropOpen}/>
       </ErrorBoundary>
