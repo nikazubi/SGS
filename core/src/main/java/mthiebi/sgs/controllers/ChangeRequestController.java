@@ -31,15 +31,17 @@ public class ChangeRequestController {
     private GradeMapper gradeMapper;
 
     @GetMapping("/get-change-requests")
-    @Secured({AuthConstants.EDIT_GRADES})
+//    @Secured({AuthConstants.EDIT_GRADES})
     public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("authorization") String authHeader,
                                                     @RequestParam(required = false) Long classId,
                                                     @RequestParam(required = false) Long studentId,
                                                     @RequestParam(required = false) String date) throws Exception {
 
         String username = utilsJwt.getUsernameFromHeader(authHeader);
-        Date date1 = new Date();
-        date1.setTime(Long.parseLong(date));
+        Date date1 = new Date();;
+        if (!date.equals("NaN")) {
+            date1.setTime(Long.parseLong(date));
+        }
         return changeRequestService.getChangeRequests(username, classId, studentId, date1).stream()
                 .map(this::adjustDTO)
                 .collect(Collectors.toList());
@@ -65,6 +67,7 @@ public class ChangeRequestController {
         changeRequestDTO.setId(changeRequest.getId());
         changeRequestDTO.setStatus(changeRequest.getStatus().toString());
         changeRequestDTO.setNewValue(changeRequest.getNewValue());
+        changeRequestDTO.setDescription(changeRequest.getDescription());
         changeRequestDTO.setPrevValue(changeRequest.getPrevValue());
         changeRequestDTO.setPrevGrade(gradeMapper.gradeDTO(changeRequest.getPrevGrade()));
         changeRequestDTO.setIssuerFullname(changeRequest.getIssuer().getName());
@@ -75,7 +78,8 @@ public class ChangeRequestController {
     ChangeRequest adjust(ChangeRequestDTO changeRequestDTO){
         ChangeRequest changeRequest = new ChangeRequest();
         changeRequest.setId(changeRequestDTO.getId());
-        changeRequest.setStatus(ChangeRequestStatus.valueOf(changeRequestDTO.getStatus()));
+        changeRequest.setStatus(ChangeRequestStatus.PENDING);
+        changeRequest.setDescription(changeRequestDTO.getDescription());
         changeRequest.setNewValue(changeRequestDTO.getNewValue());
         changeRequest.setPrevValue(changeRequestDTO.getPrevValue());
         changeRequest.setPrevGrade(gradeMapper.grade(changeRequestDTO.getPrevGrade()));

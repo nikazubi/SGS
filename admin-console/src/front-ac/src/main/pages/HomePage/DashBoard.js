@@ -1,17 +1,20 @@
 import GradeTableToolbar from "./GradeTableToolbar";
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import DataGridSGS from "../../components/grid/DataGrid";
 import useGrades from "./useGrades";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import useUpdateGrade from "./useUpdateGrade";
 import ConfirmationModal from "../../../components/modals/ConfirmationModal";
 import axios from "../../../utils/axios";
+import Modal from "../../../components/modals/Modal";
+import TextField from "../../components/formik/TextField";
 
 const DashBoard = () => {
     const [filters, setFilters] = useState({groupByClause: 'STUDENT'});
     const {data, isLoading, isError, error, isSuccess} = useGrades(filters);
     const [openRequestModal, setOpenRequestModal] = useState(false);
     const [newRowToSave, setNewRowToSave] = useState({});
+    const [descriptionText, setDescriptionText] = useState('');
     const {mutateAsync: mutateRow} = useUpdateGrade();
 
     const gradeColumns = [
@@ -259,7 +262,7 @@ const DashBoard = () => {
             editable: true,
             type: "number",
             width: 78,
-            maxWidth: 78,
+            maxWidth: 78
         },{
             headerName: "II",
             renderCell: ({row}) => {
@@ -382,9 +385,26 @@ const DashBoard = () => {
         async (newRow) => {
             const gradeType = Object.keys(newRow).filter(field => field !== "student" && field !== "grades")[0]
             const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType)
-            if (gradesOfType.length > 0) {
-                setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
-                setOpenRequestModal(true);
+            if (gradesOfType.length > 0 && gradesOfType[0].value !== undefined) {
+                const params = {
+                    academyClassId: gradesOfType[0].academyClass.id,
+                    gradePrefix: "GENERAL",
+                    gradeId: gradesOfType[0].id
+                };
+                const {data} = await axios.get("/close-period/get-period-by-class", {params});
+                console.log(data.length);
+                if (data.length === undefined) {
+                    setNewRowToSave({
+                            newValue: newRow[gradeType],
+                            id: gradesOfType[0].id,
+                            description: descriptionText
+                        }
+                    )
+                    setOpenRequestModal(true);
+                } else {
+                    newRow.subject = filters.subject
+                    return await mutateRow(newRow);
+                }
             } else {
                 newRow.subject = filters.subject
                 return await mutateRow(newRow);
@@ -410,6 +430,7 @@ const DashBoard = () => {
                                 }`,
                             },
                         }}
+
                         experimentalFeatures={{ columnGrouping: true }}
                         columnGroupingModel={columnGroupingModel}
                         queryKey={"GRADES"}
@@ -426,15 +447,26 @@ const DashBoard = () => {
                     />
                 </DataGridPaper>
             </div>
-            <ConfirmationModal
+            <Modal
+                maxWidth={600}
                 open={openRequestModal}
+                onClose={() => (setOpenRequestModal(false))}
                 title={"ნიშნის ცვლილება"}
                 onSubmit={
                     async (options) => {
-                        await axios.post("/change-request/create-change-request", newRowToSave)
+                        await axios.post("/change-request/create-change-request", newRowToSave);
+                        setOpenRequestModal(false);
                     }}
-                onClose={() => (setOpenRequestModal(false))}
-            />
+            >
+                <p>თუ გსურთ ნიშნის ცვლილების მოთხოვნა შეავსეთ ახსნა განმარტების ველი:</p>
+                <br/>
+                <TextField
+                    onChange={(e) => {
+                        setDescriptionText(e.target.value);}}
+                    value={descriptionText}
+                    label={"ახსნა განმარტება"}
+                />
+            </Modal>
         </div>
     )
 }

@@ -29,8 +29,9 @@ const BehaviourDashBoard = () => {
             width: 200,
             maxWidth: 200,
         },
+
         {
-            headerName: "1",
+            headerName: "ფორმით გამოცხადება",
             renderCell: ({row}) => {
                 const summary1 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_1");
                 if (summary1.length === 0) {
@@ -44,102 +45,11 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
+            width: 40,
+            maxWidth: 40,
         },
         {
-            headerName: "2",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_2");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_2',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "3",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_3");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_3',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "4",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_4");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_4',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "5",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_5");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_5',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "ქულა",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_COMPLETE");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_GRADE',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 50,
-            maxWidth: 50,
-        },
-
-        {
-            headerName: "1",
+            headerName: "დაგვიანება",
             renderCell: ({row}) => {
                 const summary1 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_1");
                 if (summary1.length === 0) {
@@ -153,102 +63,11 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
+            width: 25,
+            maxWidth: 25,
         },
         {
-            headerName: "2",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_2");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_DELAYS_2',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "3",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_3");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_DELAYS_3',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "4",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_4");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_DELAYS_4',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "5",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_5");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_DELAYS_5',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "ქულა",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_COMPLETE");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_DELAYS_GRADE',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 50,
-            maxWidth: 50,
-        },
-
-        {
-            headerName: "1",
+            headerName: "ინვენტარის მოვლა",
             renderCell: ({row}) => {
                 const summary1 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_1");
                 if (summary1.length === 0) {
@@ -262,103 +81,11 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
+            width: 40,
+            maxWidth: 40,
         },
         {
-            headerName: "2",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_2");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_2',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "3",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_3");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_3',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "4",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_4");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_4',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "5",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_5");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_5',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "ქულა",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_GRADE");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_GRADE',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 50,
-            maxWidth: 50,
-        },
-
-
-        {
-            headerName: "1",
+            headerName: "ჰიგიენა",
             renderCell: ({row}) => {
                 const summary1 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_1");
                 if (summary1.length === 0) {
@@ -375,8 +102,82 @@ const BehaviourDashBoard = () => {
             width: 20,
             maxWidth: 20,
         },
+
         {
-            headerName: "2",
+            headerName: "მოსწავლის ყოფაქცევა",
+            renderCell: ({row}) => {
+                const summary1 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_1");
+                if (summary1.length === 0) {
+                    return ""
+                }
+                return summary1[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_1',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+        {
+            headerName: "ფორმით გამოცხადება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_2");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+
+        {
+            headerName: "დაგვიანება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_2");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_DELAYS_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 25,
+            maxWidth: 25,
+        },
+        {
+            headerName: "ინვენტარის მოვლა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_2");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+        {
+            headerName: "ჰიგიენა",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_2");
                 if(summary2.length === 0){
@@ -394,7 +195,80 @@ const BehaviourDashBoard = () => {
             maxWidth: 20,
         },
         {
-            headerName: "3",
+            headerName: "მოსწავლის ყოფაქცევა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_2");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+        {
+            headerName: "ფორმით გამოცხადება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_3");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+        {
+            headerName: "დაგვიანება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_3");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_DELAYS_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 25,
+            maxWidth: 25,
+        },
+
+        {
+            headerName: "ინვენტარის მოვლა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_3");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+        {
+            headerName: "ჰიგიენა",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_3");
                 if(summary2.length === 0){
@@ -410,9 +284,84 @@ const BehaviourDashBoard = () => {
             type: "number",
             width: 20,
             maxWidth: 20,
+            justifyContent: 'flex-start',
+            flexDirection: 'column',
         },
         {
-            headerName: "4",
+            headerName: "მოსწავლის ყოფაქცევა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_3");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+        {
+            headerName: "ფორმით გამოცხადება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_4");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_4',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+
+        {
+            headerName: "დაგვიანება",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_4");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_DELAYS_4',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 25,
+            maxWidth: 25,
+        },
+        {
+            headerName: "ინვენტარის მოვლა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_4");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_4',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 40,
+            maxWidth: 40,
+        },
+        {
+            headerName: "ჰიგიენა",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_4");
                 if(summary2.length === 0){
@@ -430,99 +379,7 @@ const BehaviourDashBoard = () => {
             maxWidth: 20,
         },
         {
-            headerName: "5",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_5");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_HYGIENE_5',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "ქულა",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_GRADE");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_HYGIENE_GRADE',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 50,
-            maxWidth: 50,
-        },
-
-
-        {
-            headerName: "1",
-            renderCell: ({row}) => {
-                const summary1 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_1");
-                if (summary1.length === 0) {
-                    return ""
-                }
-                return summary1[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_1',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "2",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_2");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_2',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "3",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_3");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_3',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "4",
+            headerName: "მოსწავლის ყოფაქცევა",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_4");
                 if(summary2.length === 0){
@@ -536,44 +393,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "5",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_5");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_5',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 20,
-            maxWidth: 20,
-        },
-        {
-            headerName: "ქულა",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_GRADE");
-                if(summary2.length === 0){
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_GRADE',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 50,
-            maxWidth: 50,
+            width: 40,
+            maxWidth: 40,
         },
     ];
 
@@ -590,67 +411,54 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center'
         },
         {
-            groupId: 'uniform',
-            headerName: 'მოსწავლის ფორმით გამოცხადება',
+            groupId: 'firstWeek',
+            headerName: 'I კვირა',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
-            children: [{ field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_1' }, {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_2'},
-                {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_3'}, {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_4'},
-                {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_5'},{field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_GRADE'}],
+            children: [{ field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_1' }, {field: 'BEHAVIOUR_STUDENT_DELAYS_1'},
+                {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_1'}, {field: 'BEHAVIOUR_STUDENT_HYGIENE_1'},
+                {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_1'}],
             align: 'center',
             headerAlign: 'center'
         },
         {
-            groupId: 'delay',
-            headerName: 'მოსწავლის დაგვიანება',
+            groupId: 'secondWeek',
+            headerName: 'II კვირა',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
-            children: [{ field: 'BEHAVIOUR_STUDENT_DELAYS_1' }, {field: 'BEHAVIOUR_STUDENT_DELAYS_2'},
-                {field: 'BEHAVIOUR_STUDENT_DELAYS_3'}, {field: 'BEHAVIOUR_STUDENT_DELAYS_4'},
-                {field: 'BEHAVIOUR_STUDENT_DELAYS_5'},{field: 'BEHAVIOUR_STUDENT_DELAYS_GRADE'}],
+            children: [{ field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_2' }, {field: 'BEHAVIOUR_STUDENT_DELAYS_2'},
+                {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_2'}, {field: 'BEHAVIOUR_STUDENT_HYGIENE_2'},
+                {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_2'}],
             align: 'center',
             headerAlign: 'center'
         },
         {
-            groupId: 'inventory',
-            headerName: 'საკლასო ინვენტარის მოვლა',
+            groupId: 'thirdWeek',
+            headerName: 'III კვირა',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
-            children: [{ field: 'BEHAVIOUR_CLASSROOM_INVENTORY_1' }, {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_2'},
-                {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_3'}, {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_4'},
-                {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_5'},{field: 'BEHAVIOUR_CLASSROOM_INVENTORY_GRADE'}],
+            children: [{ field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_3' }, {field: 'BEHAVIOUR_STUDENT_DELAYS_3'},
+                {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_3'}, {field: 'BEHAVIOUR_STUDENT_HYGIENE_3'},
+                {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_3'}],
             align: 'center',
             headerAlign: 'center'
         },
         {
-            groupId: 'hygiene',
-            headerName: 'მოსწავლის მიერ ჰიგიენური ნორმების დაცვა',
+            groupId: 'fourthWeek',
+            headerName: 'IV კვირა',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
-            children: [{ field: 'BEHAVIOUR_STUDENT_HYGIENE_1' }, {field: 'BEHAVIOUR_STUDENT_HYGIENE_2'},
-                {field: 'BEHAVIOUR_STUDENT_HYGIENE_3'}, {field: 'BEHAVIOUR_STUDENT_HYGIENE_4'},
-                {field: 'BEHAVIOUR_STUDENT_HYGIENE_5'},{field: 'BEHAVIOUR_STUDENT_HYGIENE_GRADE'}],
-            align: 'center',
-            headerAlign: 'center'
-        },
-        {
-            groupId: 'behavior',
-            headerName: 'მოსწავლის ყოფაქცევა',
-            description: '',
-            // renderHeaderGroup: (params) => (
-            //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
-            // ),
-            children: [{ field: 'BEHAVIOUR_STUDENT_BEHAVIOR_1' }, {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_2'},
-                {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_3'}, {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_4'},
-                {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_5'},{field: 'BEHAVIOUR_STUDENT_BEHAVIOR_GRADE'}],
+            children: [{ field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_4' }, {field: 'BEHAVIOUR_STUDENT_DELAYS_4'},
+                {field: 'BEHAVIOUR_CLASSROOM_INVENTORY_4'}, {field: 'BEHAVIOUR_STUDENT_HYGIENE_4'},
+                {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_4'}],
             align: 'center',
             headerAlign: 'center'
         },

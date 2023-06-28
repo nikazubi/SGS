@@ -24,4 +24,5 @@ public class ChangeRequestDTO {
 
     private String status;
 
+    private String description;
 }

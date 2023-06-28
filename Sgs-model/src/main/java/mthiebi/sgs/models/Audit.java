@@ -17,6 +17,7 @@ import java.util.Date;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Audit {
 
     private Date createTime;
