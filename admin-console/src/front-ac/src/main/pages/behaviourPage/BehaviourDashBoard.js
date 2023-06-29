@@ -46,7 +46,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "დაგვიანება",
@@ -63,8 +63,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 25,
-            maxWidth: 25,
+            width: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ინვენტარის მოვლა",
@@ -82,7 +82,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ჰიგიენა",
@@ -99,8 +99,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
+            width: 40,
+            maxWidth: 'max-content'
         },
 
         {
@@ -119,7 +119,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ფორმით გამოცხადება",
@@ -137,7 +137,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
 
         {
@@ -155,8 +155,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 25,
-            maxWidth: 25,
+            width: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ინვენტარის მოვლა",
@@ -174,7 +174,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ჰიგიენა",
@@ -191,8 +191,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
+            width: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "მოსწავლის ყოფაქცევა",
@@ -210,7 +210,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ფორმით გამოცხადება",
@@ -228,7 +228,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "დაგვიანება",
@@ -245,8 +245,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 25,
-            maxWidth: 25,
+            width: 40,
+            maxWidth: 'max-content'
         },
 
         {
@@ -265,7 +265,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ჰიგიენა",
@@ -282,8 +282,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
+            width: 40,
+            maxWidth: 'max-content',
             justifyContent: 'flex-start',
             flexDirection: 'column',
         },
@@ -303,7 +303,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ფორმით გამოცხადება",
@@ -321,7 +321,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
 
         {
@@ -339,8 +339,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 25,
-            maxWidth: 25,
+            width: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ინვენტარის მოვლა",
@@ -358,7 +358,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "ჰიგიენა",
@@ -375,8 +375,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 20,
-            maxWidth: 20,
+            width: 40,
+            maxWidth: 'max-content'
         },
         {
             headerName: "მოსწავლის ყოფაქცევა",
@@ -394,7 +394,7 @@ const BehaviourDashBoard = () => {
             editable: true,
             type: "number",
             width: 40,
-            maxWidth: 40,
+            maxWidth: 'max-content'
         },
     ];
 
@@ -485,7 +485,7 @@ const BehaviourDashBoard = () => {
     }
 
     return (
-        <div>
+        <div className="behaviourCnt">
             <BehaviourTableToolbar filters={filters} setFilters={setFilters}/>
             <div style={{height: 561, width: '98%', marginLeft:15, marginRight:15}}>
                 <DataGridPaper>
