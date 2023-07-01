@@ -151,7 +151,31 @@ header{
     cursor: pointer;
 }
 
+.headerCnt{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 10px;
+    justify-content: space-between;
+}
 
+.headerCnt.home{
+    justify-content: flex-end;
+}
+
+.headerCnt__aTag{
+    text-decoration: none;
+}
+
+.headerCnt__aTag div{
+    color: #fff;
+}
+
+.headerCnt__arrow{
+    margin-left: 10px;
+    font-size: 40px !important;
+    color: #fff;
+}
 
 @media only screen and (max-width: 1240px) {
     .ibChart{
