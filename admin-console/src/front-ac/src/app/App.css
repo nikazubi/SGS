@@ -121,3 +121,49 @@ body {
 .status-PENDING {
     color: rgb(0, 136, 255);
 }
+
+/* Custom Table absence */
+
+.absenceMain .css-gg4vpm{
+    justify-content: center;
+}
+
+.absenceTable{
+    width: 100%;
+    padding: 5px 10px;
+    overflow-y: scroll;
+    border-collapse: collapse;
+}
+
+.absenceTable__date{
+    border: 1px solid #000;
+    min-width: 30px;
+    max-width: 42px;
+    height: 78px;
+    padding-top: 24px;
+    white-space: nowrap;
+}
+
+.absenceTable__attend{
+    width: 42px;
+    height: 25px;   
+    border: none;
+    text-align: center;
+}
+
+.absenceTable__date div{
+    transform: rotate(-90deg);
+}
+
+.absenceTable__nameSurname{
+    min-width: 230px;
+}
+.absenceTable tr{
+    border: 1px solid #000;
+}
+.absenceTable td{
+    border: 1px solid #000;
+}
+.absenceTable th{
+    border: 1px solid #000;
+}
