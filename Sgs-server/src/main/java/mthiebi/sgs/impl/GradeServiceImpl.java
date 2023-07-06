@@ -1,10 +1,6 @@
 package mthiebi.sgs.impl;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import mthiebi.sgs.models.AcademyClass;
-import mthiebi.sgs.models.Grade;
-import mthiebi.sgs.models.Student;
-import mthiebi.sgs.models.Subject;
+import mthiebi.sgs.models.*;
 import mthiebi.sgs.repository.AcademyClassRepository;
 import mthiebi.sgs.repository.GradeRepository;
 import mthiebi.sgs.repository.StudentRepository;
@@ -13,10 +9,7 @@ import mthiebi.sgs.service.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,8 +27,6 @@ public class GradeServiceImpl implements GradeService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    @PersistenceContext
-    private EntityManager em;
 
     @Override
     public Grade insertStudentGrade(Grade grade) {
@@ -81,9 +72,44 @@ public class GradeServiceImpl implements GradeService {
                                                                        Long studentId,
                                                                        Date createTime,
                                                                        String gradeTypePrefix) {
-        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)
-                .stream()
-                .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
-                .collect(Collectors.toList());
+        List<Student> allStudentsInAcademyClass = studentRepository.findAllByAcademyClass(classId);
+        Subject currSubject = subjectRepository.findById(subjectId).orElse(null);
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElse(null);
+
+        List<Grade> existingGrades =  gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)
+                                                        .stream()
+                                                        .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
+                                                        .collect(Collectors.toList());
+        return fillWithEmptyGradeListOfGradeType(allStudentsInAcademyClass, gradeTypePrefix, academyClass, currSubject, existingGrades);
+    }
+
+    private List<Grade> fillWithEmptyGradeListOfGradeType(List<Student> students,
+                                                          String gradeTypePrefix,
+                                                          AcademyClass academyClass,
+                                                          Subject subject,
+                                                          List<Grade> existingGrades){
+       List<GradeType> gradeTypes = Arrays.stream(GradeType.values())
+                                                    .filter(gradeType -> gradeType.toString().startsWith(gradeTypePrefix))
+                                                    .collect(Collectors.toList());
+        List<Grade> result = new ArrayList<>(existingGrades);
+        for (Student student : students) {
+            for(GradeType gradeType : gradeTypes){
+                if (existingGrades.stream().filter(grade -> grade.getGradeType() == gradeType && student.getId() == grade.getStudent().getId()).findAny().isEmpty()){
+                    Grade grade = buildGradeOfGradeType(gradeType, academyClass, student, subject);
+                    result.add(grade);
+                }
+            }
+        }
+        return result;
+    }
+
+    private Grade buildGradeOfGradeType(GradeType gradeType, AcademyClass academyClass, Student student, Subject subject){
+        return  Grade.builder()
+                    .gradeType(gradeType)
+                    .academyClass(academyClass)
+                    .student(student)
+                    .subject(subject)
+                    .value(null)
+                    .build();
     }
 }

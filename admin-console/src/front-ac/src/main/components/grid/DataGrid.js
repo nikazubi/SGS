@@ -66,7 +66,6 @@ const DataGridSGS = ({
         );
     }
   const handleCellCommit = (params) => {
-    console.log(params)
     const row = data.content.find(element => element[rowIdField] === params.id);
     const field = params.field;
     const changedRow = {
@@ -95,7 +94,7 @@ const DataGridSGS = ({
         rowCount={isSuccess && data? data.totalElements : 0}
         onPageChange={(page) => setPageParams((prev) => ({...prev, page}))}
         onPageSizeChange={(size) => setPageParams((prev) => ({...prev, size}))}
-        loading={isLoading || isFetching || loading}
+        // loading={isLoading || isFetching || loading}
         disableColumnFilter
         rowBuffer={10}
         columnBuffer={columns.length}

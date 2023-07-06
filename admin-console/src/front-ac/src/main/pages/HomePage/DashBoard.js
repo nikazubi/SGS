@@ -392,8 +392,7 @@ const DashBoard = () => {
                     gradeId: gradesOfType[0].id
                 };
                 const {data} = await axios.get("/close-period/get-period-by-class", {params});
-                console.log(data.length);
-                if (data.length === undefined) {
+                if (data.length === undefined && newRow[gradeType] > 0) {
                     setNewRowToSave({
                             newValue: newRow[gradeType],
                             id: gradesOfType[0].id,

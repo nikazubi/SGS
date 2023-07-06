@@ -7,21 +7,40 @@ import {FormikDatePickerField} from "../../components/formik/FormikDatePickerFie
 import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
-import Button from "../../../components/buttons/Button";
-import {closePeriod} from "./useClosePeriod";
-import {useUserContext} from "../../../contexts/user-context";
 
-const ChangeRequestTableToolbar = ({setFilters, filters}) => {
+const MonthlyGradeToolbar = ({setFilters, filters, setData}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
-    const [date, setDate] = useState(new Date());
-    const {hasPermission} = useUserContext();
+    const [date, setDate] = useState(new Date())
 
-    const hasManageClosePeriodPermission = hasPermission("MANAGE_CLOSED_PERIOD")
-
+    let permanentData = [
+        {
+            name: "ზუბიაშვილი ნიკა",
+            geo: 6,
+            geolang: 5,
+            write: 3,
+            math: 7,
+            eng: 7,
+            englit:5,
+            german:7,
+            russia:7,
+            bio: 10,
+            chemistry: 7,
+            physic: 5,
+            history: 10,
+            geography: 8,
+            nationaly: 9,
+            hum: 10,
+            sport: 10,
+            ethic: 9,
+            rating: 10,
+            absent: 0,
+            mistake:0
+        }
+    ]
 
     return (
-        <div style={{width:'100%'}}>
+        <div>
             <FlexBox justifyContent='space-between'>
                 <Formik
                     initialValues={
@@ -38,17 +57,23 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                     enableReinitialize
                 >
                     {({ values, setFieldValue }) => (
-                    <div style={{display: "flex", flexDirection: 'row', marginTop: 50,}}>
+                    <div style={{display: "flex", flexDirection: 'row', marginTop: 25, marginBottom:25}}>
                         <div style={{marginLeft: 50, width: 300}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
                                                 label={"კლასი"}
-                                             // resolveData={resolveCardTypeAutocompleteData}
+                                // resolveData={resolveCardTypeAutocompleteData}
                                                 onFetch={onFetchAcademyClass}
-                                                getOptionSelected={(option, value) => option.id === value.id}
+                                                getOptionSelected={(option, value) => {
+
+                                                    return option.id === value.id
+                                                }}
                                                 getOptionLabel={(option) => option.className}
-                                                // onBlur={()=> setFilters(values)}
-                                                />
+                                                setInitialVulue={(options) =>{
+                                                    if(options.length === 1){
+                                                        return options[0]
+                                                    }
+                                                }}/>
                         </div>
                         <div style={{marginLeft: 50, width: 300}}>
                             <FormikAutocomplete name="student"
@@ -58,8 +83,11 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                                 onFetch={onFetchStudents}
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.firstName + " " + option.lastName}
-                                                //onBlur={()=> setFilters(values)}
-                             />
+                                                setInitialVulue={(options) =>{
+                                                    if(options.length === 1){
+                                                        return options[0]
+                                                    }
+                                                }}/>
                         </div>
 
                         <div style={{marginLeft: 50, width: 300}}>
@@ -77,22 +105,9 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                         <div style={{marginLeft: 15, width: 100}}>
                             <IconButton
                                 icon={<Search/>}
-                                onClick={() => setFilters(values)}
+                                onClick={() => setData(permanentData)}
                             />
                         </div>
-                        {hasManageClosePeriodPermission &&
-                            <div style={{position: 'absolute', right: '5%'}}>
-                            <Button style={{backgroundColor: !filters || !filters.academyClass || ! filters.academyClass.id? "#b3aabf":"#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
-                                    disabled={!filters || !filters.academyClass || ! filters.academyClass.id}
-                                    onClick={async () => {
-                                        const params = {
-                                            academyClassId: filters.academyClass.id
-                                        }
-                                        await closePeriod(params)
-                                    }}>
-                                {"პერიოდის დახურვა"}
-                            </Button>
-                        </div>}
                     </div>)}
                 </Formik>
             </FlexBox>
@@ -100,4 +115,4 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     )
 }
 
-export default ChangeRequestTableToolbar;
+export default MonthlyGradeToolbar;

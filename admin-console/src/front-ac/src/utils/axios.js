@@ -48,7 +48,6 @@ const logout = (error, refreshToken) => {
 
 const onError = async (error) => {
   const originalRequest = error.config;
-  console.log(originalRequest)
   if (error.response.status === 401) {
     // const refreshToken = getRefreshToken();
     //

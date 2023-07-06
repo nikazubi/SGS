@@ -2,14 +2,15 @@ import React, {useMemo} from 'react';
 import {useUserContext} from "../contexts/user-context";
 import {Grading, Home} from "@mui/icons-material";
 import DashBoard from "../main/pages/HomePage/DashBoard";
-import {AssignmentLate, ChangeHistory, ExitToApp, Grade} from "@material-ui/icons";
+import {AssignmentLate, ChangeHistory, DiscFull, ExitToApp, Grade} from "@material-ui/icons";
 import BehaviourDashBoard from "../main/pages/behaviourPage/BehaviourDashBoard";
 import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 import ChangeRequestDashBoard from "../main/pages/changeRequestPage/ChangeRequestDashBoard";
+import MonthlyGradeDashBoard from "../main/pages/MonthlyGradePage/MonthlyGradeDashBoard";
 
 
 const useNavigationData = () => {
-  const {hasPermission} = useUserContext();
+  const {hasPermission, user} = useUserContext();
 
   const pages = useMemo(() => ({
     GRADES: {
@@ -18,7 +19,7 @@ const useNavigationData = () => {
       component: <DashBoard/>,
       icon: <Grading/>,
       show: false,
-      permissions: [],
+      permissions: ["ADD_GRADES", "MANAGE_GRADES"],
     },
     BEHAVIOUR: {
       id: 'BEHAVIOUR',
@@ -26,7 +27,7 @@ const useNavigationData = () => {
       component: <BehaviourDashBoard/>,
       icon: <Grade/>,
       show: false,
-      permissions: [],
+      permissions: ["ADD_GRADES", "MANAGE_GRADES"],
       collapsible: false
     },
     ABSENCE: {
@@ -35,7 +36,7 @@ const useNavigationData = () => {
       component: <AbsenceDashBoard/>,
       icon: <ExitToApp/>,
       show: false,
-      permissions: [],
+      permissions: ["ADD_GRADES", "MANAGE_GRADES"],
       collapsible: false
     },
     CHANGE_REQUEST: {
@@ -44,10 +45,19 @@ const useNavigationData = () => {
       component: <ChangeRequestDashBoard/>,
       icon: <ChangeHistory/>,
       show: false,
-      permissions: ["EDIT_GRADES"],
+      permissions: ["MANAGE_CHANGE_REQUESTS", "VIEW_CHANGE_REQUESTS"],
       collapsible: false
     },
-  }), []);
+    MONTHLY_GRADE: {
+      id: 'MONTHLY_GRADE',
+      name: 'თვის შემაჯამებელი ნიშნები',
+      component: <MonthlyGradeDashBoard/>,
+      icon: <DiscFull/>,
+      show: false,
+      permissions: [],
+      collapsible: false
+    },
+  }), [user]);
 
   return useMemo(() => {
     const createPageLabels = (page) => {
@@ -69,23 +79,28 @@ const useNavigationData = () => {
       if (!requiredPermissions) {
         return true;
       }
-
-      return requiredPermissions.map(hasPermission).reduce((curr, next) => curr || next, false);
+      return requiredPermissions.map(val => {
+        return hasPermission(val)
+      }).reduce((curr, next) => curr || next, false);
     };
-
     return Object.values(pages)
       .map(page => {
-        page.show = hasAnyPermission(page, hasPermission);
-        if (page.collapsable) {
-          Object.values(page.options).forEach(page => {
-            page.show = hasAnyPermission(page, hasPermission);
-          });
+        if(page.show !== true) {
+          const hasPerm =  hasAnyPermission(page, hasPermission);
+          page.show = hasPerm? hasPerm : false;
+          if (page.collapsable) {
+            Object.values(page.options).forEach(page => {
+              const hasPerm =  hasAnyPermission(page, hasPermission);
+              page.show = hasPerm? hasPerm : false;
+              page.show = hasAnyPermission(page, hasPermission);
+            });
+          }
         }
         createPageLabels(page);
         return page;
       });
 
-  }, [pages, hasPermission]);
+  }, [pages]);
 };
 
 

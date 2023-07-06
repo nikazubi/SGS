@@ -30,21 +30,21 @@ public class SubjectController {
     private UtilsJwt utilsJwt;
 
     @PostMapping("/create-subject")
-    //@Secured({AuthConstants.MANAGE_SUBJECT})
+    @Secured({AuthConstants.MANAGE_SUBJECT})
     public SubjectDTO createSubject(@RequestBody SubjectDTO subjectDTO){
         Subject subject = subjectService.createSubject(subjectMapper.subject(subjectDTO));
         return subjectMapper.subjectDTO(subject);
     }
 
     @PutMapping("/update-subject")
-    //@Secured({AuthConstants.MANAGE_SUBJECT})
+    @Secured({AuthConstants.MANAGE_SUBJECT})
     public SubjectDTO updateSubject(@RequestBody SubjectDTO subjectDTO){
         Subject subject = subjectService.updateSubject(subjectMapper.subject(subjectDTO));
         return subjectMapper.subjectDTO(subject);
     }
 
     @GetMapping("/get-subjects")
-    //@Secured({AuthConstants.VIEW_SUBJECT})
+    @Secured({AuthConstants.VIEW_SUBJECT})
     public List<SubjectDTO> getSubjects(@RequestHeader("authorization") String authHeader,
                                         @RequestParam(defaultValue = "10") int limit,
                                         @RequestParam(defaultValue = "1") int page,
@@ -58,15 +58,14 @@ public class SubjectController {
     }
 
     @GetMapping("/get-subject/{id}")
-    //@Secured({AuthConstants.VIEW_SUBJECT})
+    @Secured({AuthConstants.VIEW_SUBJECT})
     public SubjectDTO getSubjects(@PathVariable Long id){
         return subjectMapper.subjectDTO(subjectService.findSubjectById(id));
     }
 
     @DeleteMapping("/delete-subject/{id}")
-    //@Secured({AuthConstants.MANAGE_SUBJECT})
+    @Secured({AuthConstants.MANAGE_SUBJECT})
     public void deleteSubject(@PathVariable Long id){
         subjectService.deleteSubject(id);
     }
-    
 }

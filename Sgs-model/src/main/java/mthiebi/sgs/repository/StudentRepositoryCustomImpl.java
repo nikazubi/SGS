@@ -18,6 +18,7 @@ import java.util.List;
 public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
 
     private static final QStudent qStudent = QStudent.student;
+    private static final QAcademyClass qAcademyClass = QAcademyClass.academyClass;
     @Autowired
     private JPAQueryFactory qf;
 
@@ -55,6 +56,16 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .where(qAcademyClass.in(academyClassList))
                 .where(likeNameAndSurname)
                 .orderBy(qStudent.createTime.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Student> findAllByAcademyClass(long academyClassId) {
+        return qf.select(qStudent)
+                .from(qStudent)
+                .join(qAcademyClass)
+                .on(qStudent.in(qAcademyClass.studentList))
+                .where(qAcademyClass.id.eq(academyClassId))
                 .fetch();
     }
 }

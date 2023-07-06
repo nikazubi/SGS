@@ -121,3 +121,8 @@ body {
 .status-PENDING {
     color: rgb(0, 136, 255);
 }
+
+
+.behaviourCnt .MuiDataGrid-withBorderColor.MuiDataGrid-columnHeader--filledGroup{
+    width: 653.5px !important;
+}

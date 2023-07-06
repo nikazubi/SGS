@@ -33,7 +33,7 @@ const App = () => {
   return (
       <ErrorBoundary FallbackComponent={ErrorPage}>
         <CssBaseline/>
-         {(loggedIn ?
+          {(loggedIn ?
                 <MainContainer/>
                 :
                 <LoginPage/>
