@@ -128,6 +128,13 @@ body {
     justify-content: center;
 }
 
+.absenceMain__cnt{
+    overflow-x:scroll;
+    max-width:1535px;
+    margin: 50px auto;
+    padding: 0 5px;
+}
+
 .absenceTable{
     width: 100%;
     padding: 5px 10px;

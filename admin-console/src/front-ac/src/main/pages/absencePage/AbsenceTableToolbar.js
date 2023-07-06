@@ -5,6 +5,8 @@ import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useState} from "react";
+import IconButton from "../../../components/buttons/IconButton";
+import {Search} from "@material-ui/icons";
 
 const AbsenceTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -62,6 +64,12 @@ const AbsenceTableToolbar = ({setFilters, filters}) => {
                                                           return copied
                                                       })
                                                    }}/>
+                        </div>
+                        <div style={{marginLeft: 15, width: 100}}>
+                            <IconButton
+                                icon={<Search/>}
+                                onClick={() => setFilters(values)}
+                            />
                         </div>
                     </div>)}
                 </Formik>

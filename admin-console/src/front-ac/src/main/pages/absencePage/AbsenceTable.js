@@ -24,7 +24,7 @@ const CustomTable = () => {
     },[dateTitleSpan])
 
     return ( 
-<div style={{overflowX:'scroll', maxWidth:'1535px', margin: 'auto'}}>        
+<div className="absenceMain__cnt">        
 <table className="absenceTable">
     <tr>
     <th className="absenceTable__nameSurname" colSpan={4} rowSpan={5}>მოსწავლის გვარი,<br></br>სახელი</th>
