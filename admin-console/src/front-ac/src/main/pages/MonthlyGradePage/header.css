@@ -1,0 +1,25 @@
+.header-class {
+    transform: rotate(-90deg);
+    transform-origin: center;
+    white-space: nowrap;
+    position: absolute !important;
+    width: 153px !important;
+}
+
+.monthlyGradeCnt .cell-header {
+    min-width: 60px !important;
+    width: 60px !important;
+}
+
+.monthlyGradeCnt .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor.css-1iyq7zh-MuiDataGrid-columnHeaders{
+    overflow: unset !important;
+    border: unset !important;
+}
+.monthlyGradeCnt .MuiDataGrid-main.css-204u17-MuiDataGrid-main {
+    padding: 90px 0;
+}
+
+.monthlyGradeCnt .css-yrdy0g-MuiDataGrid-columnHeaderRow {
+    margin-bottom: 95px;
+    position: relative;
+}

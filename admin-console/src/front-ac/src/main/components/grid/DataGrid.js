@@ -95,7 +95,7 @@ const DataGridSGS = ({
         rowCount={isSuccess && data? data.totalElements : 0}
         onPageChange={(page) => setPageParams((prev) => ({...prev, page}))}
         onPageSizeChange={(size) => setPageParams((prev) => ({...prev, size}))}
-        loading={isLoading || isFetching || loading}
+        // loading={isLoading || isFetching || loading}
         disableColumnFilter
         rowBuffer={10}
         columnBuffer={columns.length}

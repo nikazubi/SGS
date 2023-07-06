@@ -2,10 +2,11 @@ import React, {useMemo} from 'react';
 import {useUserContext} from "../contexts/user-context";
 import {Grading, Home} from "@mui/icons-material";
 import DashBoard from "../main/pages/HomePage/DashBoard";
-import {AssignmentLate, ChangeHistory, ExitToApp, Grade} from "@material-ui/icons";
+import {AssignmentLate, ChangeHistory, DiscFull, ExitToApp, Grade} from "@material-ui/icons";
 import BehaviourDashBoard from "../main/pages/behaviourPage/BehaviourDashBoard";
 import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 import ChangeRequestDashBoard from "../main/pages/changeRequestPage/ChangeRequestDashBoard";
+import MonthlyGradeDashBoard from "../main/pages/MonthlyGradePage/MonthlyGradeDashBoard";
 
 
 const useNavigationData = () => {
@@ -45,6 +46,15 @@ const useNavigationData = () => {
       icon: <ChangeHistory/>,
       show: false,
       permissions: ["EDIT_GRADES"],
+      collapsible: false
+    },
+    MONTHLY_GRADE: {
+      id: 'MONTHLY_GRADE',
+      name: 'თვის შემაჯამებელი ნიშნები',
+      component: <MonthlyGradeDashBoard/>,
+      icon: <DiscFull/>,
+      show: false,
+      permissions: [],
       collapsible: false
     },
   }), []);
