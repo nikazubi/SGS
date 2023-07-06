@@ -1,12 +1,17 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Chart from "./Chart";
 import Dropdown from "./Dropdown";
 import SemestruliBox from "./SemestruliBox";
 import SmallBox from "./SmallBox";
 import Button from '@mui/material/Button';
-import userDataContext from "../../context/userDataContext";
+import {useUserData, MyContext, useUpdate} from "../../context/userDataContext";
 
 const SemestruliShefaseba = () => {
+    const updateData = useUpdate()
+    const allStudentsData = useUserData()
+    console.log(allStudentsData, 'TEST123 allStudentsData')
+    const avgMonth = allStudentsData.filter((m)=>m.boxdetails[0] === 'თვის ქულა' || m.boxdetails[0] === 'გაცდენილი საათები')
+    console.log(avgMonth,"AVERAGE TEST123")
 
     const subjectsData = ['მათემატიკა', 'ქართული', 'მუსიკა']
     const monthData = [
@@ -34,12 +39,8 @@ const SemestruliShefaseba = () => {
     const [month, setMonth] = useState(monthData)
     const [year, setYear] = useState(yearsData)
     
-    console.log(selectedSubject, selectedMonth, selectedYear)
-    const test123 = useContext(userDataContext)
-    console.log(test123,'GUDA')
     useEffect(()=>{
 
-        
         //API for Subjects month and year
         
         //with returned data should run setSubject, setMonth setYear
@@ -52,6 +53,9 @@ const SemestruliShefaseba = () => {
             setIsButtonActive(false)
         }
         else {
+
+            //es udna eweros handleSearch magram satestoa da ak magitom weria
+
             setIsButtonActive(true)
         }
 
@@ -61,6 +65,97 @@ const SemestruliShefaseba = () => {
 
         if(selectedSubject && selectedMonth && selectedYear) {
             //API AXIOS
+            const allStudentData = [
+                {
+                    name:'შემაჯამებელი დავალება',
+                    testNumber: 'I',
+                    precent: '50%',
+                    boxdetails: [
+                      { label: '1',
+                        grade: 0,
+                      },
+              
+                      { label: '2',
+                        grade: 0,
+                      },
+              
+                      { label: 'აღდ',
+                        grade: 0,
+                      },
+              
+                      { label: 'თვე',
+                        grade: 0,
+                      },
+              
+                      { label: '%',
+                        grade: 0,
+                      }
+                    ]
+                },
+              
+                {
+                    name:'საშინაო დავალება',
+                    testNumber: 'II',
+                    precent: '30%',
+                    boxdetails: [
+                      { label: '1',
+                        grade: 0,
+                      },
+              
+                      { label: '2',
+                        grade: 0,
+                      },
+              
+                      { label: '3',
+                        grade: 0,
+                      },
+              
+                      { label: 'თვე',
+                        grade: 0,
+                      },
+              
+                      { label: '%',
+                        grade: 0,
+                      }
+                    ]
+                },
+              
+                {
+                    name:'საკლასო დავალება',
+                    testNumber: 'III',
+                    precent: '20%',
+                    boxtitle: ['1', '2', 'თვე', '%'],
+                    boxdetails: [
+                      { label: '1',
+                        grade: 0,
+                      },
+                      
+                      { label: '2',
+                        grade: 0,
+                      },
+              
+                      { label: 'თვე',
+                        grade: 0,
+                      },
+              
+                      { label: '%',
+                        grade: 0,
+                      }
+                    ]
+                },
+              
+                {   monthlyGrade: 6,
+                    boxdetails: ['თვის ქულა']
+                },
+              
+                {   gacdena: 3,
+                    boxdetails: ['გაცდენილი საათები']
+                }
+              
+              ]
+
+                updateData(allStudentData)
+            
             setAllSelectedData({selectedSubject, selectedMonth, selectedYear})
         }
     }
@@ -77,28 +172,27 @@ const SemestruliShefaseba = () => {
                 <Button onClick={handleSearch} disabled={isButtonActive} style={{ fontWeight: 'bold'}} variant="contained">ძიება</Button>
             </div>
 
-            <div className="termEstCnt">
+            {allStudentsData && <div className="termEstCnt">
                 {/* id=1 means it's  შემაჯამებელი დავალება*/}
                 <SemestruliBox title={'შემაჯამებელი დავალება'} number={'I'} precent={'50%'} id={1} data={allSelectedData}/>
-                <SemestruliBox title={'საშინაო დავალება'} number={'II'} precent={'30%'} id={2} data={allSelectedData}/>
-                <SemestruliBox title={'საკლასო დავალება'} number={'III'} precent={'20%'} id={3} data={allSelectedData}/>
-            </div>
+                {/* <SemestruliBox title={'საშინაო დავალება'} number={'II'} precent={'30%'} id={2} data={allSelectedData}/>
+                <SemestruliBox title={'საკლასო დავალება'} number={'III'} precent={'20%'} id={3} data={allSelectedData}/> */}
+            </div>}
 
-            <div className="ib__center" style={{gap:'30px'}}>
-                <div className="avgCnt">
-                    <div style={{marginLeft:"20px"}}>თვის ქულა</div>
-                    <SmallBox boxLabel={'თვის ქულა'} />
-                </div>
+            {allStudentsData && <div className="ib__center" style={{gap:'30px'}}>
+                {avgMonth.map(m=>{
+                    return(
+                    <div className="avgCnt">
+                        <div style={{marginLeft:"20px"}}>{m.boxdetails[0]}</div>
+                        <SmallBox boxdetails={m.boxdetails[0]} mark={m} />
+                    </div>
+                    )
+                })}
+            </div>}
 
-                <div className="avgCnt">
-                    <div boxLabel={'გაცდენილი საათები'} style={{marginLeft:"20px"}}>გაცდენილი საათები</div>
-                    <SmallBox/>
-                </div>
-            </div>
-
-            <div className="ibChart">
+            {allStudentsData && <div className="ibChart">
                 <Chart/>
-            </div>
+            </div> }
 
         </div>
      );

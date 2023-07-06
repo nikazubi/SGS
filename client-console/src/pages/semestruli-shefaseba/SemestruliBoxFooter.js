@@ -3,7 +3,7 @@
 
 import SmallBox from "./SmallBox";
 
-const SemestruliBoxFooter = ({testID, data}) => {
+const SemestruliBoxFooter = ({testID, data, boxdetails}) => {
 
     //testID romeli boxia
     //testID -> 1 -> 'შემაჯამებელი წერა'
@@ -50,7 +50,10 @@ const SemestruliBoxFooter = ({testID, data}) => {
     }
 
     return ( 
-        renderGrades()
+        // renderGrades()
+        <div className="grades__footerCnt">
+        {boxdetails.map(m=><SmallBox boxdetails={m}/>)}
+        </div>
      );
 }
  

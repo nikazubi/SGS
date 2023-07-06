@@ -177,6 +177,37 @@ header{
     color: #fff;
 }
 
+.ethicCnt{
+    margin: 60px;
+}
+
+/* .MuiTableCell-root{
+    border: 1px solid #01619b !important;
+} */
+.css-177gid-MuiTableCell-root{
+    border: 1px solid #01619b !important;
+}
+.css-1ex1afd-MuiTableCell-root{
+    border-bottom: 1px solid #01619b !important;
+    border-left: 1px solid #01619b !important;
+}
+.css-15wwp11-MuiTableHead-root{
+    display: table-header-group;
+    position: sticky;
+    top: 0;
+    background: #01619b;
+    z-index: 22;
+}
+
+.css-11xur9t-MuiPaper-root-MuiTableContainer-root{
+    max-height: 500px;
+}
+
+.css-1ndpvdd-MuiTableCell-root{
+    color: #fff !important;
+    border-left: 1px solid #01619b;
+}
+
 @media only screen and (max-width: 1240px) {
     .ibChart{
         overflow-x: scroll;

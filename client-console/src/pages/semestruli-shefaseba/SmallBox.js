@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-const SmallBox = ({testID, boxLabel, data}) => {
-
+const SmallBox = ({testID, boxdetails, mark}) => {
+    console.log(boxdetails,'boxDetail')
+    
     const [studentResult, setStudentResult] = useState([])
     const [grade, setGrade] = useState(0)
     useEffect(()=>{
@@ -30,13 +31,20 @@ const SmallBox = ({testID, boxLabel, data}) => {
             // }]
         }
 
+
     },[])
 
     return ( 
         <div className="ib__center column" style={{margin:"unset"}}>
-            {boxLabel !== 'თვის ქულა' && boxLabel !== 'გაცდენილი საათები' && <div>{boxLabel}</div>}
+            {boxdetails !== 'თვის ქულა' && boxdetails !== 'გაცდენილი საათები' ?
+             <>
+                <div>{boxdetails.label}</div>
+                <div className="grade__data__api">{boxdetails.grade}</div>
+             </>
+              :
+                <div className="grade__data__api">{boxdetails === 'თვის ქულა' ? mark.monthlyGrade : mark.gacdena}</div>
+               }
             {/* write retrived grades from API here */}
-            <div className="grade__data__api">{grade}</div>
 
             {/* {studentResult.map(data=>{
                 if(data.boxLabel !== 'თვის ქულა' && data.boxLabel !== 'გაცდენილი საათები'){

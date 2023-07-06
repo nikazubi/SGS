@@ -1,9 +1,9 @@
+import { useUserData } from "../../context/userDataContext";
 import SemestruliBoxFooter from "./SemestruliBoxFooter";
+// {title, number, precent,id, data}=argumentebia ->SemestruliBox
+const SemestruliBox = () => {
 
-const SemestruliBox = ({title, number, precent,id, data}) => {
-
-    console.log(data,'DATA')
-
+    const allData = useUserData()
     // ArrayOfObj = [{
     //     name: 'შემაჯამებელი დავალება' | 'საშინაო დავალება' | 'საკლასო დავალება' | null,
     //     number: romauli ricxvebi iyo -> III ან I ა.შ | null,
@@ -30,27 +30,40 @@ const SemestruliBox = ({title, number, precent,id, data}) => {
 
 
 {/* id=1 means it's  შემაჯამებელი დავალება*/}
-    const renderBackground = () =>{
+    const renderBackground = (id) =>{
         switch(id){
-            case 1:
+            case 'შემაჯამებელი დავალება':
                 return "#f25d23";
-            case 2:
+            case 'საშინაო დავალება':
                 return "#f79348";
-            case 3:
+            case 'საკლასო დავალება':
                 return "#f8a66a";
             default:
                 return "orange"
         }
     }
-
-    return ( 
-        <div className="semestruliBox" style={{backgroundColor:renderBackground()}}>
-            <div className="semestruliBox__title">{title}</div>
-            <div>{number}</div>
-            <div className="semestruliBox__precent">{precent}</div>
-            <SemestruliBoxFooter data={data} testID={id}/>
-        </div>
-     );
+    console.log(allData, 'TEST123 ALL DATA')
+    return (
+        allData.map(m =>
+            
+          (m.boxdetails[0] !== 'თვის ქულა' && m.boxdetails[0] !== 'გაცდენილი საათები') ? 
+          (
+            <div className="semestruliBox" key={m.name} style={{backgroundColor: renderBackground(m.name)}}>
+              <div className="semestruliBox__title">{m.name}</div>
+              <div>{m.testNumber}</div>
+              <div className="semestruliBox__precent">{m.precent}</div>
+              <SemestruliBoxFooter boxdetails={m.boxdetails} />
+            </div>
+          ) : null
+        )
+      );
+      
+             // <div className="semestruliBox">
+        //     <div className="semestruliBox__title">{title}</div>
+        //     <div>{number}</div>
+        //     <div className="semestruliBox__precent">{precent}</div>
+        //     <SemestruliBoxFooter data={data} testID={id}/>
+        // </div>
 }
  
 export default SemestruliBox;
