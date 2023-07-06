@@ -10,7 +10,7 @@ public class Student extends Audit{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
 
     private String firstName;
 
@@ -24,7 +24,7 @@ public class Student extends Audit{
         this.id = id;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

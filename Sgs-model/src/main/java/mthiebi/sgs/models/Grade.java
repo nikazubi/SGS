@@ -1,8 +1,15 @@
 package mthiebi.sgs.models;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 import javax.persistence.*;
 
 @Entity(name = "GRADES")
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Grade extends Audit{
 
     @Id

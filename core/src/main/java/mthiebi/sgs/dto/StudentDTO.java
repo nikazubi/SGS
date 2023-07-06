@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class StudentDTO {
 
-    private Long id;
+    private long id;
 
     private String firstName;
 

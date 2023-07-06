@@ -3,6 +3,7 @@ import {deleteAuth, setAuth} from "../utils/auth";
 import {useLoggedInUser} from "../hooks/useLoggedInUser";
 import ErrorPage from "../components/ErrorPage";
 import Progress from "../components/Progress";
+import useAxios from "../hooks/useAxios";
 
 const UserContext = createContext(null);
 
@@ -18,8 +19,10 @@ export const useUserContext = () => {
 
 export const UserContextProvider = props => {
     const [loggedIn, setLoggedIn ]= useState(false);
-  // const {data, refetch, isLoading, isError, error} = useLoggedInUser();
-  // const user = data?.user;
+    const [user, setUser ]= useState(false);
+    const {axios} = useAxios();
+    // const {data, refetch, isLoading, isError, error} = useLoggedInUser();
+    // const user = data?.user;
   // const language = data?.user?.systemUserConfig?.languageTag;
   // const updateLogin = () => refetch().then(auth => {
   //   setAuth({
@@ -28,10 +31,12 @@ export const UserContextProvider = props => {
   //   })
   // });
   //
-  const login = (auth) => {
+  const login = async (auth) => {
+      const {data} = await axios.get("/user-and-permissions")
+      setUser(data)
       setLoggedIn(true)
-    // setAuth({accessToken: auth.accessToken, refreshToken: auth.refreshToken});
-    // refetch();
+      // setAuth({accessToken: auth.accessToken, refreshToken: auth.refreshToken});
+      // refetch();
   };
 
   const logout = () => {
@@ -46,11 +51,13 @@ export const UserContextProvider = props => {
   //   }
   // };
   //
-  // let hasPermission = () => true;
-  // if (!!user) {
-  //   user.permissions = user.groups.flatMap(group => group?.systemPermissions ?? []);
-  //   hasPermission = (permission) => user.permissions.includes(permission);
-  // }
+  let hasPermission = (permission) => {
+      if (!!user) {
+          // hasPermission = (permission) => {
+              return user.permissionList.includes(permission.toString());
+          // }
+      }
+  }
   //
   // const userGroupUpdated = ({id}) => {
   //   if (user?.groups && user.groups.map(value => value.id).includes(id)) {
@@ -65,13 +72,13 @@ export const UserContextProvider = props => {
   // } else {
     return <UserContext.Provider
       value={{
-          user: {},
+          user: user,
           login: () => login(),
           logout: () => logout(),
-         hasPermission: () => true,
+         hasPermission: (permission) => hasPermission(permission),
          userUpdated: () => {},
          userGroupUpdated: () => {},
          loggedIn: loggedIn
       }} {...props}/>;
-  // }
+
 };

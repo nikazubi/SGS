@@ -1,18 +1,25 @@
 package mthiebi.sgs.models;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity(name = "CLOSED_PERIOD")
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClosedPeriod extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long AcademyClassId;
+    private Long academyClassId;
 
     private String gradePrefix;
 
@@ -25,11 +32,11 @@ public class ClosedPeriod extends Audit {
     }
 
     public Long getAcademyClassId() {
-        return AcademyClassId;
+        return academyClassId;
     }
 
     public void setAcademyClassId(Long academyClassId) {
-        AcademyClassId = academyClassId;
+        this.academyClassId = academyClassId;
     }
 
     public String getGradePrefix() {

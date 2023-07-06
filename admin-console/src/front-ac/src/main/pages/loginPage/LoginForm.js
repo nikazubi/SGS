@@ -10,11 +10,15 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const { login, logout } = useUserContext();
 
-    useEffect(() =>{
+    useEffect(() => {
         //todo will probably fail when token expires
+        const checkTokenAndLogin = async () =>{
         const token = getAccessToken();
-        if (token)
-            login()
+            if (token) {
+                await login()
+            }
+        }
+        checkTokenAndLogin()
     },[])
 
     const handleEmailChange = (e) => {
@@ -34,8 +38,8 @@ const LoginPage = () => {
             password: password
         })
         if (response?.data?.jwtToken) {
-            login()
-            setAuth(response?.data?.jwtToken)
+            await setAuth(response?.data?.jwtToken);
+            await login()
         } else {
             logout()
         }

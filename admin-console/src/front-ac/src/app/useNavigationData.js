@@ -10,7 +10,7 @@ import MonthlyGradeDashBoard from "../main/pages/MonthlyGradePage/MonthlyGradeDa
 
 
 const useNavigationData = () => {
-  const {hasPermission} = useUserContext();
+  const {hasPermission, user} = useUserContext();
 
   const pages = useMemo(() => ({
     GRADES: {
@@ -19,7 +19,7 @@ const useNavigationData = () => {
       component: <DashBoard/>,
       icon: <Grading/>,
       show: false,
-      permissions: [],
+      permissions: ["ADD_GRADES", "MANAGE_GRADES"],
     },
     BEHAVIOUR: {
       id: 'BEHAVIOUR',
@@ -27,7 +27,7 @@ const useNavigationData = () => {
       component: <BehaviourDashBoard/>,
       icon: <Grade/>,
       show: false,
-      permissions: [],
+      permissions: ["ADD_GRADES", "MANAGE_GRADES"],
       collapsible: false
     },
     ABSENCE: {
@@ -36,7 +36,7 @@ const useNavigationData = () => {
       component: <AbsenceDashBoard/>,
       icon: <ExitToApp/>,
       show: false,
-      permissions: [],
+      permissions: ["ADD_GRADES", "MANAGE_GRADES"],
       collapsible: false
     },
     CHANGE_REQUEST: {
@@ -45,7 +45,7 @@ const useNavigationData = () => {
       component: <ChangeRequestDashBoard/>,
       icon: <ChangeHistory/>,
       show: false,
-      permissions: ["EDIT_GRADES"],
+      permissions: ["MANAGE_CHANGE_REQUESTS", "VIEW_CHANGE_REQUESTS"],
       collapsible: false
     },
     MONTHLY_GRADE: {
@@ -57,7 +57,7 @@ const useNavigationData = () => {
       permissions: [],
       collapsible: false
     },
-  }), []);
+  }), [user]);
 
   return useMemo(() => {
     const createPageLabels = (page) => {
@@ -79,23 +79,28 @@ const useNavigationData = () => {
       if (!requiredPermissions) {
         return true;
       }
-
-      return requiredPermissions.map(hasPermission).reduce((curr, next) => curr || next, false);
+      return requiredPermissions.map(val => {
+        return hasPermission(val)
+      }).reduce((curr, next) => curr || next, false);
     };
-
     return Object.values(pages)
       .map(page => {
-        page.show = hasAnyPermission(page, hasPermission);
-        if (page.collapsable) {
-          Object.values(page.options).forEach(page => {
-            page.show = hasAnyPermission(page, hasPermission);
-          });
+        if(page.show !== true) {
+          const hasPerm =  hasAnyPermission(page, hasPermission);
+          page.show = hasPerm? hasPerm : false;
+          if (page.collapsable) {
+            Object.values(page.options).forEach(page => {
+              const hasPerm =  hasAnyPermission(page, hasPermission);
+              page.show = hasPerm? hasPerm : false;
+              page.show = hasAnyPermission(page, hasPermission);
+            });
+          }
         }
         createPageLabels(page);
         return page;
       });
 
-  }, [pages, hasPermission]);
+  }, [pages]);
 };
 
 

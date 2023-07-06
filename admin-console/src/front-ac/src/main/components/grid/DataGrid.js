@@ -66,7 +66,6 @@ const DataGridSGS = ({
         );
     }
   const handleCellCommit = (params) => {
-    console.log(params)
     const row = data.content.find(element => element[rowIdField] === params.id);
     const field = params.field;
     const changedRow = {

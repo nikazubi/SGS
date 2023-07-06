@@ -24,13 +24,13 @@ public class GradeController {
     private GradeMapper gradeMapper;
 
     @PostMapping("/insert-student-grade")
-//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
+    @Secured({AuthConstants.ADD_GRADES})
     public GradeDTO insertGrade(@RequestBody GradeDTO gradeDTO){
         return gradeMapper.gradeDTO(gradeService.insertStudentGrade(gradeMapper.grade(gradeDTO)));
     }
 
     @GetMapping("/get-grades")
-//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
+    @Secured({AuthConstants.MANAGE_GRADES})
     public List<GradeDTO> getGradeByClassAndSubject(@RequestParam(required = false) Long classId,
                                                     @RequestParam(required = false) Long subjectId,
                                                     @RequestParam(required = false) Long studentId,
@@ -42,7 +42,7 @@ public class GradeController {
     }
 
     @GetMapping("/get-grades-grouped")
-//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
+    @Secured({AuthConstants.MANAGE_GRADES})
     public List<GradeWrapperDto> getGradeGrouped(@RequestParam(required = false) Long classId,
                                                  @RequestParam(required = false) Long subjectId,
                                                  @RequestParam(required = false) Long studentId,
@@ -75,5 +75,4 @@ public class GradeController {
                     .collect(Collectors.toList());
         }
     }
-
 }

@@ -120,7 +120,7 @@ const ChangeRequestDashBoard = () => {
     return (
         <div>
             <ChangeRequestTableToolbar filters={filters} setFilters={setFilters}/>
-            <div style={{height: 500, width: '100%'}}>
+            <div style={{height: 560, width: '98%', marginLeft:15, marginRight:15}}>
                 <DataGridPaper>
                     <DataGridSGS
                         // queryKey={"GRADES"}

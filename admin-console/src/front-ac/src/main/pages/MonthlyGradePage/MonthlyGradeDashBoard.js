@@ -15,11 +15,9 @@ const MonthlyGradeDashBoard = () => {
                 e.style = "left: " + (103 + (index * 60)) + "px";
                 // e.style.left = (103 + (index * 57));
                 // e.style.color = "red";
-                console.log('test123 GUDAAAA', e)
             })
         }),1000)
 
-        console.log('test123 ZUBII')
     },[])
 
     const gradeColumns = [

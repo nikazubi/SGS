@@ -20,4 +20,6 @@ public interface StudentRepositoryCustom {
                                  String personalNumber);
 
     List<Student> findByNameAndSurname(List<AcademyClass> academyClassList, String queryKey);
+
+    List<Student> findAllByAcademyClass(long academyClassId);
 }

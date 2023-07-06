@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ClosedPeriodService {
 
-    ClosedPeriod createClosedPeriod(ClosedPeriod closedPeriod);
+    ClosedPeriod createClosedPeriod(long academyClassId);
 
     void deleteClosedPeriod(Long closedPeriodId);
 

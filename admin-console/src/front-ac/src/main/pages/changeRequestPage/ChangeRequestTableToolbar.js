@@ -7,14 +7,21 @@ import {FormikDatePickerField} from "../../components/formik/FormikDatePickerFie
 import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
+import Button from "../../../components/buttons/Button";
+import {closePeriod} from "./useClosePeriod";
+import {useUserContext} from "../../../contexts/user-context";
 
 const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
-    const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(new Date());
+    const {hasPermission} = useUserContext();
+
+    const hasManageClosePeriodPermission = hasPermission("MANAGE_CLOSED_PERIOD")
+
 
     return (
-        <div>
+        <div style={{width:'100%'}}>
             <FlexBox justifyContent='space-between'>
                 <Formik
                     initialValues={
@@ -31,7 +38,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                     enableReinitialize
                 >
                     {({ values, setFieldValue }) => (
-                    <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
+                    <div style={{display: "flex", flexDirection: 'row', marginTop: 50,}}>
                         <div style={{marginLeft: 50, width: 300}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
@@ -73,6 +80,19 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                 onClick={() => setFilters(values)}
                             />
                         </div>
+                        {hasManageClosePeriodPermission &&
+                            <div style={{position: 'absolute', right: '5%'}}>
+                            <Button style={{backgroundColor: !filters || !filters.academyClass || ! filters.academyClass.id? "#b3aabf":"#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
+                                    disabled={!filters || !filters.academyClass || ! filters.academyClass.id}
+                                    onClick={async () => {
+                                        const params = {
+                                            academyClassId: filters.academyClass.id
+                                        }
+                                        await closePeriod(params)
+                                    }}>
+                                {"პერიოდის დახურვა"}
+                            </Button>
+                        </div>}
                     </div>)}
                 </Formik>
             </FlexBox>

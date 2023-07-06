@@ -31,7 +31,7 @@ public class ChangeRequestController {
     private GradeMapper gradeMapper;
 
     @GetMapping("/get-change-requests")
-//    @Secured({AuthConstants.EDIT_GRADES})
+    @Secured({AuthConstants.VIEW_CHANGE_REQUESTS})
     public List<ChangeRequestDTO> getChangeRequests(@RequestHeader("authorization") String authHeader,
                                                     @RequestParam(required = false) Long classId,
                                                     @RequestParam(required = false) Long studentId,
@@ -48,7 +48,7 @@ public class ChangeRequestController {
     }
 
     @PostMapping("/create-change-request")
-//    @Secured({AuthConstants.ADD_OR_VIEW_GRADES})
+    @Secured({AuthConstants.MANAGE_CHANGE_REQUESTS})
     public ChangeRequestDTO createChangeRequest(@RequestHeader("authorization") String authHeader,
                                                 @RequestBody ChangeRequestDTO changeRequestDTO) throws Exception {
         String username = utilsJwt.getUsernameFromHeader(authHeader);
@@ -57,7 +57,7 @@ public class ChangeRequestController {
     }
 
     @PutMapping("/change-request-status")
-//    @Secured({AuthConstants.EDIT_GRADES})
+    @Secured({AuthConstants.MANAGE_CHANGE_REQUESTS})
     public void changeRequestStatus(@RequestBody ChangeRequestStatusChangeDTO changeRequestStatus){
         changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(), changeRequestStatus.getChangeRequestStatus());
     }
@@ -86,6 +86,4 @@ public class ChangeRequestController {
 
         return changeRequest;
     }
-
 }
-
