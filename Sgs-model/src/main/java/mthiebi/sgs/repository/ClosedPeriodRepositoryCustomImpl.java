@@ -26,4 +26,13 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
                 .fetchOne();
     }
+
+    @Override
+    public ClosedPeriod findClosedPeriodByAcademyClassIdAndPrefix(Long academyClassId, String gradePrefix) {
+        return qf.selectFrom(qClosedPeriod)
+                .where(qClosedPeriod.AcademyClassId.eq(academyClassId))
+                .where(qClosedPeriod.gradePrefix.eq(gradePrefix))
+                .orderBy(qClosedPeriod.lastUpdateTime.desc())
+                .fetchOne();
+    }
 }

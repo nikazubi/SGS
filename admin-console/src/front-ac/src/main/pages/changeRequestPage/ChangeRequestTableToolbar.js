@@ -4,21 +4,27 @@ import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
 import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import Button from "../../../components/buttons/Button";
 import {closePeriod} from "./useClosePeriod";
 import {useUserContext} from "../../../contexts/user-context";
+import { format } from 'date-fns';
+import axios from "../../../utils/axios";
 
 const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const [date, setDate] = useState(new Date());
     const {hasPermission} = useUserContext();
-
+    const [lastCloseDate, setLastCloseDate] = useState(new Date());
     const hasManageClosePeriodPermission = hasPermission("MANAGE_CLOSED_PERIOD")
 
+    useEffect(() => {
+        axios.get("change-request/get-last-update-time")
+            .then((response) => setLastCloseDate(format(response.data, 'dd-MM-yyyy')))
+    }, []);
 
     return (
         <div style={{width:'100%'}}>
@@ -81,18 +87,18 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                             />
                         </div>
                         {hasManageClosePeriodPermission &&
-                            <div style={{position: 'absolute', right: '5%'}}>
-                            <Button style={{backgroundColor: !filters || !filters.academyClass || ! filters.academyClass.id? "#b3aabf":"#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
-                                    disabled={!filters || !filters.academyClass || ! filters.academyClass.id}
+                            <div style={{position: 'absolute', right: '2%'}}>
+                            <span>{"ბოლო დახურვის თარიღია: " + format(lastCloseDate, 'dd-MM-yyyy')}</span>
+                            <Button style={{backgroundColor: "#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
+                                    disabled={false}
                                     onClick={async () => {
-                                        const params = {
-                                            academyClassId: filters.academyClass.id
-                                        }
-                                        await closePeriod(params)
+                                        await closePeriod();
+                                        // let lastDate = new Date();
+                                        // setLastCloseDate(lastDate);
                                     }}>
                                 {"პერიოდის დახურვა"}
                             </Button>
-                        </div>}
+                            </div>}
                     </div>)}
                 </Formik>
             </FlexBox>

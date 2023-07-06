@@ -10,4 +10,6 @@ import java.util.List;
 public interface ChangeRequestRepositoryCustom {
 
     List<ChangeRequest> getChangeRequests(List<AcademyClass> academyClassList, Long classId, Long StudentId, Date date);
+
+    Date getLastUpdateDate();
 }

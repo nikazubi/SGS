@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface ClosedPeriodService {
 
-    ClosedPeriod createClosedPeriod(long academyClassId);
+    ClosedPeriod createClosedPeriod(String username);
 
     void deleteClosedPeriod(Long closedPeriodId);
 
-    ClosedPeriod getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId);
+    boolean getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId);
 
     List<ClosedPeriod> getClosedPeriods();
 

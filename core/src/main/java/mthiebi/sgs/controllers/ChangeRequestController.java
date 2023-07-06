@@ -62,6 +62,11 @@ public class ChangeRequestController {
         changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(), changeRequestStatus.getChangeRequestStatus());
     }
 
+    @GetMapping("/get-last-update-time")
+    public Date getLastUpdateTime() {
+        return changeRequestService.getLastUpdateTime();
+    }
+
     ChangeRequestDTO adjustDTO(ChangeRequest changeRequest){
         ChangeRequestDTO changeRequestDTO = new ChangeRequestDTO();
         changeRequestDTO.setId(changeRequest.getId());
@@ -86,4 +91,5 @@ public class ChangeRequestController {
 
         return changeRequest;
     }
+
 }

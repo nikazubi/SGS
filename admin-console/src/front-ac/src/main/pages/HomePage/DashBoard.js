@@ -4,7 +4,6 @@ import DataGridSGS from "../../components/grid/DataGrid";
 import useGrades from "./useGrades";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import useUpdateGrade from "./useUpdateGrade";
-import ConfirmationModal from "../../../components/modals/ConfirmationModal";
 import axios from "../../../utils/axios";
 import Modal from "../../../components/modals/Modal";
 import TextField from "../../components/formik/TextField";
@@ -392,7 +391,9 @@ const DashBoard = () => {
                     gradeId: gradesOfType[0].id
                 };
                 const {data} = await axios.get("/close-period/get-period-by-class", {params});
-                if (data.length === undefined && newRow[gradeType] > 0) {
+                console.log(data);
+
+                if (data) {
                     setNewRowToSave({
                             newValue: newRow[gradeType],
                             id: gradesOfType[0].id,

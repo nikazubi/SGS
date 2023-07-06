@@ -62,4 +62,11 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
         List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
         return changeRequestRepository.getChangeRequests(academyClassList, classId, studentId, date);
     }
+
+    @Override
+    public Date getLastUpdateTime() {
+        return changeRequestRepository.getLastUpdateDate();
+    }
+
+
 }

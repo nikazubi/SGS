@@ -10,7 +10,7 @@ const AbsenceDashBoard = () => {
     return (
         <div className="absenceMain">
             <AbsenceTableToolbar filters={filters} setFilters={setFilters}/>
-            <CustomTable/>
+            {/*<CustomTable/>*/}
         </div>
     )
 }

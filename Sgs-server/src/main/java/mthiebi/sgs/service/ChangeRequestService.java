@@ -14,4 +14,5 @@ public interface ChangeRequestService {
 
     List<ChangeRequest> getChangeRequests(String username, Long classId, Long studentId, Date date);
 
+    Date getLastUpdateTime();
 }

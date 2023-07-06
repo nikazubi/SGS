@@ -39,4 +39,11 @@ public class ChangeRequestRepositoryCustomImpl implements ChangeRequestRepositor
                 .orderBy(qChangeRequest.createTime.desc())
                 .fetch();
     }
+
+    @Override
+    public Date getLastUpdateDate() {
+        return qf.select(qChangeRequest.lastUpdateTime.max())
+                .from(qChangeRequest)
+                .fetchOne();
+    }
 }
