@@ -54,7 +54,7 @@ const useNavigationData = () => {
       component: <MonthlyGradeDashBoard/>,
       icon: <DiscFull/>,
       show: false,
-      permissions: [],
+      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
     },
   }), [user]);

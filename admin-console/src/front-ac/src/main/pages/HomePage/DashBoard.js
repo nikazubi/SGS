@@ -454,7 +454,7 @@ const DashBoard = () => {
                 title={"ნიშნის ცვლილება"}
                 onSubmit={
                     async (options) => {
-                        await axios.post("/change-request/create-change-request", newRowToSave);
+                        await axios.post("/change-request/create-change-request", {...newRowToSave, description: descriptionText});
                         setOpenRequestModal(false);
                     }}
             >
@@ -464,7 +464,7 @@ const DashBoard = () => {
                     onChange={(e) => {
                         setDescriptionText(e.target.value);}}
                     value={descriptionText}
-                    label={"ახსნა განმარტება"}
+                    label={"ახსნა-განმარტება"}
                 />
             </Modal>
         </div>

@@ -9,23 +9,30 @@ const MonthlyGradeDashBoard = () => {
 
     const [data, setData] = useState([]);
 
-    useEffect(()=>{
-        setTimeout((function (){
-            document.querySelectorAll('.header-class').forEach((e,index)=>{
-                e.style = "left: " + (103 + (index * 60)) + "px";
-                // e.style.left = (103 + (index * 57));
-                // e.style.color = "red";
-            })
-        }),1000)
+    // useEffect(()=>{
+    //     setTimeout((function (){
+    //         document.querySelectorAll('.header-class').forEach((e,index)=>{
+    //             e.style = "left: " + (103 + (index * 60)) + "px";
+    //             // e.style.left = (103 + (index * 57));
+    //             // e.style.color = "red";
+    //         })
+    //     }),1000)
 
-    },[])
+    // },[])
 
     const gradeColumns = [
         {
             headerName: "მოსწავლე",
             renderCell: ({row}) => {
-                return row.name;
+                return ( <div  >
+                    {row.name}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
+                    {'მოსწავლე'}
+                </div>
+            ),
             field: 'name',
             sortable: false,
             align: 'center',
@@ -34,9 +41,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ქართული ლიტ",
             renderCell: ({row}) => {
-                return row.geo;
+                return (<div  >
+                    {row.geo}
+                </div>);
             },
-
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ქართული ლიტ '}
+                </div>
+            ),
             field: 'geo',
             sortable: false,
             align: 'center',
@@ -45,8 +58,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ქართული ენა",
             renderCell: ({row}) => {
-                return row.geolang;
+                return (<div  >
+                    {row.geolang}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ქართული ენა'}
+                </div>
+            ),
             field: 'geolang',
             sortable: false,
             align: 'center',
@@ -56,8 +76,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ქართული წერა",
             renderCell: ({row}) => {
-                return row.write;
+                return (<div  >
+                    {row.write}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ქართული წერა'}
+                </div>
+            ),
             field: 'write',
             sortable: false,
             align: 'center',
@@ -66,8 +93,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "მათემატიკა",
             renderCell: ({row}) => {
-                return row.math;
+                return (<div  >
+                    {row.math}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'მათემატიკა'}
+                </div>
+            ),
             field: 'math',
             sortable: false,
             align: 'center',
@@ -76,8 +110,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ინგლისური",
             renderCell: ({row}) => {
-                return row.eng;
+                return (<div  >
+                    {row.eng}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ინგლისური'}
+                </div>
+            ),
             field: 'eng',
             sortable: false,
             align: 'center',
@@ -86,8 +127,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ინგლისური ლიტ",
             renderCell: ({row}) => {
-                return row.englit;
+                return (<div  >
+                    {row.englit}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ინგლისური ლიტ'}
+                </div>
+            ),
             field: 'englit',
             sortable: false,
             align: 'center',
@@ -96,8 +144,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "გერმანული",
             renderCell: ({row}) => {
-                return row.german;
+                return (<div  >
+                    {row.german}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'გერმანული'}
+                </div>
+            ),
             field: 'german',
             sortable: false,
             align: 'center',
@@ -106,8 +161,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "რუსული ენა",
             renderCell: ({row}) => {
-                return row.russia;
+                return (<div  >
+                    {row.russia}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'რუსული ენა'}
+                </div>
+            ),
             field: 'russia',
             sortable: false,
             align: 'center',
@@ -116,8 +178,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ბიოლოგია",
             renderCell: ({row}) => {
-                return row.bio;
+                return (<div  >
+                    {row.bio}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ბიოლოგია'}
+                </div>
+            ),
             field: 'bio',
             sortable: false,
             align: 'center',
@@ -126,8 +195,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ქიმია",
             renderCell: ({row}) => {
-                return row.chemistry;
+                return (<div  >
+                    {row.chemistry}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ქიმია'}
+                </div>
+            ),
             field: 'chemistry',
             sortable: false,
             align: 'center',
@@ -136,8 +212,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ფიზიკა",
             renderCell: ({row}) => {
-                return row.physic;
+                return (<div  >
+                    {row.phisic}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ფიზიკა'}
+                </div>
+            ),
             field: 'physic',
             sortable: false,
             align: 'center',
@@ -146,8 +229,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ისტორია",
             renderCell: ({row}) => {
-                return row.history;
+                return (<div  >
+                    {row.history}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ისტორია'}
+                </div>
+            ),
             field: 'history',
             sortable: false,
             align: 'center',
@@ -156,8 +246,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "გეოგრაფია",
             renderCell: ({row}) => {
-                return row.geography;
+                return (<div  >
+                    {row.geography}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'გეოგრაფია'}
+                </div>
+            ),
             field: 'geography',
             sortable: false,
             align: 'center',
@@ -166,8 +263,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "მოქალაქეობა",
             renderCell: ({row}) => {
-                return row.nationaly;
+                return (<div  >
+                    {row.nationaly}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'მოქალაქეობა'}
+                </div>
+            ),
             field: 'nationaly',
             sortable: false,
             align: 'center',
@@ -176,8 +280,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ჰუმ. აზროვნება",
             renderCell: ({row}) => {
-                return row.hum;
+                return (<div  >
+                    {row.hum}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ჰუმ. აზროვნება'}
+                </div>
+            ),
             field: 'hum',
             sortable: false,
             align: 'center',
@@ -186,8 +297,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "სპორტი",
             renderCell: ({row}) => {
-                return row.sport;
+                return (<div  >
+                    {row.sport}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'სპორტი'}
+                </div>
+            ),
             field: 'sport',
             sortable: false,
             align: 'center',
@@ -196,8 +314,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "ეთიკური ნორმა",
             renderCell: ({row}) => {
-                return row.ethic;
+                return (<div  >
+                    {row.ethic}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'ეთიკური ნორმა'}
+                </div>
+            ),
             field: 'ethic',
             sortable: false,
             align: 'center',
@@ -206,8 +331,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "რეიტინგი",
             renderCell: ({row}) => {
-                return row.rating;
+                return (<div  >
+                    {row.rating}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'რეიტინგი'}
+                </div>
+            ),
             field: 'rating',
             sortable: false,
             align: 'center',
@@ -216,8 +348,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "გაცდენილი საათი",
             renderCell: ({row}) => {
-                return row.absent;
+                return (<div  >
+                    {row.absent}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                    {'გაცდენილი საათი'}
+                </div>
+            ),
             field: 'absent',
             sortable: false,
             align: 'center',
@@ -226,8 +365,15 @@ const MonthlyGradeDashBoard = () => {
         {
             headerName: "შენიშვნა",
             renderCell: ({row}) => {
-                return row.mistake;
+                return (<div  >
+                    {row.mistake}
+                </div>);
             },
+            renderHeader: (params) => (
+                <div style={{writingMode: "vertical-rl", height:150,fontSize:16, textAlign:'center'}}>
+                    {'შენიშვნა'}
+                </div>
+            ),
             field: 'mistake',
             sortable: false,
             align: 'center',
@@ -243,9 +389,10 @@ const MonthlyGradeDashBoard = () => {
                 <DataGridPaper>
                     <DataGridSGS
                         sx={{
+                            overflowX: 'hidden',
                             '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
-                                border: `3px solid ${
-                                    '#bbbbbb'
+                                borderRight: `3px solid ${
+                                    '#f4f4f4'
                                 }`,
                             },
                         }}
