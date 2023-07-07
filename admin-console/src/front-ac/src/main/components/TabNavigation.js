@@ -34,9 +34,11 @@ const TabNavigation = () => {
         justifyContent: 'space-between',
         backgroundColor: theme.navigation.primary.main,
         minHeight: 50,
+        width: 'unset'
       }}
       elevation={0}
     >
+      <div className="HeaderTabNav">
       <Tabs
         TabIndicatorProps={{
           style: {display: 'none'}
@@ -64,6 +66,7 @@ const TabNavigation = () => {
           />
         ))}
       </Tabs>
+      </div>
       <UserBar/>
     </AppBar>
   );

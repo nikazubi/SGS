@@ -35,7 +35,7 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                     enableReinitialize
                 >
                     {({ values, setFieldValue }) => (
-                    <div style={{display: "flex", flexDirection: 'row', marginTop: 25, marginBottom:25}}>
+                    <div style={{display: "flex", flexDirection: 'row', marginTop: 50, marginBottom:25}}>
                             <div style={{marginLeft: 15, width: 300}}>
                                 <FormikAutocomplete name="academyClass"
                                                     multiple={false}

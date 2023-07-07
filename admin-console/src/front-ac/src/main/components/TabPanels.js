@@ -8,8 +8,8 @@ import { useNavigate } from '../../contexts/navigation-context';
 
 const Wrapper = styled(Box)({
   flexGrow: 1,
-  height: 0,
-  overflow: 'auto',
+  height: 'fit-content',
+  overflow: 'hidden',
 });
 
 const TabPanels = () => {

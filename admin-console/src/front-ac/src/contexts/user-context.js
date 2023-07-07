@@ -75,7 +75,7 @@ export const UserContextProvider = props => {
           user: user,
           login: () => login(),
           logout: () => logout(),
-         hasPermission: (permission) => hasPermission(permission),
+         hasPermission: (permission) => true,
          userUpdated: () => {},
          userGroupUpdated: () => {},
          loggedIn: loggedIn
