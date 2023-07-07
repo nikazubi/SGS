@@ -73,7 +73,7 @@ public class GradeServiceImpl implements GradeService {
                                                                        Date createTime,
                                                                        String gradeTypePrefix) {
         List<Student> allStudentsInAcademyClass = studentRepository.findAllByAcademyClass(classId);
-        Subject currSubject = subjectRepository.findById(subjectId).orElse(null);
+        Subject currSubject = subjectId == null? null : subjectRepository.findById(subjectId).orElse(null);
         AcademyClass academyClass = academyClassRepository.findById(classId).orElse(null);
 
         List<Grade> existingGrades =  gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)

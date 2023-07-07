@@ -20,7 +20,7 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
     @Override
     public ClosedPeriod findClosedPeriodByAcademyClassIdAndPrefix(Long academyClassId, String gradePrefix, Date lastUpdate) {
         return qf.selectFrom(qClosedPeriod)
-                .where(qClosedPeriod.AcademyClassId.eq(academyClassId))
+                .where(qClosedPeriod.academyClassId.eq(academyClassId))
                 .where(qClosedPeriod.gradePrefix.eq(gradePrefix))
                 .where(qClosedPeriod.lastUpdateTime.after(lastUpdate))
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
@@ -30,7 +30,7 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
     @Override
     public ClosedPeriod findClosedPeriodByAcademyClassIdAndPrefix(Long academyClassId, String gradePrefix) {
         return qf.selectFrom(qClosedPeriod)
-                .where(qClosedPeriod.AcademyClassId.eq(academyClassId))
+                .where(qClosedPeriod.academyClassId.eq(academyClassId))
                 .where(qClosedPeriod.gradePrefix.eq(gradePrefix))
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
                 .fetchOne();

@@ -22,7 +22,7 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                             student: '',
                             academyClass: '',
                             date: date,
-                            groupBy: 'STUDENT',
+                            groupByClause: 'STUDENT'
                         }
                     }
                     onSubmit={() => {
