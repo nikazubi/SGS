@@ -6,13 +6,13 @@ import styled from '@material-ui/core/styles/styled';
 const Wrapper = styled('div')({
   flexGrow: 1,
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   width: 'calc(100% - 300px)',
   backgroundColor: "#e3f2fa"
 });
 
 const Content = () => {
-  return (
+  return (  
     <Wrapper>
       <TabNavigation />
       <TabPanels />

@@ -34,3 +34,19 @@ html, body, #root {
 .prettyScroll::-webkit-scrollbar-thumb:hover {
     background: #c4c4c4;
 }
+
+/* Header navigation styling */
+
+.HeaderTabNav .MuiAppBar-root{
+    width: unset !important;
+}
+
+.HeaderTabNav .Styled\(MuiBox\)-root-18{
+    height: unset !important;
+}
+
+.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorSecondary.MuiIconButton-sizeSmall{
+    position: absolute !important;
+    top: 10px !important;
+    right: 0 !important;
+}

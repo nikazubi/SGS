@@ -6,7 +6,7 @@
 
 body {
     font-family: "Roboto", "Dejavu Sans";
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
 }
 
 .main-container {
@@ -38,6 +38,7 @@ body {
 
 .page-tab .MuiTab-root {
     padding: 6px 6px 6px 20px;
+    width: 100% !important;
 }
 
 .page-tab .Mui-selected {
@@ -177,4 +178,24 @@ body {
 
 .behaviourCnt .MuiDataGrid-withBorderColor.MuiDataGrid-columnHeader--filledGroup{
     width: 653.5px !important;
+}
+
+.behaviourCnt{
+    overflow-x: scroll;
+}
+
+/* Header navigation styling */
+
+.HeaderTabNav{
+    background: #e3f2fa;
+    padding-top: 88px;
+}
+
+.HeaderTabNav .MuiTabs-flexContainer.css-heg063-MuiTabs-flexContainer{
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.HeaderTabNav .MuiBox-root-19{
+    height: fit-content !important;
 }

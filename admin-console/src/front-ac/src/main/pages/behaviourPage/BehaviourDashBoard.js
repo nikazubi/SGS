@@ -485,9 +485,10 @@ const BehaviourDashBoard = () => {
     }
 
     return (
-        <div className="behaviourCnt">
+        <>
             <BehaviourTableToolbar filters={filters} setFilters={setFilters}/>
-            <div style={{height: 561, width: '98%', marginLeft:15, marginRight:15}}>
+            <div className="behaviourCnt">
+            <div style={{height: `calc(100vh - ${145}px)`, width: 'fit-content', marginLeft:15, marginRight:15}}>
                 <DataGridPaper>
                     <DataGridSGS
                         sx={{
@@ -523,6 +524,7 @@ const BehaviourDashBoard = () => {
                 onClose={() => (setOpenRequestModal(false))}
             />
         </div>
+        </>
     )
 }
 
