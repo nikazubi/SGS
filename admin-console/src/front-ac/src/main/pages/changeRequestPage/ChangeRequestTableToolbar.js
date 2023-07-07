@@ -12,18 +12,19 @@ import {closePeriod} from "./useClosePeriod";
 import {useUserContext} from "../../../contexts/user-context";
 import { format } from 'date-fns';
 import axios from "../../../utils/axios";
+import moment from "moment";
 
 const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const [date, setDate] = useState(new Date());
     const {hasPermission} = useUserContext();
-    const [lastCloseDate, setLastCloseDate] = useState(new Date());
+    const [lastCloseDate, setLastCloseDate] = useState("");
     const hasManageClosePeriodPermission = hasPermission("MANAGE_CLOSED_PERIOD")
 
     useEffect(() => {
         axios.get("change-request/get-last-update-time")
-            .then((response) => setLastCloseDate(format(response.data, 'dd-MM-yyyy')))
+            .then(({data}) => setLastCloseDate(data? moment.utc(data).local().format("DD-MM-YYYY") : ""))
     }, []);
 
     return (
@@ -88,7 +89,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                         </div>
                         {hasManageClosePeriodPermission &&
                             <div style={{position: 'absolute', right: '2%'}}>
-                            <span>{"ბოლო დახურვის თარიღია: " + format(lastCloseDate, 'dd-MM-yyyy')}</span>
+                            <span>{lastCloseDate}</span>
                             <Button style={{backgroundColor: "#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
                                     disabled={false}
                                     onClick={async () => {

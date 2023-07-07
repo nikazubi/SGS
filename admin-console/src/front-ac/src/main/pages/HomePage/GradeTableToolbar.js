@@ -9,11 +9,14 @@ import {useState} from "react";
 import Button from "@material-ui/core/Button";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
+import {closePeriod} from "../changeRequestPage/useClosePeriod";
+import useCalculateGeneralGrade, {calculateMonthlyGrade} from "./calculateMonthlyGrade";
 
 const GradeTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchSubjects} = useSubjects();
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
+    const {mutateAsync: calculateGeneralGrade} = useCalculateGeneralGrade();
     const [date, setDate] = useState(new Date())
 
     return (
@@ -96,6 +99,22 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                 icon={<Search/>}
                                 onClick={() => setFilters(values)}
                                 />
+                        </div>
+                        <div style={{marginLeft: 15, width: 250}}>
+                            <Button style={{backgroundColor: "#45c1a4", color: "#fff", marginBottom: -30, fontSize: 16}}
+                                    disabled={!filters.academyClass || !filters.subject}
+                                    onClick={async () => {
+                                        console.log("hello")
+                                        console.log(date.getTime())
+                                        const params = {
+                                            academyClassId: filters.academyClass.id,
+                                            subjectId: filters.subject.id,
+                                            date: new Date(date).getTime(),
+                                        }
+                                        await calculateGeneralGrade(params);
+                                    }}>
+                                {"თვის ქულის დათვლა"}
+                            </Button>
                         </div>
 
                     </div>)}
