@@ -8,7 +8,8 @@ import org.mapstruct.Named;
 
 @Mapper(config = ACMapperConfig.class, imports = {StudentMapper.class,
                                                     AcademyClassMapper.class,
-                                                    SubjectMapper.class})
+                                                    SubjectMapper.class,
+                                                    AuditMapper.class})
 public interface GradeMapper {
 
     @Mapping(source = "gradeType", target = "gradeType", qualifiedByName = "stringGradeTypeToEnum")

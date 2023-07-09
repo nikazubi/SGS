@@ -58,7 +58,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
         List<Student> studentList = academyClass.getStudentList();
         for (Student student : studentList) {
             List<Grade> gradeList = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(academyClassId, null, student.getId(), date);
-            List<Grade> withoutMonthly = gradeList.stream().filter(grade -> grade.getGradeType() != GradeType.ABSENT_MONTHLY && grade.getGradeType().name().startsWith("ABSENT")).collect(Collectors.toList());
+            List<Grade> withoutMonthly = gradeList.stream().filter(grade -> grade.getGradeType() != GradeType.ABSENCE_MONTHLY && grade.getGradeType().name().startsWith("ABSENT")).collect(Collectors.toList());
             Long sum = withoutMonthly.stream().map(Grade::getValue).reduce(0L, (first, second) -> BigDecimal.valueOf(first).add(BigDecimal.valueOf(second)).longValue());
             Long monthly = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(withoutMonthly.size()), RoundingMode.HALF_UP).longValue();
             Grade grade = Grade.builder()

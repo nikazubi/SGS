@@ -32,7 +32,7 @@ public class GradeServiceImpl implements GradeService {
     public Grade insertStudentGrade(Grade grade) {
         Student student = studentRepository.findById(grade.getStudent().getId()).orElseThrow();
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
-        Subject subject = subjectRepository.findById(grade.getSubject().getId()).orElseThrow();
+        Subject subject = grade.getSubject() == null ? null : subjectRepository.findById(grade.getSubject().getId()).orElseThrow();
         grade.setStudent(student);
         grade.setAcademyClass(academyClass);
         grade.setSubject(subject);

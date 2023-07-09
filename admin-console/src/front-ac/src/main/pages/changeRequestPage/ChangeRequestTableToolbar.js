@@ -22,6 +22,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const [lastCloseDate, setLastCloseDate] = useState("");
     const hasManageClosePeriodPermission = hasPermission("MANAGE_CLOSED_PERIOD")
 
+
     useEffect(() => {
         axios.get("change-request/get-last-update-time")
             .then(({data}) => setLastCloseDate(data? moment.utc(data).local().format("DD-MM-YYYY") : ""))
@@ -89,7 +90,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                         </div>
                         {hasManageClosePeriodPermission &&
                             <div style={{position: 'absolute', right: '2%'}}>
-                            <span>{lastCloseDate}</span>
+                            <span>{"დახურვის თარიღი: " + lastCloseDate}</span>
                             <Button style={{backgroundColor: "#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
                                     disabled={false}
                                     onClick={async () => {

@@ -385,7 +385,7 @@ const MonthlyGradeDashBoard = () => {
     return (
         <div className={"monthlyGradeCnt"}>
             <MonthlyGradeToolbar filters={filters} setFilters={setFilters} setData={setData}/>
-            <div style={{height: 500, width: '100%'}}>
+            <div style={{height: `calc(100vh - ${130}px)`, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS
                         sx={{

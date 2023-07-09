@@ -384,7 +384,8 @@ const DashBoard = () => {
         async (newRow) => {
             const gradeType = Object.keys(newRow).filter(field => field !== "student" && field !== "grades")[0]
             const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType)
-            if (gradesOfType.length > 0 && gradesOfType[0].value !== undefined) {
+            console.log(gradesOfType);
+            if (gradesOfType.length > 0 && gradesOfType[0].value !== undefined && gradesOfType[0].value !== null) {
                 const params = {
                     academyClassId: gradesOfType[0].academyClass.id,
                     gradePrefix: "GENERAL",

@@ -17,6 +17,6 @@ export const updateGrade = async grade => {
     return data;
 };
 
-const useUpdateGrade = () => useMutationWithInvalidation(updateGrade, "GRADES");
+const useUpdateBehaviourGrade = () => useMutationWithInvalidation(updateGrade, "BEHAVIOUR");
 
-export default useUpdateGrade
+export default useUpdateBehaviourGrade

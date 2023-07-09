@@ -7,13 +7,14 @@ import DataGridSGS from "../../components/grid/DataGrid";
 import ConfirmationModal from "../../../components/modals/ConfirmationModal";
 import axios from "../../../utils/axios";
 import useFetchBehaviour from "./useBehaviour";
+import useUpdateBehaviourGrade from "./useUpdateBehaviourGrade";
 
 const BehaviourDashBoard = () => {
     const [filters, setFilters] = useState({groupByClause: 'STUDENT'});
     const {data, isLoading, isError, error, isSuccess} = useFetchBehaviour(filters);
     const [openRequestModal, setOpenRequestModal] = useState(false);
     const [newRowToSave, setNewRowToSave] = useState({});
-    const {mutateAsync: mutateRow} = useUpdateGrade();
+    const {mutateAsync: mutateRow} = useUpdateBehaviourGrade();
 
     const gradeColumns = [
         {
@@ -679,7 +680,7 @@ const BehaviourDashBoard = () => {
     return (
         <div>
             <BehaviourTableToolbar filters={filters} setFilters={setFilters}/>
-            <div style={{height: 561, width: '98%', marginLeft:15, marginRight:15}}>
+            <div style={{height: `calc(100vh - ${130}px)`, width: '98%', marginLeft:15, marginRight:15}}>
                 <DataGridPaper>
                     <DataGridSGS
                         sx={{
@@ -691,7 +692,7 @@ const BehaviourDashBoard = () => {
                         }}
                         experimentalFeatures={{ columnGrouping: true }}
                         columnGroupingModel={columnGroupingModel}
-                        queryKey={"GRADES"}
+                        queryKey={"BEHAVIOUR"}
                         columns={gradeColumns}
                         rows={data ? data : []}
                         getRowId={(row) => {

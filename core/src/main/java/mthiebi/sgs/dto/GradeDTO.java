@@ -2,15 +2,21 @@ package mthiebi.sgs.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 
+import java.util.Date;
+
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GradeDTO {
+@SuperBuilder
+public class GradeDTO extends AuditDTO{
 
     private Long id;
 
