@@ -2,9 +2,13 @@ package mthiebi.sgs.service;
 
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Grade;
+import mthiebi.sgs.models.Student;
+import mthiebi.sgs.models.Subject;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface GradeService {
 
@@ -25,5 +29,9 @@ public interface GradeService {
                                                                 Long studentId,
                                                                 Date createTime,
                                                                 String gradeTypePrefix);
-
+    Map<Student, Map<Subject, BigDecimal>> getGradeByComponent(Long classId,
+                                                               Long studentId,
+                                                               String yearRange,
+                                                               Date createDate,
+                                                               String component);
 }

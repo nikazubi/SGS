@@ -7,6 +7,7 @@ import BehaviourDashBoard from "../main/pages/behaviourPage/BehaviourDashBoard";
 import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 import ChangeRequestDashBoard from "../main/pages/changeRequestPage/ChangeRequestDashBoard";
 import MonthlyGradeDashBoard from "../main/pages/MonthlyGradePage/MonthlyGradeDashBoard";
+import SemesterGradeDashBoard from "../main/pages/semesterPage/SemesterGradeDashBoard";
 
 
 const useNavigationData = () => {
@@ -52,6 +53,15 @@ const useNavigationData = () => {
       id: 'MONTHLY_GRADE',
       name: 'თვის შემაჯამებელი ნიშნები',
       component: <MonthlyGradeDashBoard/>,
+      icon: <DiscFull/>,
+      show: false,
+      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
+      collapsible: false
+    },
+    SEMESTER_GRADE: {
+      id: 'SEMESTER_GRADE',
+      name: 'სემესტრის ნიშნები',
+      component: <SemesterGradeDashBoard/>,
       icon: <DiscFull/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO

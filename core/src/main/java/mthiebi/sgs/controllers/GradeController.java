@@ -2,12 +2,16 @@ package mthiebi.sgs.controllers;
 
 import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.Grade;
+import mthiebi.sgs.models.Student;
+import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.GradeService;
 import mthiebi.sgs.utils.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -74,5 +78,31 @@ public class GradeController {
                             .build())
                     .collect(Collectors.toList());
         }
+    }
+
+    @GetMapping("/get-grades-by-component")
+    @Secured({AuthConstants.MANAGE_GRADES}) //todo
+    public List<GradeComponentWrapper> getGradesByComponent(@RequestParam Long classId,
+                                                                       @RequestParam(required = false) Long studentId,
+                                                                       @RequestParam(required = false) String yearRange,
+                                                                       @RequestParam(required = false) Date createDate,
+                                                                       @RequestParam String component){
+        List<GradeComponentWrapper> list = new ArrayList<>();
+        Map<Student, Map<Subject, BigDecimal>> map = gradeService.getGradeByComponent(classId, studentId, yearRange, createDate, component);
+        for (Student student : map.keySet()) {
+            GradeComponentWrapper gradeComponentWrapper = new GradeComponentWrapper();
+            gradeComponentWrapper.setStudent(student);
+            List<SubjectComponentWrapper> gradeList = new ArrayList<>();
+            Map<Subject, BigDecimal> map2 = map.get(student);
+            for (Subject subject : map2.keySet()) {
+                SubjectComponentWrapper subjectComponentWrapper = new SubjectComponentWrapper();
+                subjectComponentWrapper.setSubject(subject);
+                subjectComponentWrapper.setValue(map2.get(subject));
+                gradeList.add(subjectComponentWrapper);
+            }
+            gradeComponentWrapper.setGradeList(gradeList);
+            list.add(gradeComponentWrapper);
+        }
+        return list;
     }
 }

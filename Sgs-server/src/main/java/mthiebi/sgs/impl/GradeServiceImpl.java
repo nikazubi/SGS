@@ -9,6 +9,8 @@ import mthiebi.sgs.service.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,6 +85,42 @@ public class GradeServiceImpl implements GradeService {
         return fillWithEmptyGradeListOfGradeType(allStudentsInAcademyClass, gradeTypePrefix, academyClass, currSubject, existingGrades);
     }
 
+    @Override
+    public Map<Student, Map<Subject, BigDecimal>> getGradeByComponent(Long classId, Long studentId, String yearRange, Date createDate, String component) {
+        String[] arr = yearRange.split("-");
+        int startYear = Integer.parseInt(arr[0]), endYear = Integer.parseInt(arr[1]);
+        Map<Student, Map<Subject, BigDecimal>> gradeByStudent = new HashMap<>();
+        switch (component) {
+            case "firstSemester":
+                gradeByStudent = gradeRepository.findGradeBySemester(classId, startYear, true);
+                break;
+            case "secondSemester":
+                gradeByStudent = gradeRepository.findGradeBySemester(classId, endYear, false);
+                break;
+            case "anual":
+                gradeByStudent = getAnualGrades(classId, startYear, endYear);
+                break;
+            case "monthly":
+                gradeByStudent = getMonthlyGrades(classId, createDate);
+                break;
+        }
+        return gradeByStudent;
+
+    }
+
+    private Map<Student, Map<Subject, BigDecimal>> getMonthlyGrades(Long classId, Date createDate) {
+        Map<Student, List<Grade>> gradelist = gradeRepository.findGradeByMonth(classId, createDate);
+        Map<Student, Map<Subject, BigDecimal>> result = new HashMap<>();
+        for (Student student : gradelist.keySet()) {
+            Map<Subject, BigDecimal> value = gradelist.get(student).stream().collect(Collectors.toMap(
+                    Grade::getSubject,
+                    entry -> new BigDecimal(entry.getValue())
+            ));
+            result.put(student, value);
+        }
+        return result;
+    }
+
     private List<Grade> fillWithEmptyGradeListOfGradeType(List<Student> students,
                                                           String gradeTypePrefix,
                                                           AcademyClass academyClass,
@@ -112,4 +150,33 @@ public class GradeServiceImpl implements GradeService {
                     .value(null)
                     .build();
     }
+
+    private static BigDecimal calculateAverage(BigDecimal value1, BigDecimal value2) {
+        BigDecimal sum = value1.add(value2);
+        return sum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP); // Assuming you want the average of two values
+    }
+
+    private Map<Student, Map<Subject, BigDecimal>> getAnualGrades(Long classId, int startYear, int endYear) {
+        Map<Student, Map<Subject, BigDecimal>> first = gradeRepository.findGradeBySemester(classId, startYear, true);
+        Map<Student, Map<Subject, BigDecimal>> second = gradeRepository.findGradeBySemester(classId, endYear, false);
+        Set<Student> allStudents = new HashSet<>(first.keySet());
+        allStudents.addAll(second.keySet());
+        return allStudents.stream()
+                .collect(Collectors.toMap(
+                        student -> student,
+                        student -> {
+                            Set<Subject> allSubject = new HashSet<>(first.get(student).keySet());
+                            allSubject.addAll(second.get(student).keySet());
+                            return allSubject.stream().collect(Collectors.toMap(
+                                    subject -> subject,
+                                    subject -> {
+                                        BigDecimal firstValue = first.get(student).getOrDefault(subject, BigDecimal.ZERO);
+                                        BigDecimal secondValue = second.get(student).getOrDefault(subject, BigDecimal.ZERO);
+                                        return calculateAverage(firstValue, secondValue);
+                                    }
+                            ));
+                        }
+                ));
+    }
+
 }

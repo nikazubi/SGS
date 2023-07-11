@@ -12,9 +12,6 @@ public class Subject extends Audit{
 
     private String name;
 
-    @ManyToMany(mappedBy = "subjectList")
-    private List<AcademyClass> academyClassList;
-
     // todo: შუალედური წერები და დამატებითი აქტივობების კონფიგურაცია
 
     public void setId(Long id) {
@@ -33,11 +30,4 @@ public class Subject extends Audit{
         this.name = name;
     }
 
-    public List<AcademyClass> getAcademyClassList() {
-        return academyClassList;
-    }
-
-    public void setAcademyClassList(List<AcademyClass> academyClassList) {
-        this.academyClassList = academyClassList;
-    }
 }
