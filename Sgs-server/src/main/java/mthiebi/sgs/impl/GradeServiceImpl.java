@@ -82,6 +82,9 @@ public class GradeServiceImpl implements GradeService {
                                                         .stream()
                                                         .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
                                                         .collect(Collectors.toList());
+        if (studentId != null) {
+            return existingGrades;
+        }
         return fillWithEmptyGradeListOfGradeType(allStudentsInAcademyClass, gradeTypePrefix, academyClass, currSubject, existingGrades);
     }
 
@@ -119,6 +122,12 @@ public class GradeServiceImpl implements GradeService {
             result.put(student, value);
         }
         return result;
+    }
+
+    @Override
+    public byte[] exportPdfMonthlyGrade(Long classId, Long studentId, Date month) {
+
+        return new byte[0];
     }
 
     private List<Grade> fillWithEmptyGradeListOfGradeType(List<Student> students,

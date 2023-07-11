@@ -1,6 +1,5 @@
 import axios from "../../../utils/axios";
 import useMutationWithInvalidation from "../../../hooks/useMutationWithInvalidation";
-import {updateGrade} from "./useUpdateGrade";
 
 export const calculateMonthlyGrade = async (data) => {
     const params = {

@@ -1,5 +1,6 @@
 package mthiebi.sgs.controllers;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.ChangeRequestDTO;
 import mthiebi.sgs.dto.ChangeRequestStatusChangeDTO;
 import mthiebi.sgs.dto.GradeMapper;
@@ -58,7 +59,7 @@ public class ChangeRequestController {
 
     @PutMapping("/change-request-status")
     @Secured({AuthConstants.MANAGE_CHANGE_REQUESTS})
-    public void changeRequestStatus(@RequestBody ChangeRequestStatusChangeDTO changeRequestStatus){
+    public void changeRequestStatus(@RequestBody ChangeRequestStatusChangeDTO changeRequestStatus) throws SGSException {
         changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(), changeRequestStatus.getChangeRequestStatus());
     }
 

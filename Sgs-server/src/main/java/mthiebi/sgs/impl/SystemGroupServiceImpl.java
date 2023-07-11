@@ -1,5 +1,6 @@
 package mthiebi.sgs.impl;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.SystemUserGroup;
 import mthiebi.sgs.repository.SystemGroupRepository;
 import mthiebi.sgs.service.SystemGroupService;
@@ -25,13 +26,13 @@ public class SystemGroupServiceImpl implements SystemGroupService {
     }
 
     @Override
-    public SystemUserGroup createSystemUserGroup(SystemUserGroup SystemUserGroup) throws Exception {
+    public SystemUserGroup createSystemUserGroup(SystemUserGroup SystemUserGroup) throws SGSException {
         return systemGroupRepository.save(SystemUserGroup);
     }
 
     @Override
     @Transactional
-    public SystemUserGroup updateSystemUserGroup(SystemUserGroup SystemUserGroup) throws Exception {
+    public SystemUserGroup updateSystemUserGroup(SystemUserGroup SystemUserGroup) throws SGSException {
         SystemUserGroup foundSystemUserGroup = getById(SystemUserGroup.getId());
 
         foundSystemUserGroup.setId(SystemUserGroup.getId());
@@ -42,7 +43,7 @@ public class SystemGroupServiceImpl implements SystemGroupService {
         return getById(SystemUserGroup.getId());
     }
 
-    public boolean deleteSystemUserGroup(long id) throws Exception{
+    public boolean deleteSystemUserGroup(long id) throws SGSException{
         systemGroupRepository.deleteById(id);
         return true;
     }

@@ -2,6 +2,7 @@ package mthiebi.sgs.controllers;
 
 
 import lombok.extern.slf4j.Slf4j;
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.UserAndPermissionDTO;
 import mthiebi.sgs.jwtmodels.JwtRequest;
 import mthiebi.sgs.jwtmodels.JwtResponse;
@@ -32,7 +33,7 @@ public class AuthController {
 	private UtilsJwt utilsJwt;
 
 	@PostMapping("/authenticate")
-	public JwtResponse authenticate(@RequestBody JwtRequest jwtRequest) throws Exception {
+	public JwtResponse authenticate(@RequestBody JwtRequest jwtRequest) throws SGSException {
 		String username = jwtRequest.getUsername();
 		String password = jwtRequest.getPassword();
 		log.info("request arrived at /authenticate with username: " +
@@ -48,7 +49,7 @@ public class AuthController {
 
 		} catch (BadCredentialsException e) {
 			log.info("username and password not correct, throw invalid credentials exception");
-			throw new Exception("INVALID_CREDENTIALS", e);
+			throw new SGSException("INVALID_CREDENTIALS");
 		}
 
 		final String token = utilsJwt.generateToken(authentication);
@@ -57,7 +58,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/refresh-token")
-	public JwtResponse refreshToken(@RequestHeader("authorization") String authHeader) throws Exception {
+	public JwtResponse refreshToken(@RequestHeader("authorization") String authHeader) throws SGSException {
 		if (authHeader.startsWith("Bearer ")) {
 			String jwtToken = authHeader.substring(7);
 			String userName = utilsJwt.getUsernameFromToken(jwtToken);
@@ -71,7 +72,7 @@ public class AuthController {
 				return new JwtResponse(updatedToken);
 			}
 		}
-		throw new Exception("INVALID JWT");
+		throw new SGSException("INVALID JWT");
 	}
 
 	@GetMapping("/user-and-permissions")

@@ -1,5 +1,6 @@
 package mthiebi.sgs.controllers;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.SubjectDTO;
 import mthiebi.sgs.dto.SubjectMapper;
 import mthiebi.sgs.models.Subject;
@@ -38,7 +39,7 @@ public class SubjectController {
 
     @PutMapping("/update-subject")
     @Secured({AuthConstants.MANAGE_SUBJECT})
-    public SubjectDTO updateSubject(@RequestBody SubjectDTO subjectDTO){
+    public SubjectDTO updateSubject(@RequestBody SubjectDTO subjectDTO) throws SGSException {
         Subject subject = subjectService.updateSubject(subjectMapper.subject(subjectDTO));
         return subjectMapper.subjectDTO(subject);
     }
@@ -59,7 +60,7 @@ public class SubjectController {
 
     @GetMapping("/get-subject/{id}")
     @Secured({AuthConstants.VIEW_SUBJECT})
-    public SubjectDTO getSubjects(@PathVariable Long id){
+    public SubjectDTO getSubjects(@PathVariable Long id) throws SGSException {
         return subjectMapper.subjectDTO(subjectService.findSubjectById(id));
     }
 

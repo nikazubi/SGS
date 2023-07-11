@@ -91,7 +91,7 @@ const UserBar = () => {
           <ListItemIcon>
             <Person/>
           </ListItemIcon>
-          <ListItemText primary={user.name}/>
+          <ListItemText primary={user.username}/>
         </MenuItem>
         <MenuItem classes={{root: classes.menuitem}} onClick={logout}>
           <ListItemIcon>

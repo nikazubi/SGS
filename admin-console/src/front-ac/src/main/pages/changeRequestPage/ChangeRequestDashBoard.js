@@ -6,12 +6,19 @@ import useChangeRequests from "./useChangeRequests";
 import ChangeRequestStatusChangeAction from "./ChangeRequestStatusChangeAction";
 import {Check, Close} from "@material-ui/icons";
 import {gradeTypeTranslator} from "../../../utils/gradeTypeTranslator";
+import {getFiltersOfPage} from "../../../utils/filters";
+import {useNotification} from "../../../contexts/notification-context";
 
 const ChangeRequestDashBoard = () => {
-    const [filters, setFilters] = useState({});
-
+    const [filters, setFilters] = useState({...getFiltersOfPage("CHANGE_REQUEST")});
+    const {setErrorMessage} = useNotification();
     const {data, isLoading, isError, error} = useChangeRequests(filters);
 
+    useEffect(() =>{
+        if(isError && error){
+            setErrorMessage(error);
+        }
+    }, [isError, error])
 
     const gradeColumns = [
         {

@@ -24,22 +24,22 @@ const useNavigationData = () => {
     },
     BEHAVIOUR: {
       id: 'BEHAVIOUR',
-      name: 'ყოფაქცევის ჟურნალი',
+      name: 'ეთიკური ნორმა',
       component: <BehaviourDashBoard/>,
       icon: <Grade/>,
       show: false,
       permissions: ["ADD_GRADES", "MANAGE_GRADES"],
       collapsible: false
     },
-    ABSENCE: {
-      id: 'ABSENCE',
-      name: 'გაცდენების ჟურნალი',
-      component: <AbsenceDashBoard/>,
-      icon: <ExitToApp/>,
-      show: false,
-      permissions: ["ADD_GRADES", "MANAGE_GRADES"],
-      collapsible: false
-    },
+    // ABSENCE: {
+    //   id: 'ABSENCE',
+    //   name: 'გაცდენების ჟურნალი',
+    //   component: <AbsenceDashBoard/>,
+    //   icon: <ExitToApp/>,
+    //   show: false,
+    //   permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+    //   collapsible: false
+    // },
     CHANGE_REQUEST: {
       id: 'CHANGE_REQUEST',
       name: 'მოთხოვნილი ცვლილებები',

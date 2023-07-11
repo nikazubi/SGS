@@ -1,6 +1,9 @@
 package mthiebi.sgs.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import mthiebi.sgs.ExceptionKeys;
+import mthiebi.sgs.SGSException;
+import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.dto.SystemUserCreateDTO;
 import mthiebi.sgs.dto.SystemUserDTO;
 import mthiebi.sgs.dto.SystemUserMapper;
@@ -17,9 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,7 +42,7 @@ public class SystemUserController {
 
     @PostMapping("/add-User")
     @Secured({AuthConstants.MANAGE_SYSTEM_USER})
-    public ResponseEntity create(@RequestBody SystemUserCreateDTO systemUserCreateDTO) {
+    public ResponseEntity create(@RequestBody SystemUserCreateDTO systemUserCreateDTO) throws SGSException {
         SystemUser systemUser = systemUserMapper.systemUser(systemUserCreateDTO.getSystemUserDTO());
         systemUser.setGroups(adjustSystemGroup(systemUserCreateDTO.getGroupIdList()));
         systemUser.setAcademyClassList(adjustAcademyClassList(systemUserCreateDTO.getClassIdList()));
@@ -53,25 +54,23 @@ public class SystemUserController {
         } catch (Exception e) {
             log.info("Error in create controller");
             log.info(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            throw new SGSException(e.getMessage());
         }
     }
 
     @PutMapping("/statuschange/{userId}")
     @Secured({AuthConstants.MANAGE_SYSTEM_USER})
-    public ResponseEntity changeActiveStatus(@PathVariable long userId) {
+    public ResponseEntity changeActiveStatus(@PathVariable long userId) throws SGSException {
         log.info("Change user status: userId=\"" + userId + "\"");
-        try {
-            SystemUser systemUser = systemUserService.findById(userId);
-            log.info("before changes: active=" + systemUser.getActive());
-            systemUser = systemUserService.changeActivity(userId);
-            log.info("after changes: active=" + systemUser.getActive());
-            return ResponseEntity.ok(systemUserMapper.systemUserDTO(systemUser));
-        } catch (Exception e) {
-            log.info("Error in changeActiveStatus controller");
-            log.info(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
+        SystemUser systemUser = systemUserService.findById(userId);
+        if (systemUser == null) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
         }
+        log.info("before changes: active=" + systemUser.getActive());
+        systemUser = systemUserService.changeActivity(userId);
+        log.info("after changes: active=" + systemUser.getActive());
+        return ResponseEntity.ok(systemUserMapper.systemUserDTO(systemUser));
+
     }
 
     @PutMapping("/update")

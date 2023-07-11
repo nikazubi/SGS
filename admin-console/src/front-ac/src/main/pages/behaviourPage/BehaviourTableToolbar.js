@@ -7,11 +7,18 @@ import {FormikDatePickerField} from "../../components/formik/FormikDatePickerFie
 import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
+import Button from "@material-ui/core/Button";
+import useCalculateGeneralGrade from "../HomePage/calculateMonthlyGrade";
+import useCalculateMonthlyBehaviour, {calculateMonthlyBehaviour} from "./calculateMonthlyBehaviour";
+import {setFiltersOfPage} from "../../../utils/filters";
+import {useNotification} from "../../../contexts/notification-context";
 
 const BehaviourTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
-    const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(new Date());
+    const {mutateAsync: calculateMonthlyBehaviour} = useCalculateMonthlyBehaviour();
+    const {setNotification, setErrorMessage} = useNotification();
 
     return (
         <div>
@@ -19,9 +26,9 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                 <Formik
                     initialValues={
                         {
-                            student: '',
-                            academyClass: '',
-                            date: date,
+                            student: filters.student || '',
+                            academyClass: filters.academyClass || '',
+                            date:  filters.date ||date,
                             groupByClause: 'STUDENT'
                         }
                     }
@@ -76,8 +83,31 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                         <div style={{marginLeft: 15, width: 100}}>
                             <IconButton
                                 icon={<Search/>}
-                                onClick={() => setFilters(values)}
+                                onClick={() => {
+                                    setFiltersOfPage("BEHAVIOUR", values)
+                                    setFilters(values)
+                                }}
                             />
+                        </div>
+                        <div style={{marginLeft: 15, width: 250}}>
+                            <Button style={{backgroundColor: "#45c1a4", color: "#fff", marginBottom: -30, fontSize: 16}}
+                                    disabled={!filters.academyClass}
+                                    onClick={async () => {
+                                        const params = {
+                                            academyClassId: filters.academyClass.id,
+                                            date: new Date(date).getTime(),
+                                        }
+                                        calculateMonthlyBehaviour(params).then(() =>{
+                                            setNotification({
+                                                message: 'თვის ნიშანი წარმატებით დაითვალა',
+                                                severity: 'success'
+                                            });
+                                        }).catch((error) => {
+                                            setErrorMessage(error);
+                                        });
+                                    }}>
+                                {"თვის ქულის დათვლა"}
+                            </Button>
                         </div>
                     </div>)}
                 </Formik>

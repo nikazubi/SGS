@@ -34,4 +34,7 @@ public interface GradeService {
                                                                String yearRange,
                                                                Date createDate,
                                                                String component);
+
+    byte[] exportPdfMonthlyGrade(Long classId, Long studentId, Date month);
+
 }

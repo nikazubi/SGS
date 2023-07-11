@@ -1,5 +1,6 @@
 package mthiebi.sgs.controllers;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.service.AcademyClassService;
@@ -34,7 +35,7 @@ public class AcademyClassController {
 
     @PutMapping("/update-academy-class")
     @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
-    public AcademyClassDTO updateAcademyClass(@RequestBody AcademyClassDTO academyClassDTO){
+    public AcademyClassDTO updateAcademyClass(@RequestBody AcademyClassDTO academyClassDTO) throws SGSException {
         AcademyClass academyClass = academyClassService.updateAcademyClass(academyClassMapper.academyClass(academyClassDTO));
         return academyClassMapper.academyClassDTO(academyClass);
     }
@@ -72,13 +73,13 @@ public class AcademyClassController {
 
     @PutMapping("/attach-students-to-academy-class")
     @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
-    public void attachStudentsToAcademyClass(@RequestParam Long academyClassId, @RequestBody StudentListDTO studentListDTO){
+    public void attachStudentsToAcademyClass(@RequestParam Long academyClassId, @RequestBody StudentListDTO studentListDTO) throws SGSException {
         academyClassService.attachStudentsToAcademyClass(academyClassId, studentListDTO.getStudentIdList());
     }
 
     @PutMapping("/attach-subjects-to-academy-class")
     @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
-    public void attachSubjectsToAcademyClass(@RequestParam Long academyClassId, @RequestBody SubjectListDTO subjectListDTO){
+    public void attachSubjectsToAcademyClass(@RequestParam Long academyClassId, @RequestBody SubjectListDTO subjectListDTO) throws SGSException {
         academyClassService.attachSubjectsToAcademyClass(academyClassId, subjectListDTO.getSubjectIdList());
     }
 

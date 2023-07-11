@@ -1,5 +1,8 @@
 package mthiebi.sgs.impl;
 
+import mthiebi.sgs.ExceptionKeys;
+import mthiebi.sgs.SGSException;
+import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.SystemUser;
@@ -33,8 +36,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student updateStudent(Student student) {
-        Student oldStudent = studentRepository.findById(student.getId()).orElseThrow();
+    public Student updateStudent(Student student) throws SGSException {
+        Student oldStudent = studentRepository.findById(student.getId())
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.STUDENT_NOT_FOUNT));
         oldStudent.setFirstName(student.getFirstName());
         oldStudent.setLastName(student.getLastName());
         oldStudent.setAge(student.getAge());
@@ -58,14 +62,18 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> findByNameAndSurname(String username, String queryKey) {
+    public List<Student> findByNameAndSurname(String username, String queryKey) throws SGSException {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
+        if (systemUser == null) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
+        }
         List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
         return studentRepository.findByNameAndSurname(academyClassList, queryKey);
     }
 
     @Override
-    public Student findStudentById(Long studentId) {
-        return studentRepository.findById(studentId).orElseThrow();
+    public Student findStudentById(Long studentId) throws SGSException {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.STUDENT_NOT_FOUNT));
     }
 }

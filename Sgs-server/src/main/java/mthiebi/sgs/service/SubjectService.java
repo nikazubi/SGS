@@ -1,5 +1,6 @@
 package mthiebi.sgs.service;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.Subject;
 
 import javax.persistence.EntityManager;
@@ -9,7 +10,7 @@ public interface SubjectService {
 
     Subject createSubject(Subject subject);
 
-    Subject updateSubject(Subject subject);
+    Subject updateSubject(Subject subject) throws SGSException;
 
     void deleteSubject(Long id);
 
@@ -17,8 +18,8 @@ public interface SubjectService {
                               int page,
                               Long id,
                               String name,
-                              String userName);
+                              String userName) throws SGSException;
 
-    Subject findSubjectById(Long id);
+    Subject findSubjectById(Long id) throws SGSException;
 
 }

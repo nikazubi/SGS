@@ -1,5 +1,6 @@
 package mthiebi.sgs.controllers;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.ClosedPeriod;
 import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.service.ClosedPeriodService;
@@ -26,7 +27,7 @@ public class ClosedPeriodController {
     @GetMapping("/get-period-by-class")
     public boolean getClosedPeriodByClass(@RequestParam Long academyClassId,
                                            @RequestParam String gradePrefix,
-                                           @RequestParam(required = false) Long gradeId){
+                                           @RequestParam(required = false) Long gradeId) throws SGSException {
         return closedPeriodService.getClosedPeriodByClassId(academyClassId, gradePrefix, gradeId);
     }
 

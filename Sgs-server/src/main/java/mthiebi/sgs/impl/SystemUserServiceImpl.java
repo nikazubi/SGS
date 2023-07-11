@@ -1,5 +1,8 @@
 package mthiebi.sgs.impl;
 
+import mthiebi.sgs.ExceptionKeys;
+import mthiebi.sgs.SGSException;
+import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.repository.SystemUserRepository;
 import mthiebi.sgs.service.SystemUserService;
@@ -26,14 +29,10 @@ public class SystemUserServiceImpl implements SystemUserService {
     private PasswordEncoder passwordEncoder;
     
     @Override
-    public SystemUser createSystemUser(SystemUser systemUser) throws Exception {
-        if (true) {
-            return null;
-        } else {
+    public SystemUser createSystemUser(SystemUser systemUser) throws SGSException {
 //            encryptPassword(systemUser); todo
             systemUserRepository.save(systemUser);
             return systemUser;
-        }
     }
 
     private void encryptPassword(SystemUser systemUser) {
@@ -42,22 +41,20 @@ public class SystemUserServiceImpl implements SystemUserService {
 
     @Override
     @Transactional
-    public SystemUser updateUser(SystemUser systemUser) throws Exception {
+    public SystemUser updateUser(SystemUser systemUser) throws SGSException {
         Optional<SystemUser> systemUserOptional = systemUserRepository.findById(systemUser.getId());
         if (systemUserOptional.isPresent()) {
             SystemUser user = systemUserOptional.get();
             if (systemUser.getUsername().isEmpty() ||
                     systemUser.getName().isEmpty() ||
-                    systemUser.getEmail().isEmpty()) {
+                    systemUser.getEmail().isEmpty() ||
+                    systemUser.getGroups().size() < 1) {
 
                 logger.info("Need to fill all fields");
-                throw new Exception("UsersFillAllFields");
-            } else if (systemUser.getGroups().size() < 1) {
-                logger.info("Need to choose min 1 groups");
-                throw new Exception("UsersGroupValidation");
-            } else if (systemUserRepository.findSystemUserByUsername(systemUser.getUsername()) != null && !systemUser.getUsername().equals(user.getUsername())) {
+                throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_FIELDS_INVALID);
+            }  else if (systemUserRepository.findSystemUserByUsername(systemUser.getUsername()) != null && !systemUser.getUsername().equals(user.getUsername())) {
                 logger.info("This username is already taken");
-                throw new Exception("UsersUsernameUniqValidation");
+                throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_USERNAME_NOT_UNIQUE);
             } else {
                 if (systemUser.getPassword() != null) {
 //                    encryptPassword(systemUser);
@@ -71,7 +68,7 @@ public class SystemUserServiceImpl implements SystemUserService {
             }
         } else {
             logger.info("User not found");
-            throw new Exception("UserNotFound");
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
         }
     }
 
@@ -82,33 +79,33 @@ public class SystemUserServiceImpl implements SystemUserService {
 //    }
 
     @Override
-    public SystemUser findById(long id) throws Exception {
+    public SystemUser findById(long id) throws SGSException {
         Optional<SystemUser> systemUserOptional = systemUserRepository.findById(id);
         if (systemUserOptional.isPresent()) {
             logger.info("User found successfully");
             return systemUserOptional.get();
         } else {
             logger.info("User not found");
-            throw new Exception("UserNotFound");
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
         }
     }
 
 
     @Override
-    public SystemUser delete(long userId) throws Exception {
+    public SystemUser delete(long userId) throws SGSException {
         Optional<SystemUser> systemUserOptional = systemUserRepository.findById(userId);
         if (systemUserOptional.isPresent()) {
             systemUserRepository.delete(systemUserOptional.get());
             return systemUserOptional.get();
         } else {
             logger.info("User not found");
-            throw new Exception("UserNotFound");
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
         }
     }
 
     @Override
     @Transactional
-    public SystemUser changeActivity(long id) throws Exception {
+    public SystemUser changeActivity(long id) throws SGSException {
         Optional<SystemUser> systemUserOptional = systemUserRepository.findById(id);
         if (systemUserOptional.isPresent()) {
             SystemUser user = systemUserOptional.get();
@@ -116,7 +113,7 @@ public class SystemUserServiceImpl implements SystemUserService {
             return findById(user.getId());
         } else {
             logger.info("User not found");
-            throw new Exception("UserNotFound");
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
         }
     }
 

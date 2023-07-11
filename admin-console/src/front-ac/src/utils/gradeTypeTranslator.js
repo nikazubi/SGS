@@ -25,11 +25,11 @@ export const gradeTypeTranslator = (gradeType) => {
         case 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT':
             translateVersion = 'შემოქმედებითი დავალება';
             break;
-        case 'GENERAL_HOMEWORK_SUM_1':
-            translateVersion = 'სულ 1';
+        case 'GENERAL_HOMEWORK_MONTHLY':
+            translateVersion = 'თვე';
             break;
-        case 'GENERAL_HOMEWORK_SUM_2':
-            translateVersion = 'სულ 2';
+        case 'GENERAL_HOMEWORK_PERCENT':
+            translateVersion = '%';
             break;
         case 'GENERAL_SCHOOL_WORK_1':
             translateVersion = 'საკლასო დავალება 1';
@@ -67,7 +67,7 @@ export const gradeTypeTranslator = (gradeType) => {
         case 'BEHAVIOUR_APPEARING_IN_UNIFORM_5':
             translateVersion = '';
             break;
-        case 'BEHAVIOUR_APPEARING_IN_UNIFORM_GRADE':
+        case 'BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY':
             translateVersion = '';
             break;
         case 'BEHAVIOUR_STUDENT_DELAYS_1':

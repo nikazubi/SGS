@@ -13,6 +13,8 @@ import {useUserContext} from "../../../contexts/user-context";
 import { format } from 'date-fns';
 import axios from "../../../utils/axios";
 import moment from "moment";
+import {setFiltersOfPage} from "../../../utils/filters";
+import {useNotification} from "../../../contexts/notification-context";
 
 const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -21,7 +23,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {hasPermission} = useUserContext();
     const [lastCloseDate, setLastCloseDate] = useState("");
     const hasManageClosePeriodPermission = hasPermission("MANAGE_CLOSED_PERIOD")
-
+    const {setNotification, setErrorMessage} = useNotification();
 
     useEffect(() => {
         axios.get("change-request/get-last-update-time")
@@ -34,10 +36,10 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                 <Formik
                     initialValues={
                         {
-                            student: '',
-                            academyClass: '',
-                            date: date,
-                            groupBy: 'STUDENT',
+                            student: filters.student || '',
+                            academyClass: filters.academyClass || '',
+                            date:  filters.date ||date,
+                            groupByClause: 'STUDENT'
                         }
                     }
                     onSubmit={() => {
@@ -85,7 +87,10 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                         <div style={{marginLeft: 15, width: 100}}>
                             <IconButton
                                 icon={<Search/>}
-                                onClick={() => setFilters(values)}
+                                onClick={() => {
+                                    setFiltersOfPage("CHANGE_REQUEST", values)
+                                    setFilters(values)
+                                }}
                             />
                         </div>
                         {hasManageClosePeriodPermission &&
@@ -94,9 +99,14 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                             <Button style={{backgroundColor: "#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
                                     disabled={false}
                                     onClick={async () => {
-                                        await closePeriod();
-                                        // let lastDate = new Date();
-                                        // setLastCloseDate(lastDate);
+                                        closePeriod().then(() =>{
+                                            setNotification({
+                                                message: 'თვის ნიშანი წარმატებით დაითვალა',
+                                                severity: 'success'
+                                            });
+                                        }).catch((error) => {
+                                            setErrorMessage(error);
+                                        });
                                     }}>
                                 {"პერიოდის დახურვა"}
                             </Button>

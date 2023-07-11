@@ -1,5 +1,6 @@
 package mthiebi.sgs.controllers;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.StudentDTO;
 import mthiebi.sgs.dto.StudentMapper;
 import mthiebi.sgs.models.Student;
@@ -35,7 +36,7 @@ public class StudentController {
 
     @PutMapping("/update-student")
     @Secured({AuthConstants.MANAGE_STUDENT})
-    public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO){
+    public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO) throws SGSException {
         Student student = studentService.updateStudent(studentMapper.student(studentDTO));
         return studentMapper.studentDTO(student);
     }
@@ -65,7 +66,7 @@ public class StudentController {
 
     @GetMapping("/get-student/{id}")
     @Secured({AuthConstants.VIEW_STUDENT})
-    public StudentDTO getStudents(@PathVariable Long id){
+    public StudentDTO getStudents(@PathVariable Long id) throws SGSException {
         return studentMapper.studentDTO(studentService.findStudentById(id));
     }
 

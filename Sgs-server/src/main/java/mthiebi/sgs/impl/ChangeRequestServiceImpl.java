@@ -1,5 +1,8 @@
 package mthiebi.sgs.impl;
 
+import mthiebi.sgs.ExceptionKeys;
+import mthiebi.sgs.SGSException;
+import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.*;
 import mthiebi.sgs.repository.*;
 import mthiebi.sgs.service.ChangeRequestService;
@@ -32,9 +35,12 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     private SubjectRepository subjectRepository;
 
     @Override
-    public ChangeRequest createChangeRequest(ChangeRequest changeRequest, String username) {
+    public ChangeRequest createChangeRequest(ChangeRequest changeRequest, String username) throws SGSException {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
-        Grade prevGrade = gradeRepository.findById(changeRequest.getId()).orElseThrow();
+        if (systemUser == null) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
+        }
+        Grade prevGrade = gradeRepository.findById(changeRequest.getId()).orElseThrow(); //TODO incorrect code
 
         changeRequest.setIssuer(systemUser);
         changeRequest.setPrevGrade(prevGrade);
@@ -45,9 +51,10 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
 
     @Override
     @Transactional
-    public void changeRequestStatus(Long changeRequestId, ChangeRequestStatus changeRequestStatus) {
-        ChangeRequest changeRequest = changeRequestRepository.findById(changeRequestId).orElseThrow();
-        if (changeRequestStatus == ChangeRequestStatus.APPROVED){
+    public void changeRequestStatus(Long changeRequestId, ChangeRequestStatus changeRequestStatus) throws SGSException {
+        ChangeRequest changeRequest = changeRequestRepository.findById(changeRequestId)
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.CHANGE_REQUEST_NOT_FOUND));
+        if (changeRequestStatus == ChangeRequestStatus.APPROVED) {
             Grade prevGrade = changeRequest.getPrevGrade();
             prevGrade.setValue(changeRequest.getNewValue());
             gradeRepository.save(prevGrade);
@@ -57,8 +64,11 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     }
 
     @Override
-    public List<ChangeRequest> getChangeRequests(String username, Long classId, Long studentId, Date date) {
+    public List<ChangeRequest> getChangeRequests(String username, Long classId, Long studentId, Date date) throws SGSException {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
+        if (systemUser == null) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
+        }
         List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
         return changeRequestRepository.getChangeRequests(academyClassList, classId, studentId, date);
     }
@@ -67,6 +77,5 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     public Date getLastUpdateTime() {
         return changeRequestRepository.getLastUpdateDate();
     }
-
 
 }

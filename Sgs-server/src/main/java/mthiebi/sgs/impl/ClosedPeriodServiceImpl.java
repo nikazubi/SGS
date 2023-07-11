@@ -1,5 +1,8 @@
 package mthiebi.sgs.impl;
 
+import mthiebi.sgs.ExceptionKeys;
+import mthiebi.sgs.SGSException;
+import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.ClosedPeriod;
 import mthiebi.sgs.models.Grade;
@@ -28,9 +31,11 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
 
     @Override
     //TODO change!!
-    public ClosedPeriod createClosedPeriod(String username) {
-
+    public ClosedPeriod createClosedPeriod(String username) throws SGSException {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
+        if (systemUser == null) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
+        }
         for (AcademyClass academyClass : systemUser.getAcademyClassList()) {
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "GENERAL");
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "BEHAVIOUR");
@@ -45,8 +50,9 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
     }
 
     @Override
-    public boolean getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId) {
-        Grade grade = gradeRepository.findById(gradeId).orElseThrow();
+    public boolean getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId) throws SGSException {
+        Grade grade = gradeRepository.findById(gradeId)
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GRADE_REQUEST_NOT_FOUND));
         ClosedPeriod closedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(id, gradePrefix, grade.getCreateTime());
         return closedPeriod != null;
     }

@@ -11,13 +11,17 @@ import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import {closePeriod} from "../changeRequestPage/useClosePeriod";
 import useCalculateGeneralGrade, {calculateMonthlyGrade} from "./calculateMonthlyGrade";
+import {setFiltersOfPage} from "../../../utils/filters";
+import {useNotification} from "../../../contexts/notification-context";
 
 const GradeTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchSubjects} = useSubjects();
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const {mutateAsync: calculateGeneralGrade} = useCalculateGeneralGrade();
-    const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(new Date());
+    const {setNotification, setErrorMessage} = useNotification();
+
 
     return (
         <div>
@@ -25,10 +29,10 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                 <Formik
                     initialValues={
                         {
-                            student: '',
-                            academyClass: '',
-                            subject: '',
-                            date: date,
+                            student: filters.student || '',
+                            academyClass: filters.academyClass || '',
+                            subject: filters.subject || '',
+                            date: filters.date || date,
                             groupByClause: 'STUDENT',
                         }
                     }
@@ -39,7 +43,7 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 50, marginBottom:25}}>
-                            <div style={{marginLeft: 15, width: 300}}>
+                            <div style={{marginLeft: 15, width: 200}}>
                                 <FormikAutocomplete name="academyClass"
                                                     multiple={false}
                                                     label={"კლასი"}
@@ -53,7 +57,7 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                                     }}
                                 />
                             </div>
-                        <div style={{marginLeft: 15, width: 300}}>
+                        <div style={{marginLeft: 15, width: 200}}>
                             <FormikAutocomplete name="subject"
                                                 multiple={false}
                                                 label={"საგანი"}
@@ -67,7 +71,7 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                                 }}
                             />
                         </div>
-                        <div style={{marginLeft: 15, width: 300}}>
+                        <div style={{marginLeft: 15, width: 200}}>
                             <FormikAutocomplete name="student"
                                                 multiple={false}
                                                 label={"მოსწავლე"}
@@ -82,7 +86,7 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                             />
                         </div>
 
-                        <div style={{marginLeft: 15, width: 300}}>
+                        <div style={{marginLeft: 15, width: 200}}>
                             <FormikDatePickerField name="date"
                                                    label={"თვე"}
                                                    onChange={(event, value)=> {
@@ -97,21 +101,29 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                         <div style={{marginLeft: 15, width: 100}}>
                             <IconButton
                                 icon={<Search/>}
-                                onClick={() => setFilters(values)}
+                                onClick={() => {
+                                    setFiltersOfPage("GRADES", values)
+                                    setFilters(values)
+                                }}
                                 />
                         </div>
                         <div style={{marginLeft: 15, width: 250}}>
                             <Button style={{backgroundColor: "#45c1a4", color: "#fff", marginBottom: -30, fontSize: 16}}
                                     disabled={!filters.academyClass || !filters.subject}
                                     onClick={async () => {
-                                        console.log("hello")
-                                        console.log(date.getTime())
                                         const params = {
                                             academyClassId: filters.academyClass.id,
                                             subjectId: filters.subject.id,
                                             date: new Date(date).getTime(),
                                         }
-                                        await calculateGeneralGrade(params);
+                                        calculateGeneralGrade(params).then(() =>{
+                                            setNotification({
+                                                message: 'თვის ნიშანი წარმატებით დაითვალა',
+                                                severity: 'success'
+                                            });
+                                        }).catch((error) => {
+                                            setErrorMessage(error);
+                                        });
                                     }}>
                                 {"თვის ქულის დათვლა"}
                             </Button>

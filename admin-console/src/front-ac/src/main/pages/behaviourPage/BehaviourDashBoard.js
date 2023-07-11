@@ -8,13 +8,22 @@ import ConfirmationModal from "../../../components/modals/ConfirmationModal";
 import axios from "../../../utils/axios";
 import useFetchBehaviour from "./useBehaviour";
 import useUpdateBehaviourGrade from "./useUpdateBehaviourGrade";
+import {getFiltersOfPage} from "../../../utils/filters";
+import {useNotification} from "../../../contexts/notification-context";
 
 const BehaviourDashBoard = () => {
-    const [filters, setFilters] = useState({groupByClause: 'STUDENT'});
+    const [filters, setFilters] = useState({groupByClause: 'STUDENT', ...getFiltersOfPage("BEHAVIOUR")});
     const {data, isLoading, isError, error, isSuccess} = useFetchBehaviour(filters);
+    const {setErrorMessage} = useNotification();
     const [openRequestModal, setOpenRequestModal] = useState(false);
     const [newRowToSave, setNewRowToSave] = useState({});
     const {mutateAsync: mutateRow} = useUpdateBehaviourGrade();
+
+    useEffect(() =>{
+        if(isError && error){
+            setErrorMessage(error);
+        }
+    }, [isError, error])
 
     const gradeColumns = [
         {
@@ -45,8 +54,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "II კვირა",
@@ -63,8 +72,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "III კვირა",
@@ -81,8 +90,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "IV კვირა",
@@ -99,8 +108,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         // {
         //     headerName: "5",
@@ -120,24 +129,24 @@ const BehaviourDashBoard = () => {
         //     width: 20,
         //     maxWidth: 20,
         // },
-        // {
-        //     headerName: "ქულა",
-        //     renderCell: ({row}) => {
-        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_COMPLETE");
-        //         if(summary2.length === 0){
-        //             return ""
-        //         }
-        //         return summary2[0].value;
-        //     },
-        //     field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_GRADE',
-        //     sortable: false,
-        //     align: 'center',
-        //     headerAlign: 'center',
-        //     editable: true,
-        //     type: "number",
-        //     width: 50,
-        //     maxWidth: 50,
-        // },
+        {
+            headerName: "თვე",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 50,
+            maxWidth: 50,
+        },
 
         {
             headerName: "I კვირა",
@@ -154,8 +163,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "II კვირა",
@@ -172,8 +181,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "III კვირა",
@@ -190,8 +199,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "IV კვირა",
@@ -208,8 +217,26 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
+        },
+        {
+            headerName: "თვე",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_DELAYS_MONTHLY");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_DELAYS_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 70,
+            maxWidth: 70,
         },
         // {
         //     headerName: "5",
@@ -263,8 +290,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "II კვირა",
@@ -281,8 +308,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "III კვირა",
@@ -299,8 +326,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "IV კვირა",
@@ -317,8 +344,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         // {
         //     headerName: "5",
@@ -338,24 +365,24 @@ const BehaviourDashBoard = () => {
         //     width: 20,
         //     maxWidth: 20,
         // },
-        // {
-        //     headerName: "ქულა",
-        //     renderCell: ({row}) => {
-        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_GRADE");
-        //         if(summary2.length === 0){
-        //             return ""
-        //         }
-        //         return summary2[0].value;
-        //     },
-        //     field: 'BEHAVIOUR_CLASSROOM_INVENTORY_GRADE',
-        //     sortable: false,
-        //     align: 'center',
-        //     headerAlign: 'center',
-        //     editable: true,
-        //     type: "number",
-        //     width: 50,
-        //     maxWidth: 50,
-        // },
+        {
+            headerName: "თვე",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_CLASSROOM_INVENTORY_MONTHLY");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_CLASSROOM_INVENTORY_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 50,
+            maxWidth: 50,
+        },
 
 
         {
@@ -373,8 +400,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "II კვირა",
@@ -391,8 +418,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "III კვირა",
@@ -409,8 +436,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "IV კვირა",
@@ -427,8 +454,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         // {
         //     headerName: "5",
@@ -448,24 +475,24 @@ const BehaviourDashBoard = () => {
         //     width: 20,
         //     maxWidth: 20,
         // },
-        // {
-        //     headerName: "ქულა",
-        //     renderCell: ({row}) => {
-        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_GRADE");
-        //         if(summary2.length === 0){
-        //             return ""
-        //         }
-        //         return summary2[0].value;
-        //     },
-        //     field: 'BEHAVIOUR_STUDENT_HYGIENE_GRADE',
-        //     sortable: false,
-        //     align: 'center',
-        //     headerAlign: 'center',
-        //     editable: true,
-        //     type: "number",
-        //     width: 50,
-        //     maxWidth: 50,
-        // },
+        {
+            headerName: "თვე",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_HYGIENE_MONTHLY");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_HYGIENE_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 50,
+            maxWidth: 50,
+        },
 
 
         {
@@ -483,8 +510,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "II კვირა",
@@ -501,8 +528,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "III კვირა",
@@ -519,8 +546,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "IV კვირა",
@@ -537,8 +564,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-             width: 80,
-            maxWidth: 80,
+             width: 70,
+            maxWidth: 70,
         },
         // {
         //     headerName: "5",
@@ -558,24 +585,24 @@ const BehaviourDashBoard = () => {
         //     width: 20,
         //     maxWidth: 20,
         // },
-        // {
-        //     headerName: "ქულა",
-        //     renderCell: ({row}) => {
-        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_GRADE");
-        //         if(summary2.length === 0){
-        //             return ""
-        //         }
-        //         return summary2[0].value;
-        //     },
-        //     field: 'BEHAVIOUR_STUDENT_BEHAVIOR_GRADE',
-        //     sortable: false,
-        //     align: 'center',
-        //     headerAlign: 'center',
-        //     editable: true,
-        //     type: "number",
-        //     width: 50,
-        //     maxWidth: 50,
-        // },
+        {
+            headerName: "ქულა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_STUDENT_BEHAVIOR_MONTHLY");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_STUDENT_BEHAVIOR_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 50,
+            maxWidth: 50,
+        },
     ];
 
     const columnGroupingModel = [
@@ -599,7 +626,7 @@ const BehaviourDashBoard = () => {
             // ),
             children: [{ field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_1' }, {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_2'},
                 {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_3'}, {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_4'},
-                {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_5'},{field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_GRADE'}],
+                {field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_5'},{field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY'}],
             align: 'center',
             headerAlign: 'center'
         },

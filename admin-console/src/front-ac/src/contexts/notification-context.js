@@ -29,11 +29,15 @@ export const NotificationProvider = (props) => {
     setOpen(true);
   }, [setNotification, setOpen]);
 
-  const setErrorMessage = useCallback((error, includeStatus = true) => {
+  const setErrorMessage = useCallback((error, includeStatus = true, needsConvert = true) => {
     setError(error)
-    const converted = convert(error, includeStatus);
-    const message = converted?.message;
-    const statusCode = converted?.statusCode;
+    let message = error;
+    let statusCode = "500";
+    if(needsConvert){
+      const converted = convert(error, includeStatus);
+      message = converted?.message;
+      statusCode = converted?.statusCode;
+    }
     makeNotification({message, statusCode, severity: 'error'});
   }, [makeNotification, convert]);
 
