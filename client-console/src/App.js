@@ -4,6 +4,7 @@ import AfterLoginPage from './pages/afterLoginPage/AfterLoginPage'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import SemestruliShefaseba from './pages/semestruli-shefaseba/SemestruliShefaseba';
 import EthicPage from './pages/ethicalPage';
+import AbsencePage from './pages/AbsencePage';
 
 export const App = () =>{
     return(
@@ -13,6 +14,7 @@ export const App = () =>{
                 <Route exact path="/" component={AfterLoginPage}/>
                 <Route path="/semestruli-shefaseba" component={SemestruliShefaseba}/>
                 <Route path="/ethicalPage" component={EthicPage}/>
+                <Route path="/absence-page" component={AbsencePage}/>
             </Switch>
         </BrowserRouter>
     )

@@ -163,7 +163,7 @@ const SemestruliShefaseba = () => {
     return ( 
         <div className="ibCnt">
             <div className="ib__center column">
-                <div>მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
+                <div className="pageName">მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
                 <div>
                 <Dropdown data={subject} select={setSelectedSubject} label={'საგანი'}/>
                 <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>

@@ -208,6 +208,76 @@ header{
     border-left: 1px solid #01619b;
 }
 
+/* Custom Table absence */
+
+.absenceMain{
+    max-width: 1280px;
+    margin: 50px auto;
+}
+
+.absenceMain .css-gg4vpm{
+    justify-content: center;
+}
+
+.absenceMain__cnt{
+    overflow-x:scroll;
+    max-width:1535px;
+    margin: 50px auto;
+    padding: 0 5px;
+}
+
+.absenceTable{
+    width: 100%;
+    padding: 5px 10px;
+    overflow-y: scroll;
+    border-collapse: collapse;
+}
+
+.absenceTable__date{
+    border: 1px solid #000;
+    min-width: 30px;
+    max-width: 42px;
+    height: 78px;
+    padding-top: 24px;
+    white-space: nowrap;
+}
+
+.absenceTable__attend{
+    background-color: #fff;
+    text-align: center;
+}
+
+.absenceTable__date div{
+    transform: rotate(-90deg);
+}
+
+.absenceTable__nameSurname{
+    min-width: 230px;
+}
+.absenceTable tr{
+    border: 1px solid #000;
+}
+.absenceTable td{
+    border: 1px solid #000;
+}
+.absenceTable th{
+    border: 1px solid #000;
+}
+
+.absenceMain .recharts-wrapper{
+    margin: auto;
+}
+
+.absenceDropdown label[data-shrink=false]+.MuiInputBase-formControl .css-jedpe8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+    background-color: #fff !important;
+}
+
+.pageName{
+    font-size: 20px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
 @media only screen and (max-width: 1240px) {
     .ibChart{
         overflow-x: scroll;
