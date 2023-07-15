@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import Chart from "./Chart";
 import Dropdown from "./Dropdown";
-import SemestruliBox from "./SemestruliBox";
+import DisciplineBox from "./DisciplineBox";
 import SmallBox from "./SmallBox";
 import Button from '@mui/material/Button';
 import {useUserData, MyContext, useUpdate} from "../../context/userDataContext";
 
-const SemestruliShefaseba = () => {
+const Discipline = () => {
     const updateData = useUpdate()
     const allStudentsData = useUserData()
     console.log(allStudentsData, 'TEST123 allStudentsData')
@@ -163,7 +163,7 @@ const SemestruliShefaseba = () => {
     return ( 
         <div className="ibCnt">
             <div className="ib__center column">
-                <div>მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
+                <div className="pageName">მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
                 <div>
                 <Dropdown data={subject} select={setSelectedSubject} label={'საგანი'}/>
                 <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>
@@ -174,9 +174,9 @@ const SemestruliShefaseba = () => {
 
             {allStudentsData && <div className="termEstCnt">
                 {/* id=1 means it's  შემაჯამებელი დავალება*/}
-                <SemestruliBox title={'შემაჯამებელი დავალება'} number={'I'} precent={'50%'} id={1} data={allSelectedData}/>
-                {/* <SemestruliBox title={'საშინაო დავალება'} number={'II'} precent={'30%'} id={2} data={allSelectedData}/>
-                <SemestruliBox title={'საკლასო დავალება'} number={'III'} precent={'20%'} id={3} data={allSelectedData}/> */}
+                <DisciplineBox title={'შემაჯამებელი დავალება'} number={'I'} precent={'50%'} id={1} data={allSelectedData}/>
+                {/* <DisciplineBox title={'საშინაო დავალება'} number={'II'} precent={'30%'} id={2} data={allSelectedData}/>
+                <DisciplineBox title={'საკლასო დავალება'} number={'III'} precent={'20%'} id={3} data={allSelectedData}/> */}
             </div>}
 
             {allStudentsData && <div className="ib__center" style={{gap:'30px'}}>
@@ -198,4 +198,4 @@ const SemestruliShefaseba = () => {
      );
 }
  
-export default SemestruliShefaseba;
+export default Discipline;

@@ -3,7 +3,7 @@
 
 import SmallBox from "./SmallBox";
 
-const SemestruliBoxFooter = ({testID, data, boxdetails}) => {
+const FooterBox = ({testID, data, boxdetails}) => {
 
     //testID romeli boxia
     //testID -> 1 -> 'შემაჯამებელი წერა'
@@ -57,4 +57,4 @@ const SemestruliBoxFooter = ({testID, data, boxdetails}) => {
      );
 }
  
-export default SemestruliBoxFooter;
+export default FooterBox;

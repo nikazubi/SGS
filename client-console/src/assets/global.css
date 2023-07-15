@@ -2,12 +2,17 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Noto Sans Georgian', sans-serif;
 }
 
 header{
     width: 100%;
     height: 81px;
     background-color: #01619b;
+}
+
+body{
+    background-color: #f0f9fd;
 }
 
 .boxCnt{
@@ -27,22 +32,47 @@ header{
     margin: auto;
 }
 
+.boxWrap__div{
+    overflow: hidden;
+    border-radius: 29px;
+}
+
 .box{
     width: 300px;
-    border: 25px solid;
-    height: 156px;
+    height: 167px;
+    transition: .5s;
+    border: 3px solid;
     text-align: center;
     padding: 10px;
     font-size: 18px;
     display: flex;
     align-items: center;
-    border-radius: 0px 30px 30px 30px;
+    font-weight: bold;
+    border-radius: 29px;
     margin-bottom: 30px;
     cursor: pointer;
     margin-right: 10px;
     text-decoration: none;
-    color: #000;
+    color: #fff;
+    background-color: #01619b;
+    box-shadow: #2285b2 2px 2px 9px;
+    border-color: #0071cc;
+    opacity: 0;
+    transform: translateY(100%);
 }
+
+.box.loaded{
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.box:hover{
+    background: #fff;
+    border-color: rgb(118 194 255) !important;
+    color: #00558a !important;
+    box-shadow: #2285b2 2px 2px 9px;
+}
+
 .ibCnt{
     max-width: 1280px;
     margin: auto;
@@ -61,7 +91,7 @@ header{
     align-items: center;
 }
 
-.semestruliBox{
+.DisciplineBox{
     width: 310px;
     height: 230px;
     border-radius: 0px 30px 30px 30px;
@@ -72,12 +102,12 @@ header{
     flex-grow: 1;
 }
 
-.semestruliBox__title{
+.DisciplineBox__title{
     padding-top: 10px;
     padding-bottom: 5px;
 }
 
-.semestruliBox__precent{
+.DisciplineBox__precent{
     padding: 10px 0;
     border-bottom: 1px solid #da9e90;
     margin-bottom: 25px;
@@ -177,15 +207,13 @@ header{
     color: #fff;
 }
 
-.ethicCnt{
-    margin: 60px;
-}
 
 /* .MuiTableCell-root{
     border: 1px solid #01619b !important;
 } */
 .css-177gid-MuiTableCell-root{
     border: 1px solid #01619b !important;
+    padding: 0px !important;
 }
 .css-1ex1afd-MuiTableCell-root{
     border-bottom: 1px solid #01619b !important;
@@ -206,6 +234,149 @@ header{
 .css-1ndpvdd-MuiTableCell-root{
     color: #fff !important;
     border-left: 1px solid #01619b;
+}
+
+.ethicCnt{
+    margin: 60px;
+}
+
+.ethicCnt .css-1ex1afd-MuiTableCell-root{
+    white-space: nowrap;
+}
+
+.ethicCnt .css-1ndpvdd-MuiTableCell-root div{
+    white-space: nowrap;
+}
+
+.ethicCnt .css-1ygcj2i-MuiTableCell-root{
+    padding: 10px;
+}
+
+.ethicCnt__w{
+    width: 90px;
+    border: unset !important;
+    border-right: 1px solid #01619b !important;
+}
+
+.ethicCnt__w.week{
+    color: #fff !important;
+    white-space: nowrap;
+}
+
+.ethicCnt__w.v2{
+    width: 90px;
+    border: unset !important;
+    border-right: unset !important;
+}
+
+/* shefaseba table */
+
+.shefasebaCnt{
+    max-width: 100vw;
+    padding-bottom: 0;
+    overflow-x: auto;
+    margin: 50px 20px;
+}
+
+.shefasebaTable{
+    border-collapse: collapse;
+    margin: auto;
+}
+
+.shefasebaTable__col{
+    border: 1px solid #000;
+    text-align: center;
+    padding: 8px;
+    background-color: #fff;
+}
+
+.shefasebaTable__col.row{
+    background-color: #01619b !important;
+    color: #fff !important;
+}
+
+/* Custom Table absence */
+
+.absenceMain{
+    max-width: 1280px;
+    margin: 50px auto;
+}
+
+.absenceMain .css-gg4vpm{
+    justify-content: center;
+}
+
+.absenceMain__cnt{
+    overflow-x:scroll;
+    max-width:1535px;
+    margin: 50px auto;
+    padding: 0 5px;
+}
+
+.absenceTable{
+    width: 100%;
+    padding: 5px 10px;
+    overflow-y: scroll;
+    border-collapse: collapse;
+}
+
+.absenceTable__date{
+    border: 1px solid #000;
+    min-width: 30px;
+    max-width: 42px;
+    height: 78px;
+    padding-top: 24px;
+    white-space: nowrap;
+}
+
+.absenceTable__attend{
+    background-color: #fff;
+    text-align: center;
+}
+
+.absenceTable__date div{
+    transform: rotate(-90deg);
+}
+
+.absenceTable__nameSurname{
+    min-width: 230px;
+}
+.absenceTable tr{
+    border: 1px solid #000;
+}
+.absenceTable td{
+    border: 1px solid #000;
+}
+.absenceTable th{
+    border: 1px solid #000;
+}
+
+.absenceMain .recharts-wrapper{
+    margin: auto;
+}
+
+.absenceDropdown label[data-shrink=false]+.MuiInputBase-formControl .css-jedpe8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+    background-color: #fff !important;
+}
+
+.pageName{
+    font-size: 20px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+/* dropdown */
+
+.yearDropwdown{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 35px;
+}
+
+.yearDropwdown .css-1u3bzj6-MuiFormControl-root-MuiTextField-root{
+    background-color: #fff;
+    width: 290px;
 }
 
 @media only screen and (max-width: 1240px) {
