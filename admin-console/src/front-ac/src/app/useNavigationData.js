@@ -8,6 +8,7 @@ import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 import ChangeRequestDashBoard from "../main/pages/changeRequestPage/ChangeRequestDashBoard";
 import MonthlyGradeDashBoard from "../main/pages/MonthlyGradePage/MonthlyGradeDashBoard";
 import SemesterGradeDashBoard from "../main/pages/semesterPage/SemesterGradeDashBoard";
+import TotalAbsenceDashBoard from "../main/pages/totalAbsencePage/TotalAbsenceDashBoard";
 
 
 const useNavigationData = () => {
@@ -34,7 +35,7 @@ const useNavigationData = () => {
     // ABSENCE: {
     //   id: 'ABSENCE',
     //   name: 'გაცდენების ჟურნალი',
-    //   component: <AbsenceDashBoard/>,
+    //   component: <TotalAbsenceDashBoard/>,
     //   icon: <ExitToApp/>,
     //   show: false,
     //   permissions: ["ADD_GRADES", "MANAGE_GRADES"],
@@ -62,6 +63,15 @@ const useNavigationData = () => {
       id: 'SEMESTER_GRADE',
       name: 'სემესტრის ნიშნები',
       component: <SemesterGradeDashBoard/>,
+      icon: <DiscFull/>,
+      show: false,
+      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
+      collapsible: false
+    },
+    TOTAL_ABSENCE: {
+      id: 'TOTAL_ABSENCE',
+      name: 'ჯამური გაცდენები',
+      component: <TotalAbsenceDashBoard/>,
       icon: <DiscFull/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO

@@ -21,6 +21,7 @@ export const FormikDatePickerField = ({
                                         inputProps,
                                         disabled = false,
                                         hideLabelOnOverflow = false,
+                                        format,
                                         ...rest
                                       }) => {
   const {setFieldValue} = useFormikContext();
@@ -65,7 +66,7 @@ export const FormikDatePickerField = ({
                 })
               } : {})
             }}
-            format={DATE_FORMAT}
+            format={format? format : DATE_FORMAT}
             KeyboardButtonProps={{
               size: 'small',
               color: 'primary'

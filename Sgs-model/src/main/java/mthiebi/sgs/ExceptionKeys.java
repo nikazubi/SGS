@@ -14,5 +14,7 @@ public interface ExceptionKeys {
     String GENERAL_SUMMERY_GRADES_NOT_PRESENT = "შემაჯამებელი დავალების ნიშნები არ არის შეყვანილი";
     String SYSTEM_USER_FIELDS_INVALID = "გთხოვთ შეავსოთ ყველა ველი";
     String SYSTEM_USER_USERNAME_NOT_UNIQUE = "მომხმარებლის სახელი უნდა იყოს უნიკალური";
+    String TOTAL_ACADEMIC_HOUR_OF_CLASS_AND_DATE_ALREADY_EXISTS = "მოცემულ კლასზე თვის ჯამური აკადემიური საათის ჩანაწერი უკვე არსებობს";
+    String TOTAL_ACADEMIC_HOUR_NOT_FOUND = "თვის ჯამური აკადემიური საათის ჩანაწერი ვერ მოიძებნა";
 
 }

@@ -1,7 +1,10 @@
 package mthiebi.sgs.models;
 
+import lombok.Builder;
+
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity(name = "ACADEMY_CLASS")
 public class AcademyClass extends mthiebi.sgs.models.Audit {
@@ -13,6 +16,10 @@ public class AcademyClass extends mthiebi.sgs.models.Audit {
     private Long classLevel;
 
     private String className;
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "academyClass", cascade = CascadeType.ALL)
+    private List<TotalAbsence> totalAbsences = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "academy_class_id")
@@ -62,6 +69,50 @@ public class AcademyClass extends mthiebi.sgs.models.Audit {
 
     public void setSubjectList(List<mthiebi.sgs.models.Subject> subjectList) {
         this.subjectList = subjectList;
+    }
+
+    public List<TotalAbsence> getTotalAbsences() {
+        return totalAbsences;
+    }
+
+    public void setTotalAbsences(List<TotalAbsence> totalAbsences) {
+        this.totalAbsences = totalAbsences;
+    }
+
+    public void addTotalAbsence(TotalAbsence totalAbsence) {
+        totalAbsence.setAcademyClass(this);
+        totalAbsences.add(totalAbsence);
+    }
+
+    @Transient
+    public TotalAbsence getActiveTotalAbsence() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        return getTotalAbsenceForYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1);
+    }
+
+    @Transient
+    public TotalAbsence getTotalAbsenceForYearAndMonth(Integer year, Integer month) {
+        return this.totalAbsences.stream().filter(totalAbsence -> {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(totalAbsence.getActivePeriod());
+                    if (month.equals(1) || month.equals(2)) {
+                        return calendar.get(Calendar.YEAR) == year &&
+                                (calendar.get(Calendar.MONTH) + 1 == 1 || calendar.get(Calendar.MONTH) + 1 == 2);
+                    }
+                    if (month.equals(9) || month.equals(10)) {
+                        return calendar.get(Calendar.YEAR) == year &&
+                                (calendar.get(Calendar.MONTH) + 1 == 9 || calendar.get(Calendar.MONTH) + 1 == 10);
+                    }
+                    return calendar.get(Calendar.YEAR) == year &&
+                            (calendar.get(Calendar.MONTH) + 1 == month);
+                })
+                .max(Comparator.comparing(Audit::getCreateTime))
+                .orElse(TotalAbsence.builder()
+                        .academyClass(this)
+                        .activePeriod(null)
+                        .totalAcademyHour(0L)
+                        .build());
     }
 
     @Override

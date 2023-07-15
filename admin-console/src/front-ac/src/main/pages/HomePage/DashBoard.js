@@ -309,6 +309,24 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
+        {
+            headerName: "გაცდენა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_ABSENCE_MONTHLY");
+                if(summary2.length === 0){
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_ABSENCE_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
     ];
 
     const columnGroupingModel = [
@@ -389,6 +407,7 @@ const DashBoard = () => {
                     return await mutateRow(newRow);
                 }
             } else {
+                console.log("in else", newRow)
                 newRow.subject = filters.subject
                 return await mutateRow(newRow);
             }
