@@ -30,7 +30,6 @@ const AbsencePage = () => {
   const [year, setYear] = useState(yearsData)
 
   useEffect(()=>{
-    document.querySelector('body').style.backgroundColor="#e3f2fa"
 
     if (selectedMonth && selectedYear) {
         setIsButtonActive(false)
@@ -41,10 +40,6 @@ const AbsencePage = () => {
         //es udna eweros handleSearch magram satestoa da ak magitom weria
 
         setIsButtonActive(true)
-    }
-
-    return () => {
-      document.querySelector('body').style.backgroundColor="unset"
     }
 
 },[selectedMonth, selectedYear])

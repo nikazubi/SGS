@@ -36,14 +36,14 @@ const CustomTable = () => {
         
     ]
 
-    useEffect(()=>{
-        document.querySelector('body').style.backgroundColor="#e3f2fa"
+    // useEffect(()=>{
+    //     document.querySelector('body').style.backgroundColor="#e3f2fa"
 
-        return () => {
-            document.querySelector('body').style.backgroundColor="unset"
-        }
+    //     return () => {
+    //         document.querySelector('body').style.backgroundColor="unset"
+    //     }
 
-    },[])
+    // },[])
 
     useEffect(()=>{
         const count = document.querySelectorAll('.absenceTable__date').length

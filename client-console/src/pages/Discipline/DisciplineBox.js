@@ -1,7 +1,7 @@
 import { useUserData } from "../../context/userDataContext";
-import SemestruliBoxFooter from "./SemestruliBoxFooter";
-// {title, number, precent,id, data}=argumentebia ->SemestruliBox
-const SemestruliBox = () => {
+import FooterBox from "./FooterBox";
+// {title, number, precent,id, data}=argumentebia ->DisciplineBox
+const DisciplineBox = () => {
 
     const allData = useUserData()
     // ArrayOfObj = [{
@@ -48,22 +48,22 @@ const SemestruliBox = () => {
             
           (m.boxdetails[0] !== 'თვის ქულა' && m.boxdetails[0] !== 'გაცდენილი საათები') ? 
           (
-            <div className="semestruliBox" key={m.name} style={{backgroundColor: renderBackground(m.name)}}>
-              <div className="semestruliBox__title">{m.name}</div>
+            <div className="DisciplineBox" key={m.name} style={{backgroundColor: renderBackground(m.name)}}>
+              <div className="DisciplineBox__title">{m.name}</div>
               <div>{m.testNumber}</div>
-              <div className="semestruliBox__precent">{m.precent}</div>
-              <SemestruliBoxFooter boxdetails={m.boxdetails} />
+              <div className="DisciplineBox__precent">{m.precent}</div>
+              <FooterBox boxdetails={m.boxdetails} />
             </div>
           ) : null
         )
       );
       
-             // <div className="semestruliBox">
-        //     <div className="semestruliBox__title">{title}</div>
+             // <div className="DisciplineBox">
+        //     <div className="DisciplineBox__title">{title}</div>
         //     <div>{number}</div>
-        //     <div className="semestruliBox__precent">{precent}</div>
-        //     <SemestruliBoxFooter data={data} testID={id}/>
+        //     <div className="DisciplineBox__precent">{precent}</div>
+        //     <FooterBox data={data} testID={id}/>
         // </div>
 }
  
-export default SemestruliBox;
+export default DisciplineBox;

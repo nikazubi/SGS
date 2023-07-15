@@ -3,12 +3,29 @@ const AfterLoginPage = () => {
     return ( 
         <div className="boxCnt">
             <div className="boxWrap">
-                <Box text={'მოსწავლის შეფასება აკადემიური საგნობრივი დისციპლინის მიხედვით'} link={'/dat'} color={'#106cb7'}/>
-                <Box text={'მოსწავლის შეფასება თვის რეიტინგების მიხედვით'} link={'/dat'} color={'#7ccfd7'}/>
-                <Box text={'მოსწავლის შეფასება ეთიკური ნომრების მიხედვით'} link={'/ethicalPage'} color={'#f6a21e'}/>
-                <Box text={'მოსწავლის სემესტრული შეფასება'} link={'/semestruli-shefaseba'} color={'#f25d23'}/>
-                <Box text={'მოსწავლის წლიური შეფასება'} link={'/dat'} color={'#1c4678'}/>
-                <Box text={'მოსწავლის მიერ გაცდენილი საათები'} link={'/absence-page'} color={'#16987c'}/>
+                <div className="boxWrap__div">
+                    <Box text={'მოსწავლის შეფასება აკადემიური საგნობრივი დისციპლინის მიხედვით'} link={'/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit'} />
+                </div>
+
+                <div className="boxWrap__div">
+                    <Box text={'მოსწავლის შეფასება თვის რეიტინგების მიხედვით'} link={'/tvis-reitingi'} />
+                </div>
+
+                <div className="boxWrap__div">
+                    <Box text={'მოსწავლის შეფასება ეთიკური ნომრების მიხედვით'} link={'/ethicalPage'} />
+                </div>
+
+                <div className="boxWrap__div">
+                    <Box text={'მოსწავლის სემესტრული შეფასება'} link={'/semestruli-shefaseba'} />
+                </div>
+
+                <div className="boxWrap__div">
+                    <Box text={'მოსწავლის წლიური შეფასება'} link={'/tsliuri-shefaseba'} />
+                </div>
+
+                <div className="boxWrap__div">
+                    <Box text={'მოსწავლის მიერ გაცდენილი საათები'} link={'/absence-page'} />
+                </div>
             </div>   
         </div>
      );
