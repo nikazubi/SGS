@@ -1,7 +1,7 @@
 package mthiebi.sgs.models;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
 
 @Entity(name = "SUBJECT")
 public class Subject extends Audit{
@@ -28,6 +28,16 @@ public class Subject extends Audit{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return Objects.equals(id, ((Subject) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

@@ -1,6 +1,8 @@
 package mthiebi.sgs.repository;
 
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.DatePath;
+import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.querydsl.core.types.dsl.Expressions.dateTemplate;
 
 @Repository
 public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRepositoryCustom {
@@ -95,5 +99,23 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 .orderBy(qGrade.createTime.desc())
                 .fetch();
         return gradeList.stream().collect(Collectors.groupingBy(Grade::getStudent));
+    }
+
+    @Override
+    public Integer getMinYear() {
+        DateTimePath<Date> createDatePath = qGrade.createTime;
+
+        return qf.select(dateTemplate(Integer.class, "YEAR({0})", createDatePath).min())
+                .from(qGrade)
+                .fetchOne();
+    }
+
+    @Override
+    public Integer getMaxYear() {
+        DateTimePath<Date> createDatePath = qGrade.createTime;
+
+        return qf.select(dateTemplate(Integer.class, "YEAR({0})", createDatePath).max())
+                .from(qGrade)
+                .fetchOne();
     }
 }

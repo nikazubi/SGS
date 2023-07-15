@@ -63,9 +63,11 @@ public class Student extends Audit{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return super.equals(o);
+        return this.id == ((Student) o).getId();
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -1,15 +1,15 @@
 import React, {useCallback, useEffect, useState} from "react";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import DataGridSGS from "../../components/grid/DataGrid";
-import SemesterGradeToolbar from "./SemesterGradeToolbar";
+import AnualGradeToolbar from "./AnualGradeToolbar";
 import "./header.css"
-import useGradeSemester from "./useGradeSemester";
+import useGradeAnual from "./useGradeAnual";
 import {getFiltersOfPage} from "../../../utils/filters";
 
-const SemesterGradeDashBoard = () => {
-    const [filters, setFilters] = useState({...getFiltersOfPage("SEMESTER_GRADE")});
+const AnualGradeDashBoard = () => {
+    const [filters, setFilters] = useState({...getFiltersOfPage("ANNUAL_GRADE")});
 
-    const {data, isLoading, isError, error, isSuccess} = useGradeSemester(filters);
+    const {data, isLoading, isError, error, isSuccess} = useGradeAnual(filters);
 
     const gradeColumns = [
         {
@@ -420,7 +420,7 @@ const SemesterGradeDashBoard = () => {
 
     return (
         <div className={"semesterGradeCnt"}>
-            <SemesterGradeToolbar filters={filters} setFilters={setFilters}/>
+            <AnualGradeToolbar filters={filters} setFilters={setFilters}/>
             <div style={{height: `calc(100vh - ${130}px)`, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS
@@ -432,7 +432,7 @@ const SemesterGradeDashBoard = () => {
                                 }`,
                             },
                         }}
-                        queryKey={"SEMESTER_GRADE"}
+                        queryKey={"ANNUAL_GRADE"}
                         columns={getGradeColumns()}
                         rows={data ? data : []}
                         getRowId={(row) => {
@@ -448,4 +448,4 @@ const SemesterGradeDashBoard = () => {
     )
 }
 
-export default SemesterGradeDashBoard;
+export default AnualGradeDashBoard;

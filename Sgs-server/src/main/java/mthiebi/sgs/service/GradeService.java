@@ -1,5 +1,6 @@
 package mthiebi.sgs.service;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Grade;
 import mthiebi.sgs.models.Student;
@@ -33,7 +34,9 @@ public interface GradeService {
                                                                Long studentId,
                                                                String yearRange,
                                                                Date createDate,
-                                                               String component);
+                                                               String component) throws SGSException;
+
+    List<String> getGradeYearGrouped();
 
     byte[] exportPdfMonthlyGrade(Long classId, Long studentId, Date month);
 

@@ -1,7 +1,7 @@
 package mthiebi.sgs.controllers;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.*;
-import mthiebi.sgs.models.Grade;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.GradeService;
@@ -83,12 +83,16 @@ public class GradeController {
     @GetMapping("/get-grades-by-component")
     @Secured({AuthConstants.MANAGE_GRADES}) //todo
     public List<GradeComponentWrapper> getGradesByComponent(@RequestParam Long classId,
-                                                                       @RequestParam(required = false) Long studentId,
-                                                                       @RequestParam(required = false) String yearRange,
-                                                                       @RequestParam(required = false) Date createDate,
-                                                                       @RequestParam String component){
+                                                           @RequestParam(required = false) Long studentId,
+                                                           @RequestParam(required = false) String yearRange,
+                                                           @RequestParam(required = false) String createDate,
+                                                           @RequestParam String component) throws SGSException {
         List<GradeComponentWrapper> list = new ArrayList<>();
-        Map<Student, Map<Subject, BigDecimal>> map = gradeService.getGradeByComponent(classId, studentId, yearRange, createDate, component);
+        Date date = new Date();
+        if (createDate != null) {
+            date.setTime(Long.parseLong(createDate));
+        }
+        Map<Student, Map<Subject, BigDecimal>> map = gradeService.getGradeByComponent(classId, studentId, yearRange, date, component);
         for (Student student : map.keySet()) {
             GradeComponentWrapper gradeComponentWrapper = new GradeComponentWrapper();
             gradeComponentWrapper.setStudent(student);
@@ -104,5 +108,11 @@ public class GradeController {
             list.add(gradeComponentWrapper);
         }
         return list;
+    }
+
+    @GetMapping("/get-grades-years-grouped")
+    @Secured({AuthConstants.MANAGE_GRADES}) //todo
+    public List<String> getGradeYear() throws SGSException {
+        return gradeService.getGradeYearGrouped();
     }
 }

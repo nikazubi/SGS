@@ -20,4 +20,7 @@ public interface GradeRepositoryCustom {
 
     Map<Student, List<Grade>> findGradeByMonth(Long classId, Date createDate);
 
+    Integer getMinYear();
+
+    Integer getMaxYear();
 }

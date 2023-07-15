@@ -1,5 +1,9 @@
 package mthiebi.sgs.impl;
 
+import com.fasterxml.jackson.core.PrettyPrinter;
+import mthiebi.sgs.ExceptionKeys;
+import mthiebi.sgs.SGSException;
+import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.*;
 import mthiebi.sgs.repository.AcademyClassRepository;
 import mthiebi.sgs.repository.GradeRepository;
@@ -89,19 +93,23 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public Map<Student, Map<Subject, BigDecimal>> getGradeByComponent(Long classId, Long studentId, String yearRange, Date createDate, String component) {
-        String[] arr = yearRange.split("-");
-        int startYear = Integer.parseInt(arr[0]), endYear = Integer.parseInt(arr[1]);
+    public Map<Student, Map<Subject, BigDecimal>> getGradeByComponent(Long classId, Long studentId, String yearRange, Date createDate, String component) throws SGSException {
+        int startYear = 2023, endYear = 2023;
+        if (yearRange != null) {
+            String[] arr = yearRange.split("-");
+            startYear = Integer.parseInt(arr[0]);
+            endYear = Integer.parseInt(arr[1]);
+        }
         Map<Student, Map<Subject, BigDecimal>> gradeByStudent = new HashMap<>();
         switch (component) {
             case "firstSemester":
-                gradeByStudent = gradeRepository.findGradeBySemester(classId, startYear, true);
+                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, startYear, true));
                 break;
             case "secondSemester":
-                gradeByStudent = gradeRepository.findGradeBySemester(classId, endYear, false);
+                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, endYear, false));
                 break;
             case "anual":
-                gradeByStudent = getAnualGrades(classId, startYear, endYear);
+                gradeByStudent = fillMissingSubjects(classId, getAnualGrades(classId, startYear, endYear));
                 break;
             case "monthly":
                 gradeByStudent = getMonthlyGrades(classId, createDate);
@@ -111,7 +119,18 @@ public class GradeServiceImpl implements GradeService {
 
     }
 
-    private Map<Student, Map<Subject, BigDecimal>> getMonthlyGrades(Long classId, Date createDate) {
+    @Override
+    public List<String> getGradeYearGrouped() {
+        Integer minYear = gradeRepository.getMinYear();
+        Integer maxYear = gradeRepository.getMaxYear();
+        List<String> result = new ArrayList<>();
+        for (; minYear < maxYear; minYear++) {
+            result.add(String.valueOf(minYear) + "-" + String.valueOf(minYear + 1));
+        }
+        return result;
+    }
+
+    private Map<Student, Map<Subject, BigDecimal>> getMonthlyGrades(Long classId, Date createDate) throws SGSException {
         Map<Student, List<Grade>> gradelist = gradeRepository.findGradeByMonth(classId, createDate);
         Map<Student, Map<Subject, BigDecimal>> result = new HashMap<>();
         for (Student student : gradelist.keySet()) {
@@ -121,7 +140,7 @@ public class GradeServiceImpl implements GradeService {
             ));
             result.put(student, value);
         }
-        return result;
+        return fillMissingSubjects(classId, result);
     }
 
     @Override
@@ -186,6 +205,25 @@ public class GradeServiceImpl implements GradeService {
                             ));
                         }
                 ));
+    }
+
+    private Map<Student, Map<Subject, BigDecimal>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, BigDecimal>> map) throws SGSException {
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
+        List<Subject> subjectList = academyClass.getSubjectList();
+        List<Student> studentList = academyClass.getStudentList();
+        for (Student student : studentList) {
+            Map<Subject, BigDecimal> existMap = map.get(student);
+            Map<Subject, BigDecimal> newMap = new HashMap<>();
+            for (Subject subject : subjectList) {
+                if (existMap != null && existMap.get(subject) != null) {
+                    newMap.put(subject, existMap.get(subject));
+                } else {
+                    newMap.put(subject, BigDecimal.ZERO);
+                }
+            }
+            map.put(student, newMap);
+        }
+        return map;
     }
 
 }

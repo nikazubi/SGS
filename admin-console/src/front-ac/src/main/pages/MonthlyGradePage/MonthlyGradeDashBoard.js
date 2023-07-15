@@ -1,25 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import DataGridSGS from "../../components/grid/DataGrid";
 import MonthlyGradeToolbar from "./MonthlyGradeToolbar";
 import "./header.css"
+import {getFiltersOfPage} from "../../../utils/filters";
+import useGradeMonthly from "./useGradeMonthly";
 
 const MonthlyGradeDashBoard = () => {
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({...getFiltersOfPage("MONTHLY_GRADE")});
 
-    const [data, setData] = useState([]);
-
-    // useEffect(()=>{
-    //     setTimeout((function (){
-    //         document.querySelectorAll('.header-class').forEach((e,index)=>{
-    //             e.style = "left: " + (103 + (index * 60)) + "px";
-    //             // e.style.left = (103 + (index * 57));
-    //             // e.style.color = "red";
-    //         })
-    //     }),1000)
-
-    // },[])
-
+    const {data, isLoading, isError, error, isSuccess} = useGradeMonthly(filters);
     const gradeColumns = [
         {
             headerName: "მოსწავლე",
@@ -71,7 +61,7 @@ const MonthlyGradeDashBoard = () => {
             sortable: false,
             align: 'center',
             headerAlign: 'center', headerClassName: "header-class", cellClassName: "cell-header"
-            
+
         },
         {
             headerName: "ქართული წერა",
@@ -382,9 +372,79 @@ const MonthlyGradeDashBoard = () => {
 
     ];
 
+    let gradeClomuns2 = []
+
+    const getGradeColumns = useCallback(() =>{
+        if(data && data.length > 0){
+            gradeClomuns2 = [        {
+                headerName: "მოსწავლე",
+                renderCell: ({row}) => {
+                    return ( <div>
+                        {row.student.firstName + ' ' + row.student.lastName}
+                    </div>);
+                },
+                renderHeader: (params) => (
+                    <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
+                        {'მოსწავლე'}
+                    </div>
+                ),
+                field: 'name',
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center',
+            }];
+            data[0].gradeList.forEach((o, index) => {
+                gradeClomuns2 = [ ...gradeClomuns2, {
+                    headerName: o.subject.name,
+                    renderCell: ({row}) => {
+                        return ( <div>
+                            {row.gradeList[index].value === 0 ? '' : row.gradeList[index].value}
+                        </div>);
+                    },
+                    renderHeader: (params) => (
+                        <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
+                            {o.subject.name}
+                        </div>
+                    ),
+                    field: '' + o.subject.name,
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center',
+                }]
+            })
+            return gradeClomuns2
+        }
+        return gradeColumns
+    }, [data])
+
+
+
+    // if (data !== undefined && data.length > 0) {
+    //     data[0].gradeList.forEach(o => {
+    //         gradeClomuns2 = [ ...gradeClomuns2, {
+    //             headerName: o.subject.name,
+    //             renderCell: ({o}) => {
+    //                 return ( <div>
+    //                     {o.value}
+    //                 </div>);
+    //             },
+    //             renderHeader: (params) => (
+    //                 <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
+    //                     {o.subject.name}
+    //                 </div>
+    //             ),
+    //             field: '' + o.subject.name,
+    //             sortable: false,
+    //             align: 'center',
+    //             headerAlign: 'center',
+    //         }]
+    //     })
+    //     setColumn(gradeClomuns2);
+    // }
+
     return (
         <div className={"monthlyGradeCnt"}>
-            <MonthlyGradeToolbar filters={filters} setFilters={setFilters} setData={setData}/>
+            <MonthlyGradeToolbar filters={filters} setFilters={setFilters}/>
             <div style={{height: `calc(100vh - ${130}px)`, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS
@@ -396,11 +456,11 @@ const MonthlyGradeDashBoard = () => {
                                 }`,
                             },
                         }}
-                        // queryKey={"GRADES"}
-                        columns={gradeColumns}
+                        queryKey={"MONTHLY_GRADE"}
+                        columns={getGradeColumns()}
                         rows={data ? data : []}
                         getRowId={(row) => {
-                            return row.name;
+                            return row.student.id;
                         }}
                         getRowHeight={() => 'auto'}
                         disableColumnMenu

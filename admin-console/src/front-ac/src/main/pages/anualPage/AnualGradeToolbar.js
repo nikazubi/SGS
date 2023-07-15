@@ -8,10 +8,12 @@ import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import {setFiltersOfPage} from "../../../utils/filters";
+import useFetchYear from "./useYear";
 
-const MonthlyGradeToolbar = ({setFilters, filters}) => {
+const AnualGradeToolbar = ({setFilters, filters, setData}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
+    const {mutateAsync: onFetchYear} = useFetchYear();
     const [date, setDate] = useState(new Date())
 
 
@@ -21,10 +23,11 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                 <Formik
                     initialValues={
                         {
-                            student: filters.student || '',
-                            academyClass: filters.academyClass || '',
-                            date: filters.date || date,
+                            student: '',
+                            academyClass: '',
+                            yearRange: '',
                             groupBy: 'STUDENT',
+                            semesterN: ''
                         }
                     }
                     onSubmit={() => {
@@ -67,22 +70,24 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                         </div>
 
                         <div style={{marginLeft: 50, width: 300}}>
-                            <FormikDatePickerField name="date"
-                                                   label={"თვე"}
-                                                   onChange={(event, value)=> {
-                                                      setFieldValue("date", value)
-                                                      setFilters(prevState => {
-                                                          const copied = prevState;
-                                                          copied.date = value
-                                                          return copied
-                                                      })
-                                                   }}/>
+                            <FormikAutocomplete name="yearRange"
+                                                multiple={false}
+                                                label={"წელი"}
+                                // resolveData={resolveCardTypeAutocompleteData}
+                                                onFetch={onFetchYear}
+                                                getOptionSelected={(option, value) => option.id === value.id}
+                                                getOptionLabel={(option) => option}
+                                                setInitialVulue={(options) =>{
+                                                    if(options.length === 1){
+                                                        return options[0]
+                                                    }
+                                                }}/>
                         </div>
                         <div style={{marginLeft: 15, width: 100}}>
                             <IconButton
                                 icon={<Search/>}
                                 onClick={() => {
-                                    setFiltersOfPage("MONTHLY_GRADE", values)
+                                    setFiltersOfPage("ANNUAL_GRADE", values)
                                     setFilters(values)
                                 }}
                             />
@@ -94,4 +99,4 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
     )
 }
 
-export default MonthlyGradeToolbar;
+export default AnualGradeToolbar;
