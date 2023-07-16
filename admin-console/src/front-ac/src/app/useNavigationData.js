@@ -10,6 +10,7 @@ import MonthlyGradeDashBoard from "../main/pages/MonthlyGradePage/MonthlyGradeDa
 import SemesterGradeDashBoard from "../main/pages/semesterPage/SemesterGradeDashBoard";
 import AnualGradeDashBoard from "../main/pages/anualPage/AnualGradeDashBoard";
 import TotalAbsenceDashBoard from "../main/pages/totalAbsencePage/TotalAbsenceDashBoard";
+import SystemUserDashBoard from "../main/pages/systemUserPage/SystemUserDashBoard";
 
 
 const useNavigationData = () => {
@@ -82,6 +83,15 @@ const useNavigationData = () => {
       id: 'TOTAL_ABSENCE',
       name: 'ჯამური გაცდენები',
       component: <TotalAbsenceDashBoard/>,
+      icon: <DiscFull/>,
+      show: false,
+      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
+      collapsible: false
+    },
+    SYSTEM_USER: {
+      id: 'SYSTEM_USER',
+      name: 'სისტემური მომხმარებელი',
+      component: <SystemUserDashBoard/>,
       icon: <DiscFull/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO

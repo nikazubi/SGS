@@ -73,10 +73,10 @@ public class SystemUserServiceImpl implements SystemUserService {
     }
 
 
-//    @Override
-//    public List<SystemUser> filterUsers(int limit, int page, String username, String name, String groupName, String active) {
-//        return systemUserRepository.filterUser(limit, page, username, name, groupName, active, em);
-//    }
+    @Override
+    public List<SystemUser> filterUsers(String username, String name, Boolean active) {
+        return systemUserRepository.filter(username, name, active);
+    }
 
     @Override
     public SystemUser findById(long id) throws SGSException {
@@ -95,7 +95,11 @@ public class SystemUserServiceImpl implements SystemUserService {
     public SystemUser delete(long userId) throws SGSException {
         Optional<SystemUser> systemUserOptional = systemUserRepository.findById(userId);
         if (systemUserOptional.isPresent()) {
-            systemUserRepository.delete(systemUserOptional.get());
+            try {
+                systemUserRepository.delete(systemUserOptional.get());
+            } catch (Exception e) {
+                throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ERASE_ALL_DATA_FROM_SYSTEM_USER);
+            }
             return systemUserOptional.get();
         } else {
             logger.info("User not found");

@@ -15,7 +15,8 @@ public class SystemGroupServiceImpl implements SystemGroupService {
 
     @Autowired
     private SystemGroupRepository systemGroupRepository;
-    
+
+    @Override
     public List<SystemUserGroup> getAll(){
         return systemGroupRepository.findAll();
     }

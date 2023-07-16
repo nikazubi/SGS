@@ -12,7 +12,7 @@ public interface SystemUserService {
 
     SystemUser updateUser(SystemUser systemUser) throws SGSException;
 
-//    List<SystemUser> filterUsers(int limit, int page, String username, String name, String group, String active);
+    List<SystemUser> filterUsers(String username, String name, Boolean active);
 
     SystemUser findById(long id) throws SGSException;
 

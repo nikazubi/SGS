@@ -47,18 +47,9 @@ const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
                                                 multiple={false}
                                                 label={"სემესტრი"}
                                                 minLengthForSearch={300}
-                                // resolveData={resolveCardTypeAutocompleteData}
                                                 onFetch={()=>{}}
                                                 options={options}
-                                //                 getOptionSelected={(option, value) => {
-                                //                     return option.id === value.id
-                                //                 }}
                                                 getOptionLabel={(option) => option.label}
-                                //                 setInitialVulue={(options) =>{
-                                //                     if(options.length === 1){
-                                //                         return options[0]
-                                //                     }
-                                //                 }}
                             />
                         </div>
                         <div style={{marginLeft: 50, width: 300}}>

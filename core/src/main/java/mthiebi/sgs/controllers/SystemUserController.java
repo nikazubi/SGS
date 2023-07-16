@@ -91,6 +91,15 @@ public class SystemUserController {
         }
     }
 
+    @GetMapping("/filter")
+    @Secured({AuthConstants.MANAGE_SYSTEM_USER})
+    public List<SystemUserDTO> filterUsers(@RequestParam(required = false) String username,
+                                        @RequestParam(required = false) String name,
+                                        @RequestParam(required = false) Boolean active){
+        return systemUserService.filterUsers(username, name, active).stream()
+                .map(sys -> systemUserMapper.systemUserDTO(sys)).collect(Collectors.toList());
+    }
+
     @DeleteMapping("/delete/{userId}")
     @Secured({AuthConstants.MANAGE_SYSTEM_USER})
     public ResponseEntity delete(@PathVariable long userId) {

@@ -16,5 +16,6 @@ public interface ExceptionKeys {
     String SYSTEM_USER_USERNAME_NOT_UNIQUE = "მომხმარებლის სახელი უნდა იყოს უნიკალური";
     String TOTAL_ACADEMIC_HOUR_OF_CLASS_AND_DATE_ALREADY_EXISTS = "მოცემულ კლასზე თვის ჯამური აკადემიური საათის ჩანაწერი უკვე არსებობს";
     String TOTAL_ACADEMIC_HOUR_NOT_FOUND = "თვის ჯამური აკადემიური საათის ჩანაწერი ვერ მოიძებნა";
+    String ERASE_ALL_DATA_FROM_SYSTEM_USER = "მომხმარებელს ვერ წაშლით სანამ არ გაასუფთავებთ მის სისტემურ ჯგუფებს და კლასებს";
 
 }
