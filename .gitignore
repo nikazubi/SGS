@@ -32,3 +32,4 @@ client-console/yarn.lock
 
 ### VS Code ###
 .vscode/
+node_modules
