@@ -58,6 +58,18 @@ public class SubjectController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/get-subjects-without-academy-class-filter")
+    @Secured({AuthConstants.VIEW_SUBJECT})
+    public List<SubjectDTO> getSubjectsWithoutFilter(@RequestParam(defaultValue = "10") int limit,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(required = false, defaultValue = "0") Long id,
+                                        @RequestParam(required = false) String name) throws Exception {
+
+        return subjectService.getSubjects(limit, page, id, name).stream()
+                .map(subject -> subjectMapper.subjectDTO(subject))
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/get-subject/{id}")
     @Secured({AuthConstants.VIEW_SUBJECT})
     public SubjectDTO getSubjects(@PathVariable Long id) throws SGSException {

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "SUBJECT")
-public class Subject extends Audit{
+public class Subject extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

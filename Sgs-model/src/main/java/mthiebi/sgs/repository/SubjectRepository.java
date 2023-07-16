@@ -31,8 +31,8 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>, Queryds
         QAcademyClass qAcademyClass = QAcademyClass.academyClass;
 
         //todo
-        List<Subject> uniqueSubjects = academyClassList.stream()
-                .flatMap(academyClass -> academyClass.getSubjectList().stream())
+        List<Long> uniqueSubjects = academyClassList.stream()
+                .flatMap(academyClass -> academyClass.getSubjectList().stream().map(Subject::getId))
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -46,12 +46,31 @@ public interface SubjectRepository extends JpaRepository<Subject, Long>, Queryds
                 .from(qSubject)
                         .where(idPredicate)
                         .where(namePredicate)
-                        .where(qSubject.in(uniqueSubjects))
+                        .where(qSubject.id.in(uniqueSubjects))
                         .limit(converted.getPageSize())
                         .orderBy(qSubject.createTime.desc())
                         .fetch();
     }
 
+    default List<Subject> findAllSubject(int limit,
+                                         int page,
+                                         Long id,
+                                         String name,
+                                         EntityManager em){
 
+        QSubject qSubject = QSubject.subject;
 
+        PageRequest converted = PageRequest.of(page, limit);
+        Predicate idPredicate = id == 0 ? qSubject.id.isNotNull() : qSubject.id.eq(id);
+        Predicate namePredicate = name != null ? qSubject.name.contains(name) : qSubject.name.isNotNull();
+        final JPAQueryFactory query = new JPAQueryFactory(em);
+
+        return query.selectDistinct(qSubject)
+                .from(qSubject)
+                .where(idPredicate)
+                .where(namePredicate)
+                .limit(converted.getPageSize())
+                .orderBy(qSubject.createTime.desc())
+                .fetch();
+    }
 }

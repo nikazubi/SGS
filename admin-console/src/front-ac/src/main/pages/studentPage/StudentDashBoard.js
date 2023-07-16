@@ -1,15 +1,15 @@
-import {useEffect, useState} from "react";
-import TotalAbsenceTableToolbar from "./TotalAbsenceTableToolbar";
+import {useState} from "react";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import DataGridSGS from "../../components/grid/DataGrid";
-import useFetchTotalAbsences from "./useTotalAbsenceGrades";
-import moment from "moment";
-import DeleteTotalAbsenceGrades from "./DeleteTotalAbsenceGrades";
+import useStudents, {fetchStudents} from "./useStudents";
+import StudentTableToolbar from "./StudentTableToolbar";
+import DeleteSubject from "./DeleteStudent";
+import EditStudent from "./EditStudent";
 
-const TotalAbsenceDashBoard = () => {
+const StudentDashBoard = () => {
     const [filters, setFilters] = useState({});
 
-    const {data, isLoading, isError, error} = useFetchTotalAbsences(filters);
+    const {data, isLoading, isError, error} = useStudents(filters);
 
     const columns = [
         {
@@ -23,31 +23,41 @@ const TotalAbsenceDashBoard = () => {
             headerAlign: 'center'
         },
         {
-            headerName: "კლასი",
+            headerName: "სახელი",
             renderCell: ({row}) => {
-                return row.academyClass.className + '-' + row.academyClass.classLevel;
+                return row.firstName;
             },
-            field: 'academyClass',
+            field: 'firstName',
             sortable: false,
             align: 'center',
             headerAlign: 'center'
         },
         {
-            headerName: "აქტივობის დრო",
+            headerName: "გვარი",
             renderCell: ({row}) => {
-                return moment.utc(Date.parse(row.activePeriod)).local().format("MM-YYYY");
+                return row.lastName;
             },
-            field: 'activePeriod',
+            field: 'lastName',
             sortable: false,
             align: 'center',
             headerAlign: 'center'
         },
         {
-            headerName: "ჯამური სასწავლო საათი",
+            headerName: "პირადი ნომერი",
             renderCell: ({row}) => {
-                return row.totalAcademyHour;
+                return row.name;
             },
-            field: 'totalAcademyHour',
+            field: 'personalNumber',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "მომხმარებლის სახელი",
+            renderCell: ({row}) => {
+                return row.username;
+            },
+            field: 'username',
             sortable: false,
             align: 'center',
             headerAlign: 'center'
@@ -55,9 +65,10 @@ const TotalAbsenceDashBoard = () => {
         {
             field: 'actions',
             type: 'actions',
-            width: 42 + 10,
+            width: 2 * 42 + 10,
             getActions: ({row}) => [
-                 <DeleteTotalAbsenceGrades data={row} />,
+                <EditStudent data={row}/>,
+                <DeleteSubject data={row}/>,
             ],
         },
     ]
@@ -65,7 +76,7 @@ const TotalAbsenceDashBoard = () => {
 
     return (
         <div>
-            <TotalAbsenceTableToolbar filters={filters} setFilters={setFilters}/>
+            <StudentTableToolbar filters={filters} setFilters={setFilters}/>
             <div style={{height: `calc(100vh - ${130}px)`, width: '98%', marginLeft: 15, marginRight: 15}}>
                 <DataGridPaper>
                     <DataGridSGS
@@ -76,16 +87,14 @@ const TotalAbsenceDashBoard = () => {
                                 }`,
                             },
                         }}
-                        // experimentalFeatures={{columnGrouping: true}}
-                        // columnGroupingModel={columnGroupingModel}
-                        queryKey={"TOTAL_ABSENCE"}
+                        queryKey={"STUDENTS"}
                         columns={columns}
                         rows={data ? data : []}
                         getRowId={(row) => {
                             return row.id;
                         }}
-                        // processRowUpdate={processRowUpdate}
-                        // onProcessRowUpdateError={handleProcessRowUpdateError}
+                        fetchData={fetchStudents}
+                        pagination={true}
                         getRowHeight={() => 'auto'}
                         disableColumnMenu
                         filters={filters}
@@ -106,4 +115,4 @@ const TotalAbsenceDashBoard = () => {
     )
 }
 
-export default TotalAbsenceDashBoard;
+export default StudentDashBoard;
