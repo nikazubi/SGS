@@ -194,7 +194,10 @@ body{
 .ibChart .recharts-layer.recharts-cartesian-axis-tick{
     cursor: pointer;
 }
-
+.ibChart .recharts-cartesian-axis-ticks{
+    font-size: 14px;
+    font-weight: bold;
+}
 .headerCnt{
     display: flex;
     align-items: center;
@@ -328,6 +331,15 @@ body{
     margin: 50px auto;
 }
 
+.absenceMain.shefaseba{
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.absenceMain.shefaseba.term{
+    margin: 0 auto;
+}
+
 .absenceMain .css-gg4vpm{
     justify-content: center;
 }
@@ -381,6 +393,16 @@ body{
     margin: auto;
 }
 
+.ibChart .recharts-wrapper{
+    overflow: hidden;
+}
+
+.absenceDropdown{
+    display: flex;
+    align-items: center;
+    margin-top: 25px;
+}
+
 .absenceDropdown label[data-shrink=false]+.MuiInputBase-formControl .css-jedpe8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
     background-color: #fff !important;
 }
@@ -398,7 +420,6 @@ body{
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 35px;
 }
 
 .yearDropwdown .css-1u3bzj6-MuiFormControl-root-MuiTextField-root{

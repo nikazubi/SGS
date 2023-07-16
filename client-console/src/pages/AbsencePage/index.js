@@ -2,11 +2,11 @@ import CustomBar from "./BarChart";
 import { useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
 import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
 const AbsencePage = () => {
 
-
-  const subjectsData = ['მათემატიკა', 'ქართული', 'მუსიკა']
-  const monthData = [
+  useEffect(()=>{
+    const monthData = [
       'სექტემბერი',
       'ოქტომბერი',
       'ნოემბერი',
@@ -18,37 +18,24 @@ const AbsencePage = () => {
       'მაისი',
       'ივნისი'
     ];
-  const yearsData = [2021 ,2022, 2023]
-  
-  const [isButtonActive, setIsButtonActive] = useState(true)
+    setMonth(monthData)
+
+    const yearsData = [2021 ,2022, 2023]
+    setYear(yearsData)
+  },[])
+
+
+  const [absenceBySubject, setAbsenceBySubject] = useState([]);
 
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
 
-  const [subject, setSubject] = useState(subjectsData)
-  const [month, setMonth] = useState(monthData)
-  const [year, setYear] = useState(yearsData)
 
-  useEffect(()=>{
-
-    if (selectedMonth && selectedYear) {
-        setIsButtonActive(false)
-    }
-
-    else {
-
-        //es udna eweros handleSearch magram satestoa da ak magitom weria
-
-        setIsButtonActive(true)
-    }
-
-},[selectedMonth, selectedYear])
-
-
-
-//API CALL
-    const [attendMax, setAttendMAx] = useState(120) //chatarebuli saatebi
-    const [absence, setAbsence] = useState(60) //gaacdina sul
+  const [month, setMonth] = useState([])
+  const [year, setYear] = useState([])
+  //API CALL
+  const [attendMax, setAttendMAx] = useState(0) //chatarebuli saatebi
+  const [absence, setAbsence] = useState(0) //gaacdina sul
 
     const allAbsenceData = [
         {
@@ -56,8 +43,12 @@ const AbsencePage = () => {
           არა: absence, 
         },
       ];
+
+    const handleSearch = async () =>{
+      if(!!selectedMonth && !!selectedYear) {
     //60 miviget jamshi anu sul gacdenebis raodenoba rac werie "absence"
-    const absenceBySubject = [
+
+    const subjectAbsence = [
         {
           name: 'მუსიკა',
           არა: 1, 
@@ -117,23 +108,31 @@ const AbsencePage = () => {
           არა: 5, 
         },
       ];
+          setAbsenceBySubject(subjectAbsence)
+          setAbsence(60)
+          setAttendMAx(120)
+      }
+  }
 
     return ( 
         <>
-            <div className="ib__center column">
-                <div className="pageName">მოსწავლის მიერ გაცდენილი საათები</div>
-                <div className="absenceDropdown">
-                <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>
-                <Dropdown data={year}  select={setSelectedYear} label={'წელი'}/>
-                </div>
-                <Button onClick={()=>console.log('1')} disabled={isButtonActive} style={{ fontWeight: 'bold'}} variant="contained">ძიება</Button>
+        <div className="ib__center column">
+            <div className="pageName">მოსწავლის მიერ გაცდენილი საათები</div>
+            <div className="absenceDropdown">
+            <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>
+            <Dropdown data={year}  select={setSelectedYear} label={'წელი'}/>
+            <div style={{marginLeft:'10px'}}>
+              <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear} style={{ fontWeight: 'bold', height: '40px'}} variant="contained">ძიება<SearchIcon/></Button>
             </div>
-        <div className="absenceMain">
+            </div>
+
+        </div>
+        {!!absence && <div className="absenceMain">
             <CustomBar color={'#01619b'} attend={absence} attendMax={attendMax} layout={'vertical'} data={allAbsenceData}/>
-        </div>
-        <div className="absenceMain horizontal">
+        </div>}
+        {!!absenceBySubject.length && <div className="absenceMain horizontal">
             <CustomBar color={'#FF5722'} attendMax={absence} keyLabel={'არა'} layout={'horizontal'} data={absenceBySubject} />
-        </div>
+        </div>}
         </>
      );
 }

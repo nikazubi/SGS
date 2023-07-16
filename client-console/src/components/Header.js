@@ -4,6 +4,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Link, useLocation  } from "react-router-dom";
 import React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import UserBar from './UserBar';
 
 
 const Header = () => {
@@ -38,7 +39,6 @@ const Header = () => {
         }
       }));
 
-      const classes = useStyles();
 
     return ( 
         <header>
@@ -46,14 +46,15 @@ const Header = () => {
               {
                 isNotHomePage &&
                 <Link className="headerCnt__aTag" to="/">
-                  <ArrowBackIcon className='headerCnt__arrow'/>
+                  {/* <ArrowBackIcon className='headerCnt__arrow'/> */}
+                  <div style={{marginLeft:'15px'}}>მთავარი</div>
                 </Link>
                 
               }
 
               <div>
                 <Link className="headerCnt__aTag" to="/">
-                  <AvatarWithLabel label={'SOSO GUDADZE'} classes={classes}/>
+                  <UserBar />
                 </Link>
               </div>
             </div>

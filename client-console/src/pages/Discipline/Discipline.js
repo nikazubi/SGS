@@ -5,6 +5,7 @@ import DisciplineBox from "./DisciplineBox";
 import SmallBox from "./SmallBox";
 import Button from '@mui/material/Button';
 import {useUserData, MyContext, useUpdate} from "../../context/userDataContext";
+import SearchIcon from '@mui/icons-material/Search';
 
 const Discipline = () => {
     const updateData = useUpdate()
@@ -164,12 +165,12 @@ const Discipline = () => {
         <div className="ibCnt">
             <div className="ib__center column">
                 <div className="pageName">მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
-                <div>
+                <div style={{display:'flex', alignItems:'center'}}>
                 <Dropdown data={subject} select={setSelectedSubject} label={'საგანი'}/>
                 <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>
                 <Dropdown data={year}  select={setSelectedYear} label={'წელი'}/>
+                <Button onClick={handleSearch} disabled={isButtonActive} style={{ fontWeight: 'bold', height: '40px'}} variant="contained">ძიება<SearchIcon/></Button>
                 </div>
-                <Button onClick={handleSearch} disabled={isButtonActive} style={{ fontWeight: 'bold'}} variant="contained">ძიება</Button>
             </div>
 
             {allStudentsData && <div className="termEstCnt">

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useUpdate } from "../../context/userDataContext";
 import DisciplineBox from "./EthicalBox";
-import EthicTable from "./EthicTable"
 
 const EthicPage = () => {
     const updateData = useUpdate()
@@ -142,7 +141,6 @@ const EthicPage = () => {
     return ( 
         <>
         <div className="pageName">მოსწავლის შეფასება ეთიკური ნომრების მიხედვით</div>
-        <EthicTable/>
         <div className="ibCnt">
             <div className="termEstCnt">
                 <DisciplineBox />
