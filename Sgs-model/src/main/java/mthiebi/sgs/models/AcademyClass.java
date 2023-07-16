@@ -31,6 +31,9 @@ public class AcademyClass extends mthiebi.sgs.models.Audit {
             inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private List<mthiebi.sgs.models.Subject> subjectList;
 
+    @Builder.Default
+    private Boolean isTransit = Boolean.FALSE;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -82,6 +85,14 @@ public class AcademyClass extends mthiebi.sgs.models.Audit {
     public void addTotalAbsence(TotalAbsence totalAbsence) {
         totalAbsence.setAcademyClass(this);
         totalAbsences.add(totalAbsence);
+    }
+
+    public Boolean getIsTransit() {
+        return isTransit;
+    }
+
+    public void setIsTransit(Boolean isTransit) {
+        isTransit = isTransit;
     }
 
     @Transient

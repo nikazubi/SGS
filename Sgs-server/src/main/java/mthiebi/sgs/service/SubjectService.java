@@ -20,6 +20,11 @@ public interface SubjectService {
                               String name,
                               String userName) throws SGSException;
 
+    List<Subject> getSubjects(int limit,
+                              int page,
+                              Long id,
+                              String name) throws SGSException;
+
     Subject findSubjectById(Long id) throws SGSException;
 
 }

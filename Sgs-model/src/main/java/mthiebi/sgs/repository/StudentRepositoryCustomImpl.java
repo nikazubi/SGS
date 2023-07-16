@@ -8,6 +8,7 @@ import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.QAcademyClass;
 import mthiebi.sgs.models.QStudent;
 import mthiebi.sgs.models.Student;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
@@ -28,16 +29,16 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
         PageRequest converted = PageRequest.of(page, limit);
 
         Predicate idPredicate = id == 0 ? qStudent.id.isNotNull() : qStudent.id.eq(id);
-        Predicate firstNamePredicate = firstName != null ? qStudent.firstName.contains(firstName) : qStudent.firstName.isNotNull();
-        Predicate lastNamePredicate = lastName != null ? qStudent.lastName.contains(lastName) : qStudent.lastName.isNotNull();
-        Predicate personalNumberPredicate = personalNumber != null ? qStudent.personalNumber.contains(lastName) : qStudent.personalNumber.isNotNull();
+        Predicate firstNamePredicate = StringUtils.isNotBlank(firstName) ? qStudent.firstName.contains(firstName) : qStudent.firstName.isNotNull();
+        Predicate lastNamePredicate = StringUtils.isNotBlank(lastName) ? qStudent.lastName.contains(lastName) : qStudent.lastName.isNotNull();
+        Predicate personalNumberPredicate = StringUtils.isNotBlank(personalNumber) ? qStudent.personalNumber.contains(personalNumber) : qStudent.personalNumber.isNotNull();
 
         return qf.selectFrom(qStudent)
                 .where(idPredicate)
                 .where(firstNamePredicate)
                 .where(lastNamePredicate)
                 .where(personalNumberPredicate)
-                .offset(converted.getOffset())
+//                .offset(converted.getOffset())
                 .limit(converted.getPageSize())
                 .orderBy(qStudent.createTime.desc())
                 .fetch();

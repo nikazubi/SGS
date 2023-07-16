@@ -20,5 +20,7 @@ public class StudentDTO {
     private Long age;
 
     private String personalNumber;
+    private String username;
+    private String password;
 
 }

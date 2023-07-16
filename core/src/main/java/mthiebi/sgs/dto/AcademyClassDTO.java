@@ -21,4 +21,6 @@ public class AcademyClassDTO {
 
     private String className;
 
+    private Boolean isTransit;
+
 }

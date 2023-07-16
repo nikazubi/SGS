@@ -62,6 +62,14 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Subject> getSubjects(int limit,
+                                     int page,
+                                     Long id,
+                                     String name) throws SGSException {
+        return subjectRepository.findAllSubject(limit, page, id, name, em);
+    }
+
+    @Override
     public Subject findSubjectById(Long id) throws SGSException {
         return subjectRepository.findById(id)
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SUBJECT_NOT_FOUND));
