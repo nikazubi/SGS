@@ -91,15 +91,24 @@ body{
     align-items: center;
 }
 
+.ib__center.ethical{
+    font-size: 18px;
+    color: #fff;
+}
+
 .DisciplineBox{
-    width: 310px;
+    min-width: 310px;
     height: 230px;
     border-radius: 0px 30px 30px 30px;
-    background-color: orange;
+    background-color: #01619b;
     text-align: center;
     font-size: 20px;
     padding: 0 15px;
     flex-grow: 1;
+}
+
+.DisciplineBox.ethical{
+    height: 200px;
 }
 
 .DisciplineBox__title{
@@ -115,7 +124,7 @@ body{
 
 .grades__footerCnt{
     display: flex;
-    gap: 5px;
+    gap: 8px;
     position: relative;
     justify-content: center;
 }
@@ -145,6 +154,11 @@ body{
     background: #fcb683;
     border-radius: 6px;
     margin-top: 7px;
+}
+
+.grade__data__api.ethical{
+    background-color: #fff;
+    color: #000;
 }
 
 .termEstCnt{
@@ -237,7 +251,7 @@ body{
 }
 
 .ethicCnt{
-    margin: 60px;
+    margin: 30px 60px;
 }
 
 .ethicCnt .css-1ex1afd-MuiTableCell-root{
@@ -267,6 +281,18 @@ body{
     width: 90px;
     border: unset !important;
     border-right: unset !important;
+}
+
+.ethical__precent{
+    padding: 10px 0;
+    border-bottom: 1px solid #ffffff;
+    margin-bottom: 15px;
+}
+
+.ethical__title{
+    padding-top: 10px;
+    padding-bottom: 5px;
+    color: #fff;
 }
 
 /* shefaseba table */
@@ -363,6 +389,7 @@ body{
     font-size: 20px;
     font-weight: bold;
     margin: 15px 0;
+    text-align: center;
 }
 
 /* dropdown */
