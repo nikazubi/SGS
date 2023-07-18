@@ -35,6 +35,7 @@ export const UserContextProvider = props => {
       const {data} = await axios.get("/user-and-permissions")
       setUser(data)
       setLoggedIn(true)
+      localStorage.setItem("loginTime", new Date().toString())
       // setAuth({accessToken: auth.accessToken, refreshToken: auth.refreshToken});
       // refetch();
   };

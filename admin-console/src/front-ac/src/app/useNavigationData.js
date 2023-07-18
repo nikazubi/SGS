@@ -1,8 +1,17 @@
 import React, {useMemo} from 'react';
 import {useUserContext} from "../contexts/user-context";
-import {Grading, Home} from "@mui/icons-material";
+import {Grading, Home, SwitchAccount} from "@mui/icons-material";
 import DashBoard from "../main/pages/HomePage/DashBoard";
-import {AssignmentLate, ChangeHistory, DiscFull, ExitToApp, Grade} from "@material-ui/icons";
+import {
+  AssignmentLate,
+  ChangeHistory, Class,
+  DiscFull,
+  EventAvailable,
+  EventNote,
+  ExitToApp,
+  Grade, MenuBook, Person,
+  Today
+} from "@material-ui/icons";
 import BehaviourDashBoard from "../main/pages/behaviourPage/BehaviourDashBoard";
 import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 import ChangeRequestDashBoard from "../main/pages/changeRequestPage/ChangeRequestDashBoard";
@@ -59,7 +68,7 @@ const useNavigationData = () => {
       id: 'MONTHLY_GRADE',
       name: 'თვის შემაჯამებელი ნიშნები',
       component: <MonthlyGradeDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <Today/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
@@ -68,7 +77,7 @@ const useNavigationData = () => {
       id: 'SEMESTER_GRADE',
       name: 'სემესტრის ნიშნები',
       component: <SemesterGradeDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <EventNote/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
@@ -77,7 +86,7 @@ const useNavigationData = () => {
       id: 'ANNUAL_GRADE',
       name: 'წლიური ნიშნები',
       component: <AnualGradeDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <EventAvailable/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
@@ -86,7 +95,7 @@ const useNavigationData = () => {
       id: 'TOTAL_ABSENCE',
       name: 'ჯამური გაცდენები',
       component: <TotalAbsenceDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <AssignmentLate/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
@@ -95,7 +104,7 @@ const useNavigationData = () => {
       id: 'SYSTEM_USER',
       name: 'სისტემური მომხმარებელი',
       component: <SystemUserDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <Person/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
@@ -104,7 +113,7 @@ const useNavigationData = () => {
       id: 'SUBJECTS',
       name: 'საგანები',
       component: <SubjectDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <MenuBook/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
@@ -113,7 +122,7 @@ const useNavigationData = () => {
       id: 'STUDENTS',
       name: 'მოსწავლეები',
       component: <StudentDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <SwitchAccount/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false
@@ -122,7 +131,7 @@ const useNavigationData = () => {
       id: 'ACADEMY_CLASS',
       name: 'კლასები',
       component: <AcademyClassDashBoard/>,
-      icon: <DiscFull/>,
+      icon: <Class/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
       collapsible: false

@@ -392,6 +392,8 @@ const MonthlyGradeDashBoard = () => {
                 sortable: false,
                 align: 'center',
                 headerAlign: 'center',
+                width: 200,
+                maxWidth: 200,
             }];
             data[0].gradeList.forEach((o, index) => {
                 gradeClomuns2 = [ ...gradeClomuns2, {
@@ -410,6 +412,8 @@ const MonthlyGradeDashBoard = () => {
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',
+                    width: 200,
+                    maxWidth: 200,
                 }]
             })
             return gradeClomuns2
@@ -462,7 +466,7 @@ const MonthlyGradeDashBoard = () => {
                         getRowId={(row) => {
                             return row.student.id;
                         }}
-                        getRowHeight={() => 'auto'}
+                        getRowHeight={() => 50}
                         disableColumnMenu
                         filters={filters}
                     />

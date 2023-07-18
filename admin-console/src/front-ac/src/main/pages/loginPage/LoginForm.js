@@ -1,37 +1,37 @@
 import React, {useEffect, useState} from 'react';
 import './LoginPage.css';
 import axios from "../../../utils/axios";
-import {getAccessToken, setAuth} from "../../../utils/auth";
+import {deleteAuth, getAccessToken, setAuth} from "../../../utils/auth";
 import imageSrc from './ib.png';
 import {useUserContext} from "../../../contexts/user-context";
 import {useNotification} from "../../../contexts/notification-context";
-import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
-import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
-import IconButton from "../../../components/buttons/IconButton";
-import {Search} from "@material-ui/icons";
-import {setFiltersOfPage} from "../../../utils/filters";
-import Button from "@material-ui/core/Button";
-import {Formik} from "formik";
-import FormikTextField from "../../components/formik/FormikTextField"; // Import the image file
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, logout } = useUserContext();
+    const {login, logout} = useUserContext();
     const {setErrorMessage} = useNotification();
 
     useEffect(() => {
         //todo will probably fail when token expires
-        const checkTokenAndLogin = async () =>{
-        const token = getAccessToken();
+        const checkTokenAndLogin = async () => {
+            const loginTime = localStorage.getItem("loginTime");
+            const initialDate = new Date(loginTime);
+            const currentDate = new Date();
+            const timeDifference = currentDate.getTime() - initialDate.getTime();
+            const fiveHoursInMillis = 5 * 60 * 60 * 1000;
+            console.log(timeDifference)
+            if (timeDifference >= fiveHoursInMillis) {
+                deleteAuth();
+                return;
+            }
+            const token = getAccessToken();
             if (token) {
                 await login()
-            } else {
-                setErrorMessage("ავტორიზაცია ვერ მოხერხდა", true, false)
             }
         }
         checkTokenAndLogin()
-    },[])
+    }, [])
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -57,7 +57,7 @@ const LoginPage = () => {
                 setErrorMessage("ავტორიზაცია ვერ მოხერხდა", true, false)
                 logout()
             }
-        }).catch((error) =>{
+        }).catch((error) => {
             setErrorMessage(error)
             logout()
         })
@@ -79,7 +79,7 @@ const LoginPage = () => {
     return (
         <div className="loginCnt">
             <div className="loginCnt__img">
-                <img src={imageSrc} alt="IB Mtiebi Logo" />
+                <img src={imageSrc} alt="IB Mtiebi Logo"/>
             </div>
             <div className="loginCnt__circleWrap">
                 <div className="loginCnt__circle img"></div>
@@ -88,8 +88,10 @@ const LoginPage = () => {
                     <div className="formCnt">
                         <div className="formCnt__title">ავტორიზაცია</div>
                         <form onSubmit={handleSubmit}>
-                            <input placeholder="ელ.ფოსტა" value={email} onChange={handleEmailChange} className="formCnt__input" type="text" />
-                            <input placeholder="პაროლი" value={password} onChange={handlePasswordChange} className="formCnt__input" type="password" />
+                            <input placeholder="ელ.ფოსტა" value={email} onChange={handleEmailChange}
+                                   className="formCnt__input" type="text"/>
+                            <input placeholder="პაროლი" value={password} onChange={handlePasswordChange}
+                                   className="formCnt__input" type="password"/>
                             <div className="formCnt__btnCnt">
                                 <button>შესვლა</button>
                             </div>
