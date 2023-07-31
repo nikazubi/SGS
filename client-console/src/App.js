@@ -8,6 +8,7 @@ import AbsencePage from './pages/AbsencePage';
 import SemestruliShefaseba from './pages/semestruli-shefaseba';
 import TsliuriShefaseba from './pages/TsliuriShefaseba';
 import MonthlyGrade from './pages/MonthlyGrade';
+import Aside from './pages/Discipline/Aside';
 
 export const App = () =>{
     return(

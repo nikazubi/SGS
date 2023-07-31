@@ -122,6 +122,15 @@ body{
     margin-bottom: 25px;
 }
 
+.disciplineAside .css-1i5tyl5-MuiDrawer-docked{
+    position: relative;
+}
+
+.disciplineAside .css-12i7wg6-MuiPaper-root-MuiDrawer-paper{
+    position: absolute;
+    top: unset;
+}
+
 .grades__footerCnt{
     display: flex;
     gap: 8px;

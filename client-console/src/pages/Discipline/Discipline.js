@@ -6,8 +6,34 @@ import SmallBox from "./SmallBox";
 import Button from '@mui/material/Button';
 import {useUserData, MyContext, useUpdate} from "../../context/userDataContext";
 import SearchIcon from '@mui/icons-material/Search';
+import ResponsiveDrawer from "./Aside";
+
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { display, styled } from '@mui/system';
+
+const Sidebar = styled(Drawer)(({ theme }) => ({
+  transition:'.5s',
+  width: '240px',
+  height: '100vh !important',
+  top: 'unset !important',
+  flexShrink: 0,
+  '& .MuiDrawer-paper': {
+    width: '240px',
+    boxSizing: 'border-box',
+  },
+  '@media (max-width: 960px)': {
+    transform: 'translateX(-100%)'
+  },
+}));
 
 const Discipline = () => {
+
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
+
     const updateData = useUpdate()
     const allStudentsData = useUserData()
     console.log(allStudentsData, 'TEST123 allStudentsData')
@@ -50,17 +76,12 @@ const Discipline = () => {
 
     useEffect(()=>{
 
-        if (selectedSubject && selectedMonth && selectedYear) {
-            setIsButtonActive(false)
-        }
-        else {
+      if(window.innerWidth <= 960){
+        setSidebarOpen(false)
+      }
 
-            //es udna eweros handleSearch magram satestoa da ak magitom weria
 
-            setIsButtonActive(true)
-        }
-
-    },[selectedSubject, selectedMonth, selectedYear])
+    },[])
 
     const handleSearch = async () =>{
 
@@ -162,15 +183,35 @@ const Discipline = () => {
     }
 
     return ( 
+
+      <Box sx={{ display: 'flex' }}>
+<Sidebar
+// style={{display: sidebarOpen ? 'block' : 'none'}}
+        variant="permanent"
+        anchor="left"
+        className="disciplineAside"
+      >
+        <List>
+          {/* Add your sidebar items */}
+          <ListItem button>
+            <ListItemIcon>
+              <SearchIcon />
+            </ListItemIcon>
+            <ListItemText primary="Search" />
+          </ListItem>
+        </List>
+      </Sidebar>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+
         <div className="ibCnt">
             <div className="ib__center column">
                 <div className="pageName">მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
-                <div style={{display:'flex', alignItems:'center'}}>
+                {/* <div style={{display:'flex', alignItems:'center'}}>
                 <Dropdown data={subject} select={setSelectedSubject} label={'საგანი'}/>
                 <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>
                 <Dropdown data={year}  select={setSelectedYear} label={'წელი'}/>
                 <Button onClick={handleSearch} disabled={isButtonActive} style={{ fontWeight: 'bold', height: '40px'}} variant="contained">ძიება<SearchIcon/></Button>
-                </div>
+                </div> */}
             </div>
 
             {allStudentsData && <div className="termEstCnt">
@@ -196,6 +237,8 @@ const Discipline = () => {
             </div> }
 
         </div>
+        </Box>
+        </Box>
      );
 }
  
