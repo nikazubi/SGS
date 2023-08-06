@@ -47,13 +47,13 @@ const Header = () => {
                 isNotHomePage &&
                 <Link className="headerCnt__aTag" to="/">
                   {/* <ArrowBackIcon className='headerCnt__arrow'/> */}
-                  <div style={{marginLeft:'15px'}}>მთავარი</div>
+                  <div className='mtavari' style={{marginLeft:'15px'}}>მთავარი</div>
                 </Link>
                 
               }
 
               <div>
-                <Link className="headerCnt__aTag" to="/">
+                <Link className="headerCnt__aTag" >
                   <UserBar />
                 </Link>
               </div>

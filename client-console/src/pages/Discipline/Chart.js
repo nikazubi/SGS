@@ -35,8 +35,8 @@ const handleLineClick = (event, data) => {
     
 };
 
-export default function Chart() {
-
+export default function Chart({id}) {
+  // id -> am cvladis mixedvit wamoiget monacemebi bazidan
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(()=>{
