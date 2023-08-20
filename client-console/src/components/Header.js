@@ -45,9 +45,18 @@ const Header = () => {
             <div className={`headerCnt ${isNotHomePage ? '' : 'home'}`}>
               {
                 isNotHomePage &&
+                <div style={{display: 'flex'}}>
                 <Link className="headerCnt__aTag" to="/">
                   <ArrowBackIcon className='headerCnt__arrow'/>
                 </Link>
+                <Link to="/"><div className='headerLogoImg'></div></Link>
+                </div>
+              }
+              {
+                !isNotHomePage &&
+                <div>
+                  <Link to="/"><div className='headerLogoImg'></div></Link>
+                </div>
                 
               }
 
