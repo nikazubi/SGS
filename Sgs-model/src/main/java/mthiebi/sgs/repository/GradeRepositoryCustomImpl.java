@@ -33,7 +33,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         Predicate datePredicate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createTime);
-        datePredicate = qGrade.createTime.month().eq(calendar.get(Calendar.MONTH) + 1).and(qGrade.createTime.year().eq(calendar.get(Calendar.YEAR)));
+        datePredicate = qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1).and(qGrade.createTime.year().eq(calendar.get(Calendar.YEAR)));
         //        StringExpression prefixPredicate = qGrade.gradeType.stringValue();
 //        BooleanExpression booleanExpression = prefixPredicate.startsWith("GENERAL_");
 
@@ -48,10 +48,10 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     }
 
     @Override
-    public Map<Student, Map<Subject, BigDecimal>> findGradeBySemester(Long classId, int year, boolean firstSemester) {
+    public Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester) {
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
-        Predicate dateYearPredicate = qGrade.createTime.year().eq(year);
-        Predicate dateMonthPredicate = firstSemester ? qGrade.createTime.month().in(9, 11, 12) : qGrade.createTime.month().in(1, 3, 4, 5, 6);
+        Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year);
+        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.createTime.month().in(1, 3, 4, 5, 6);
         Predicate gradeTypePredicate = qGrade.gradeType.eq(GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList =  qf.selectFrom(qGrade)
                                     .where(dateYearPredicate)
@@ -61,23 +61,28 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                                     .orderBy(qGrade.createTime.desc())
                                     .fetch();
         Map<Student, List<Grade>> gradeMap = gradeList.stream().collect(Collectors.groupingBy(Grade::getStudent));
-        Map<Student, Map<Subject, BigDecimal>> result = new HashMap<>();
+        Map<Student, Map<Subject, Map<Integer, BigDecimal>>> result = new HashMap<>();
+        Map<Subject, Map<Integer, BigDecimal>> bySubject = new HashMap<>();
         for (Student student : gradeMap.keySet()) {
             List<Grade> old = gradeMap.get(student);
             Map<Subject, List<Grade>> newGradeList = old.stream().collect(Collectors.groupingBy(Grade::getSubject));
-            Map<Subject, BigDecimal> averageGrades = newGradeList.entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                            entry -> {
-                                BigDecimal sum = entry.getValue()
-                                        .stream()
-                                        .map(grade -> new BigDecimal(grade.getValue()))
-                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-                                return sum.divide(BigDecimal.valueOf(entry.getValue().size()), RoundingMode.HALF_UP);
-                            }
-                    ));
-            result.put(student, averageGrades);
+
+            for (Subject subject : newGradeList.keySet()) {
+                Map<Integer, BigDecimal> gradeByMonth = new HashMap<>();
+                List<Grade> curr = newGradeList.get(subject);
+                Long sum = 0L;
+                for (Grade grade: curr) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(grade.getExactMonth());
+                    Integer month = calendar.get(Calendar.MONTH);
+                    gradeByMonth.put(month, BigDecimal.valueOf(grade.getValue()));
+                    sum += grade.getValue();
+                }
+                BigDecimal average = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(curr.size()), RoundingMode.HALF_UP);
+                gradeByMonth.put(-1, average);
+                bySubject.put(subject, gradeByMonth);
+            }
+            result.put(student, bySubject);
         }
 
         return result;
@@ -103,7 +108,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
 
     @Override
     public Integer getMinYear() {
-        DateTimePath<Date> createDatePath = qGrade.createTime;
+        DateTimePath<Date> createDatePath = qGrade.exactMonth;
 
         return qf.select(dateTemplate(Integer.class, "YEAR({0})", createDatePath).min())
                 .from(qGrade)
@@ -112,7 +117,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
 
     @Override
     public Integer getMaxYear() {
-        DateTimePath<Date> createDatePath = qGrade.createTime;
+        DateTimePath<Date> createDatePath = qGrade.exactMonth;
 
         return qf.select(dateTemplate(Integer.class, "YEAR({0})", createDatePath).max())
                 .from(qGrade)

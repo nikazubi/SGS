@@ -15,6 +15,6 @@ public class SubjectComponentWrapper {
 
     private Subject subject;
 
-    private BigDecimal value;
+    private Object value;
 
 }

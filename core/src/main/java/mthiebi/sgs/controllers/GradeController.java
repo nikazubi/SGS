@@ -92,12 +92,42 @@ public class GradeController {
         if (createDate != null) {
             date.setTime(Long.parseLong(createDate));
         }
-        Map<Student, Map<Subject, BigDecimal>> map = gradeService.getGradeByComponent(classId, studentId, yearRange, date, component);
+        Map<Student, Map<Subject, BigDecimal>> map = (Map<Student, Map<Subject, BigDecimal>>) gradeService.getGradeByComponent(classId, studentId, yearRange, date, component);
         for (Student student : map.keySet()) {
             GradeComponentWrapper gradeComponentWrapper = new GradeComponentWrapper();
             gradeComponentWrapper.setStudent(student);
             List<SubjectComponentWrapper> gradeList = new ArrayList<>();
             Map<Subject, BigDecimal> map2 = map.get(student);
+            for (Subject subject : map2.keySet()) {
+                SubjectComponentWrapper subjectComponentWrapper = new SubjectComponentWrapper();
+                subjectComponentWrapper.setSubject(subject);
+                subjectComponentWrapper.setValue(map2.get(subject));
+                gradeList.add(subjectComponentWrapper);
+            }
+            gradeComponentWrapper.setGradeList(gradeList);
+            list.add(gradeComponentWrapper);
+        }
+        return list;
+    }
+
+    @GetMapping("/get-grades-by-semester")
+    @Secured({AuthConstants.MANAGE_GRADES}) //todo
+    public List<GradeComponentWrapper> getGradesBySemester(@RequestParam Long classId,
+                                                            @RequestParam(required = false) Long studentId,
+                                                            @RequestParam(required = false) String yearRange,
+                                                            @RequestParam(required = false) String createDate,
+                                                            @RequestParam String component) throws SGSException {
+        List<GradeComponentWrapper> list = new ArrayList<>();
+        Date date = new Date();
+        if (createDate != null) {
+            date.setTime(Long.parseLong(createDate));
+        }
+        Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map = (Map<Student, Map<Subject, Map<Integer, BigDecimal>>>) gradeService.getGradeByComponent(classId, studentId, yearRange, date, component);
+        for (Student student : map.keySet()) {
+            GradeComponentWrapper gradeComponentWrapper = new GradeComponentWrapper();
+            gradeComponentWrapper.setStudent(student);
+            List<SubjectComponentWrapper> gradeList = new ArrayList<>();
+            Map<Subject,  Map<Integer, BigDecimal>> map2 = map.get(student);
             for (Subject subject : map2.keySet()) {
                 SubjectComponentWrapper subjectComponentWrapper = new SubjectComponentWrapper();
                 subjectComponentWrapper.setSubject(subject);

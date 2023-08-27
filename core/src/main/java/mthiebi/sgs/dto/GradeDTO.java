@@ -30,4 +30,6 @@ public class GradeDTO extends AuditDTO{
 
     private AcademyClassDTO academyClass;
 
+    private Date exactMonth;
+
 }

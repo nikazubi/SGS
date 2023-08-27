@@ -2,9 +2,7 @@ import {useQuery} from "react-query";
 import axios from "../../../utils/axios";
 
 export const fetchGradesMonthly = async (filters) => {
-    console.log("filteeers:", filters)
     if (!filters.academyClass) {
-        console.log("aaaaaaaaaaaaaaaaaaaa");
         return [];
     }
     const params = {

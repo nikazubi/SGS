@@ -5,12 +5,152 @@ import SemesterGradeToolbar from "./SemesterGradeToolbar";
 import "./header.css"
 import useGradeSemester from "./useGradeSemester";
 import {getFiltersOfPage} from "../../../utils/filters";
+import {getFirstSemestMonths, MONTHS} from "../../../utils/months";
 
 const SemesterGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("SEMESTER_GRADE")});
 
     const {data, isLoading, isError, error, isSuccess} = useGradeSemester(filters);
 
+    const getMonthFields = useCallback(() => {
+        if (filters.semesterN?.value === 'firstSemester') {
+            return [{
+                headerName: "მოსწავლის გვარი, სახელი",
+                renderCell: ({row}) => {
+                    return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
+                        {row.student.lastName + " " + row.student.firstName}</div>
+                },
+                field: 'firstName',
+                sortable: false,
+                headerAlign: 'center',
+                align: 'center',
+                width: 200,
+                maxWidth: 200,
+            },
+            // getFirstSemestMonths.map((key, keyIndex)
+            {
+                headerName: 'სექტემბერი-ოქტომბერი',
+                description: '',
+                field: "9",
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center'
+            },
+            {
+                headerName: 'ნოემბერი',
+                description: '',
+                // renderHeaderGroup: (params) => (
+                //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                // ),
+                field: "11",
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center'
+            },
+            {
+                headerName: 'დეკემბერი',
+                description: '',
+                // renderHeaderGroup: (params) => (
+                //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                // ),
+                field: "12",
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center'
+            }]
+        } else {
+            return [        {
+                headerName: "მოსწავლის გვარი, სახელი",
+                renderCell: ({row}) => {
+                    return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
+                        {row.student.lastName + " " + row.student.firstName}</div>
+                },
+                field: 'firstName',
+                sortable: false,
+                headerAlign: 'center',
+                align: 'center',
+                width: 200,
+                maxWidth: 200,
+            },
+                {
+                headerName: 'იანვარი-თებერვალი',
+                description: '',
+                // renderHeaderGroup: (params) => (
+                //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                // ),
+                field: "0",
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center'
+             },
+                {
+                    headerName: 'მარტი',
+                    description: '',
+                    // renderHeaderGroup: (params) => (
+                    //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                    // ),
+                    field: "3",
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center'
+                },
+                {
+                    headerName: 'აპრილი',
+                    description: '',
+                    // renderHeaderGroup: (params) => (
+                    //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                    // ),
+                    field: "4",
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center'
+                },
+                {
+                    headerName: 'მაისი',
+                    description: '',
+                    // renderHeaderGroup: (params) => (
+                    //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                    // ),
+                    field: "5",
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center'
+                },
+                {
+                    headerName: 'ივნისი',
+                    description: '',
+                    // renderHeaderGroup: (params) => (
+                    //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                    // ),
+                    field: "6",
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center'
+                },
+                {
+                    headerName: 'ივლისი',
+                    description: '',
+                    // renderHeaderGroup: (params) => (
+                    //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                    // ),
+                    field: "7",
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center'
+                },
+                {
+                    headerName: 'აგვისტო',
+                    description: '',
+                    // renderHeaderGroup: (params) => (
+                    //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+                    // ),
+                    field: "8",
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center'
+                }]
+        }
+    }, [data])
     const gradeColumns = [
         {
             headerName: "მოსწავლე",
@@ -438,10 +578,19 @@ const SemesterGradeDashBoard = () => {
     ];
 
     let gradeClomuns2 = []
+    const getName = (o) =>{
+        console.log("+++++++++++++++++++++++++++++++++++", o.subject.name)
+        return o.subject.name
+    }
+
+    const getFieldName = (o, num) =>{
+        return num + o.subject.name
+    }
 
     const getGradeColumns = useCallback(() => {
         if (data && data.length > 0) {
             gradeClomuns2 = [{
+                groupId: 'student',
                 headerName: "მოსწავლე",
                 renderCell: ({row}) => {
                     return (<div>
@@ -453,8 +602,9 @@ const SemesterGradeDashBoard = () => {
                         {'მოსწავლე'}
                     </div>
                 ),
-                field: 'name',
-                sortable: false,
+                children: [{field: 'firstName'}],
+                // field: 'name',
+                // sortable: false,
                 align: 'center',
                 headerAlign: 'center',
                 width: 200,
@@ -462,29 +612,61 @@ const SemesterGradeDashBoard = () => {
             }];
             data[0].gradeList.forEach((o, index) => {
                 gradeClomuns2 = [...gradeClomuns2, {
+                    groupId: o.subject.name,
                     headerName: o.subject.name,
                     renderCell: ({row}) => {
                         return (<div>
                             {row.gradeList[index].value === 0 ? '' : row.gradeList[index].value}
                         </div>);
+                        // return (<div style={{display:'flex', flexDirection:'column'}}>
+                        //     {row.gradeList[index].value?
+                        //         Object.keys(row.gradeList[index].value).map((key, keyIndex) =>{
+                        //             return ( <>
+                        //                 <div>
+                        //                     {key.toString() === '-1'? 'სემესტრული ნიშანი' : MONTHS[key]}
+                        //                 </div>
+                        //                 <div>
+                        //                     {row.gradeList[index].value[key]}
+                        //                 </div>
+                        //             </>)
+                        //         })
+                        //         :
+                        //         0
+                        //     }
+                        // </div>);
                     },
                     renderHeader: (params) => (
                         <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
-                            {o.subject.name}
+                            {getName(o)}
                         </div>
                     ),
-                    field: '' + o.subject.name,
+                    // field: '' + o.subject.name,
+                    children: [{field: getFieldName(o, "9")},
+                        {field: getFieldName(o, "11")},
+                        {field: getFieldName(o, "12")},
+                        {field: getFieldName(o, "0")},
+                        {field: getFieldName(o, "3")},
+                        {field: getFieldName(o, "4")},
+                        {field: getFieldName(o, "5")},
+                        {field: getFieldName(o, "6")},
+                        {field: getFieldName(o, "7")},
+                        {field: getFieldName(o, "8")}],
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',
                     width: 200,
                     maxWidth: 200,
+
                 }]
             })
             return gradeClomuns2
         }
         return gradeColumns
     }, [data])
+
+    let columnGroupingModel = [];
+
+console.log("hello",columnGroupingModel)
 
     return (
         <div className={"semesterGradeCnt"}>
@@ -501,7 +683,9 @@ const SemesterGradeDashBoard = () => {
                         //     },
                         // }}
                         queryKey={"SEMESTER_GRADE"}
-                        columns={getGradeColumns()}
+                        experimentalFeatures={{columnGrouping: true}}
+                            columnGroupingModel={getGradeColumns()}
+                        columns={getMonthFields()}
                         rows={data ? data : []}
                         getRowId={(row) => {
                             return row.student.id;

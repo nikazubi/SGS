@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity(name = "GRADES")
 @SuperBuilder
@@ -32,6 +33,8 @@ public class Grade extends Audit{
     @OneToOne
     @JoinColumn(name = "class_id")
     private AcademyClass academyClass;
+
+    private Date exactMonth;
 
 
     public void setId(Long id) {
@@ -80,5 +83,13 @@ public class Grade extends Audit{
 
     public void setAcademyClass(AcademyClass academyClass) {
         this.academyClass = academyClass;
+    }
+
+    public Date getExactMonth() {
+        return exactMonth;
+    }
+
+    public void setExactMonth(Date exactMonth) {
+        this.exactMonth = exactMonth;
     }
 }

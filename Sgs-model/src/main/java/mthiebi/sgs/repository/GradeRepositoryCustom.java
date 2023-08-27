@@ -16,7 +16,7 @@ public interface GradeRepositoryCustom {
                                                                    Long studentId,
                                                                    Date createTim);
 
-    Map<Student, Map<Subject, BigDecimal>> findGradeBySemester(Long classId, int year, boolean firstSemester);
+    Map<Student, Map<Subject,  Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester);
 
     Map<Student, List<Grade>> findGradeByMonth(Long classId, Date createDate);
 

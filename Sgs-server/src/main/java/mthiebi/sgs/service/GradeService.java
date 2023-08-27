@@ -30,7 +30,7 @@ public interface GradeService {
                                                                 Long studentId,
                                                                 Date createTime,
                                                                 String gradeTypePrefix);
-    Map<Student, Map<Subject, BigDecimal>> getGradeByComponent(Long classId,
+    Object getGradeByComponent(Long classId,
                                                                Long studentId,
                                                                String yearRange,
                                                                Date createDate,

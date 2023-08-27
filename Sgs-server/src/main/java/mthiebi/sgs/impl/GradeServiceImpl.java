@@ -1,6 +1,7 @@
 package mthiebi.sgs.impl;
 
 import com.fasterxml.jackson.core.PrettyPrinter;
+import com.querydsl.core.types.Predicate;
 import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
@@ -83,9 +84,9 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElse(null);
 
         List<Grade> existingGrades =  gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)
-                                                        .stream()
-                                                        .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
-                                                        .collect(Collectors.toList());
+                .stream()
+                .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
+                .collect(Collectors.toList());
         if (studentId != null) {
             return existingGrades;
         }
@@ -93,20 +94,20 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public Map<Student, Map<Subject, BigDecimal>> getGradeByComponent(Long classId, Long studentId, String yearRange, Date createDate, String component) throws SGSException {
+    public Object getGradeByComponent(Long classId, Long studentId, String yearRange, Date createDate, String component) throws SGSException {
         int startYear = 2023, endYear = 2023;
         if (yearRange != null) {
             String[] arr = yearRange.split("-");
             startYear = Integer.parseInt(arr[0]);
             endYear = Integer.parseInt(arr[1]);
         }
-        Map<Student, Map<Subject, BigDecimal>> gradeByStudent = new HashMap<>();
+        Object gradeByStudent = new HashMap<>();
         switch (component) {
             case "firstSemester":
-                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, startYear, true));
+                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, startYear, true), true);
                 break;
             case "secondSemester":
-                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, endYear, false));
+                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, endYear, false), false);
                 break;
             case "anual":
                 gradeByStudent = fillMissingSubjects(classId, getAnualGrades(classId, startYear, endYear));
@@ -154,9 +155,9 @@ public class GradeServiceImpl implements GradeService {
                                                           AcademyClass academyClass,
                                                           Subject subject,
                                                           List<Grade> existingGrades){
-       List<GradeType> gradeTypes = Arrays.stream(GradeType.values())
-                                                    .filter(gradeType -> gradeType.toString().startsWith(gradeTypePrefix))
-                                                    .collect(Collectors.toList());
+        List<GradeType> gradeTypes = Arrays.stream(GradeType.values())
+                .filter(gradeType -> gradeType.toString().startsWith(gradeTypePrefix))
+                .collect(Collectors.toList());
         List<Grade> result = new ArrayList<>(existingGrades);
         for (Student student : students) {
             for(GradeType gradeType : gradeTypes){
@@ -171,12 +172,12 @@ public class GradeServiceImpl implements GradeService {
 
     private Grade buildGradeOfGradeType(GradeType gradeType, AcademyClass academyClass, Student student, Subject subject){
         return  Grade.builder()
-                    .gradeType(gradeType)
-                    .academyClass(academyClass)
-                    .student(student)
-                    .subject(subject)
-                    .value(null)
-                    .build();
+                .gradeType(gradeType)
+                .academyClass(academyClass)
+                .student(student)
+                .subject(subject)
+                .value(null)
+                .build();
     }
 
     private static BigDecimal calculateAverage(BigDecimal value1, BigDecimal value2) {
@@ -185,8 +186,8 @@ public class GradeServiceImpl implements GradeService {
     }
 
     private Map<Student, Map<Subject, BigDecimal>> getAnualGrades(Long classId, int startYear, int endYear) {
-        Map<Student, Map<Subject, BigDecimal>> first = gradeRepository.findGradeBySemester(classId, startYear, true);
-        Map<Student, Map<Subject, BigDecimal>> second = gradeRepository.findGradeBySemester(classId, endYear, false);
+        Map<Student, Map<Subject, Map<Integer, BigDecimal>>> first = gradeRepository.findGradeBySemester(classId, startYear, true);
+        Map<Student, Map<Subject, Map<Integer, BigDecimal>>> second = gradeRepository.findGradeBySemester(classId, endYear, false);
         Set<Student> allStudents = new HashSet<>(first.keySet());
         allStudents.addAll(second.keySet());
         return allStudents.stream()
@@ -198,8 +199,8 @@ public class GradeServiceImpl implements GradeService {
                             return allSubject.stream().collect(Collectors.toMap(
                                     subject -> subject,
                                     subject -> {
-                                        BigDecimal firstValue = first.get(student).getOrDefault(subject, BigDecimal.ZERO);
-                                        BigDecimal secondValue = second.get(student).getOrDefault(subject, BigDecimal.ZERO);
+                                        BigDecimal firstValue = first.get(student).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
+                                        BigDecimal secondValue = second.get(student).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
                                         return calculateAverage(firstValue, secondValue);
                                     }
                             ));
@@ -226,4 +227,29 @@ public class GradeServiceImpl implements GradeService {
         return map;
     }
 
+    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map, boolean firstSemester) throws SGSException {
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
+        List<Subject> subjectList = academyClass.getSubjectList();
+        List<Student> studentList = academyClass.getStudentList();
+        List<Integer> mapKeys = firstSemester ? List.of(-1 ,9, 11, 12) : List.of(-1, 1, 3, 4, 5, 6);
+
+        for (Student student : studentList) {
+            Map<Subject, Map<Integer, BigDecimal>> existMap = map.get(student);
+            Map<Subject, Map<Integer, BigDecimal>> newMap = new HashMap<>();
+            for (Subject subject : subjectList) {
+                if (existMap != null && existMap.get(subject) != null) {
+                    newMap.put(subject, existMap.get(subject));
+                } else {
+                    Map<Integer, BigDecimal> emptyMap = new HashMap<>();
+                    for (Integer semesterKey : mapKeys){
+                        emptyMap.put(semesterKey, BigDecimal.ZERO);
+                    }
+//                    mapKeys.stream().map(key -> emptyMap.put(key, BigDecimal.ZERO));
+                    newMap.put(subject, emptyMap);
+                }
+            }
+            map.put(student, newMap);
+        }
+        return map;
+    }
 }
