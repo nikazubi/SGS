@@ -114,7 +114,7 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                         const params = {
                                             academyClassId: filters.academyClass.id,
                                             subjectId: filters.subject.id,
-                                            date: new Date(date).getTime(),
+                                            date: new Date(filters.date).getTime(),
                                         }
                                         calculateGeneralGrade(params).then(() =>{
                                             setNotification({

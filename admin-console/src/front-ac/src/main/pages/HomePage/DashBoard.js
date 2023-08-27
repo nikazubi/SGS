@@ -695,11 +695,12 @@ const DashBoard = () => {
                     setOpenRequestModal(true);
                 } else {
                     newRow.subject = filters.subject
+                    newRow.exact = filters.date
                     return await mutateRow(newRow);
                 }
             } else {
-                console.log("in else", newRow)
                 newRow.subject = filters.subject
+                newRow.exact = filters.date
                 return await mutateRow(newRow);
             }
         },
