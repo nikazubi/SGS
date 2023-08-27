@@ -62,7 +62,7 @@ const SystemUserForm = ({modalOpenMode}) => {
                                 <Grid item xs={12} sm={12}>
                                     <FormikAutocomplete name="systemGroup"
                                                         multiple={true}
-                                                        label={"სუსყემური ჯგუფები"}
+                                                        label={"სისტემური ჯგუფები"}
                                                         onFetch={onFetchSystemGroup}
                                                         getOptionSelected={(option, value) => option.id === value.id}
                                                         getOptionLabel={(option) => option.name}

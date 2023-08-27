@@ -51,7 +51,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     public Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester) {
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
         Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year);
-        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.createTime.month().in(1, 3, 4, 5, 6);
+        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6);
         Predicate gradeTypePredicate = qGrade.gradeType.eq(GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList =  qf.selectFrom(qGrade)
                                     .where(dateYearPredicate)
@@ -75,7 +75,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(grade.getExactMonth());
                     Integer month = calendar.get(Calendar.MONTH);
-                    gradeByMonth.put(month, BigDecimal.valueOf(grade.getValue()));
+                    gradeByMonth.put(month + 1, BigDecimal.valueOf(grade.getValue()));
                     sum += grade.getValue();
                 }
                 BigDecimal average = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(curr.size()), RoundingMode.HALF_UP);

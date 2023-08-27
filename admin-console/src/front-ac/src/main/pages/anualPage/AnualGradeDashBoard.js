@@ -5,11 +5,95 @@ import AnualGradeToolbar from "./AnualGradeToolbar";
 import "./header.css"
 import useGradeAnual from "./useGradeAnual";
 import {getFiltersOfPage} from "../../../utils/filters";
+import {fetchSubjects} from "../../../hooks/useSubjects";
 
 const AnualGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("ANNUAL_GRADE")});
+    const [subjects, setSubjects] = useState([]);
 
     const {data, isLoading, isError, error, isSuccess} = useGradeAnual(filters);
+
+    useEffect(()=>{
+        const getSubjects = async () => {
+            const param = {queryKey: ""};
+            const subjectArr = await fetchSubjects(param);
+            setSubjects(subjectArr);
+        }
+        getSubjects();
+    },[])
+
+    const getSemesterFields = useCallback(() => {
+        if (!subjects) {
+            return [];
+        }
+
+        const semesterFields = [];
+
+        const semesterNames = [
+            {
+                val: "I სემესტრი",
+                ind: 1
+            },
+            {
+                val: "II სემესტრი",
+                ind: 2
+            },
+            {
+                val: "წლიური",
+                ind: 3
+            }
+        ];
+
+        semesterFields.push({
+            headerName: "მოსწავლის გვარი, სახელი",
+            renderCell: ({ row }) => {
+                return <div style={{ height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+                    {row.student.lastName + " " + row.student.firstName}</div>
+            },
+            field: 'firstName',
+            sortable: false,
+            headerAlign: 'center',
+            align: 'center',
+            width: 200,
+            maxWidth: 200,
+        });
+
+        for (const semester of semesterNames) {
+            for (const subject of subjects) {
+                semesterFields.push({
+                    headerName: semesterNames[semester.ind] || '',
+                    description: '',
+                    renderCell: ({row}) => {
+                        const transformedArray = row.gradeList.map(item => ({
+                            subjectName: item.subject.name,
+                            value: item.value
+                        }));
+                        const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[semester.ind];
+
+                        return <div>{monthValue === 0 ? '' : monthValue}</div>;
+                        // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+                    },
+                    field: subject.name + "-" + semester.ind,
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center'
+                });
+            }
+        }
+
+        semesterFields.sort((a, b) => {
+            const [subjectA, monthA] = a.field.split('-');
+            const [subjectB, monthB] = b.field.split('-');
+
+            if (subjectA !== subjectB) {
+                return subjectA.localeCompare(subjectB);
+            } else {
+                return parseInt(monthA) - parseInt(monthB);
+            }
+        });
+        return semesterFields;
+    }, [data, subjects]);
+
 
     const gradeColumns = [
         {
@@ -398,18 +482,18 @@ const AnualGradeDashBoard = () => {
             }];
             data[0].gradeList.forEach((o, index) => {
                 gradeClomuns2 = [ ...gradeClomuns2, {
+                    groupId: o.subject.name,
                     headerName: o.subject.name,
-                    renderCell: ({row}) => {
-                        return ( <div>
-                            {row.gradeList[index].value === 0 ? '' : row.gradeList[index].value}
-                        </div>);
-                    },
                     renderHeader: (params) => (
                         <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
                             {o.subject.name}
                         </div>
                     ),
-                    field: '' + o.subject.name,
+                    children: [
+                        {field: o.subject.name + "-" + "1"},
+                        {field: o.subject.name + "-" + "2"},
+                        {field: o.subject.name + "-" + "3"}
+                    ],
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',
@@ -437,7 +521,8 @@ const AnualGradeDashBoard = () => {
                             },
                         }}
                         queryKey={"ANNUAL_GRADE"}
-                        columns={getGradeColumns()}
+                        columnGroupingModel={getGradeColumns()}
+                        columns={getSemesterFields()}
                         rows={data ? data : []}
                         getRowId={(row) => {
                             return row.student.id;

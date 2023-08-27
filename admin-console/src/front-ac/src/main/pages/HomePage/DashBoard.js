@@ -704,7 +704,7 @@ const DashBoard = () => {
                 return await mutateRow(newRow);
             }
         },
-        [mutateRow],
+        [mutateRow, filters],
     );
 
     if (isLoading) {

@@ -110,7 +110,7 @@ public class GradeServiceImpl implements GradeService {
                 gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, endYear, false), false);
                 break;
             case "anual":
-                gradeByStudent = fillMissingSubjects(classId, getAnualGrades(classId, startYear, endYear));
+                gradeByStudent = fillMissingSubjectsAnual(classId, getAnualGrades(classId, startYear, endYear));
                 break;
             case "monthly":
                 gradeByStudent = getMonthlyGrades(classId, createDate);
@@ -185,9 +185,12 @@ public class GradeServiceImpl implements GradeService {
         return sum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP); // Assuming you want the average of two values
     }
 
-    private Map<Student, Map<Subject, BigDecimal>> getAnualGrades(Long classId, int startYear, int endYear) {
+    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> getAnualGrades(Long classId, int startYear, int endYear) throws SGSException {
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> first = gradeRepository.findGradeBySemester(classId, startYear, true);
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> second = gradeRepository.findGradeBySemester(classId, endYear, false);
+        if (first == null || first.isEmpty() || second == null || second.isEmpty()) {
+            throw new SGSException("საჭიროა დასრულდეს 2-ვე სემესტრი ნიშნების სნახავად");
+        }
         Set<Student> allStudents = new HashSet<>(first.keySet());
         allStudents.addAll(second.keySet());
         return allStudents.stream()
@@ -199,27 +202,35 @@ public class GradeServiceImpl implements GradeService {
                             return allSubject.stream().collect(Collectors.toMap(
                                     subject -> subject,
                                     subject -> {
+                                        Map<Integer, BigDecimal> temporaryMap = new HashMap<>();
                                         BigDecimal firstValue = first.get(student).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
+                                        temporaryMap.put(1, firstValue);
                                         BigDecimal secondValue = second.get(student).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
-                                        return calculateAverage(firstValue, secondValue);
+                                        temporaryMap.put(2, secondValue);
+                                        temporaryMap.put(3, calculateAverage(firstValue, secondValue));
+                                        return temporaryMap;
                                     }
                             ));
                         }
                 ));
     }
 
-    private Map<Student, Map<Subject, BigDecimal>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, BigDecimal>> map) throws SGSException {
+    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjectsAnual(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map) throws SGSException {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
         for (Student student : studentList) {
-            Map<Subject, BigDecimal> existMap = map.get(student);
-            Map<Subject, BigDecimal> newMap = new HashMap<>();
+            Map<Subject, Map<Integer, BigDecimal>> existMap = map.get(student);
+            Map<Subject, Map<Integer, BigDecimal>> newMap = new HashMap<>();
             for (Subject subject : subjectList) {
                 if (existMap != null && existMap.get(subject) != null) {
                     newMap.put(subject, existMap.get(subject));
                 } else {
-                    newMap.put(subject, BigDecimal.ZERO);
+                    Map<Integer, BigDecimal> map1 = new HashMap<>();
+                    map1.put(1, BigDecimal.ZERO);
+                    map1.put(2, BigDecimal.ZERO);
+                    map1.put(3, BigDecimal.ZERO);
+                    newMap.put(subject, map1);
                 }
             }
             map.put(student, newMap);
@@ -246,6 +257,24 @@ public class GradeServiceImpl implements GradeService {
                     }
 //                    mapKeys.stream().map(key -> emptyMap.put(key, BigDecimal.ZERO));
                     newMap.put(subject, emptyMap);
+                }
+            }
+            map.put(student, newMap);
+        }
+        return map;
+    }
+
+    private Map<Student, Map<Subject, BigDecimal>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, BigDecimal>> map) throws SGSException {        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
+        List<Subject> subjectList = academyClass.getSubjectList();
+        List<Student> studentList = academyClass.getStudentList();
+        for (Student student : studentList) {
+            Map<Subject, BigDecimal> existMap = map.get(student);
+            Map<Subject, BigDecimal> newMap = new HashMap<>();
+            for (Subject subject : subjectList) {
+                if (existMap != null && existMap.get(subject) != null) {
+                    newMap.put(subject, existMap.get(subject));
+                } else {
+                    newMap.put(subject, BigDecimal.ZERO);
                 }
             }
             map.put(student, newMap);

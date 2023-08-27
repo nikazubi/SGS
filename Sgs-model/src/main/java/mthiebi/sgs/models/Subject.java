@@ -32,7 +32,7 @@ public class Subject extends Audit {
 
     @Override
     public boolean equals(Object o) {
-        return Objects.equals(id, ((Subject) o).id);
+        return this.id == ((Subject) o).getId();
     }
 
     @Override
