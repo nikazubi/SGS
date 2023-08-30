@@ -6,7 +6,10 @@ import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.UserAndPermissionDTO;
 import mthiebi.sgs.jwtmodels.JwtRequest;
 import mthiebi.sgs.jwtmodels.JwtResponse;
+import mthiebi.sgs.models.Student;
+import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.utils.UtilsJwt;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +31,9 @@ public class AuthController {
 
 	@Autowired
 	UserDetailsService userDetailsService;
+
+	@Autowired
+	private StudentRepository studentRepository;
 
 	@Autowired
 	private UtilsJwt utilsJwt;
@@ -53,6 +59,27 @@ public class AuthController {
 		}
 
 		final String token = utilsJwt.generateToken(authentication);
+		log.info("jwt token is: " + token);
+		return new JwtResponse(token);
+	}
+
+	@PostMapping("/authenticate-student")
+	public JwtResponse authenticateStudent(@RequestBody JwtRequest jwtRequest) throws SGSException {
+		String username = jwtRequest.getUsername();
+		String encodedPassword = DigestUtils.md5Hex(jwtRequest.getPassword()).toUpperCase();
+
+		log.info("request arrived at /authenticate with username: " +
+				username + " and password: " + jwtRequest.getPassword());
+		log.info("encoded password: {}", encodedPassword);
+		Student student;
+		try {
+			student = studentRepository.authStudent(username, encodedPassword);
+		} catch (BadCredentialsException e) {
+			log.info("username and password not correct, throw invalid credentials exception");
+			throw new SGSException("INVALID_CREDENTIALS");
+		}
+
+		final String token = utilsJwt.generateTokenForStudent(student.getUsername());
 		log.info("jwt token is: " + token);
 		return new JwtResponse(token);
 	}
