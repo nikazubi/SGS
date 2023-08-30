@@ -19,7 +19,8 @@ export const App = () =>{
                 <Route path="/semestruli-shefaseba" component={SemestruliShefaseba}/>
                 <Route path="/ethicalPage" component={EthicPage}/>
                 <Route path="/absence-page" component={AbsencePage}/>
-                <Route path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit" component={Discipline}/>
+                {/* <Route exact path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit" component={Discipline}/> */}
+                <Route path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit/:id" component={Discipline}/>
                 <Route path="/tsliuri-shefaseba" component={TsliuriShefaseba}/>
                 <Route path="/tvis-reitingi" component={MonthlyGrade}/>
                 <Route path="/login" component={Login}/>

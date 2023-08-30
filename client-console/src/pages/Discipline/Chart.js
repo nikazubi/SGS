@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis,  CartesianGrid, Tooltip, activeDot, LabelList } from 'recharts';
 
-const pData = [5, 2, 3, 4, 5, 6, 7, 2, 1, 5];
+const pData = [5, 3, 4, 5, 6, 7, 2, 5];
 const xLabels = [
-  'სექტემბერი',
-  'ოქტომბერი',
+  'სექტემბერი-ოქტომბერი',
   'ნოემბერი',
   'დეკემბერი',
-  'იანვარი',
-  'თებერვალი',
+  'იანვარი-თებერვალი',
   'მარტი',
   'აპრილი',
   'მაისი',
@@ -31,12 +29,14 @@ const handleLineClick = (event, data) => {
     //data.index 0 means => სექტემბერი
     //data.payload.label => 'სექტემბერი'
     //API semestruli
+
+    //ak aris axios requesti
     console.log('Line clicked:', data);
     
 };
 
-export default function Chart() {
-
+export default function Chart({id}) {
+  // id -> am cvladis mixedvit wamoiget monacemebi bazidan
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(()=>{
@@ -63,7 +63,7 @@ export default function Chart() {
   };
 
   return (
-    <LineChart width={1200} height={300} data={xLabels.map((label, index) => ({ label, value: pData[index] }))}>
+    <LineChart width={1200} height={300} data={xLabels.map((label, index) => ({ label, value: pData[index] }))} >
       <CartesianGrid strokeDasharray="0" vertical={false} />
       <XAxis style={{cursor:'pointer'}} onClick={handleLineClick} padding={{ left: 80, right: 80 }} angle={0} dataKey="label" height={60} tick={<CustomTick />} />
       <YAxis />

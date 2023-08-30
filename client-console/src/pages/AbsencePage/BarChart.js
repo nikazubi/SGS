@@ -72,7 +72,7 @@ export default function CustomBar({color, attend, attendMax, layout, data}) {
         dataKey={'არა'}
         fill={color}
         background={{ fill: "#eee" }}
-        barSize={layout === 'horizontal' ? 50 : 100} // Adjust the bar size based on the maximum value
+        barSize={layout === 'horizontal' ? 50 : 70} // Adjust the bar size based on the maximum value
         radius={layout === 'horizontal' ? [20, 20, 0, 0] : [0, 20, 20, 0]}
       >
         <LabelList dataKey={displayPrecent} position="top" />

@@ -1,10 +1,11 @@
 import Box from "./Box";
 const AfterLoginPage = () => {
     return ( 
+        <>
         <div className="boxCnt">
             <div className="boxWrap">
                 <div className="boxWrap__div">
-                    <Box text={'მოსწავლის შეფასება აკადემიური საგნობრივი დისციპლინის მიხედვით'} link={'/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit'} />
+                    <Box text={'მოსწავლის შეფასება აკადემიური საგნობრივი დისციპლინის მიხედვით'} link={'/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit/ქართული'} />
                 </div>
 
                 <div className="boxWrap__div">
@@ -28,6 +29,8 @@ const AfterLoginPage = () => {
                 </div>
             </div>   
         </div>
+        <div class="body__wallpaper"></div>
+        </>
      );
 }
  

@@ -1,13 +1,7 @@
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import Box from "@mui/material/Box";
-// import FlexBox from "../FlexBox";
-const FlexBox = ({ children, ...rest }) => (
-  <Box display='flex' {...rest}>
-    {children}
-  </Box>
-);
+import FlexBox from "../FlexBox";
 
 const useStyles = makeStyles((theme) => ({
   text: {
