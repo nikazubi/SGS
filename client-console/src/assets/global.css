@@ -203,10 +203,6 @@ body{
     justify-content: space-between;
 }
 
-.headerCnt.home{
-    justify-content: flex-end;
-}
-
 .headerCnt__aTag{
     text-decoration: none;
 }
@@ -406,6 +402,97 @@ body{
     width: 290px;
 }
 
+.login__wrapper{
+    min-height: calc(100vh - 81px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-image: url('./images/loginBckg.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.headerLogoImg{
+    background-image: url('./images/logoMtiebi.png');
+    background-repeat: no-repeat;
+    width: 120px;
+    height: 44px;
+    margin-left: 20px;
+    display: block;
+}
+
+.loginCnt{
+    border: 1px solid #03b4f7;
+    max-width: 600px;
+    width: 100%;
+    background-color: #fff;
+    min-height: 380px;
+    margin: auto;
+    border-radius: 25px;
+    box-shadow: rgb(89 158 191) 0px 5px 30px;
+}
+
+.login__label{
+    display: inline-block;
+    padding-bottom: 5px;
+    color: #007db5;
+    font-weight: bold;
+}
+
+.login__inputCnt{
+    margin: auto;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.formCnt{
+    width: max-content;
+    margin: auto;
+}
+
+.formCnt__input{
+    padding: 8px 5px;
+    border-radius: 7px;
+    border: 1px solid #bbbbbb;
+    width: 100%;
+    min-width: 280px;
+}
+
+.formCnt__input:focus{
+    outline: none;
+    border: 1px solid #000;
+}
+
+.formCnt__btnCnt .css-sghohy-MuiButtonBase-root-MuiButton-root{
+    width: 50%;
+    font-weight: bold;
+    background: #01619b;
+    border-radius: 18px;
+    min-width: 185px;
+    padding: 8px;
+    font-size: 15px;
+}
+
+.formCnt__title{
+    margin: 25px 0;
+    padding-bottom: 15px;
+    font-size: 28px;
+    letter-spacing: 1px;
+    display: inline-block;
+    border-bottom: 2px solid #2196F3;
+    width: 100%;
+    font-weight: bold;
+}
+
+.remember__password a{
+    margin-top: 8px;
+    display: block;
+    font-size: 14px;
+    color: #03A9F4;
+}
+
 @media only screen and (max-width: 1240px) {
     .ibChart{
         overflow-x: scroll;
@@ -421,5 +508,24 @@ body{
 @media only screen and (max-width: 660px){
     .boxWrap{
         max-width: 300px;
+    }
+}
+
+@media only screen and (max-width: 450px){
+    .boxWrap{
+        max-width: 300px;
+    }
+    .formCnt__input{
+        min-width: unset;
+    }
+    .formCnt__title{
+        font-size: 25px;
+    }
+}
+
+@media only screen and (max-width: 320px){
+    .formCnt{
+        width: unset;
+        padding: 0 15px;
     }
 }

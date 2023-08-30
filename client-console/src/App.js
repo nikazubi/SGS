@@ -8,11 +8,12 @@ import AbsencePage from './pages/AbsencePage';
 import SemestruliShefaseba from './pages/semestruli-shefaseba';
 import TsliuriShefaseba from './pages/TsliuriShefaseba';
 import MonthlyGrade from './pages/MonthlyGrade';
+import Login from './pages/loginPage';
 
 export const App = () =>{
     return(
         <BrowserRouter>
-            <Header/>
+        <Header/>
             <Switch>
                 <Route exact path="/" component={AfterLoginPage}/>
                 <Route path="/semestruli-shefaseba" component={SemestruliShefaseba}/>
@@ -21,6 +22,7 @@ export const App = () =>{
                 <Route path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit" component={Discipline}/>
                 <Route path="/tsliuri-shefaseba" component={TsliuriShefaseba}/>
                 <Route path="/tvis-reitingi" component={MonthlyGrade}/>
+                <Route path="/login" component={Login}/>
             </Switch>
         </BrowserRouter>
     )
