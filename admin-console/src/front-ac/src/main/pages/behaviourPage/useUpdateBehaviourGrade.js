@@ -11,7 +11,8 @@ export const updateGrade = async grade => {
         value: grade[gradeType],
         gradeType: gradeType,
         student: grade.student,
-        subject: grade.grades[0].subject // TODO should be grade.subject because on no grades this will fail
+        subject: grade.grades[0].subject,
+        exactMonth: grade.exactMonth// TODO should be grade.subject because on no grades this will fail
     }
     const {data} = await axios.post("/grade/insert-student-grade", request);
     return data;

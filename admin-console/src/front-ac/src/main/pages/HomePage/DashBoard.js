@@ -130,96 +130,6 @@ const DashBoard = () => {
             maxWidth: 60,
         },
         {
-            headerName: "წერილობითი დაავალება 1",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_1");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_1',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 78,
-            maxWidth: 78,
-        },
-        {
-            headerName: "წერილობითი დაავალება 2",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_2");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_2',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 78,
-            maxWidth: 78,
-        },
-        {
-            headerName: "შემოქმედებითი დავალება",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_CREATIVE_ASSIGMENT");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 78,
-            maxWidth: 78,
-        },
-        {
-            headerName: "თვის ნიშანი",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_MONTHLY");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'GENERAL_HOMEWORK_MONTHLY',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 78,
-            maxWidth: 78,
-        },
-        {
-            headerName: "%",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_PERCENT");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'GENERAL_HOMEWORK_PERCENT',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 78,
-            maxWidth: 78,
-        },
-        {
             headerName: "1",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_1");
@@ -290,6 +200,96 @@ const DashBoard = () => {
             type: "number",
             width: 60,
             maxWidth: 60,
+        },
+        {
+            headerName: "წერილობითი დაავალება 1",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_1");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_1',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "წერილობითი დაავალება 2",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_2");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        // {
+        //     headerName: "შემოქმედებითი დავალება",
+        //     renderCell: ({row}) => {
+        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_CREATIVE_ASSIGMENT");
+        //         if (summary2.length === 0) {
+        //             return ""
+        //         }
+        //         return summary2[0].value;
+        //     },
+        //     field: 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT',
+        //     sortable: false,
+        //     align: 'center',
+        //     headerAlign: 'center',
+        //     editable: true,
+        //     type: "number",
+        //     width: 78,
+        //     maxWidth: 78,
+        // },
+        {
+            headerName: "თვის ნიშანი",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_MONTHLY");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "%",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_PERCENT");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_PERCENT',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
         },
         {
             headerName: "თვის ქულა",
@@ -596,7 +596,7 @@ const DashBoard = () => {
         },
         {
             groupId: 'classwork',
-            headerName: 'საკლასო დავალება II',
+            headerName: 'შემოქმედებითობა II',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
@@ -635,26 +635,26 @@ const DashBoard = () => {
         },
         {
             groupId: 'homework',
-            headerName: 'საშინაო დავალება II',
-            description: '',
-            // renderHeaderGroup: (params) => (
-            //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
-            // ),
-            children: [{field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_1'}, {field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_2'},
-                {field: 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT'},
-                {field: 'GENERAL_HOMEWORK_MONTHLY'}, {field: 'GENERAL_HOMEWORK_PERCENT'}],
-            align: 'center',
-            headerAlign: 'center'
-        },
-        {
-            groupId: 'classwork',
-            headerName: 'საკლასო დავალება III',
+            headerName: 'შემოქმედებითობა II',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
             children: [{field: 'GENERAL_SCHOOL_WORK_1'}, {field: 'GENERAL_SCHOOL_WORK_2'}, {field: 'GENERAL_SCHOOL_WORK_MONTH'},
                 {field: 'GENERAL_SCHOOL_WORK_PERCENT'}],
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            groupId: 'classwork',
+            headerName: 'საშინაო დავალება III',
+            description: '',
+            // renderHeaderGroup: (params) => (
+            //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+            // ),
+            children: [{field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_1'}, {field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_2'},
+                // {field: 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT'},
+                {field: 'GENERAL_HOMEWORK_MONTHLY'}, {field: 'GENERAL_HOMEWORK_PERCENT'}],
             align: 'center',
             headerAlign: 'center'
         },

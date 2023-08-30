@@ -95,7 +95,7 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                     onClick={async () => {
                                         const params = {
                                             academyClassId: filters.academyClass.id,
-                                            date: new Date(date).getTime(),
+                                            date: Date.parse(filters.date),
                                         }
                                         calculateMonthlyBehaviour(params).then(() =>{
                                             setNotification({

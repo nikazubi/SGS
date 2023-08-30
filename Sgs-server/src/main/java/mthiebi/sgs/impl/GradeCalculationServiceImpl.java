@@ -41,13 +41,13 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             for (Student student : studentList) {
                 List<Grade> gradeList = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(academyClassId, subjectId, student.getId(), date);
                 Long monthlyGeneralSummery = calculateTransitSummeryMonthlyGrade(gradeList);
-                saveGrade(subject, academyClass, student, monthlyGeneralSummery, GradeType.TRANSIT_SUMMARY_ASSIGMENT_MONTH);
+                saveGrade(subject, academyClass, student, monthlyGeneralSummery, GradeType.TRANSIT_SUMMARY_ASSIGMENT_MONTH, date);
                 BigDecimal monthlyGeneralSummeryPercent = BigDecimal.valueOf(monthlyGeneralSummery).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
-                saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent.longValue(), GradeType.TRANSIT_SUMMARY_ASSIGMENT_PERCENT);
+                saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent.longValue(), GradeType.TRANSIT_SUMMARY_ASSIGMENT_PERCENT, date);
                 Long monthlySchoolWork = calculateSimpleAverageOfPrefix(gradeList, "TRANSIT_SCHOOL_WORK");
-                saveGrade(subject, academyClass, student, monthlySchoolWork, GradeType.TRANSIT_SCHOOL_WORK_MONTH);
+                saveGrade(subject, academyClass, student, monthlySchoolWork, GradeType.TRANSIT_SCHOOL_WORK_MONTH, date);
                 BigDecimal monthlySchoolWorkPercent = BigDecimal.valueOf(monthlySchoolWork).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
-                saveGrade(subject, academyClass, student, monthlySchoolWorkPercent.longValue(), GradeType.TRANSIT_SCHOOL_WORK_MONTH_PERCENT);
+                saveGrade(subject, academyClass, student, monthlySchoolWorkPercent.longValue(), GradeType.TRANSIT_SCHOOL_WORK_MONTH_PERCENT, date);
 
                 BigDecimal sum = (monthlyGeneralSummeryPercent).add(monthlySchoolWorkPercent);
                 Long monthly = sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP).longValue();
@@ -57,6 +57,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                         .academyClass(academyClass)
                         .student(student)
                         .value(monthly)
+                        .exactMonth(date)
                         .build();
                 gradeRepository.save(grade);
             }
@@ -64,17 +65,17 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             for (Student student : studentList) {
                 List<Grade> gradeList = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(academyClassId, subjectId, student.getId(), date);
                 Long monthlyGeneralSummery = calculateGeneralSummeryMonthlyGrade(gradeList);
-                saveGrade(subject, academyClass, student, monthlyGeneralSummery, GradeType.GENERAL_SUMMARY_ASSIGMENT_MONTH);
+                saveGrade(subject, academyClass, student, monthlyGeneralSummery, GradeType.GENERAL_SUMMARY_ASSIGMENT_MONTH, date);
                 BigDecimal monthlyGeneralSummeryPercent = BigDecimal.valueOf(monthlyGeneralSummery).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
-                saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent.longValue(), GradeType.GENERAL_SUMMARY_ASSIGMENT_PERCENT);
+                saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent.longValue(), GradeType.GENERAL_SUMMARY_ASSIGMENT_PERCENT, date);
                 Long monthlyHomework = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_HOMEWORK");
-                saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent.longValue(), GradeType.GENERAL_HOMEWORK_MONTHLY);
+                saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent.longValue(), GradeType.GENERAL_HOMEWORK_MONTHLY, date);
                 BigDecimal monthlyHomeworkPercent = BigDecimal.valueOf(monthlyHomework).multiply(BigDecimal.valueOf(3)).divide(BigDecimal.valueOf(10), RoundingMode.HALF_UP);
-                saveGrade(subject, academyClass, student, monthlyHomeworkPercent.longValue(), GradeType.GENERAL_HOMEWORK_PERCENT);
+                saveGrade(subject, academyClass, student, monthlyHomeworkPercent.longValue(), GradeType.GENERAL_HOMEWORK_PERCENT, date);
                 Long monthlySchoolWork = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_SCHOOL_WORK");
-                saveGrade(subject, academyClass, student, monthlySchoolWork, GradeType.GENERAL_SCHOOL_WORK_MONTH);
+                saveGrade(subject, academyClass, student, monthlySchoolWork, GradeType.GENERAL_SCHOOL_WORK_MONTH, date);
                 BigDecimal monthlySchoolWorkPercent = BigDecimal.valueOf(monthlySchoolWork).divide(BigDecimal.valueOf(5), RoundingMode.HALF_UP);
-                saveGrade(subject, academyClass, student, monthlySchoolWorkPercent.longValue(), GradeType.GENERAL_SCHOOL_WORK_PERCENT);
+                saveGrade(subject, academyClass, student, monthlySchoolWorkPercent.longValue(), GradeType.GENERAL_SCHOOL_WORK_PERCENT, date);
 
                 BigDecimal sum = monthlyHomeworkPercent.add(monthlyGeneralSummeryPercent).add(monthlySchoolWorkPercent);
                 Long monthly = sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP).longValue();
@@ -84,6 +85,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                         .academyClass(academyClass)
                         .student(student)
                         .value(monthly)
+                        .exactMonth(date)
                         .build();
                 gradeRepository.save(grade);
             }
@@ -103,33 +105,37 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                     .academyClass(academyClass)
                     .student(student)
                     .value(monthlyUniform.longValue())
+                    .exactMonth(date)
                     .build();
             gradeRepository.save(gradeUniform);
             BigDecimal delays = BigDecimal.valueOf(calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_STUDENT_DELAYS"));
             Grade delaysMonthly = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY)
+                    .gradeType(GradeType.BEHAVIOUR_STUDENT_DELAYS_MONTHLY)
                     .subject(null)
                     .academyClass(academyClass)
                     .student(student)
                     .value(monthlyUniform.longValue())
+                    .exactMonth(date)
                     .build();
             gradeRepository.save(delaysMonthly);
             BigDecimal inventory = BigDecimal.valueOf(calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_CLASSROOM_INVENTORY"));
             Grade inventoryMonthly = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY)
+                    .gradeType(GradeType.BEHAVIOUR_CLASSROOM_INVENTORY_MONTHLY)
                     .subject(null)
                     .academyClass(academyClass)
                     .student(student)
                     .value(inventory.longValue())
+                    .exactMonth(date)
                     .build();
             gradeRepository.save(inventoryMonthly);
             BigDecimal hygiene = BigDecimal.valueOf(calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_STUDENT_HYGIENE"));
             Grade hygieneMonthly = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY)
+                    .gradeType(GradeType.BEHAVIOUR_STUDENT_HYGIENE_MONTHLY)
                     .subject(null)
                     .academyClass(academyClass)
                     .student(student)
                     .value(hygiene.longValue())
+                    .exactMonth(date)
                     .build();
             gradeRepository.save(hygieneMonthly);
             BigDecimal sum = monthlyUniform.add(delays).add(inventory).add(hygiene);
@@ -140,6 +146,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                     .academyClass(academyClass)
                     .student(student)
                     .value(monthly)
+                    .exactMonth(date)
                     .build();
             gradeRepository.save(grade);
         }
@@ -227,13 +234,14 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
         return BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP).longValue();
     }
 
-    private Grade saveGrade(Subject subject, AcademyClass academyClass, Student student, Long value, GradeType gradeType) {
+    private Grade saveGrade(Subject subject, AcademyClass academyClass, Student student, Long value, GradeType gradeType, Date exactMonth) {
         Grade grade = Grade.builder()
                 .gradeType(gradeType)
                 .subject(subject)
                 .academyClass(academyClass)
                 .student(student)
                 .value(value)
+                .exactMonth(exactMonth)
                 .build();
         return gradeRepository.save(grade);
     }

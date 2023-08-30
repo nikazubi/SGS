@@ -6,9 +6,10 @@ import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
-import {Search} from "@material-ui/icons";
+import {KeyboardArrowDown, Search} from "@material-ui/icons";
 import {setFiltersOfPage} from "../../../utils/filters";
 import useFetchYear from "./useYear";
+import {fetchGradesSemester} from "./useExportWord";
 
 const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -104,6 +105,14 @@ const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
                                 onClick={() => {
                                     setFiltersOfPage("SEMESTER_GRADE", values)
                                     setFilters(values)
+                                }}
+                            />
+                        </div>
+                        <div style={{marginLeft: 15, width: 100}}>
+                            <IconButton
+                                icon={<KeyboardArrowDown/>}
+                                onClick={async () => {
+                                    await fetchGradesSemester(filters)
                                 }}
                             />
                         </div>

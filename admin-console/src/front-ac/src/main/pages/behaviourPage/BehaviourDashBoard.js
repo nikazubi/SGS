@@ -694,10 +694,11 @@ const BehaviourDashBoard = () => {
                 setOpenRequestModal(true);
             } else {
                 newRow.subject = filters.subject
+                newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
                 return await mutateRow(newRow);
             }
         },
-        [mutateRow],
+        [mutateRow, filters],
     );
 
     if (isLoading) {

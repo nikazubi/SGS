@@ -60,11 +60,13 @@ const TabComponent = React.forwardRef((props, ref) => {
       <div ref={ref} {...props}>
         {props.children}
         <IconButton
-          style={{ marginLeft: 3, visibility: closeIconVisibility}}
+          style={{ marginLeft: 3, visibility: props.onClose? closeIconVisibility : "hidden"}}
           size='small'
           onClick={e => {
             e.stopPropagation();
-            props.onClose();
+            if (props.onClose) {
+              props.onClose();
+            }
           }}
         >
           {/* {props.onClose && <CloseIcon/>} */}
@@ -82,7 +84,7 @@ const initialState = {
 
 export const CustomTabComponent = ({ tab, value, onClose, onCloseAll, onCloseOthers, ...rest }) => {
   const [menuState, setMenuState] = useState(initialState);
-  const handleClose = tab.id === 'GRADES' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? onClose : null;
+  const handleClose = tab.id === 'GRADES' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? null : onClose;
 
   const handleMenuOpen = (event) => {
     event.preventDefault();
