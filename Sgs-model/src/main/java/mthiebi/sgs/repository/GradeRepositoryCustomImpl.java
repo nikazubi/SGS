@@ -52,7 +52,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
         Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year);
         Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6);
-        Predicate gradeTypePredicate = qGrade.gradeType.eq(GradeType.GENERAL_COMPLETE_MONTHLY);
+        Predicate gradeTypePredicate = qGrade.gradeType.eq(GradeType.GENERAL_COMPLETE_MONTHLY).or(qGrade.gradeType.eq(GradeType.GENERAL_SCHOOL_WORK_MONTH));
         List<Grade> gradeList =  qf.selectFrom(qGrade)
                                     .where(dateYearPredicate)
                                     .where(dateMonthPredicate)
@@ -60,6 +60,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                                     .where(gradeTypePredicate)
                                     .orderBy(qGrade.createTime.desc())
                                     .fetch();
+
         Map<Student, List<Grade>> gradeMap = gradeList.stream().collect(Collectors.groupingBy(Grade::getStudent));
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> result = new HashMap<>();
         Map<Subject, Map<Integer, BigDecimal>> bySubject = new HashMap<>();
@@ -71,15 +72,26 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 Map<Integer, BigDecimal> gradeByMonth = new HashMap<>();
                 List<Grade> curr = newGradeList.get(subject);
                 Long sum = 0L;
+                int count = 0;
+                Long sumOfSchoolWork = 0L;
+                int countOfSchoolWork = 0;
                 for (Grade grade: curr) {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(grade.getExactMonth());
-                    Integer month = calendar.get(Calendar.MONTH);
-                    gradeByMonth.put(month + 1, BigDecimal.valueOf(grade.getValue()));
-                    sum += grade.getValue();
+                    if (grade.getGradeType() != GradeType.GENERAL_SCHOOL_WORK_MONTH) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(grade.getExactMonth());
+                        Integer month = calendar.get(Calendar.MONTH);
+                        gradeByMonth.put(month + 1, grade.getValue());
+                        sum += grade.getValue().longValue();
+                        count++;
+                    } else {
+                        sumOfSchoolWork += grade.getValue().longValue();
+                        countOfSchoolWork++;
+                    }
                 }
-                BigDecimal average = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(curr.size()), RoundingMode.HALF_UP);
+                BigDecimal average = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+                BigDecimal averageOfSchoolWork = BigDecimal.valueOf(sumOfSchoolWork).divide(BigDecimal.valueOf(countOfSchoolWork), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, average);
+                gradeByMonth.put(-2, averageOfSchoolWork);
                 bySubject.put(subject, gradeByMonth);
             }
             result.put(student, bySubject);

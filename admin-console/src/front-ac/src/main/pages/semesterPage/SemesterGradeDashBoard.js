@@ -112,13 +112,32 @@ const SemesterGradeDashBoard = () => {
                 align: 'center',
                 headerAlign: 'center'
             });
+            monthFields.push({
+                headerName: 'შემოქმედებითობა',
+                description: '',
+                renderCell: ({row}) => {
+                    const transformedArray = row.gradeList.map(item => ({
+                        subjectName: item.subject.name,
+                        value: item.value
+                    }));
+                    const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-2];
+
+                    return <div>{monthValue === 0 ? '' : monthValue}</div>;
+                    // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+                },
+                field: subject.name + "--2",
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center'
+            });
         }
+
 
         console.log("before sort", monthFields);
         monthFields.sort((a, b) => {
             const [subjectA, monthA] = a.field.split('-');
-            const [subjectB, monthB] = b.field.split('-');
 
+            const [subjectB, monthB] = b.field.split('-');
             if (subjectA !== subjectB) {
                 return subjectA.localeCompare(subjectB);
             } else {
@@ -604,7 +623,8 @@ const SemesterGradeDashBoard = () => {
                         {field: getFieldName(o, "6")},
                         {field: getFieldName(o, "7")},
                         {field: getFieldName(o, "8")},
-                        {field: getFieldName(o, "-1")}
+                        {field: getFieldName(o, "-1")},
+                        {field: getFieldName(o, "-2")}
                     ],
                     sortable: false,
                     align: 'center',
