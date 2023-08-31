@@ -112,7 +112,7 @@ const DashBoard = () => {
             maxWidth: 78,
         },
         {
-            headerName: "%",
+            headerName: "50%",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_PERCENT");
                 if (summary2.length === 0) {
@@ -184,7 +184,7 @@ const DashBoard = () => {
             maxWidth: 78,
         },
         {
-            headerName: "%",
+            headerName: "20%",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_PERCENT");
                 if (summary2.length === 0) {
@@ -202,7 +202,7 @@ const DashBoard = () => {
             maxWidth: 60,
         },
         {
-            headerName: "წერილობითი დაავალება 1",
+            headerName: "1",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_1");
                 if (summary2.length === 0) {
@@ -220,7 +220,7 @@ const DashBoard = () => {
             maxWidth: 78,
         },
         {
-            headerName: "წერილობითი დაავალება 2",
+            headerName: "2",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_2");
                 if (summary2.length === 0) {
@@ -237,24 +237,6 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
-        // {
-        //     headerName: "შემოქმედებითი დავალება",
-        //     renderCell: ({row}) => {
-        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_CREATIVE_ASSIGMENT");
-        //         if (summary2.length === 0) {
-        //             return ""
-        //         }
-        //         return summary2[0].value;
-        //     },
-        //     field: 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT',
-        //     sortable: false,
-        //     align: 'center',
-        //     headerAlign: 'center',
-        //     editable: true,
-        //     type: "number",
-        //     width: 78,
-        //     maxWidth: 78,
-        // },
         {
             headerName: "თვის ნიშანი",
             renderCell: ({row}) => {
@@ -274,7 +256,7 @@ const DashBoard = () => {
             maxWidth: 78,
         },
         {
-            headerName: "%",
+            headerName: "30%",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_PERCENT");
                 if (summary2.length === 0) {

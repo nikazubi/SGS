@@ -43,6 +43,7 @@ const StudentForm = ({modalOpenMode}) => {
                                 <Grid item xs={12} sm={12}>
                                     <FormikTextField
                                         name={"password"}
+                                        type={"password"}
                                         // variant={"standard"}
                                         label={"მომხმარებლის პაროლი"}
                                     />

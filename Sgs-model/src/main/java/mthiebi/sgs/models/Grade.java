@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity(name = "GRADES")
@@ -20,7 +21,8 @@ public class Grade extends Audit{
     @Enumerated(EnumType.STRING)
     private GradeType gradeType;
 
-    private Long value;
+    @Column(precision = 16, scale = 2)
+    private BigDecimal value;
 
     @OneToOne
     @JoinColumn(name = "student_id")
@@ -53,11 +55,11 @@ public class Grade extends Audit{
         this.gradeType = gradeType;
     }
 
-    public Long getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Long value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 

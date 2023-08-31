@@ -29,19 +29,16 @@ const AnualGradeDashBoard = () => {
 
         const semesterFields = [];
 
+        const names = [
+            "I სემესტრი",
+            "II სემესტრი",
+            "წლიური"
+        ]
+
         const semesterNames = [
-            {
-                val: "I სემესტრი",
-                ind: 1
-            },
-            {
-                val: "II სემესტრი",
-                ind: 2
-            },
-            {
-                val: "წლიური",
-                ind: 3
-            }
+            {val: "I სემესტრი", ind: 1},
+            {val: "II სემესტრი", ind: 2},
+            {val: "წლიური", ind: 3}
         ];
 
         semesterFields.push({
@@ -61,7 +58,7 @@ const AnualGradeDashBoard = () => {
         for (const semester of semesterNames) {
             for (const subject of subjects) {
                 semesterFields.push({
-                    headerName: semesterNames[semester.ind] || '',
+                    headerName: names[semester.ind - 1] || '',
                     description: '',
                     renderCell: ({row}) => {
                         const transformedArray = row.gradeList.map(item => ({
@@ -486,7 +483,6 @@ const AnualGradeDashBoard = () => {
                     headerName: o.subject.name,
                     renderHeader: (params) => (
                         <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
-                            {o.subject.name}
                         </div>
                     ),
                     children: [
@@ -501,6 +497,7 @@ const AnualGradeDashBoard = () => {
                     maxWidth: 200,
                 }]
             })
+            console.log(gradeClomuns2)
             return gradeClomuns2
         }
         return gradeColumns
@@ -521,8 +518,9 @@ const AnualGradeDashBoard = () => {
                             },
                         }}
                         queryKey={"ANNUAL_GRADE"}
-                        columnGroupingModel={getGradeColumns()}
+                        experimentalFeatures={{columnGrouping: true}}
                         columns={getSemesterFields()}
+                        columnGroupingModel={getGradeColumns()}
                         rows={data ? data : []}
                         getRowId={(row) => {
                             return row.student.id;

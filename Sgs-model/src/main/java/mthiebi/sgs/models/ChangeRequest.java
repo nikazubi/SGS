@@ -1,6 +1,7 @@
 package mthiebi.sgs.models;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity(name = "CHANGE_REQUESTS")
 public class ChangeRequest extends Audit{
@@ -15,9 +16,9 @@ public class ChangeRequest extends Audit{
     @OneToOne(fetch = FetchType.LAZY)
     private Grade prevGrade;
 
-    private Long prevValue;
+    private BigDecimal prevValue;
 
-    private Long newValue;
+    private BigDecimal newValue;
 
     @Enumerated(EnumType.STRING)
     private ChangeRequestStatus status;
@@ -49,19 +50,19 @@ public class ChangeRequest extends Audit{
         this.prevGrade = prevGrade;
     }
 
-    public Long getPrevValue() {
+    public BigDecimal getPrevValue() {
         return prevValue;
     }
 
-    public void setPrevValue(Long prevValue) {
+    public void setPrevValue(BigDecimal prevValue) {
         this.prevValue = prevValue;
     }
 
-    public Long getNewValue() {
+    public BigDecimal getNewValue() {
         return newValue;
     }
 
-    public void setNewValue(Long newValue) {
+    public void setNewValue(BigDecimal newValue) {
         this.newValue = newValue;
     }
 

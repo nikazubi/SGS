@@ -22,4 +22,7 @@ public interface StudentRepositoryCustom {
     List<Student> findByNameAndSurname(List<AcademyClass> academyClassList, String queryKey);
 
     List<Student> findAllByAcademyClass(long academyClassId);
+
+    Student authStudent(String username, String password);
+
 }

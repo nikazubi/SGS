@@ -9,6 +9,7 @@ import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,7 +21,7 @@ public class GradeDTO extends AuditDTO{
 
     private Long id;
 
-    private Long value;
+    private BigDecimal value;
 
     private String gradeType;
 

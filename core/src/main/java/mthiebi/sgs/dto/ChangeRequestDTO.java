@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import mthiebi.sgs.models.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -18,9 +19,9 @@ public class ChangeRequestDTO {
 
     private String issuerFullname;
 
-    private Long prevValue;
+    private BigDecimal prevValue;
 
-    private Long newValue;
+    private BigDecimal newValue;
 
     private String status;
 

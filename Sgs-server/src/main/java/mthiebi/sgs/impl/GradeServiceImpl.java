@@ -137,7 +137,7 @@ public class GradeServiceImpl implements GradeService {
         for (Student student : gradelist.keySet()) {
             Map<Subject, BigDecimal> value = gradelist.get(student).stream().collect(Collectors.toMap(
                     Grade::getSubject,
-                    entry -> new BigDecimal(entry.getValue())
+                    Grade::getValue
             ));
             result.put(student, value);
         }
@@ -242,7 +242,7 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
-        List<Integer> mapKeys = firstSemester ? List.of(-1 ,9, 11, 12) : List.of(-1, 1, 3, 4, 5, 6);
+        List<Integer> mapKeys = firstSemester ? List.of(-2, -1 ,9, 11, 12) : List.of(-2, -1, 1, 3, 4, 5, 6);
 
         for (Student student : studentList) {
             Map<Subject, Map<Integer, BigDecimal>> existMap = map.get(student);

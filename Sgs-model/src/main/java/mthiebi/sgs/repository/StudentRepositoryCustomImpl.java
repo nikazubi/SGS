@@ -69,4 +69,13 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .where(qAcademyClass.id.eq(academyClassId))
                 .fetch();
     }
+
+    @Override
+    public Student authStudent(String username, String password) {
+        return qf.select(qStudent)
+                .from(qStudent)
+                .where(qStudent.username.eq(username))
+                .where(qStudent.password.eq(password))
+                .fetchOne();
+    }
 }

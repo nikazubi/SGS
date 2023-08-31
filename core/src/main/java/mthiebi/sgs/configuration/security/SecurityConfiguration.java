@@ -93,6 +93,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.antMatchers("/authenticate")
 			.permitAll()
+			.antMatchers("/authenticate-student")
+			.permitAll()
 			.antMatchers(AUTH_WHITELIST_SWAGGER_UI)
 			.permitAll()
 //			.antMatchers("/services/sps-soap-service?wsdl")
