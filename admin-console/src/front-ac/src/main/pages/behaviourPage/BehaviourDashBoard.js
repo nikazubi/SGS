@@ -39,7 +39,7 @@ const BehaviourDashBoard = () => {
         {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
-                return <div style={{height:50, justifyContent:'center', alignItems: 'center', display: 'flex'}}>
+                return <div style={{height:50, justifyContent:'center', alignItems: 'center',}}>
                     {row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
@@ -1457,7 +1457,7 @@ const BehaviourDashBoard = () => {
     return (
         <div>
             <BehaviourTableToolbar filters={filters} setFilters={setFilters}/>
-            <div style={{height: `calc(100vh - ${130}px)`, width: '98%', marginLeft:15, marginRight:15}}>
+            <div style={{height: `calc(100vh - ${130}px)`, marginLeft:15, marginRight:15,}}>
                 <DataGridPaper>
                     <DataGridSGS
                         sx={{
@@ -1466,7 +1466,10 @@ const BehaviourDashBoard = () => {
                                     '#f4f4f4'
                                 }`,
                             },
+                           overflowX: 'scroll',
+                            width: "100%"
                         }}
+                        // colorGroups={{ overflowX: 'scroll', width: "100%"  }}
                         experimentalFeatures={{ columnGrouping: true }}
                         columnGroupingModel={getGradeColumnGrouping()}
                         columns={getGradeColumns()}

@@ -5,6 +5,7 @@ export const fetchGradesSemester = async (filters) => {
     if (!filters.academyClass) {
         return [];
     }
+    console.log(filters)
     const params = {
         classId: filters.academyClass.id,
         studentId: filters.student.id,

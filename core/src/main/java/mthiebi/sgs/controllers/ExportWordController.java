@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/export")
@@ -32,7 +33,7 @@ public class ExportWordController {
             date.setTime(Long.parseLong(createDate));
         }
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map = (Map<Student, Map<Subject, Map<Integer, BigDecimal>>>) gradeService.getGradeByComponent(classId, studentId, yearRange, date, component);
-        exportWordService.exportSemesterGrades(map, component);
+        exportWordService.exportSemesterGrades(map, Objects.equals(component, "firstSemester"));
     }
 
 }
