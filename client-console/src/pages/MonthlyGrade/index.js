@@ -79,17 +79,18 @@ const month = [
         <div className="ib__center column">
             <div className="pageName">მოსწავლის შეფასება თვის რეიტინგების მიხედვით</div>
             <div style={{display:'flex', alignItems:'center', marginTop:'25px'}}>
-            <div>
-            {dropdown()}
-            <div style={{marginLeft:'10px'}}>
-                <Button onClick={handleSearch} disabled={!selectedData} style={{ fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
-            </div>
+            <div style={{display: 'flex'}}>
+                {dropdown()}
+                <div style={{marginLeft: '10px'}}>
+                    <Button onClick={handleSearch} disabled={!selectedData} style={{fontWeight: 'bold', height: '50px'}}
+                            variant="contained">ძიება<SearchIcon/></Button>
+                </div>
             </div>
             </div>
         </div>
 
         {!!currentData.length && <div className="absenceMain shefaseba horizontal">
-            <CustomShefasebaBar color={'#008639'} data={currentData} />
+            <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
         </div>}
 
         </>

@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LabelList
-} from "recharts";
+import {Bar, BarChart, CartesianGrid, LabelList, Tooltip, XAxis, YAxis} from "recharts";
 
 export default function CustomShefasebaBar({color, data}) {
 
@@ -22,11 +13,11 @@ export default function CustomShefasebaBar({color, data}) {
 
   return (
     <BarChart
-      width={1280}
-      height={500}
-      data={data}
-      layout={'horizontal'}
-      margin={{
+        width={1280}
+        height={440}
+        data={data}
+        layout={'horizontal'}
+        margin={{
         top: 20,
         right: 30,
         left: 20,

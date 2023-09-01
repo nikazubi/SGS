@@ -12,8 +12,8 @@ const SemestruliShefaseba = () => {
         '2022-2023'
     ];
     
-      const [selectedData, setSelectedData] = useState('2021-2022');
-      const [currentData, setCurrentData] = useState([]);
+      const [selectedData, setSelectedData] = useState('2022-2023');
+    const [currentData, setCurrentData] = useState([]);
       const [currentDataTerm2, setCurrentDataTerm2] = useState([]);
     
       const handleChange = (event) => {
@@ -101,14 +101,16 @@ const SemestruliShefaseba = () => {
                 </div>
             </div>
             {!!currentData.length && <div className="absenceMain shefaseba term horizontal">
-            <div style={{fontWeight:'unset', marginBottom: 0}} className="pageName">I სემესტრი</div>
-                <CustomShefasebaBar color={'#FF5722'} data={currentData} />
+                <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">I სემესტრი
+                </div>
+                <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
             </div>}
 
             {!!currentDataTerm2.length && <div className="absenceMain shefaseba term horizontal">
-            <div style={{fontWeight:'unset', marginBottom: 0}} className="pageName">II სემესტრი</div>
+                <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">II სემესტრი
+                </div>
 
-                <CustomShefasebaBar color={'#FF5722'} data={currentData} />
+                <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
             </div>}
     
             </>
