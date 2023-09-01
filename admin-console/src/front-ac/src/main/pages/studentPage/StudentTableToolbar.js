@@ -1,12 +1,11 @@
 import FlexBox from "../../../components/FlexBox";
 import {Formik} from "formik";
-import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import {useState} from "react";
-import IconButton from "../../../components/buttons/IconButton";
 import {Add, Search} from "@material-ui/icons";
 import FormikTextField from "../../components/formik/FormikTextField";
 import StudentModal from "./StudentModal";
 import {ModalOpenMode} from "../../../utils/constants";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const StudentTableToolbar = ({setFilters, filters}) => {
     const [open, setOpen] = useState(false);
@@ -18,9 +17,9 @@ const StudentTableToolbar = ({setFilters, filters}) => {
                 <Formik
                     initialValues={
                         {
-                           firstName: '',
-                           lastName: '',
-                           personalNumber:''
+                            firstName: '',
+                            lastName: '',
+                            personalNumber: ''
                         }
                     }
                     onSubmit={() => {
@@ -31,23 +30,25 @@ const StudentTableToolbar = ({setFilters, filters}) => {
                     {({values, setFieldValue}) => (
                         <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
 
-                            <div style={{marginLeft: 50, width: 300}}>
+                            <div style={{marginLeft: 15, width: 250}}>
                                 <FormikTextField name="firstName" label={"მოსწავლის სახელი"}/>
                             </div>
-                            <div style={{marginLeft: 50, width: 300}}>
+                            <div style={{marginLeft: 20, width: 250}}>
                                 <FormikTextField name="lastName" label={"მოსწავლის გვარი"}/>
                             </div>
-                            <div style={{marginLeft: 50, width: 300}}>
+                            <div style={{marginLeft: 20, width: 250}}>
                                 <FormikTextField name="personalNumber" label={"მოსწავლის პირადი ნომერი"}/>
                             </div>
-                            <div style={{marginLeft: 15, width: 100}}>
-                                <IconButton
+                            <div style={{marginLeft: 10, width: 50}}>
+                                <IconButtonWithTooltip
+                                    tooltip={"ძიება"}
                                     icon={<Search/>}
                                     onClick={() => setFilters(values)}
                                 />
                             </div>
-                            <div style={{marginLeft: 15, width: 100}}>
-                                <IconButton
+                            <div style={{marginLeft: 10, width: 50}}>
+                                <IconButtonWithTooltip
+                                    tooltip={"დამატება"}
                                     icon={<Add/>}
                                     onClick={() => setOpen(true)}
                                 />

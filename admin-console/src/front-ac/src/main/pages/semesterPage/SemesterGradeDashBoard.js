@@ -11,8 +11,7 @@ import axios from "../../../utils/axios";
 const SemesterGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("SEMESTER_GRADE")});
     const [subjects, setSubjects] = useState([]);
-    // const param = {queryKey: ""};
-    // const subjects = fetchSubjects(param);
+    const [checked, setChecked] = useState(false);
     const {data, isLoading, isError, error, isSuccess} = useGradeSemester(filters);
 
     useEffect(()=>{
@@ -82,7 +81,7 @@ const SemesterGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[month.month];
 
-                        return <div>{monthValue === 0 ? '' : monthValue}</div>;
+                        return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     field: subject.name + "-" + month.month,
@@ -104,7 +103,7 @@ const SemesterGradeDashBoard = () => {
                     }));
                     const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-1];
 
-                    return <div>{monthValue === 0 ? '' : monthValue}</div>;
+                    return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
                 field: subject.name + "--1",
@@ -122,7 +121,7 @@ const SemesterGradeDashBoard = () => {
                     }));
                     const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-2];
 
-                    return <div>{monthValue === 0 ? '' : monthValue}</div>;
+                    return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
                 field: subject.name + "--2",
@@ -146,7 +145,7 @@ const SemesterGradeDashBoard = () => {
         });
         console.log("after sort", monthFields);
         return monthFields;
-    }, [data, subjects, filters.semesterN?.value]);
+    }, [data, subjects, filters.semesterN?.value, checked]);
 
     const gradeColumns = [
         {
@@ -638,14 +637,14 @@ const SemesterGradeDashBoard = () => {
             return gradeClomuns2
         }
         return gradeColumns
-    }, [data])
+    }, [data, checked])
 
     let columnGroupingModel = [];
 
 
     return (
         <div className={"semesterGradeCnt"}>
-            <SemesterGradeToolbar filters={filters} setFilters={setFilters}/>
+            <SemesterGradeToolbar filters={filters} setFilters={setFilters} checked={checked} setChecked={setChecked}/>
             <div style={{height: `calc(100vh - ${130}px)`, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS

@@ -7,6 +7,7 @@ import {FormikDatePickerField} from "../../components/formik/FormikDatePickerFie
 import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const AbsenceTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -66,7 +67,8 @@ const AbsenceTableToolbar = ({setFilters, filters}) => {
                                                    }}/>
                         </div>
                         <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                            <IconButtonWithTooltip
+                                tooltip={"ძიება"}
                                 icon={<Search/>}
                                 onClick={() => setFilters(values)}
                             />

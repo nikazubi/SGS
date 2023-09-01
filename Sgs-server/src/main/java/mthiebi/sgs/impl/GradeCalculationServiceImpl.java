@@ -44,17 +44,17 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 BigDecimal monthlyGeneralSummery = calculateTransitSummeryMonthlyGrade(gradeList);
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlyGeneralSummery.doubleValue())), GradeType.TRANSIT_SUMMARY_ASSIGMENT_MONTH, date);
 
-                BigDecimal monthlyGeneralSummeryPercent = monthlyGeneralSummery.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                BigDecimal monthlyGeneralSummeryPercent = BigDecimal.ZERO.equals(monthlyGeneralSummery)? BigDecimal.ZERO : monthlyGeneralSummery.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent, GradeType.TRANSIT_SUMMARY_ASSIGMENT_PERCENT, date);
 
                 BigDecimal monthlySchoolWork = calculateSimpleAverageOfPrefix(gradeList, "TRANSIT_SCHOOL_WORK");
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlySchoolWork.doubleValue())), GradeType.TRANSIT_SCHOOL_WORK_MONTH, date);
 
-                BigDecimal monthlySchoolWorkPercent = monthlySchoolWork.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                BigDecimal monthlySchoolWorkPercent = BigDecimal.ZERO.equals(monthlySchoolWork)? BigDecimal.ZERO : monthlySchoolWork.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 saveGrade(subject, academyClass, student, monthlySchoolWorkPercent, GradeType.TRANSIT_SCHOOL_WORK_MONTH_PERCENT, date);
 
                 BigDecimal sum = (monthlyGeneralSummeryPercent).add(monthlySchoolWorkPercent);
-                BigDecimal monthly = sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP);
+                BigDecimal monthly = BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP);
                 Grade grade = Grade.builder()
                         .gradeType(GradeType.GENERAL_COMPLETE_MONTHLY)
                         .subject(subject)
@@ -71,23 +71,23 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 BigDecimal monthlyGeneralSummery = calculateGeneralSummeryMonthlyGrade(gradeList).setScale(1, RoundingMode.HALF_UP);
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlyGeneralSummery.doubleValue())), GradeType.GENERAL_SUMMARY_ASSIGMENT_MONTH, date);
 
-                BigDecimal monthlyGeneralSummeryPercent = monthlyGeneralSummery.divide(BigDecimal.valueOf(2));
+                BigDecimal monthlyGeneralSummeryPercent = BigDecimal.ZERO.equals(monthlyGeneralSummery)? BigDecimal.ZERO : monthlyGeneralSummery.divide(BigDecimal.valueOf(2));
                 saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent, GradeType.GENERAL_SUMMARY_ASSIGMENT_PERCENT, date);
 
                 BigDecimal monthlyHomework = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_HOMEWORK");
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlyGeneralSummeryPercent.doubleValue())), GradeType.GENERAL_HOMEWORK_MONTHLY, date);
 
-                BigDecimal monthlyHomeworkPercent = monthlyHomework.multiply(BigDecimal.valueOf(3)).divide(BigDecimal.valueOf(10));
+                BigDecimal monthlyHomeworkPercent = BigDecimal.ZERO.equals(monthlyHomework)? BigDecimal.ZERO : monthlyHomework.multiply(BigDecimal.valueOf(3)).divide(BigDecimal.valueOf(10));
                 saveGrade(subject, academyClass, student, monthlyHomeworkPercent, GradeType.GENERAL_HOMEWORK_PERCENT, date);
 
                 BigDecimal monthlySchoolWork = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_SCHOOL_WORK");
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlySchoolWork.doubleValue())), GradeType.GENERAL_SCHOOL_WORK_MONTH, date);
 
-                BigDecimal monthlySchoolWorkPercent = monthlySchoolWork.divide(BigDecimal.valueOf(5));
+                BigDecimal monthlySchoolWorkPercent =BigDecimal.ZERO.equals(monthlySchoolWork)? BigDecimal.ZERO :  monthlySchoolWork.divide(BigDecimal.valueOf(5));
                 saveGrade(subject, academyClass, student, monthlySchoolWorkPercent, GradeType.GENERAL_SCHOOL_WORK_PERCENT, date);
 
                 BigDecimal sum = monthlyHomeworkPercent.add(monthlyGeneralSummeryPercent).add(monthlySchoolWorkPercent);
-                BigDecimal monthly = sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP);
+                BigDecimal monthly = BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP);
                 Grade grade = Grade.builder()
                         .gradeType(GradeType.GENERAL_COMPLETE_MONTHLY)
                         .subject(subject)
@@ -158,7 +158,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                     .build();
             gradeRepository.save(behaviourStudentBehaviorMonthly);
             BigDecimal sum = monthlyUniform.add(delays).add(inventory).add(hygiene).add(behaviourStudentBehavior);
-            BigDecimal monthly = sum.divide(BigDecimal.valueOf(5L), RoundingMode.HALF_UP);
+            BigDecimal monthly = BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(5L), RoundingMode.HALF_UP);
             Grade grade = Grade.builder()
                     .gradeType(GradeType.BEHAVIOUR_MONTHLY)
                     .subject(null)
@@ -196,7 +196,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             } else {
                 BigDecimal sum = generalSummeryAssignment2.get(0).getValue()
                         .add(generalSummeryAssignment1.get(0).getValue());
-                return sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+                return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
             }
         }
     }
@@ -220,7 +220,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             } else {
                 BigDecimal sum = generalSummeryAssignment2.get(0).getValue()
                         .add(generalSummeryAssignment1.get(0).getValue());
-                return sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+                return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
             }
         }
     }
@@ -232,7 +232,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
         }
         BigDecimal sum = generalSummeryAssignment2.getValue()
                 .add(generalSummeryAssignmentRestoration.get().getValue());
-        return sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
     }
 
     private BigDecimal getRestorationGradeTransit(List<Grade> gradeList, Grade generalSummeryAssignment2) throws SGSException {
@@ -242,7 +242,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
         }
         BigDecimal sum = generalSummeryAssignment2.getValue()
                 .add(generalSummeryAssignmentRestoration.get().getValue());
-        return sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateSimpleAverageOfPrefix(List<Grade> gradeList, String prefix) {
@@ -251,7 +251,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                         !grade.getGradeType().name().contains("MONTHLY") && !grade.getGradeType().name().contains("PERCENT"))
                 .collect(Collectors.toList());
         BigDecimal sum = eligibleGrades.stream().map(Grade::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP);
+        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP);
     }
 
     private Grade saveGrade(Subject subject, AcademyClass academyClass, Student student, BigDecimal value, GradeType gradeType, Date exactMonth) {

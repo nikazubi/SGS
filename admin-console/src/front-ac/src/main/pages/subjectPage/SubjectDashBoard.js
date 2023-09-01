@@ -48,7 +48,7 @@ const SubjectDashBoard = () => {
     return (
         <div>
             <SubjectTableToolbar filters={filters} setFilters={setFilters}/>
-            <div style={{height: `calc(100vh - ${130}px)`, width: '98%', marginLeft: 15, marginRight: 15}}>
+            <div style={{height: `calc(100vh - ${130}px)`, width: '98%', marginTop:25,  marginLeft: 15, marginRight: 15}}>
                 <DataGridPaper>
                     <DataGridSGS
                         sx={{

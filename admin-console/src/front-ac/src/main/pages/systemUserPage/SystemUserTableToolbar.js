@@ -8,6 +8,7 @@ import {Add, Search} from "@material-ui/icons";
 import FormikTextField from "../../components/formik/FormikTextField";
 import SystemUserModal from "./SystemuserFormModal";
 import {setFiltersOfPage} from "../../../utils/filters";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral({});
@@ -37,7 +38,7 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 15, width: 250}}>
                             <FormikTextField
                                 name={"username"}
                                 type={"text"}
@@ -45,7 +46,7 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                                 label={"მომხმარებლის სახელი"}
                             />
                         </div>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikTextField
                                 name={"name"}
                                 type={"text"}
@@ -53,7 +54,7 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                                 label={"სახელი"}
                             />
                         </div>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikAutocomplete name="active"
                                                 multiple={false}
                                                 label={"სტატუსი"}
@@ -64,8 +65,9 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                             />
                         </div>
 
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                        <div style={{marginLeft: 10, width: 50}}>
+                            <IconButtonWithTooltip
+                                tooltip={"ძიება"}
                                 icon={<Search/>}
                                 onClick={() => {
                                     setFiltersOfPage("MONTHLY_GRADE", values);
@@ -74,7 +76,8 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                             />
                         </div>
                         <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                            <IconButtonWithTooltip
+                                tooltip={"დამატება"}
                                 icon={<Add/>}
                                 onClick={() => setOpen(true)}
                             />

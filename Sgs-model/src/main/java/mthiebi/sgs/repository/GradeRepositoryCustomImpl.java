@@ -89,7 +89,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         countOfSchoolWork++;
                     }
                 }
-                BigDecimal average = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+                BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum))? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
                 BigDecimal averageOfSchoolWork = countOfSchoolWork == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(sumOfSchoolWork).divide(BigDecimal.valueOf(countOfSchoolWork), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, average);
                 gradeByMonth.put(-2, averageOfSchoolWork);
@@ -135,5 +135,18 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         return qf.select(dateTemplate(Integer.class, "YEAR({0})", createDatePath).max())
                 .from(qGrade)
                 .fetchOne();
+    }
+
+    @Override
+    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int maxYear) {
+        return qf.select(qGrade)
+                .from(qGrade)
+                .where(qGrade.academyClass.id.eq(academyClassId)
+                        .and(qGrade.student.id.eq(studentId))
+                        .and(qGrade.gradeType.eq(gradeType))
+                        .and(qGrade.subject.id.eq(subjectId)
+                        .and(qGrade.exactMonth.year().eq(maxYear))))
+                .orderBy(qGrade.exactMonth.desc())
+                .fetch();
     }
 }

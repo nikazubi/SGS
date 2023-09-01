@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import BehaviourTableToolbar from "./BehaviourTableToolbar";
 import useGrades from "../HomePage/useGrades";
 import useUpdateGrade from "../HomePage/useUpdateGrade";
@@ -10,12 +10,15 @@ import useFetchBehaviour from "./useBehaviour";
 import useUpdateBehaviourGrade from "./useUpdateBehaviourGrade";
 import {getFiltersOfPage} from "../../../utils/filters";
 import {useNotification} from "../../../contexts/notification-context";
+import Modal from "../../../components/modals/Modal";
+import TextField from "../../components/formik/TextField";
 
 const BehaviourDashBoard = () => {
     const [filters, setFilters] = useState({groupByClause: 'STUDENT', ...getFiltersOfPage("BEHAVIOUR")});
     const {data, isLoading, isError, error, isSuccess} = useFetchBehaviour(filters);
     const {setErrorMessage} = useNotification();
     const [openRequestModal, setOpenRequestModal] = useState(false);
+    const [descriptionText, setDescriptionText] = useState('');
     const [newRowToSave, setNewRowToSave] = useState({});
     const {mutateAsync: mutateRow} = useUpdateBehaviourGrade();
 
@@ -1438,14 +1441,43 @@ const BehaviourDashBoard = () => {
         async (newRow) => {
             const gradeType = Object.keys(newRow).filter(field => field !== "student" && field !== "grades")[0]
             const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType)
-            if (gradesOfType > 0) {
-                setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
-                setOpenRequestModal(true);
+            newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
+            if (gradesOfType.length > 0 && gradesOfType[0].value !== undefined && gradesOfType[0].value !== null) {
+                const params = {
+                    academyClassId: gradesOfType[0].academyClass.id,
+                    gradePrefix: "BEHAVIOUR",
+                    gradeId: gradesOfType[0].id
+                };
+                const {data} = await axios.get("/close-period/get-period-by-class", {params});
+
+                if (data) {
+                    setNewRowToSave({
+                            newValue: newRow[gradeType],
+                            id: gradesOfType[0].id,
+                            description: descriptionText
+                        }
+                    )
+                    setOpenRequestModal(true);
+                } else {
+                    newRow.subject = filters.subject
+                    newRow.exact = filters.date
+                    return await mutateRow(newRow);
+                }
             } else {
                 newRow.subject = filters.subject
-                newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
+                newRow.exact = filters.date
                 return await mutateRow(newRow);
             }
+
+
+            // if (gradesOfType > 0) {
+            //     setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
+            //     setOpenRequestModal(true);
+            // } else {
+            //     newRow.subject = filters.subject
+            //     newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
+            //     return await mutateRow(newRow);
+            // }
         },
         [mutateRow, filters],
     );
@@ -1484,15 +1516,30 @@ const BehaviourDashBoard = () => {
                     />
                 </DataGridPaper>
             </div>
-            <ConfirmationModal
+            <Modal
+                maxWidth={600}
                 open={openRequestModal}
+                onClose={() => (setOpenRequestModal(false))}
                 title={"ნიშნის ცვლილება"}
                 onSubmit={
                     async (options) => {
-                        await axios.post("/change-request/create-change-request", newRowToSave)
+                        await axios.post("/change-request/create-change-request", {
+                            ...newRowToSave,
+                            description: descriptionText
+                        });
+                        setOpenRequestModal(false);
                     }}
-                onClose={() => (setOpenRequestModal(false))}
-            />
+            >
+                <p>თუ გსურთ ნიშნის ცვლილების მოთხოვნა, შეავსეთ ახსნა განმარტების ველი:</p>
+                <br/>
+                <TextField
+                    onChange={(e) => {
+                        setDescriptionText(e.target.value);
+                    }}
+                    value={descriptionText}
+                    label={"ახსნა-განმარტება"}
+                />
+            </Modal>
         </div>
     )
 }

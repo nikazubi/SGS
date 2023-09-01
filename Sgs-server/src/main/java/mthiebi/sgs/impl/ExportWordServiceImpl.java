@@ -8,6 +8,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -29,7 +30,7 @@ public class ExportWordServiceImpl implements ExportWordService {
     private static final String[] SECOND_SEMESTER_MONTH_INT = {"1", "3", "4", "5", "6", "-1", "-2"};
 
     @Override
-    public void exportSemesterGrades(Map<Student, Map<Subject, Map<Integer, BigDecimal>>> grades, boolean semester, boolean isDecimal, String semesterYears) {
+    public byte[] exportSemesterGrades(Map<Student, Map<Subject, Map<Integer, BigDecimal>>> grades, boolean semester, boolean isDecimal, String semesterYears) {
         try (XWPFDocument document = new XWPFDocument()) {
             XWPFParagraph title = document.createParagraph();
             title.setAlignment(ParagraphAlignment.CENTER);
@@ -51,7 +52,7 @@ public class ExportWordServiceImpl implements ExportWordService {
             List<Subject> subjects = new ArrayList<>(grades.get(students.get(0)).keySet());
             int numberOfMonths = semester ? 3 : 5;
             int numberOfColumns = 1 + (subjects.size() *  numberOfMonths);
-            BigDecimal numOfPages = BigDecimal.valueOf(numberOfColumns).divide(BigDecimal.valueOf(NUMBER_OF_SUBJECTS_PER_PAGE * numberOfMonths), RoundingMode.CEILING);
+            BigDecimal numOfPages = BigDecimal.ZERO.equals(BigDecimal.valueOf(numberOfColumns))? BigDecimal.ZERO : BigDecimal.valueOf(numberOfColumns).divide(BigDecimal.valueOf(NUMBER_OF_SUBJECTS_PER_PAGE * numberOfMonths), RoundingMode.CEILING);
             Map<String, Subject> subjectWithNames = subjects.stream().collect(Collectors.toMap(Subject::getName, Function.identity()));
             List<String> subjectNames =  new ArrayList<>(subjectWithNames.keySet());
             subjectNames.add(0, "მოსწავლის სახელი და გვარი");
@@ -97,16 +98,24 @@ public class ExportWordServiceImpl implements ExportWordService {
                      pageBreakRun.addBreak(BreakType.PAGE);
                  }
             }
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            document.write(out);
+            out.close();
+            document.close();
+
+            return out.toByteArray();
+
             // Save the document
-            try (FileOutputStream out = new FileOutputStream("WTF.docx")) {
-                document.write(out);
-                System.out.println("Word document generated successfully.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try (FileOutputStream out = new FileOutputStream("WTF.docx")) {
+//                document.write(out);
+//                System.out.println("Word document generated successfully.");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     XWPFTable createTable(XWPFDocument document, String[] headers, String[] months, String[][] studentData){

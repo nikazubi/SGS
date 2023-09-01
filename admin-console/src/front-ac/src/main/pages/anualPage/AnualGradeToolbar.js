@@ -9,8 +9,11 @@ import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import {setFiltersOfPage} from "../../../utils/filters";
 import useFetchYear from "./useYear";
+import Switch from "@mui/material/Switch";
+import {Tooltip} from "@mui/material";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
-const AnualGradeToolbar = ({setFilters, filters, setData}) => {
+const AnualGradeToolbar = ({setFilters, filters, setData, checked, setChecked}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const {mutateAsync: onFetchYear} = useFetchYear();
@@ -37,7 +40,7 @@ const AnualGradeToolbar = ({setFilters, filters, setData}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 25, marginBottom:25}}>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 0, width: 250}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
                                                 label={"კლასი"}
@@ -54,7 +57,7 @@ const AnualGradeToolbar = ({setFilters, filters, setData}) => {
                                                     }
                                                 }}/>
                         </div>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikAutocomplete name="student"
                                                 multiple={false}
                                                 label={"მოსწავლე"}
@@ -69,7 +72,7 @@ const AnualGradeToolbar = ({setFilters, filters, setData}) => {
                                                 }}/>
                         </div>
 
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikAutocomplete name="yearRange"
                                                 multiple={false}
                                                 label={"წელი"}
@@ -83,14 +86,24 @@ const AnualGradeToolbar = ({setFilters, filters, setData}) => {
                                                     }
                                                 }}/>
                         </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                        <div style={{marginLeft: 15, width: 100, display:'flex', flexDirection:'row', alignItems:'center'}}>
+                            <IconButtonWithTooltip
+                                tooltip={"ძიება"}
                                 icon={<Search/>}
                                 onClick={() => {
                                     setFiltersOfPage("ANNUAL_GRADE", values)
                                     setFilters(values)
                                 }}
                             />
+                            <Tooltip title={checked? "10 ბალიანი სისტემა" : "7 ბალიანი სისტემა"}>
+                                <div style={{marginLeft: 0, width: 50}}>
+                                    <Switch
+                                        checked={checked}
+                                        onChange={()=> setChecked(!checked)}
+                                        inputProps={{ 'aria-label': 'controlled' }}
+                                    />
+                                </div>
+                            </Tooltip>
                         </div>
                     </div>)}
                 </Formik>

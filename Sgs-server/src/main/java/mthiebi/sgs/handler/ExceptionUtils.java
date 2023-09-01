@@ -19,7 +19,7 @@ public class ExceptionUtils {
 	
 	public static final String CUSTOM_VALIDATION_FIELD = "customValidation";
 	
-	public static void throwLcmsException(Supplier<SGSException> exceptionSupplier) throws SGSException {
+	public static void throwSgsException(Supplier<SGSException> exceptionSupplier) throws SGSException {
 		throw exceptionSupplier.get();
 	}
 	

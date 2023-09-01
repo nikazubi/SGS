@@ -118,7 +118,6 @@ public class GradeServiceImpl implements GradeService {
                 break;
         }
         return gradeByStudent;
-
     }
 
     @Override
@@ -130,6 +129,11 @@ public class GradeServiceImpl implements GradeService {
             result.add(String.valueOf(minYear) + "-" + String.valueOf(minYear + 1));
         }
         return result;
+    }
+
+    private BigDecimal getFinalExamValueByStudentIdAndSubjectId(long academyClassId, long subjectId, Long studentId, int maxYear){
+        List<Grade> grades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(academyClassId, subjectId, studentId,  GradeType.FINAL_EXAM, maxYear);
+        return grades == null || grades.isEmpty()? BigDecimal.ZERO : grades.get(0).getValue();
     }
 
     private Map<Student, Map<Subject, BigDecimal>> getMonthlyGrades(Long classId, Date createDate, Long studentId) throws SGSException {
@@ -181,34 +185,36 @@ public class GradeServiceImpl implements GradeService {
                 .build();
     }
 
-    private static BigDecimal calculateAverage(BigDecimal value1, BigDecimal value2) {
-        BigDecimal sum = value1.add(value2);
-        return sum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP); // Assuming you want the average of two values
+    private static BigDecimal calculateAverage(BigDecimal value1, BigDecimal value2,  BigDecimal value3) {
+        BigDecimal sum = value1.add(value2).add(value3);
+        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(3), RoundingMode.HALF_UP); // Assuming you want the average of two values
     }
 
     private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> getAnualGrades(Long classId, int startYear, int endYear) throws SGSException {
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> first = gradeRepository.findGradeBySemester(classId, startYear, true);
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> second = gradeRepository.findGradeBySemester(classId, endYear, false);
-        if (first == null || first.isEmpty() || second == null || second.isEmpty()) {
-            throw new SGSException("საჭიროა დასრულდეს 2-ვე სემესტრი ნიშნების სნახავად");
-        }
+//        if (first == null || first.isEmpty() || second == null || second.isEmpty()) {
+//            throw new SGSException("საჭიროა დასრულდეს 2-ვე სემესტრი ნიშნების სნახავად");
+//        }
         Set<Student> allStudents = new HashSet<>(first.keySet());
         allStudents.addAll(second.keySet());
         return allStudents.stream()
                 .collect(Collectors.toMap(
                         student -> student,
                         student -> {
-                            Set<Subject> allSubject = new HashSet<>(first.get(student).keySet());
-                            allSubject.addAll(second.get(student).keySet());
+                            Set<Subject> allSubject = new HashSet<>(first.getOrDefault(student, new HashMap<>()).keySet());
+                            allSubject.addAll(second.getOrDefault(student, new HashMap<>()).keySet());
                             return allSubject.stream().collect(Collectors.toMap(
                                     subject -> subject,
                                     subject -> {
                                         Map<Integer, BigDecimal> temporaryMap = new HashMap<>();
-                                        BigDecimal firstValue = first.get(student).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
+                                        BigDecimal finalExamGrade = getFinalExamValueByStudentIdAndSubjectId(classId, subject.getId(), student.getId(), endYear);
+                                        BigDecimal firstValue = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
                                         temporaryMap.put(1, firstValue);
-                                        BigDecimal secondValue = second.get(student).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
+                                        BigDecimal secondValue = second.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
                                         temporaryMap.put(2, secondValue);
-                                        temporaryMap.put(3, calculateAverage(firstValue, secondValue));
+                                        temporaryMap.put(3, finalExamGrade);
+                                        temporaryMap.put(4, calculateAverage(firstValue, secondValue, finalExamGrade));
                                         return temporaryMap;
                                     }
                             ));

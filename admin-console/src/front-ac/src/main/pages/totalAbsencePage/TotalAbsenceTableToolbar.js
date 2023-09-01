@@ -8,6 +8,7 @@ import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Add, Search} from "@material-ui/icons";
 import TotalAbsenceModal from "./TotalAbsenceFormModal";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral({});
@@ -32,7 +33,7 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 15, width: 250}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
                                                 label={"კლასი"}
@@ -43,7 +44,7 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                                                 onBlur={()=> setFilters(values)}/>
                         </div>
 
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikDatePickerField name="date"
                                                    label={"თვე"}
                                                    onChange={(event, value)=> {
@@ -55,14 +56,16 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
                                                       })
                                                    }}/>
                         </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                        <div style={{marginLeft: 10, width: 50}}>
+                            <IconButtonWithTooltip
+                                tooltip={"ძიება"}
                                 icon={<Search/>}
                                 onClick={() => setFilters(values)}
                             />
                         </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                        <div style={{marginLeft: 10, width: 50}}>
+                            <IconButtonWithTooltip
+                                tooltip={"დამატება"}
                                 icon={<Add/>}
                                 onClick={() => setOpen(true)}
                             />

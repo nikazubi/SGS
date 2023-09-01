@@ -14,7 +14,7 @@ export const fetchChangeRequest = async (filters) => {
     return data;
 }
 
-const useFetchChangeRequest = (filterData) => useQuery([filterData],
+const useFetchChangeRequest = (filterData) => useQuery([ "CHANGE_REQUEST", filterData],
     () => fetchChangeRequest(filterData));
 
 export default useFetchChangeRequest;

@@ -28,7 +28,7 @@ import static mthiebi.sgs.handler.ExceptionUtils.getCustomValidationField;
 import static mthiebi.sgs.handler.ExceptionUtils.isCustomValidationError;
 
 @Slf4j
-@ControllerAdvice(basePackages = "com.sgs")
+@ControllerAdvice
 public class ControllerExceptionsHandler {
 
     @ResponseBody
@@ -87,19 +87,12 @@ public class ControllerExceptionsHandler {
     }
 
     @ExceptionHandler(SGSException.class)
-    public ResponseEntity<List<ErrorInfo>> handleLcmsException(SGSException ex, HttpServletRequest request) {
+    public ResponseEntity<List<ErrorInfo>> handleSgsException(SGSException ex, HttpServletRequest request) {
         ResponseEntity.BodyBuilder resp = getResponseEntityBuilder(ex);
         ErrorInfo error = ErrorInfo.builder()
                 .message(ex.getMessage())
                 .field(ex.getField())
                 .build();
-        String minifiedStackTrace = Arrays.stream(ex.getStackTrace())
-                .map(StackTraceElement::toString)
-                .filter(element -> element.startsWith("com.azry"))
-                .collect(Collectors.joining(";"));
-        String errorToLog = String.format("SGS exception[%s] trace[%s]", error.toString(), minifiedStackTrace);
-        log.error(errorToLog);
-        log.debug("SGS exception", ex);
         return resp.body(List.of(error));
     }
 

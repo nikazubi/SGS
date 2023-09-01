@@ -2,6 +2,7 @@ import React from "react";
 import {Check, Visibility} from "@material-ui/icons";
 import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 import axios from "../../../utils/axios";
+import useChangeRequestStatus from "./useUpdateChangeRequest";
 
 export const fetchChangeRequest = async (filters) => {
     const {data} = await axios.post("change-request/change-request-status");
@@ -9,9 +10,10 @@ export const fetchChangeRequest = async (filters) => {
 }
 
 const ChangeRequestStatusChangeAction = ({ row, status, tooltip, icon }) => {
+    const {mutateAsync: changeRequestStatus} = useChangeRequestStatus();
 
     const handleOpen = async () => {
-        const {data} = await axios.put("change-request/change-request-status", {
+        const {data} = await changeRequestStatus({
             changeRequestId: row.id,
             changeRequestStatus: status
         });

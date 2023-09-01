@@ -8,7 +8,16 @@ export const calculateMonthlyGrade = async (data) => {
         date: data.date,
     }
 
-    await axios.get("calculate-grade/grades-monthly", {params});
+    axios.get("calculate-grade/grades-monthly", {params})
+        .then(() => {
+            data.setNotification({
+                message: 'თვის ნიშანი წარმატებით დაითვალა',
+                severity: 'success'
+            });
+        })
+        .catch((error) => {
+            data.setErrorMessage(error);
+        });
 }
 
 const useCalculateGeneralGrade = () => useMutationWithInvalidation(calculateMonthlyGrade, "GRADES");

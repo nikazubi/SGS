@@ -5,6 +5,7 @@ import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.ExportWordService;
 import mthiebi.sgs.service.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -23,18 +24,19 @@ public class ExportWordController {
     private ExportWordService exportWordService;
 
     @GetMapping("/semester-word")
-    public void calculateGradeMonthly(@RequestParam Long classId,
-                                      @RequestParam(required = false) Long studentId,
-                                      @RequestParam(required = false) String yearRange,
-                                      @RequestParam(required = false) String createDate,
-                                      @RequestParam String component,
-                                      @RequestParam boolean isDecimal) throws Exception {
+    @ResponseBody
+    public ResponseEntity<byte[]> calculateGradeMonthly(@RequestParam Long classId,
+                                                        @RequestParam(required = false) Long studentId,
+                                                        @RequestParam(required = false) String yearRange,
+                                                        @RequestParam(required = false) String createDate,
+                                                        @RequestParam String component,
+                                                        @RequestParam boolean isDecimal) throws Exception {
         Date date = new Date();
         if (createDate != null) {
             date.setTime(Long.parseLong(createDate));
         }
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map = (Map<Student, Map<Subject, Map<Integer, BigDecimal>>>) gradeService.getGradeByComponent(classId, studentId, yearRange, date, component);
-        exportWordService.exportSemesterGrades(map, Objects.equals(component, "firstSemester"), isDecimal, yearRange);
+        return ResponseEntity.ok(exportWordService.exportSemesterGrades(map, Objects.equals(component, "firstSemester"), isDecimal, yearRange));
     }
 
 }

@@ -8,7 +8,16 @@ export const calculateMonthlyBehaviour = async (data) => {
         date: data.date,
     }
 
-    await axios.get("calculate-grade/behaviour-monthly", {params});
+    axios.get("calculate-grade/behaviour-monthly", {params})
+        .then(() => {
+            data.setNotification({
+                message: 'თვის ნიშანი წარმატებით დაითვალა',
+                severity: 'success'
+            });
+        })
+        .catch((error) => {
+            data.setErrorMessage(error);
+        });
 }
 
 const useCalculateMonthlyBehaviour = () => useMutationWithInvalidation(calculateMonthlyBehaviour, "BEHAVIOUR");
