@@ -6,6 +6,7 @@ import mthiebi.sgs.models.QClosedPeriod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Repository
@@ -19,10 +20,13 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
 
     @Override
     public ClosedPeriod findClosedPeriodByAcademyClassIdAndPrefix(Long academyClassId, String gradePrefix, Date lastUpdate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(lastUpdate);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         return qf.selectFrom(qClosedPeriod)
                 .where(qClosedPeriod.academyClassId.eq(academyClassId))
                 .where(qClosedPeriod.gradePrefix.eq(gradePrefix))
-                .where(qClosedPeriod.lastUpdateTime.after(lastUpdate))
+                .where(qClosedPeriod.lastUpdateTime.after(calendar.getTime()))
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
                 .fetchOne();
     }

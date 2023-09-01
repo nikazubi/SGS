@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useState} from "react";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import DataGridSGS from "../../components/grid/DataGrid";
 import MonthlyGradeToolbar from "./MonthlyGradeToolbar";
@@ -322,6 +322,51 @@ const MonthlyGradeDashBoard = () => {
                     maxWidth: 200,
                 }]
             })
+            gradeClomuns2.push({
+                    headerName: "ეთიკური ნორმა",
+                    renderCell: ({row}) => {
+                        return (<div>
+                            {row.ethic}
+                        </div>);
+                    },
+
+                    field: 'ethic',
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center',
+                    width: 200,
+                    maxWidth: 200,
+                },
+                {
+                    headerName: "რეიტინგი",
+                    renderCell: ({row}) => {
+                        return (<div>
+                            {row.rating}
+                        </div>);
+                    },
+
+                    field: 'rating',
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center',
+                    width: 200,
+                    maxWidth: 200,
+                },
+                {
+                    headerName: "გაცდენილი საათი",
+                    renderCell: ({row}) => {
+                        return (<div>
+                            {row.absent}
+                        </div>);
+                    },
+
+                    field: 'absent',
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center',
+                    width: 200,
+                    maxWidth: 200
+                },)
             return gradeClomuns2
         }
         return gradeColumns
