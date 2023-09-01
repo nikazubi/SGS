@@ -8,6 +8,7 @@ import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import {setFiltersOfPage} from "../../../utils/filters";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const MonthlyGradeToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -34,7 +35,7 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 25, marginBottom:25}}>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 0, width: 250}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
                                                 label={"კლასი"}
@@ -51,7 +52,7 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                                                     }
                                                 }}/>
                         </div>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikAutocomplete name="student"
                                                 multiple={false}
                                                 label={"მოსწავლე"}
@@ -66,7 +67,7 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                                                 }}/>
                         </div>
 
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikDatePickerField name="date"
                                                    label={"თვე"}
                                                    onChange={(event, value)=> {
@@ -78,8 +79,9 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                                                       })
                                                    }}/>
                         </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                        <div style={{marginLeft: 10, width: 50}}>
+                            <IconButtonWithTooltip
+                                tooltip={"ძიება"}
                                 icon={<Search/>}
                                 onClick={() => {
                                     setFiltersOfPage("MONTHLY_GRADE", values)

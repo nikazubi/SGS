@@ -1,6 +1,7 @@
 package mthiebi.sgs.repository;
 
 import mthiebi.sgs.models.Grade;
+import mthiebi.sgs.models.GradeType;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 
@@ -23,4 +24,7 @@ public interface GradeRepositoryCustom {
     Integer getMinYear();
 
     Integer getMaxYear();
+
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int maxYear);
+
 }

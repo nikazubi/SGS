@@ -6,10 +6,18 @@ import "./header.css"
 import useGradeAnual from "./useGradeAnual";
 import {getFiltersOfPage} from "../../../utils/filters";
 import {fetchSubjects} from "../../../hooks/useSubjects";
+import axios from "../../../utils/axios";
+import ConfirmationModal from "../../../components/modals/ConfirmationModal";
+import useUpdateBehaviourGrade from "../behaviourPage/useUpdateBehaviourGrade";
+import useUpdateFinalExamGrade from "./useUpdateFinalExam";
 
 const AnualGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("ANNUAL_GRADE")});
     const [subjects, setSubjects] = useState([]);
+    const [openRequestModal, setOpenRequestModal] = useState(false);
+    const [newRowToSave, setNewRowToSave] = useState({});
+    const {mutateAsync: mutateRow} = useUpdateFinalExamGrade();
+    const [checked, setChecked] = useState(false);
 
     const {data, isLoading, isError, error, isSuccess} = useGradeAnual(filters);
 
@@ -32,13 +40,15 @@ const AnualGradeDashBoard = () => {
         const names = [
             "I სემესტრი",
             "II სემესტრი",
+            "გამოცდა",
             "წლიური"
         ]
 
         const semesterNames = [
             {val: "I სემესტრი", ind: 1},
             {val: "II სემესტრი", ind: 2},
-            {val: "წლიური", ind: 3}
+            {val: "გამოცდა", ind: 3},
+            {val: "წლიური", ind: 4}
         ];
 
         semesterFields.push({
@@ -67,9 +77,10 @@ const AnualGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[semester.ind];
 
-                        return <div>{monthValue === 0 ? '' : monthValue}</div>;
+                        return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
+                    editable: semester.val === "გამოცდა",
                     field: subject.name + "-" + semester.ind,
                     sortable: false,
                     align: 'center',
@@ -89,7 +100,7 @@ const AnualGradeDashBoard = () => {
             }
         });
         return semesterFields;
-    }, [data, subjects]);
+    }, [data, subjects, checked]);
 
 
     const gradeColumns = [
@@ -503,17 +514,37 @@ const AnualGradeDashBoard = () => {
         return gradeColumns
     }, [data])
 
+    //TODO request change
+    const processRowUpdate = useCallback(
+        async (newRow) => {
+            // const gradeType = "FINAL_EXAM"
+            // console.log(newRow[Object.keys(newRow).filter(key => key.toString().includes("-3"))])
+            // const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType)
+            // console.log(newRow)
+            // console.log(gradesOfType)
+            // if (gradesOfType > 0) {
+            //     setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
+            //     setOpenRequestModal(true);
+            // } else {
+                newRow.subject = filters.subject
+                newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
+                return await mutateRow(newRow);
+            // }
+        },
+        [mutateRow, filters],
+    );
+
     return (
         <div className={"semesterGradeCnt"}>
-            <AnualGradeToolbar filters={filters} setFilters={setFilters}/>
+            <AnualGradeToolbar filters={filters} setFilters={setFilters} checked={checked} setChecked={setChecked}/>
             <div style={{height: `calc(100vh - ${130}px)`, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS
                         sx={{
                             overflowX: 'hidden',
                             '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
-                                borderRight: `3px solid ${
-                                    '#f4f4f4'
+                                border: `1px solid ${
+                                    '#98c9d7'
                                 }`,
                             },
                         }}
@@ -525,12 +556,22 @@ const AnualGradeDashBoard = () => {
                         getRowId={(row) => {
                             return row.student.id;
                         }}
+                        processRowUpdate={processRowUpdate}
                         getRowHeight={() => 50}
                         disableColumnMenu
                         filters={filters}
                     />
                 </DataGridPaper>
             </div>
+            <ConfirmationModal
+                open={openRequestModal}
+                title={"ნიშნის ცვლილება"}
+                onSubmit={
+                    async (options) => {
+                        await axios.post("/change-request/create-change-request", newRowToSave)
+                    }}
+                onClose={() => (setOpenRequestModal(false))}
+            />
         </div>
     )
 }

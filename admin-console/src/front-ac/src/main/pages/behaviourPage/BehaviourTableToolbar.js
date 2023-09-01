@@ -12,6 +12,7 @@ import useCalculateGeneralGrade from "../HomePage/calculateMonthlyGrade";
 import useCalculateMonthlyBehaviour, {calculateMonthlyBehaviour} from "./calculateMonthlyBehaviour";
 import {setFiltersOfPage} from "../../../utils/filters";
 import {useNotification} from "../../../contexts/notification-context";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const BehaviourTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -39,7 +40,7 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 50, marginBottom:25}}>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 15, width: 250}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
                                                 label={"კლასი"}
@@ -53,7 +54,7 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                                     }
                                                 }}/>
                         </div>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikAutocomplete name="student"
                                                 multiple={false}
                                                 label={"მოსწავლე"}
@@ -68,7 +69,7 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                                 }}/>
                         </div>
 
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikDatePickerField name="date"
                                                    label={"თვე"}
                                                    onChange={(event, value)=> {
@@ -80,8 +81,9 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                                       })
                                                    }}/>
                         </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                        <div style={{marginLeft: 10, width: 50}}>
+                            <IconButtonWithTooltip
+                                tooltip={"ძიება"}
                                 icon={<Search/>}
                                 onClick={() => {
                                     setFiltersOfPage("BEHAVIOUR", values)
@@ -89,21 +91,18 @@ const BehaviourTableToolbar = ({setFilters, filters}) => {
                                 }}
                             />
                         </div>
-                        <div style={{marginLeft: 15, width: 250}}>
+                        <div style={{marginLeft: 10, width: 250}}>
                             <Button style={{backgroundColor: "#45c1a4", color: "#fff", marginBottom: -30, fontSize: 16}}
                                     disabled={!filters.academyClass}
                                     onClick={async () => {
                                         const params = {
                                             academyClassId: filters.academyClass.id,
                                             date: Date.parse(filters.date),
+                                            setNotification: setNotification,
+                                            setErrorMessage: setErrorMessage
                                         }
                                         calculateMonthlyBehaviour(params).then(() =>{
-                                            setNotification({
-                                                message: 'თვის ნიშანი წარმატებით დაითვალა',
-                                                severity: 'success'
-                                            });
                                         }).catch((error) => {
-                                            setErrorMessage(error);
                                         });
                                     }}>
                                 {"თვის ქულის დათვლა"}

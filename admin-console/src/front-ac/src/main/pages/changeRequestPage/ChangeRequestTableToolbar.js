@@ -14,6 +14,7 @@ import moment from "moment";
 import {setFiltersOfPage} from "../../../utils/filters";
 import {useNotification} from "../../../contexts/notification-context";
 import ChangeRequestAcademyClassFormModal from "./ChangeRequestAcademyClassFormModal";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -60,7 +61,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                 >
                     {({values, setFieldValue}) => (
                         <div style={{display: "flex", flexDirection: 'row', marginTop: 50,}}>
-                            <div style={{marginLeft: 50, width: 300}}>
+                            <div style={{marginLeft: 15, width: 250}}>
                                 <FormikAutocomplete name="academyClass"
                                                     multiple={false}
                                                     label={"კლასი"}
@@ -71,7 +72,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                     // onBlur={()=> setFilters(values)}
                                 />
                             </div>
-                            <div style={{marginLeft: 50, width: 300}}>
+                            <div style={{marginLeft: 20, width: 250}}>
                                 <FormikAutocomplete name="student"
                                                     multiple={false}
                                                     label={"მოსწავლე"}
@@ -83,7 +84,7 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                 />
                             </div>
 
-                            <div style={{marginLeft: 50, width: 300}}>
+                            <div style={{marginLeft: 20, width: 250}}>
                                 <FormikDatePickerField name="date"
                                                        label={"თვე"}
                                                        onChange={(event, value) => {
@@ -95,8 +96,9 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                                            })
                                                        }}/>
                             </div>
-                            <div style={{marginLeft: 15, width: 50}}>
-                                <IconButton
+                            <div style={{marginLeft: 10, width: 50}}>
+                                <IconButtonWithTooltip
+                                    tooltip={"ძიება"}
                                     icon={<Search/>}
                                     onClick={() => {
                                         setFiltersOfPage("CHANGE_REQUEST", values)

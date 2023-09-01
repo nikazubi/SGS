@@ -13,6 +13,7 @@ import {closePeriod} from "../changeRequestPage/useClosePeriod";
 import useCalculateGeneralGrade, {calculateMonthlyGrade} from "./calculateMonthlyGrade";
 import {setFiltersOfPage} from "../../../utils/filters";
 import {useNotification} from "../../../contexts/notification-context";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const GradeTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchSubjects} = useSubjects();
@@ -99,7 +100,8 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                                    }}/>
                         </div>
                         <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                            <IconButtonWithTooltip
+                                tooltip={"ძიება"}
                                 icon={<Search/>}
                                 onClick={() => {
                                     setFiltersOfPage("GRADES", values)
@@ -115,14 +117,21 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                             academyClassId: filters.academyClass.id,
                                             subjectId: filters.subject.id,
                                             date: new Date(filters.date).getTime(),
+                                            setErrorMessage: setErrorMessage,
+                                            setNotification: setNotification
                                         }
                                         calculateGeneralGrade(params).then(() =>{
-                                            setNotification({
-                                                message: 'თვის ნიშანი წარმატებით დაითვალა',
-                                                severity: 'success'
-                                            });
+                                            // setNotification({
+                                            //     message: 'თვის ნიშანი წარმატებით დაითვალა',
+                                            //     severity: 'success'
+                                            // });
                                         }).catch((error) => {
+                                            console.log(error)
                                             setErrorMessage(error);
+                                            setNotification({
+                                                message: 'ნიშნის კალკულაცია ვერ მოხერხდა გთხოვთ შეავსოთ ყველა ნიშანი და სცადოთ მოგვიანებით',
+                                                severity: 'error'
+                                            });
                                         });
                                     }}>
                                 {"თვის ქულის დათვლა"}

@@ -41,12 +41,11 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
         }
         List<AcademyClass> toClose = systemUser.getAcademyClassList()
                                                 .stream()
-                                                .filter(academyClass -> !ids.contains(academyClass.getId()))
+                                                .filter(academyClass -> ids.contains(academyClass.getId()))
                                                 .collect(Collectors.toList());
         for (AcademyClass academyClass : toClose) {
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "GENERAL");
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "BEHAVIOUR");
-            createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "ABSENT");
             for(Student student : academyClass.getStudentList()){
                 if(student.getOwnerMail() == null){
                     continue;
@@ -81,7 +80,7 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
     }
 
     private void createOrUpdateClosedPeriodByPrefix(long academyClassId, String prefix) {
-        ClosedPeriod currClosedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(academyClassId, "GENERAL");
+        ClosedPeriod currClosedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(academyClassId, prefix);
         if (currClosedPeriod == null) {
             currClosedPeriod = ClosedPeriod.builder()
                     .id(0L)

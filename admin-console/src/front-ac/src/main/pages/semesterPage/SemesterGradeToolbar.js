@@ -10,8 +10,12 @@ import {KeyboardArrowDown, Search} from "@material-ui/icons";
 import {setFiltersOfPage} from "../../../utils/filters";
 import useFetchYear from "./useYear";
 import {fetchGradesSemester} from "./useExportWord";
+import Switch from "@mui/material/Switch";
+import {FileDownload} from "@mui/icons-material";
+import {Tooltip} from "@mui/material";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
-const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
+const SemesterGradeToolbar = ({setFilters, filters, setData, checked, setChecked}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const {mutateAsync: onFetchYear} = useFetchYear();
@@ -43,7 +47,7 @@ const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
                 >
                     {({ values, setFieldValue }) => (
                     <div style={{display: "flex", flexDirection: 'row', marginTop: 25, marginBottom:25}}>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{ width: 250}}>
                             <FormikAutocomplete name="semesterN"
                                                 multiple={false}
                                                 label={"სემესტრი"}
@@ -53,7 +57,7 @@ const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
                                                 getOptionLabel={(option) => option.label}
                             />
                         </div>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikAutocomplete name="academyClass"
                                                 multiple={false}
                                                 label={"კლასი"}
@@ -70,7 +74,7 @@ const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
                                                     }
                                                 }}/>
                         </div>
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 20, width: 250}}>
                             <FormikAutocomplete name="student"
                                                 multiple={false}
                                                 label={"მოსწავლე"}
@@ -85,7 +89,7 @@ const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
                                                 }}/>
                         </div>
 
-                        <div style={{marginLeft: 50, width: 300}}>
+                        <div style={{marginLeft: 10, width: 250}}>
                             <FormikAutocomplete name="yearRange"
                                                 multiple={false}
                                                 label={"წელი"}
@@ -99,23 +103,34 @@ const SemesterGradeToolbar = ({setFilters, filters, setData}) => {
                                                     }
                                                 }}/>
                         </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
+                        <div style={{marginLeft: 10, width: 50}}>
+                            <IconButtonWithTooltip
                                 icon={<Search/>}
+                                tooltip={"ძიება"}
                                 onClick={() => {
                                     setFiltersOfPage("SEMESTER_GRADE", values)
                                     setFilters(values)
                                 }}
                             />
                         </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
-                                icon={<KeyboardArrowDown/>}
-                                onClick={async () => {
-                                    await fetchGradesSemester(filters)
-                                }}
+                        <div style={{marginLeft: -10, width: 40}}>
+                                <IconButtonWithTooltip
+                                    icon={<FileDownload/>}
+                                    tooltip={"ექსპორტი"}
+                                    onClick={async () => {
+                                        await fetchGradesSemester(filters)
+                                    }}
+                                />
+                       </div>
+                        <Tooltip title={checked? "10 ბალიანი სისტემა" : "7 ბალიანი სისტემა"}>
+                        <div style={{marginLeft: 0, width: 50}}>
+                            <Switch
+                                checked={checked}
+                                onChange={()=> setChecked(!checked)}
+                                inputProps={{ 'aria-label': 'controlled' }}
                             />
                         </div>
+                        </Tooltip>
                     </div>)}
                 </Formik>
             </FlexBox>

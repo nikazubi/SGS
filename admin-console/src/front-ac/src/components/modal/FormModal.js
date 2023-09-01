@@ -131,8 +131,8 @@ const FormModal = ({
       </Formik>
       {confirmDialogOpen && (
         <ConfirmationModal
-          title={'რამე'}
-          contentText={'რუმე'}
+          title={'დაადასტურეთ გაუქმება'}
+          contentText={'ნამდვილად გსურთ რედაქტირების გაუქმება?'}
           open={confirmDialogOpen}
           onSubmit={handleConfirmationDialogConfirm}
           onClose={handleConfirmationDialogCancel}

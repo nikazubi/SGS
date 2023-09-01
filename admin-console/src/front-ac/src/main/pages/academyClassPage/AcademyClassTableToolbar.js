@@ -7,6 +7,7 @@ import {Add, Search} from "@material-ui/icons";
 import FormikTextField from "../../components/formik/FormikTextField";
 import AcademyClassModal from "./AcademyClassModal";
 import {ModalOpenMode} from "../../../utils/constants";
+import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 
 const AcademyClassTableToolbar = ({setFilters, filters}) => {
     const [open, setOpen] = useState(false);
@@ -29,17 +30,19 @@ const AcademyClassTableToolbar = ({setFilters, filters}) => {
                     {({values, setFieldValue}) => (
                         <div style={{display: "flex", flexDirection: 'row', marginTop: 50}}>
 
-                            <div style={{marginLeft: 50, width: 300}}>
+                            <div style={{marginLeft: 15, width: 250}}>
                                 <FormikTextField name="queryKey" label={"სახელი"}/>
                             </div>
-                            <div style={{marginLeft: 15, width: 100}}>
-                                <IconButton
+                            <div style={{marginLeft: 10, width: 50}}>
+                                <IconButtonWithTooltip
+                                    tooltip={"ძიება"}
                                     icon={<Search/>}
                                     onClick={() => setFilters(values)}
                                 />
                             </div>
-                            <div style={{marginLeft: 15, width: 100}}>
-                                <IconButton
+                            <div style={{marginLeft: 10, width: 50}}>
+                                <IconButtonWithTooltip
+                                    tooltip={"დამატება"}
                                     icon={<Add/>}
                                     onClick={() => setOpen(true)}
                                 />

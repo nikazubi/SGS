@@ -1,5 +1,6 @@
 package mthiebi.sgs.controllers;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.service.GradeCalculationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class GradeCalculationController {
     @GetMapping("/grades-monthly")
     public void calculateGradeMonthly(@RequestParam long academyClassId,
                                       @RequestParam long subjectId,
-                                      @RequestParam String date) throws Exception {
+                                      @RequestParam String date) throws SGSException {
         Date date1 = new Date();
         date1.setTime(Long.parseLong(date));
         gradeCalculationService.calculateGradeMonthly(academyClassId, subjectId, date1);

@@ -13,7 +13,14 @@ export const fetchGradesSemester = async (filters) => {
         component: filters.semesterN.value,
         isDecimal: false
     }
-    const {data} = await axios.get("/export/semester-word", {params});
-    return data;
+    axios.get("/export/semester-word", {responseType: 'blob', params: {...params}})
+        .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/octet-stream'}));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', "IB_Mthiebi_" + filters.academyClass.className + ".docx");
+        document.body.appendChild(link);
+        link.click();
+    })
 }
 
