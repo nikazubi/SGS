@@ -1,37 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import './LoginPage.css';
-import axios from "../../../utils/axios";
-import {deleteAuth, getAccessToken, setAuth} from "../../../utils/auth";
 import imageSrc from './ib.png';
-import {useUserContext} from "../../../contexts/user-context";
-import {useNotification} from "../../../contexts/notification-context";
+import {useHistory} from "react-router-dom";
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {login, logout} = useUserContext();
-    const {setErrorMessage} = useNotification();
+    const history = useHistory(); // Add this line
 
-    useEffect(() => {
-        //todo will probably fail when token expires
-        const checkTokenAndLogin = async () => {
-            const loginTime = localStorage.getItem("loginTime");
-            const initialDate = new Date(loginTime);
-            const currentDate = new Date();
-            const timeDifference = currentDate.getTime() - initialDate.getTime();
-            const fiveHoursInMillis = 5 * 60 * 60 * 1000;
-            console.log(timeDifference)
-            if (timeDifference >= fiveHoursInMillis) {
-                deleteAuth();
-                return;
-            }
-            const token = getAccessToken();
-            if (token) {
-                await login()
-            }
-        }
-        checkTokenAndLogin()
-    }, [])
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -42,38 +18,15 @@ const LoginPage = () => {
     };
 
     const handleSubmit = async (e) => {
-        // e.preventDefault();
-        // Handle login logic here
+        const isLoggedIn = true;
 
-        await axios.post("http://localhost:8080/authenticate", {
-            username: email,
-            password: password
-        }).then(async (response) => {
-            console.log("in then")
-            if (response?.data?.jwtToken) {
-                await setAuth(response?.data?.jwtToken);
-                await login()
-            } else {
-                setErrorMessage("ავტორიზაცია ვერ მოხერხდა", true, false)
-                logout()
-            }
-        }).catch((error) => {
-            setErrorMessage(error)
-            logout()
-        })
+        if (isLoggedIn) {
+            setEmail('');
+            setPassword('');
 
-        // then((response) => {
-        //     console.log("hoii")
-        //     setLoggedIn(true);
-        //     console.log(response)
-        //     setAuth(response.jwtToken)
-        // }).catch(() => {
-        //     setLoggedIn(false)
-        // })
-
-
-        setEmail('');
-        setPassword('');
+            // Redirect to the AfterLoginPage
+            history.push('/'); // This will redirect to the root route
+        }
     };
 
     return (

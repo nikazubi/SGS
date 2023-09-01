@@ -5,8 +5,22 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 const AbsencePage = () => {
 
-  useEffect(()=>{
-    const monthData = [
+  // useEffect(()=>{
+  //   const monthData = ;
+  //   setMonth(monthData)
+  //
+  //   const yearsData =
+  //   setYear(yearsData)
+  // },[])
+
+
+  const [absenceBySubject, setAbsenceBySubject] = useState([]);
+
+  const [selectedMonth, setSelectedMonth] = useState('სექტემბერი');
+  const [selectedYear, setSelectedYear] = useState(2021);
+
+
+  const [month, setMonth] = useState([
       'სექტემბერი',
       'ოქტომბერი',
       'ნოემბერი',
@@ -17,22 +31,8 @@ const AbsencePage = () => {
       'აპრილი',
       'მაისი',
       'ივნისი'
-    ];
-    setMonth(monthData)
-
-    const yearsData = [2021 ,2022, 2023]
-    setYear(yearsData)
-  },[])
-
-
-  const [absenceBySubject, setAbsenceBySubject] = useState([]);
-
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
-
-
-  const [month, setMonth] = useState([])
-  const [year, setYear] = useState([])
+  ])
+  const [year, setYear] = useState([2021 ,2022, 2023])
   //API CALL
   const [attendMax, setAttendMAx] = useState(0) //chatarebuli saatebi
   const [absence, setAbsence] = useState(0) //gaacdina sul
@@ -43,6 +43,10 @@ const AbsencePage = () => {
           არა: absence, 
         },
       ];
+
+    useEffect(()=> {
+        handleSearch();
+    }, [])
 
     const handleSearch = async () =>{
       if(!!selectedMonth && !!selectedYear) {
@@ -121,7 +125,7 @@ const AbsencePage = () => {
             <div className="absenceDropdown">
             <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>
             <Dropdown data={year}  select={setSelectedYear} label={'წელი'}/>
-            <div style={{marginLeft:'10px'}}>
+            <div style={{marginLeft:'10px', marginTop: '6px'}}>
               <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear} style={{ fontWeight: 'bold', height: '40px'}} variant="contained">ძიება<SearchIcon/></Button>
             </div>
             </div>

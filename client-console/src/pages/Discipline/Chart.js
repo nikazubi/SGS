@@ -63,7 +63,7 @@ export default function Chart({id}) {
   };
 
   return (
-    <LineChart width={1200} height={300} data={xLabels.map((label, index) => ({ label, value: pData[index] }))} >
+    <LineChart width={1290} height={300} data={xLabels.map((label, index) => ({ label, value: pData[index] }))} >
       <CartesianGrid strokeDasharray="0" vertical={false} />
       <XAxis style={{cursor:'pointer'}} onClick={handleLineClick} padding={{ left: 80, right: 80 }} angle={0} dataKey="label" height={60} tick={<CustomTick />} />
       <YAxis />

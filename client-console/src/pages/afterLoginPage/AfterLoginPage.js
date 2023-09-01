@@ -13,7 +13,7 @@ const AfterLoginPage = () => {
                 </div>
 
                 <div className="boxWrap__div">
-                    <Box text={'მოსწავლის შეფასება ეთიკური ნომრების მიხედვით'} link={'/ethicalPage'} />
+                    <Box text={'მოსწავლის შეფასება ეთიკური ნორმების მიხედვით'} link={'/ethicalPage'} />
                 </div>
 
                 <div className="boxWrap__div">

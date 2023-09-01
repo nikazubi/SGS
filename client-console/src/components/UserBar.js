@@ -9,11 +9,15 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import AvatarWithLabel from "./avatar/AvatarWithLabel";
+import {useHistory} from "react-router-dom";
 // import { useUserContext } from "../../contexts/user-context";
 // import { useToggle } from "../../hooks/useToggle";
 
 
 const UserBar = () => {
+
+  const history = useHistory(); // Add this line
+
   const useStyles = makeStyles((theme) => ({
     avatar: {
       width: theme.spacing(4),
@@ -72,23 +76,20 @@ const UserBar = () => {
                   aria-controls="user-bar-menu"
                   aria-haspopup="true"
                   onClick={handleToggle}
-                  icon={<AvatarWithLabel avatar={Avatar} label={'SOSO GUDADAZE'} classes={classes}/>}/>
+                  icon={<AvatarWithLabel avatar={Avatar} label={'ნიკა ზუბიაშვილი'} classes={classes}/>}/>
       <Menu
         id="user-bar-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem classes={{root: classes.menuitem}} disableTouchRipple={true}>
-            <Avatar classes={{root: classes.bigAvatar}} />
-        </MenuItem>
         <MenuItem classes={{root: classes.menuitem}}>
           <ListItemIcon>
             <Person/>
           </ListItemIcon>
-          <ListItemText primary={'SOSO GUDADZE'}/>
+          <ListItemText primary={'ნიკა ზუბიაშვილი'}/>
         </MenuItem>
-        <MenuItem classes={{root: classes.menuitem}} onClick={()=>console.log('Log out')}>
+        <MenuItem classes={{root: classes.menuitem}} onClick={() => {history.push('/')}}>
           <ListItemIcon>
             <ExitToApp/>
           </ListItemIcon>

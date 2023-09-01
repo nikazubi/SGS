@@ -9,7 +9,7 @@ import UserBar from './UserBar';
 
 const Header = () => {
     const location = useLocation();
-    const isNotHomePage = location.pathname !== '/' ? true : false
+    const isNotLoginPage = location.pathname !== '/login'
     const useStyles = makeStyles((theme) => ({
         avatar: {
           width: theme.spacing(4),
@@ -40,32 +40,21 @@ const Header = () => {
       }));
 
 
-    return ( 
+    return !isNotLoginPage ? "" : (
         <header>
-            <div className={`headerCnt ${isNotHomePage ? '' : 'home'}`}>
-              {
-                isNotHomePage &&
+            <div className={`headerCnt ${!isNotLoginPage ? '' : 'home'}`}>
                 <div style={{display: 'flex'}}>
-                <Link className="headerCnt__aTag" to="/">
-                  {/* <ArrowBackIcon className='headerCnt__arrow'/> */}
-                  <div className='mtavari' style={{marginLeft:'15px'}}>მთავარი</div>
-                </Link>
-                <Link to="/"><div className='headerLogoImg'></div></Link>
+                    <Link className="headerCnt__aTag" to="/">
+                        {/* <ArrowBackIcon className='headerCnt__arrow'/> */}
+                        <div className='mtavari' style={{marginLeft:'15px'}}>მთავარი</div>
+                    </Link>
+                    <Link to="/"><div className='headerLogoImg'></div></Link>
                 </div>
-              }
-              {
-                !isNotHomePage &&
                 <div>
-                  <Link to="/"><div className='headerLogoImg'></div></Link>
+                    <Link className="headerCnt__aTag" >
+                        <UserBar />
+                    </Link>
                 </div>
-                
-              }
-
-              <div>
-                <Link className="headerCnt__aTag" >
-                  <UserBar />
-                </Link>
-              </div>
             </div>
         </header>
      );

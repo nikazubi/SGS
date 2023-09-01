@@ -40,10 +40,10 @@ export default function CustomBar({color, attend, attendMax, layout, data}) {
     }
 
   return (
-    <ResponsiveContainer width="100%" height={500}>
+    <ResponsiveContainer width="100%" height={300}>
     <BarChart
       width={1280}
-      height={500}
+      height={300}
       data={data}
       layout={layout}
       margin={{

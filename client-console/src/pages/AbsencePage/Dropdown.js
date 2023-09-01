@@ -19,6 +19,7 @@ export default function Dropdown({data, select, label}) {
         labelId="demo-select-small-label"
         id="demo-select-small"
         value={currentSelection}
+        defaultValue={"სექტემბერი"}
         label={label}
         onChange={handleChange}
       >

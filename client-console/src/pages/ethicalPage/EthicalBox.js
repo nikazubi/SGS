@@ -1,5 +1,6 @@
 import { useUserData} from "../../context/userDataContext";
 import FooterBox from "./FooterBox";
+import SmallBox from "./SmallBox";
 // {title, number, precent,id, data}=argumentebia ->DisciplineBox
 const DisciplineBox = () => {
  
@@ -32,15 +33,38 @@ const DisciplineBox = () => {
 {/* id=1 means it's  შემაჯამებელი დავალება*/}
 
     console.log(allData, 'TEST123 ALL DATA')
+    // /min-width: 310px;
+    //     height: 230px;
+    //     border-radius: 0px 30px 30px 30px;
+    //     background-color: #01619b;
+    //     text-align: center;
+    //     font-size: 20px;
+    //     padding: 0 15px;
+    //     flex-grow: 1;
     return (
         allData.map(m =>
             
           (m.boxdetails[0] !== 'თვის ქულა' && m.boxdetails[0] !== 'გაცდენილი საათები') ? 
           (
-            <div className="DisciplineBox ethical" key={m.name} >
+            <div style={{minWidth: "310px",
+                height: m.month || m.absence ? 150: 200,
+                // maxHeight: m.month === "თვის ქულა" || m.month === "გაცდენილი საათები"? 100: 200,
+                borderRadius: "0px 30px 30px 30px",backgroundColor:'#01619b', textAlign:'center', fontSize: '20px', flexGrow:1}} key={m.name} >
               <div className="ethical__title">{m.name}</div>
               <div>{m.testNumber}</div>
               <div className="ethical__precent">{m.precent}</div>
+                {m.month &&
+                    <div style={{display:'flex', alignItems:'center', justifyContent: 'space-evenly'}}>
+                        <div className="modified__title">{m.month}</div>
+                        <div className="grade__data__api ethical">{m.monthGrade}</div>
+                    </div>
+                }
+                { m.absence  &&
+                    <div style={{display:'flex', alignItems:'center', justifyContent: 'space-evenly'}}>
+                        <div className="modified__title">{m.absence}</div>
+                        <div className="grade__data__api ethical">{m.absenceGrade}</div>
+                    </div>
+                }
               <FooterBox boxdetails={m.boxdetails} />
             </div>
           ) : null

@@ -2,7 +2,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import CustomShefasebaBar from "../../components/CustomShefasebaBar";
 
 const SemestruliShefaseba = () => {
@@ -12,20 +12,24 @@ const SemestruliShefaseba = () => {
         '2022-2023'
     ];
     
-      const [selectedData, setSelectedData] = useState('');
+      const [selectedData, setSelectedData] = useState('2021-2022');
       const [currentData, setCurrentData] = useState([]);
       const [currentDataTerm2, setCurrentDataTerm2] = useState([]);
     
       const handleChange = (event) => {
         setSelectedData(event.target.value);
       };
+
+      useEffect(()=> {
+          handleSearch();
+      }, [])
     
         function dropdown(){
             return (
                 <div className="yearDropwdown">
                     <TextField
                     select
-                    label="აირჩიე სემესტრი"
+                    label="აირჩიეთ სასწავლო წელი"
                     value={selectedData}
                     onChange={handleChange}
                     variant="outlined"
@@ -41,7 +45,7 @@ const SemestruliShefaseba = () => {
         }
     
     
-        const handleSearch = async () =>{
+        const handleSearch = () =>{
             if(!!selectedData) {
                 const studentTermGrades = [
                     {

@@ -2,20 +2,22 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import CustomShefasebaBar from "../../components/CustomShefasebaBar";
 
 const TsliuriShefaseba = () => {
 
     const year = [
-        2021,
-        2022,
-        2023
+        "2021-2022",
+        "2022-2023",
     ];
     
-      const [selectedData, setSelectedData] = useState('');
+      const [selectedData, setSelectedData] = useState('2021-2022');
       const [currentData, setCurrentData] = useState([]);
-    
+
+    useEffect(()=> {
+        handleSearch();
+    }, [])
       const handleChange = (event) => {
         setSelectedData(event.target.value);
       };

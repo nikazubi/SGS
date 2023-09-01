@@ -1,12 +1,32 @@
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { useUpdate } from "../../context/userDataContext";
 import DisciplineBox from "./EthicalBox";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import SearchIcon from "@mui/icons-material/Search";
 
 const EthicPage = () => {
     const updateData = useUpdate()
 
+    const [selectedData, setSelectedData] = useState('სექტემბერი');
+    const month = [
+        'სექტემბერი',
+        'ოქტომბერი',
+        'ნოემბერი',
+        'დეკემბერი',
+        'იანვარი',
+        'თებერვალი',
+        'მარტი',
+        'აპრილი',
+        'მაისი',
+        'ივნისი'
+    ];
+    const handleChange = (event) => {
+        setSelectedData(event.target.value);
+    };
 
-      useEffect(()=>{
+    useEffect(()=>{
         const allStudentData = [
             {
                 name:'მოსწავლის ფორმითი გამოცხადებ',
@@ -130,18 +150,40 @@ const EthicPage = () => {
           
           ]
 
-          updateData(allStudentData)
+        updateData(allStudentData)
 
-          return () =>{
-            updateData([])
-          }
+        return () => {
+          updateData([])
+        }
 
       },[])
 
+    function dropdown(){
+        return (
+            <div className="yearDropwdown">
+                <TextField
+                    select
+                    label="აირჩიე თვე"
+                    value={selectedData}
+                    onChange={handleChange}
+                    variant="outlined"
+                >
+                    {month.map((m) => (
+                        <MenuItem key={m} value={m}>
+                            {m}
+                        </MenuItem>
+                    ))}
+                </TextField>&nbsp;&nbsp;&nbsp;
+                <Button onClick={()=>{}} disabled={!selectedData} style={{ fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
+            </div>
+        );
+    }
+
     return ( 
         <>
-        <div className="pageName">მოსწავლის შეფასება ეთიკური ნომრების მიხედვით</div>
+        <div className="pageName">მოსწავლის შეფასება ეთიკური ნორმების მიხედვით</div>
         <div className="ibCnt">
+            {dropdown()}
             <div className="termEstCnt">
                 <DisciplineBox />
             </div>

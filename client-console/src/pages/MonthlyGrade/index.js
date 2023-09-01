@@ -2,7 +2,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import CustomShefasebaBar from "../../components/CustomShefasebaBar";
 
 const MonthlyGrade = () => {
@@ -20,13 +20,16 @@ const month = [
     'ივნისი'
 ];
 
-  const [selectedData, setSelectedData] = useState('');
+  const [selectedData, setSelectedData] = useState('სექტემბერი');
   const [currentData, setCurrentData] = useState([]);
 
   const handleChange = (event) => {
     setSelectedData(event.target.value);
   };
 
+    useEffect(()=>{
+        handleSearch();
+    }, []);
     function dropdown(){
         return (
             <div className="yearDropwdown">
@@ -48,7 +51,7 @@ const month = [
     }
 
 
-    const handleSearch = async () =>{
+    const handleSearch = () =>{
         if(!!selectedData) {
             const studentMonthlyGrades = [
                 {
@@ -76,15 +79,17 @@ const month = [
         <div className="ib__center column">
             <div className="pageName">მოსწავლის შეფასება თვის რეიტინგების მიხედვით</div>
             <div style={{display:'flex', alignItems:'center', marginTop:'25px'}}>
+            <div>
             {dropdown()}
             <div style={{marginLeft:'10px'}}>
                 <Button onClick={handleSearch} disabled={!selectedData} style={{ fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
             </div>
             </div>
+            </div>
         </div>
 
         {!!currentData.length && <div className="absenceMain shefaseba horizontal">
-            <CustomShefasebaBar color={'#FF5722'} data={currentData} />
+            <CustomShefasebaBar color={'#008639'} data={currentData} />
         </div>}
 
         </>

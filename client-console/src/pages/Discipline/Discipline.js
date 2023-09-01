@@ -5,55 +5,192 @@ import {useUserData, MyContext, useUpdate} from "../../context/userDataContext";
 import HomeIcon from '@mui/icons-material/Home';
 import { Box, List, ListItem, ListItemIcon } from '@mui/material';
 import Sidebar from "../../utils/Sidebar";
+import DisciplineBox from "../ethicalPage/EthicalBox";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import SearchIcon from "@mui/icons-material/Search";
 
 
 const Discipline = ({ match }) => {
     const id = match.params.id
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [selectedData, setSelectedData] = useState('სექტემბერი');
+    const [currentData, setCurrentData] = useState([]);
+
+    const updateData = useUpdate()
 
     const asideRef = useRef();
     const backgroundRef = useRef();
     const hamburgerIcon = useRef();
-    const allStudentsData = useUserData()
-    const [width, setWidth] = useState(window.innerWidth);
+    // const allStudentsData = useUserData()
+    // const [width, setWidth] = useState(window.innerWidth);
     
       const handleResize = () => {
-        setWidth(window.innerWidth)
-        if(window.innerWidth <= 960){
+        // setWidth(window.innerWidth)
           
-          if(!!sidebarOpen){
-            console.log('a TEST123')
-            asideRef.current.classList.add('open');
-          }
-          else{
-            console.log('b TEST123')
-            asideRef.current.classList.remove('open');
-          }
-        }
-        else{
-          asideRef.current.classList.remove('open');
-          hamburgerIcon.current.classList.remove("open")
-          if(!!sidebarOpen){
-            setSidebarOpen(!sidebarOpen);
-          }
+          // if(!!sidebarOpen){
+          //   console.log('a TEST123')
+          //   asideRef.current.classList.add('open');
+          // }
+          // else{
+          //   console.log('b TEST123')
+          //   asideRef.current.classList.remove('open');
+          // }
+          asideRef.current.classList.add('open')
+          // asideRef.current.classList.remove('open');
+          // hamburgerIcon.current.classList.remove("open")
+          // if(!!sidebarOpen){
+          //   setSidebarOpen(!sidebarOpen);
+          // }
           console.log('backgroundRef.current', backgroundRef.current)
-          backgroundRef.current.classList.remove("open")
+          // backgroundRef.current.classList.remove("open")
+
+      };
+
+    useEffect(()=>{
+        const allStudentData = [
+            {
+                name:'შემაჯამებელი დავალება I - 50%',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
+                boxdetails: [
+                    { label: '1',
+                        grade: 0,
+                    },
+
+                    { label: '2',
+                        grade: 0,
+                    },
+
+                    { label: 'აღდ',
+                        grade: 0,
+                    },
+
+                    { label: 'თვე',
+                        grade: 0,
+                    },
+                    { label: '%',
+                        grade: 0,
+                    },
+
+                ]
+            },
+
+            {
+                name:'შემოქმედებითობა II - 20%',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
+                boxdetails: [
+                    { label: '1',
+                        grade: 0,
+                    },
+
+                    { label: '2',
+                        grade: 0,
+                    },
+
+                    { label: 'თვე',
+                        grade: 0,
+                    },
+                    { label: '%',
+                        grade: 0,
+                    },
+
+                ]
+            },
+
+            {
+                name:'საშინაო დავალება III - 30%',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
+                boxdetails: [
+                    { label: '1',
+                        grade: 0,
+                    },
+
+                    { label: '2',
+                        grade: 0,
+                    },
+
+                    { label: 'თვე',
+                        grade: 0,
+                    },
+                    { label: '%',
+                        grade: 0,
+                    },
+
+                ]
+            },
+
+            {
+                name:'',
+                testNumber: null,
+                precent: null,
+                month: 'თვის ქულა: ',
+                monthGrade: 0,
+                absence: null,
+                absenceGrade: null,
+                boxdetails: []
+            },
+            {
+                name:'',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: 'გაცდენილი საათები: ',
+                absenceGrade: 0,
+                boxdetails: []
+            },
+
+        ]
+
+        updateData(allStudentData)
+
+        return () => {
+            updateData([])
         }
-      };
-    
-    useEffect(() => {
-      window.addEventListener('resize', handleResize);
-      if(width <= 960){
-        document.querySelector('.mtavari').style.display = 'none';
-      }
-      else{
-        document.querySelector('.mtavari').style.display = 'block';
-      }
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        
-      };
-    }, [width]);
+
+    },[])
+
+    // useEffect(() => {
+    //   window.addEventListener('resize', handleResize);
+    //   if(width <= 960){
+    //     document.querySelector('.mtavari').style.display = 'none';
+    //   }
+    //   else{
+    //     document.querySelector('.mtavari').style.display = 'block';
+    //   }
+    //   return () => {
+    //     window.removeEventListener('resize', handleResize);
+    //
+    //   };
+    // }, [width]);
+    const month = [
+        'სექტემბერი',
+        'ოქტომბერი',
+        'ნოემბერი',
+        'დეკემბერი',
+        'იანვარი',
+        'თებერვალი',
+        'მარტი',
+        'აპრილი',
+        'მაისი',
+        'ივნისი'
+    ];
 
     const toggleSidebar = () => {
       hamburgerIcon.current.classList.toggle("open")
@@ -62,12 +199,39 @@ const Discipline = ({ match }) => {
       setSidebarOpen(!sidebarOpen);
     };
 
+    const handleChange = (event) => {
+        setSelectedData(event.target.value);
+    };
+
+    function dropdown(){
+        return (
+            <div className="yearDropwdown">
+                <TextField
+                    select
+                    label="აირჩიე თვე"
+                    value={selectedData}
+                    onChange={handleChange}
+                    variant="outlined"
+                >
+                    {month.map((m) => (
+                        <MenuItem key={m} value={m}>
+                            {m}
+                        </MenuItem>
+                    ))}
+                </TextField>&nbsp;&nbsp;&nbsp;
+                <Button onClick={()=>{}} disabled={!selectedData} style={{ fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
+            </div>
+        );
+    }
+
+
+
     const subjects = ['ქართული', 'მათემატიკა'];
 
     const renderSubjects = () => {
 
       return subjects.map(subject=>(
-        <NavLink exact onClick={width <= 960 ? toggleSidebar : ''} className="aside_aTag" to={`/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit/${subject}`} activeClassName="active">
+        <NavLink exact onClick={toggleSidebar} className="aside_aTag" to={`/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit/${subject}`} activeClassName="active">
           <ListItem button>
           <div>{subject}</div>
           </ListItem>
@@ -85,7 +249,7 @@ const Discipline = ({ match }) => {
           ref={asideRef}
         >
           <List>
-          <NavLink exact onClick={width <= 960 ? toggleSidebar : ''} className="aside_aTag home" to="/">
+          <NavLink exact onClick={toggleSidebar} className="aside_aTag home" to="/">
             <ListItem button>
                 <ListItemIcon>
                     <HomeIcon />
@@ -104,11 +268,18 @@ const Discipline = ({ match }) => {
                   <div className="pageName">მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
                   <div className="pageName">{id}</div>
               </div>
-              <div className="ibChart">
+              <div style={{display: "flex"}}>
+                  {dropdown()}
+              </div>
+              <div className="termEstCnt">
+                  <DisciplineBox />
+              </div>
+              <div className="ibChart" style={{marginLeft: -50, marginTop:65}}>
                   <Chart id={id}/>
               </div>
           </div>
           </Box>
+
           <div ref={hamburgerIcon} onClick={toggleSidebar} id="nav-icon3">
                   <span></span>
                   <span></span>
