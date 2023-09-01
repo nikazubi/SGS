@@ -8,13 +8,12 @@ import {useEffect, useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import Button from "../../../components/buttons/Button";
-import {closePeriod} from "./useClosePeriod";
 import {useUserContext} from "../../../contexts/user-context";
-import { format } from 'date-fns';
 import axios from "../../../utils/axios";
 import moment from "moment";
 import {setFiltersOfPage} from "../../../utils/filters";
 import {useNotification} from "../../../contexts/notification-context";
+import ChangeRequestAcademyClassFormModal from "./ChangeRequestAcademyClassFormModal";
 
 const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -22,23 +21,35 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
     const [date, setDate] = useState(new Date());
     const {hasPermission} = useUserContext();
     const [lastCloseDate, setLastCloseDate] = useState("");
+    const [lastCloseDateInDateFormat, setLastCloseDateInDateFormat] = useState();
     const hasManageClosePeriodPermission = hasPermission("MANAGE_CLOSED_PERIOD")
     const {setNotification, setErrorMessage} = useNotification();
+    const [modalOpen, setOpenModal] = useState(false);
 
     useEffect(() => {
         axios.get("change-request/get-last-update-time")
-            .then(({data}) => setLastCloseDate(data? moment.utc(data).local().format("DD-MM-YYYY") : ""))
+            .then(({data}) => {
+                setLastCloseDateInDateFormat(new Date(data))
+                setLastCloseDate(data ? moment.utc(data).local().format("DD-MM-YYYY") : "")
+                console.log(new Date().getUTCFullYear() === new Date(new Date(data)).getUTCFullYear())
+                console.log(new Date().getUTCMonth())
+                console.log(new Date(new Date(data)).getUTCMonth())
+                console.log(new Date().getUTCDay())
+                console.log(new Date(new Date(data)).getUTCDay())
+            })
     }, []);
 
+    // console.log(new Date().getDay() === new Date(lastCloseDate).getDay())
+
     return (
-        <div style={{width:'100%'}}>
+        <div style={{width: '100%'}}>
             <FlexBox justifyContent='space-between'>
                 <Formik
                     initialValues={
                         {
                             student: filters.student || '',
                             academyClass: filters.academyClass || '',
-                            date:  filters.date ||date,
+                            date: filters.date || date,
                             groupByClause: 'STUDENT'
                         }
                     }
@@ -47,73 +58,97 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                     //validationSchema={}
                     enableReinitialize
                 >
-                    {({ values, setFieldValue }) => (
-                    <div style={{display: "flex", flexDirection: 'row', marginTop: 50,}}>
-                        <div style={{marginLeft: 50, width: 300}}>
-                            <FormikAutocomplete name="academyClass"
-                                                multiple={false}
-                                                label={"კლასი"}
-                                             // resolveData={resolveCardTypeAutocompleteData}
-                                                onFetch={onFetchAcademyClass}
-                                                getOptionSelected={(option, value) => option.id === value.id}
-                                                getOptionLabel={(option) => option.className}
-                                                // onBlur={()=> setFilters(values)}
-                                                />
-                        </div>
-                        <div style={{marginLeft: 50, width: 300}}>
-                            <FormikAutocomplete name="student"
-                                                multiple={false}
-                                                label={"მოსწავლე"}
-                                // resolveData={resolveCardTypeAutocompleteData}
-                                                onFetch={onFetchStudents}
-                                                getOptionSelected={(option, value) => option.id === value.id}
-                                                getOptionLabel={(option) => option.firstName + " " + option.lastName}
-                                                //onBlur={()=> setFilters(values)}
-                             />
-                        </div>
+                    {({values, setFieldValue}) => (
+                        <div style={{display: "flex", flexDirection: 'row', marginTop: 50,}}>
+                            <div style={{marginLeft: 50, width: 300}}>
+                                <FormikAutocomplete name="academyClass"
+                                                    multiple={false}
+                                                    label={"კლასი"}
+                                    // resolveData={resolveCardTypeAutocompleteData}
+                                                    onFetch={onFetchAcademyClass}
+                                                    getOptionSelected={(option, value) => option.id === value.id}
+                                                    getOptionLabel={(option) => option.className}
+                                    // onBlur={()=> setFilters(values)}
+                                />
+                            </div>
+                            <div style={{marginLeft: 50, width: 300}}>
+                                <FormikAutocomplete name="student"
+                                                    multiple={false}
+                                                    label={"მოსწავლე"}
+                                    // resolveData={resolveCardTypeAutocompleteData}
+                                                    onFetch={onFetchStudents}
+                                                    getOptionSelected={(option, value) => option.id === value.id}
+                                                    getOptionLabel={(option) => option.firstName + " " + option.lastName}
+                                    //onBlur={()=> setFilters(values)}
+                                />
+                            </div>
 
-                        <div style={{marginLeft: 50, width: 300}}>
-                            <FormikDatePickerField name="date"
-                                                   label={"თვე"}
-                                                   onChange={(event, value)=> {
-                                                      setFieldValue("date", value)
-                                                      setFilters(prevState => {
-                                                          const copied = prevState;
-                                                          copied.date = value
-                                                          return copied
-                                                      })
-                                                   }}/>
-                        </div>
-                        <div style={{marginLeft: 15, width: 100}}>
-                            <IconButton
-                                icon={<Search/>}
-                                onClick={() => {
-                                    setFiltersOfPage("CHANGE_REQUEST", values)
-                                    setFilters(values)
-                                }}
-                            />
-                        </div>
-                        {hasManageClosePeriodPermission &&
-                            <div style={{position: 'absolute', right: '2%'}}>
-                            <span>{"დახურვის თარიღი: " + lastCloseDate}</span>
-                            <Button style={{backgroundColor: "#e46c0a", color: "#fff", marginBottom: -30, fontSize: 16}}
-                                    disabled={false}
-                                    onClick={async () => {
-                                        closePeriod().then(() =>{
-                                            setNotification({
-                                                message: 'თვის ნიშანი წარმატებით დაითვალა',
-                                                severity: 'success'
-                                            });
-                                        }).catch((error) => {
-                                            setErrorMessage(error);
-                                        });
-                                    }}>
-                                {"პერიოდის დახურვა"}
-                            </Button>
-                            </div>}
-                    </div>)}
+                            <div style={{marginLeft: 50, width: 300}}>
+                                <FormikDatePickerField name="date"
+                                                       label={"თვე"}
+                                                       onChange={(event, value) => {
+                                                           setFieldValue("date", value)
+                                                           setFilters(prevState => {
+                                                               const copied = prevState;
+                                                               copied.date = value
+                                                               return copied
+                                                           })
+                                                       }}/>
+                            </div>
+                            <div style={{marginLeft: 15, width: 50}}>
+                                <IconButton
+                                    icon={<Search/>}
+                                    onClick={() => {
+                                        setFiltersOfPage("CHANGE_REQUEST", values)
+                                        setFilters(values)
+                                    }}
+                                />
+                            </div>
+                            {hasManageClosePeriodPermission &&
+                                <div style={{marginLeft: 15,display: 'flex', flexDirection: 'row'}}>
+                                    <div style={{display: 'flex', flexDirection: 'column', alignItems:'center'}}>
+                                        <div>{"დახურვის თარიღი: "}</div>
+                                        <div style={{color: "#e46c0a", fontWeight:'bold'}}>{lastCloseDate}</div>
+                                    </div>
+                                    <div>
+                                        <Button style={{
+                                            backgroundColor: new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&
+                                                new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&
+                                                new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay()?
+                                            "grey" :
+                                            "#e46c0a",
+                                            color: "#fff",
+                                            marginLeft: 15,
+                                            marginBottom: -20,
+                                            fontSize: 16
+                                        }}
+                                                disabled={new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&
+                                                    new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&
+                                                new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay()}
+                                                onClick={async () => {
+                                                    setOpenModal(true)
+                                                    // closePeriod().then(() =>{
+                                                    //     setNotification({
+                                                    //         message: 'თვის ნიშანი წარმატებით დაითვალა',
+                                                    //         severity: 'success'
+                                                    //     });
+                                                    // }).catch((error) => {
+                                                    //     setErrorMessage(error);
+                                                    // });
+                                                }}>
+                                            {"პერიოდის დახურვა"}
+                                        </Button>
+                                    </div>
+                                </div>}
+                        </div>)}
                 </Formik>
             </FlexBox>
+            {modalOpen && (
+                <ChangeRequestAcademyClassFormModal
+                    open={modalOpen}
+                    onClose={() => setOpenModal(false)}
+                />
+            )}
         </div>
     )
 }

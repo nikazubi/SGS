@@ -12,7 +12,8 @@ const initialValues = {
     lastName: "",
     personalNumber:'',
     username:'',
-    password:''
+    password:'',
+    ownerMail:'',
 };
 
 const StudentModal = ({open, subject, onClose, modalOpenMode, submitButton, ...props}) => {
@@ -26,9 +27,9 @@ const StudentModal = ({open, subject, onClose, modalOpenMode, submitButton, ...p
             cancelText={'დახურვა'}
             saveText={'შენახვა'}
             width={700}
-            height={350}
+            height={390}
             maxWidth={700}
-            maxHeight={350}
+            maxHeight={390}
             initialValues={
 
                 {

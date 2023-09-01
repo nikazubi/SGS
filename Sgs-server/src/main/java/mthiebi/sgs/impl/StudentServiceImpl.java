@@ -46,6 +46,7 @@ public class StudentServiceImpl implements StudentService {
         oldStudent.setFirstName(student.getFirstName());
         oldStudent.setLastName(student.getLastName());
         oldStudent.setAge(student.getAge());
+        oldStudent.setOwnerMail(student.getOwnerMail());
         studentRepository.save(oldStudent);
         return oldStudent;
     }

@@ -48,6 +48,14 @@ const StudentForm = ({modalOpenMode}) => {
                                         label={"მომხმარებლის პაროლი"}
                                     />
                                 </Grid>
+                                <Grid item xs={12} sm={12}>
+                                    <FormikTextField
+                                        name={"ownerMail"}
+                                        type={"ownerMail"}
+                                        // variant={"standard"}
+                                        label={"პორტალის მომხმარებლის მეილი"}
+                                    />
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>

@@ -3,10 +3,9 @@ package mthiebi.sgs.impl;
 import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.models.AcademyClass;
-import mthiebi.sgs.models.ClosedPeriod;
-import mthiebi.sgs.models.Grade;
-import mthiebi.sgs.models.SystemUser;
+import mthiebi.sgs.SMTP.EmailDetails;
+import mthiebi.sgs.SMTP.EmailService;
+import mthiebi.sgs.models.*;
 import mthiebi.sgs.repository.ClosedPeriodRepository;
 import mthiebi.sgs.repository.GradeRepository;
 import mthiebi.sgs.repository.SystemUserRepository;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClosedPeriodServiceImpl implements ClosedPeriodService {
@@ -29,17 +29,35 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
     @Autowired
     private SystemUserRepository systemUserRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     //TODO change!!
-    public ClosedPeriod createClosedPeriod(String username) throws SGSException {
+    public ClosedPeriod createClosedPeriod(String username, List<Long> ids) throws SGSException {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
         if (systemUser == null) {
             throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
         }
-        for (AcademyClass academyClass : systemUser.getAcademyClassList()) {
+        List<AcademyClass> toClose = systemUser.getAcademyClassList()
+                                                .stream()
+                                                .filter(academyClass -> !ids.contains(academyClass.getId()))
+                                                .collect(Collectors.toList());
+        for (AcademyClass academyClass : toClose) {
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "GENERAL");
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "BEHAVIOUR");
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "ABSENT");
+            for(Student student : academyClass.getStudentList()){
+                if(student.getOwnerMail() == null){
+                    continue;
+                }
+                EmailDetails  emailDetails = EmailDetails.builder()
+                                                        .subject("IB მთიები - ნიშნების განახლება")
+                                                        .msgBody("გაცნობებთ რომ, https://www.ibmthiebistudentrating.edu.ge პორტალზე ატვირთულია ახალი ნიშნები")
+                                                        .recipient(student.getOwnerMail())
+                                                        .build();
+                emailService.sendSimpleMail(emailDetails);
+            }
         }
         return null;
     }
@@ -53,7 +71,7 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
     public boolean getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId) throws SGSException {
         Grade grade = gradeRepository.findById(gradeId)
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GRADE_REQUEST_NOT_FOUND));
-        ClosedPeriod closedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(id, gradePrefix, grade.getCreateTime());
+        ClosedPeriod closedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(id, gradePrefix, grade.getExactMonth());
         return closedPeriod != null;
     }
 

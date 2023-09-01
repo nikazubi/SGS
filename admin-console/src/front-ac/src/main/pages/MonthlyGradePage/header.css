@@ -50,6 +50,3 @@ div.MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor {
     min-width: 85px !important;
     max-width: 85px !important;
 }
-.MuiDataGrid-virtualScroller {
-    overflow-x: hidden !important;
-}

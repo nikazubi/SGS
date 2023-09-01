@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ClosedPeriodService {
 
-    ClosedPeriod createClosedPeriod(String username) throws SGSException;
+    ClosedPeriod createClosedPeriod(String username, List<Long> ids) throws SGSException;
 
     void deleteClosedPeriod(Long closedPeriodId);
 
