@@ -704,7 +704,7 @@ const BehaviourDashBoard = () => {
         {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
-                return <div style={{height:50, justifyContent:'center', alignItems: 'center', display: 'flex'}}>
+                return <div style={{height:50, justifyContent:'center', alignItems: 'center',}}>
                     {row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
@@ -1466,8 +1466,6 @@ const BehaviourDashBoard = () => {
                                     '#cce1ea'
                                 }`,
                             },
-                           overflowX: 'scroll',
-                            width: "100%"
                         }}
                         // colorGroups={{ overflowX: 'scroll', width: "100%"  }}
                         experimentalFeatures={{ columnGrouping: true }}

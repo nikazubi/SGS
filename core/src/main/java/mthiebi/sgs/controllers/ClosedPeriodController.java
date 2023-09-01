@@ -1,6 +1,8 @@
 package mthiebi.sgs.controllers;
 
 import mthiebi.sgs.SGSException;
+import mthiebi.sgs.dto.AcademyClassDTO;
+import mthiebi.sgs.dto.AcademyClassListDto;
 import mthiebi.sgs.models.ClosedPeriod;
 import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.service.ClosedPeriodService;
@@ -12,6 +14,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/close-period")
@@ -31,12 +35,15 @@ public class ClosedPeriodController {
         return closedPeriodService.getClosedPeriodByClassId(academyClassId, gradePrefix, gradeId);
     }
 
-    @GetMapping("/create-closed-period")
+    @PostMapping ("/create-closed-period")
     @Secured({AuthConstants.MANAGE_CLOSED_PERIOD})
-    public ClosedPeriod createclosedPeriod(@RequestHeader("authorization") String authHeader) throws Exception {
+    public ClosedPeriod createclosedPeriod(@RequestHeader("authorization") String authHeader,
+                                           @RequestBody AcademyClassListDto academyClasses) throws Exception {
 
         String username = utilsJwt.getUsernameFromHeader(authHeader);
-        return closedPeriodService.createClosedPeriod(username);
+        List<Long> ids = academyClasses.getAcademyClassDTOS() == null || academyClasses.getAcademyClassDTOS().isEmpty()?
+        null : academyClasses.getAcademyClassDTOS().stream().map(AcademyClassDTO::getId).collect(Collectors.toList());
+        return closedPeriodService.createClosedPeriod(username, ids);
     }
 
 }

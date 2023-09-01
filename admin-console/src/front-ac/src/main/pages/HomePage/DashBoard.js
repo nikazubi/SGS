@@ -698,6 +698,12 @@ const DashBoard = () => {
             <GradeTableToolbar filters={filters} setFilters={setFilters}/>
             <div style={{height: `calc(100vh - ${130}px)`, width: '98%', marginLeft: 15, marginRight: 15}}>
                 <DataGridPaper>
+                    {filters.subject?
+                        <div style={{ textAlign:'center', marginTop: 10,marginBottom: 10, width: '100%',  backgroundColor:'white', fontSize:20, fontWeight:'bold'}}>
+                           <div> {filters.subject.name}</div>
+                        </div>
+                        :
+                        null}
                     <DataGridSGS
                         sx={{
                             '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {

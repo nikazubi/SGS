@@ -22,5 +22,6 @@ public class StudentDTO {
     private String personalNumber;
     private String username;
     private String password;
+    private String ownerMail;
 
 }

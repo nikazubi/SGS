@@ -25,6 +25,8 @@ public class Student extends Audit{
 
     private String password;
 
+    private String ownerMail;
+
     public void setId(long id) {
         this.id = id;
     }
@@ -79,6 +81,14 @@ public class Student extends Audit{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getOwnerMail() {
+        return ownerMail;
+    }
+
+    public void setOwnerMail(String ownerMail) {
+        this.ownerMail = ownerMail;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.ChangeRequest;
 import mthiebi.sgs.models.QChangeRequest;
+import mthiebi.sgs.models.QClosedPeriod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class ChangeRequestRepositoryCustomImpl implements ChangeRequestRepositoryCustom{
 
     private static final QChangeRequest qChangeRequest = QChangeRequest.changeRequest;
+    private static final QClosedPeriod qClosedPeriod = QClosedPeriod.closedPeriod;
 
     @Autowired
     private JPAQueryFactory qf;
@@ -42,8 +44,8 @@ public class ChangeRequestRepositoryCustomImpl implements ChangeRequestRepositor
 
     @Override
     public Date getLastUpdateDate() {
-        return qf.select(qChangeRequest.lastUpdateTime.max())
-                .from(qChangeRequest)
+        return qf.select(qClosedPeriod.lastUpdateTime.max())
+                .from(qClosedPeriod)
                 .fetchOne();
     }
 }
