@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import Chart from "./Chart";
 import {NavLink} from 'react-router-dom'
-import {useUserData, MyContext, useUpdate} from "../../context/userDataContext";
+import {MyContext, useUpdate} from "../../context/userDataContext";
 import HomeIcon from '@mui/icons-material/Home';
-import { Box, List, ListItem, ListItemIcon } from '@mui/material';
+import {Box, List, ListItem, ListItemIcon} from '@mui/material';
 import Sidebar from "../../utils/Sidebar";
 import DisciplineBox from "../ethicalPage/EthicalBox";
 import TextField from "@mui/material/TextField";
@@ -15,7 +15,7 @@ import SearchIcon from "@mui/icons-material/Search";
 const Discipline = ({ match }) => {
     const id = match.params.id
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [selectedData, setSelectedData] = useState('სექტემბერი');
+    const [selectedData, setSelectedData] = useState('ივნისი');
     const [currentData, setCurrentData] = useState([]);
 
     const updateData = useUpdate()
@@ -59,23 +59,27 @@ const Discipline = ({ match }) => {
                 absence: null,
                 absenceGrade: null,
                 boxdetails: [
-                    { label: '1',
-                        grade: 0,
+                    {
+                        label: '1',
+                        grade: 5,
                     },
 
-                    { label: '2',
-                        grade: 0,
+                    {
+                        label: '2',
+                        grade: 6,
                     },
 
                     { label: 'აღდ',
                         grade: 0,
                     },
 
-                    { label: 'თვე',
-                        grade: 0,
+                    {
+                        label: 'თვე',
+                        grade: 6,
                     },
-                    { label: '%',
-                        grade: 0,
+                    {
+                        label: '%',
+                        grade: 3.5,
                     },
 
                 ]
@@ -90,19 +94,23 @@ const Discipline = ({ match }) => {
                 absence: null,
                 absenceGrade: null,
                 boxdetails: [
-                    { label: '1',
-                        grade: 0,
+                    {
+                        label: '1',
+                        grade: 7,
                     },
 
-                    { label: '2',
-                        grade: 0,
+                    {
+                        label: '2',
+                        grade: 7,
                     },
 
-                    { label: 'თვე',
-                        grade: 0,
+                    {
+                        label: 'თვე',
+                        grade: 7,
                     },
-                    { label: '%',
-                        grade: 0,
+                    {
+                        label: '%',
+                        grade: 1.4,
                     },
 
                 ]
@@ -117,42 +125,46 @@ const Discipline = ({ match }) => {
                 absence: null,
                 absenceGrade: null,
                 boxdetails: [
-                    { label: '1',
-                        grade: 0,
+                    {
+                        label: '1',
+                        grade: 6,
                     },
 
-                    { label: '2',
-                        grade: 0,
+                    {
+                        label: '2',
+                        grade: 6,
                     },
 
-                    { label: 'თვე',
-                        grade: 0,
+                    {
+                        label: 'თვე',
+                        grade: 6,
                     },
-                    { label: '%',
-                        grade: 0,
+                    {
+                        label: '%',
+                        grade: 1.8,
                     },
 
                 ]
             },
 
             {
-                name:'',
+                name: '',
                 testNumber: null,
                 precent: null,
                 month: 'თვის ქულა: ',
-                monthGrade: 0,
+                monthGrade: 7,
                 absence: null,
                 absenceGrade: null,
                 boxdetails: []
             },
             {
-                name:'',
+                name: '',
                 testNumber: null,
                 precent: null,
                 month: null,
                 monthGrade: null,
                 absence: 'გაცდენილი საათები: ',
-                absenceGrade: 0,
+                absenceGrade: 6,
                 boxdetails: []
             },
 
@@ -225,8 +237,7 @@ const Discipline = ({ match }) => {
     }
 
 
-
-    const subjects = ['ქართული', 'მათემატიკა'];
+    const subjects = ['ქართული ენა და ლიტერატურა', 'მათემატიკა', 'ინგლისური', 'ისტორია', 'გეოგრაფია'];
 
     const renderSubjects = () => {
 

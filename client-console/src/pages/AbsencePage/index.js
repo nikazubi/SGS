@@ -1,33 +1,34 @@
 import CustomBar from "./BarChart";
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
 import Dropdown from "./Dropdown";
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
+
 const AbsencePage = () => {
 
   // useEffect(()=>{
-  //   const monthData = ;
-  //   setMonth(monthData)
-  //
-  //   const yearsData =
-  //   setYear(yearsData)
-  // },[])
+    //   const monthData = ;
+    //   setMonth(monthData)
+    //
+    //   const yearsData =
+    //   setYear(yearsData)
+    // },[])
 
 
-  const [absenceBySubject, setAbsenceBySubject] = useState([]);
+    const [absenceBySubject, setAbsenceBySubject] = useState([]);
 
-  const [selectedMonth, setSelectedMonth] = useState('სექტემბერი');
-  const [selectedYear, setSelectedYear] = useState(2021);
+    const [selectedMonth, setSelectedMonth] = useState('ივნისი');
+    const [selectedYear, setSelectedYear] = useState(2023);
 
 
-  const [month, setMonth] = useState([
-      'სექტემბერი',
-      'ოქტომბერი',
-      'ნოემბერი',
-      'დეკემბერი',
-      'იანვარი',
-      'თებერვალი',
-      'მარტი',
+    const [month, setMonth] = useState([
+        'სექტემბერი',
+        'ოქტომბერი',
+        'ნოემბერი',
+        'დეკემბერი',
+        'იანვარი',
+        'თებერვალი',
+        'მარტი',
       'აპრილი',
       'მაისი',
       'ივნისი'
@@ -54,66 +55,30 @@ const AbsencePage = () => {
 
     const subjectAbsence = [
         {
-          name: 'მუსიკა',
-          არა: 1, 
+            name: 'ქართული ენა და ლიტერატურა',
+            არა: 10,
         },
 
         {
-          name: 'მათემატიკა',
-          არა: 17,
+            name: 'მათემატიკა',
+            არა: 8,
         },
 
         {
-          name: 'მუსიკა',
-          არა: 1, 
-        },
-
-        {
-          name: 'მათემატიკა',
-          არა: 5,
+            name: 'ინგლისური',
+            არა: 7,
         },
         {
-          name: 'მუსიკა',
-          არა: 5, 
+            name: 'ისტორია',
+            არა: 3,
         },
-
         {
-          name: 'მათემატიკა',
-          არა: 5,
-        },
-
-        {
-          name: 'ქართული',
-          არა: 5, 
-        },
-
-        {
-          name: 'მათემატიკა',
-          არა: 5,
-        },
-
-        {
-          name: 'ქართული',
-          არა: 5, 
-        },
-
-        {
-          name: 'მათემატიკა',
-          არა: 1,
-        },
-
-        {
-          name: 'ქართული',
-          არა: 5, 
-        },
-
-        {
-          name: 'ქართული',
-          არა: 5, 
-        },
+            name: 'გეოგრაფია',
+            არა: 7,
+        }
       ];
           setAbsenceBySubject(subjectAbsence)
-          setAbsence(60)
+          setAbsence(35)
           setAttendMAx(120)
       }
   }
@@ -123,11 +88,12 @@ const AbsencePage = () => {
         <div className="ib__center column">
             <div className="pageName">მოსწავლის მიერ გაცდენილი საათები</div>
             <div className="absenceDropdown">
-            <Dropdown data={month} select={setSelectedMonth} label={'თვე'}/>
-            <Dropdown data={year}  select={setSelectedYear} label={'წელი'}/>
-            <div style={{marginLeft:'10px', marginTop: '6px'}}>
-              <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear} style={{ fontWeight: 'bold', height: '40px'}} variant="contained">ძიება<SearchIcon/></Button>
-            </div>
+                <Dropdown data={month} value={selectedMonth} select={setSelectedMonth} label={'თვე'}/>
+                <Dropdown data={year} value={selectedYear} select={setSelectedYear} label={'წელი'}/>
+                <div style={{marginLeft: '10px', marginTop: '6px'}}>
+                    <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear}
+                            style={{fontWeight: 'bold', height: '40px'}} variant="contained">ძიება<SearchIcon/></Button>
+                </div>
             </div>
 
         </div>

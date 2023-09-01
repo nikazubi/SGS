@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { useUpdate } from "../../context/userDataContext";
+import {useUpdate} from "../../context/userDataContext";
 import DisciplineBox from "./EthicalBox";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,7 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 const EthicPage = () => {
     const updateData = useUpdate()
 
-    const [selectedData, setSelectedData] = useState('სექტემბერი');
+    const [selectedData, setSelectedData] = useState('ივნისი');
     const month = [
         'სექტემბერი',
         'ოქტომბერი',
@@ -33,21 +33,25 @@ const EthicPage = () => {
                 testNumber: null,
                 precent: null,
                 boxdetails: [
-                  { label: 'I კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'II კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'III კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'IV კვირა',
-                    grade: 0,
-                  },
+                    {
+                        label: 'I კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'II კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'III კვირა',
+                        grade: 6,
+                    },
+
+                    {
+                        label: 'IV კვირა',
+                        grade: 7,
+                    },
           
                 ]
             },
@@ -57,21 +61,25 @@ const EthicPage = () => {
                 testNumber: null,
                 precent: null,
                 boxdetails: [
-                  { label: 'I კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'II კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'III კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'IV კვირა',
-                    grade: 0,
-                  },
+                    {
+                        label: 'I კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'II კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'III კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'IV კვირა',
+                        grade: 7,
+                    },
           
                 ]
             },
@@ -81,21 +89,25 @@ const EthicPage = () => {
                 testNumber: null,
                 precent: null,
                 boxdetails: [
-                  { label: 'I კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'II კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'III კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'IV კვირა',
-                    grade: 0,
-                  },
+                    {
+                        label: 'I კვირა',
+                        grade: 5,
+                    },
+
+                    {
+                        label: 'II კვირა',
+                        grade: 6,
+                    },
+
+                    {
+                        label: 'III კვირა',
+                        grade: 5,
+                    },
+
+                    {
+                        label: 'IV კვირა',
+                        grade: 5,
+                    },
           
                 ]
             },
@@ -105,21 +117,25 @@ const EthicPage = () => {
                 testNumber: null,
                 precent: null,
                 boxdetails: [
-                  { label: 'I კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'II კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'III კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'IV კვირა',
-                    grade: 0,
-                  },
+                    {
+                        label: 'I კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'II კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'III კვირა',
+                        grade: 7,
+                    },
+
+                    {
+                        label: 'IV კვირა',
+                        grade: 7,
+                    },
           
                 ]
             },
@@ -129,21 +145,25 @@ const EthicPage = () => {
                 testNumber: null,
                 precent: null,
                 boxdetails: [
-                  { label: 'I კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'II კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'III კვირა',
-                    grade: 0,
-                  },
-          
-                  { label: 'IV კვირა',
-                    grade: 0,
-                  },
+                    {
+                        label: 'I კვირა',
+                        grade: 5,
+                    },
+
+                    {
+                        label: 'II კვირა',
+                        grade: 5,
+                    },
+
+                    {
+                        label: 'III კვირა',
+                        grade: 6,
+                    },
+
+                    {
+                        label: 'IV კვირა',
+                        grade: 7,
+                    },
           
                 ]
             }

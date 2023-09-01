@@ -49,18 +49,26 @@ const SemestruliShefaseba = () => {
             if(!!selectedData) {
                 const studentTermGrades = [
                     {
-                      name: 'მუსიკა',
-                      ქულა: 1, 
+                        name: 'ქართული ენა და ლიტერატურა',
+                        ქულა: 6,
                     },
-            
+
                     {
-                      name: 'მათემატიკა',
-                      ქულა: 5,
+                        name: 'მათემატიკა',
+                        ქულა: 5,
                     },
-            
+
                     {
-                      name: 'მუსიკა',
-                      ქულა: 7, 
+                        name: 'ინგლისური',
+                        ქულა: 7,
+                    },
+                    {
+                        name: 'ისტორია',
+                        ქულა: 5,
+                    },
+                    {
+                        name: 'გეოგრაფია',
+                        ქულა: 7,
                     }]
                 
                 setCurrentData(studentTermGrades)
@@ -69,18 +77,26 @@ const SemestruliShefaseba = () => {
 
                 const studentTermGrades2 = [
                     {
-                      name: 'მუსიკა',
-                      ქულა: 1, 
+                        name: 'ქართული ენა და ლიტერატურა',
+                        ქულა: 7,
                     },
-            
+
                     {
-                      name: 'მათემატიკა',
-                      ქულა: 5,
+                        name: 'მათემატიკა',
+                        ქულა: 6,
                     },
-            
+
                     {
-                      name: 'მუსიკა',
-                      ქულა: 7, 
+                        name: 'ინგლისური',
+                        ქულა: 6,
+                    },
+                    {
+                        name: 'ისტორია',
+                        ქულა: 6,
+                    },
+                    {
+                        name: 'გეოგრაფია',
+                        ქულა: 7,
                     }]
                 
                 setCurrentDataTerm2(studentTermGrades2)
@@ -110,7 +126,7 @@ const SemestruliShefaseba = () => {
                 <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">II სემესტრი
                 </div>
 
-                <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
+                <CustomShefasebaBar color={'#45c1a4'} data={currentDataTerm2}/>
             </div>}
     
             </>

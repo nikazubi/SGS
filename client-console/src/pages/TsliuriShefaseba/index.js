@@ -12,8 +12,8 @@ const TsliuriShefaseba = () => {
         "2022-2023",
     ];
     
-      const [selectedData, setSelectedData] = useState('2021-2022');
-      const [currentData, setCurrentData] = useState([]);
+      const [selectedData, setSelectedData] = useState('2022-2023');
+    const [currentData, setCurrentData] = useState([]);
 
     useEffect(()=> {
         handleSearch();
@@ -47,18 +47,26 @@ const TsliuriShefaseba = () => {
             if(!!selectedData) {
                 const studentYearlyGrades = [
                     {
-                      name: 'მუსიკა',
-                      ქულა: 1, 
+                        name: 'ქართული ენა და ლიტერატურა',
+                        ქულა: 7,
                     },
-            
+
                     {
-                      name: 'მათემატიკა',
-                      ქულა: 5,
+                        name: 'მათემატიკა',
+                        ქულა: 6,
                     },
-            
+
                     {
-                      name: 'მუსიკა',
-                      ქულა: 7, 
+                        name: 'ინგლისური',
+                        ქულა: 7,
+                    },
+                    {
+                        name: 'ისტორია',
+                        ქულა: 6,
+                    },
+                    {
+                        name: 'გეოგრაფია',
+                        ქულა: 7,
                     }]
                 
                 setCurrentData(studentYearlyGrades)
@@ -79,7 +87,7 @@ const TsliuriShefaseba = () => {
             </div>
     
             {!!currentData.length && <div className="absenceMain shefaseba horizontal">
-                <CustomShefasebaBar color={'#FF5722'} data={currentData} />
+                <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
             </div>}
     
             </>

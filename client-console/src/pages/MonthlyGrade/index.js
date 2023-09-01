@@ -20,8 +20,8 @@ const month = [
     'ივნისი'
 ];
 
-  const [selectedData, setSelectedData] = useState('სექტემბერი');
-  const [currentData, setCurrentData] = useState([]);
+  const [selectedData, setSelectedData] = useState('ივნისი');
+    const [currentData, setCurrentData] = useState([]);
 
   const handleChange = (event) => {
     setSelectedData(event.target.value);
@@ -55,18 +55,26 @@ const month = [
         if(!!selectedData) {
             const studentMonthlyGrades = [
                 {
-                  name: 'მუსიკა',
-                  ქულა: 1, 
+                    name: 'ქართული ენა და ლიტერატურა',
+                    ქულა: 6,
                 },
-        
+
                 {
-                  name: 'მათემატიკა',
-                  ქულა: 5,
+                    name: 'მათემატიკა',
+                    ქულა: 5,
                 },
-        
+
                 {
-                  name: 'მუსიკა',
-                  ქულა: 7, 
+                    name: 'ინგლისური',
+                    ქულა: 7,
+                },
+                {
+                    name: 'ისტორია',
+                    ქულა: 5,
+                },
+                {
+                    name: 'გეოგრაფია',
+                    ქულა: 7,
                 }]
             
             setCurrentData(studentMonthlyGrades)
