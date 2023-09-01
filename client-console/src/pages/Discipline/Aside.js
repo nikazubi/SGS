@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
@@ -106,8 +105,8 @@ function ResponsiveDrawer(props) {
         </Drawer>
       </Box>
       <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+          component="main"
+          sx={{p: 3, width: {sm: `calc(100% - ${drawerWidth}px)`}}}
       >
         <Toolbar />
         <Typography paragraph>

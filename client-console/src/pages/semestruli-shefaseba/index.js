@@ -122,13 +122,16 @@ const SemestruliShefaseba = () => {
                 <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
             </div>}
 
-            {!!currentDataTerm2.length && <div className="absenceMain shefaseba term horizontal">
-                <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">II სემესტრი
-                </div>
+                {!!currentDataTerm2.length && <div className="absenceMain shefaseba term horizontal">
+                    <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">II
+                        სემესტრი
+                    </div>
 
-                <CustomShefasebaBar color={'#45c1a4'} data={currentDataTerm2}/>
-            </div>}
-    
+                    <CustomShefasebaBar color={'#45c1a4'} data={currentDataTerm2}/>
+                </div>}
+                <div style={{height: 100}}>
+
+                </div>
             </>
          );
 }

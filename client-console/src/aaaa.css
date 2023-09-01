@@ -1,0 +1,6 @@
+.diagonal-lines {
+    background: linear-gradient(45deg, transparent 25%, rgba(123, 181, 236, 0.29) 25%, rgba(123, 181, 236, 0.29) 50%, transparent 50%, transparent 75%, rgba(123, 181, 236, 0.29) 75%, rgba(123, 181, 236, 0.29));
+    background-size: 7px 7px; /* Adjust the size of the lines */
+    min-height: 100vh;
+    max-height: 300vh;
+}
