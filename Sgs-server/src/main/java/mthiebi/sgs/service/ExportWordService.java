@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface ExportWordService {
 
-    void exportSemesterGrades(Map<Student, Map<Subject, Map<Integer, BigDecimal>>> grades, boolean semester);
+    void exportSemesterGrades(Map<Student, Map<Subject, Map<Integer, BigDecimal>>> grades, boolean semester, boolean isDecimal, String semesterYears);
 }

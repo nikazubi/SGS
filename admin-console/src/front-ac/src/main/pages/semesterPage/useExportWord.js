@@ -10,7 +10,8 @@ export const fetchGradesSemester = async (filters) => {
         classId: filters.academyClass.id,
         studentId: filters.student.id,
         yearRange: filters.yearRange,
-        component: filters.semesterN.value
+        component: filters.semesterN.value,
+        isDecimal: false
     }
     const {data} = await axios.get("/export/semester-word", {params});
     return data;

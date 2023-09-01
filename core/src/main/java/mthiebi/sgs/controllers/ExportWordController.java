@@ -27,13 +27,14 @@ public class ExportWordController {
                                       @RequestParam(required = false) Long studentId,
                                       @RequestParam(required = false) String yearRange,
                                       @RequestParam(required = false) String createDate,
-                                      @RequestParam String component) throws Exception {
+                                      @RequestParam String component,
+                                      @RequestParam boolean isDecimal) throws Exception {
         Date date = new Date();
         if (createDate != null) {
             date.setTime(Long.parseLong(createDate));
         }
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map = (Map<Student, Map<Subject, Map<Integer, BigDecimal>>>) gradeService.getGradeByComponent(classId, studentId, yearRange, date, component);
-        exportWordService.exportSemesterGrades(map, Objects.equals(component, "firstSemester"));
+        exportWordService.exportSemesterGrades(map, Objects.equals(component, "firstSemester"), isDecimal, yearRange);
     }
 
 }

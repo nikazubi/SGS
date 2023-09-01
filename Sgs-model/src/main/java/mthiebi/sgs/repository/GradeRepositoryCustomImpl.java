@@ -33,7 +33,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         Predicate datePredicate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createTime);
-        datePredicate = qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR)));
+        int month = calendar.get(Calendar.MONTH) == Calendar.FEBRUARY ? 0 : calendar.get(Calendar.MONTH) == Calendar.OCTOBER ? 8 : calendar.get(Calendar.MONTH);
+        datePredicate = qGrade.exactMonth.month().eq(month + 1).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR)));
         //        StringExpression prefixPredicate = qGrade.gradeType.stringValue();
 //        BooleanExpression booleanExpression = prefixPredicate.startsWith("GENERAL_");
 
@@ -89,7 +90,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     }
                 }
                 BigDecimal average = BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                BigDecimal averageOfSchoolWork = BigDecimal.valueOf(sumOfSchoolWork).divide(BigDecimal.valueOf(countOfSchoolWork), RoundingMode.HALF_UP);
+                BigDecimal averageOfSchoolWork = countOfSchoolWork == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(sumOfSchoolWork).divide(BigDecimal.valueOf(countOfSchoolWork), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, average);
                 gradeByMonth.put(-2, averageOfSchoolWork);
                 bySubject.put(subject, gradeByMonth);

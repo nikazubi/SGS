@@ -98,7 +98,7 @@ const ChangeRequestDashBoard = () => {
             },
             field: 'description',
             sortable: false,
-            align: 'center',
+            align: 'left',
             headerAlign: 'center'
         },
         {
@@ -130,6 +130,13 @@ const ChangeRequestDashBoard = () => {
             <div style={{height: `calc(100vh - ${130}px)`, width: '98%', marginLeft:15, marginRight:15}}>
                 <DataGridPaper>
                     <DataGridSGS
+                        sx={{
+                            '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+                                border: `1px solid ${
+                                    '#cce1ea'
+                                }`,
+                            }
+                        }}
                         // queryKey={"GRADES"}
                         columns={gradeColumns}
                         rows={data ? data : []}

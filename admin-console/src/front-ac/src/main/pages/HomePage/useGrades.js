@@ -9,7 +9,7 @@ export const fetchGradesGrouped = async (filters) => {
     const params = {
         classId: filters.academyClass.id,
         subjectId: filters.subject.id,
-        studentId: filters.student.id,
+        studentId: filters.student?.id,
         date: Date.parse(filters.date),
         groupByClause: filters.groupByClause
     }

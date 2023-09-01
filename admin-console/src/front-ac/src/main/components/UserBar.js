@@ -84,9 +84,6 @@ const UserBar = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem classes={{root: classes.menuitem}} disableTouchRipple={true}>
-            <Avatar classes={{root: classes.bigAvatar}} src={avatar}/>
-        </MenuItem>
         <MenuItem classes={{root: classes.menuitem}}>
           <ListItemIcon>
             <Person/>

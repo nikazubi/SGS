@@ -88,7 +88,8 @@ public class GradeServiceImpl implements GradeService {
                 .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
                 .collect(Collectors.toList());
         if (studentId != null) {
-            return existingGrades;
+            Student student = studentRepository.findById(studentId).orElseThrow();
+            return fillWithEmptyGradeListOfGradeType(List.of(student), gradeTypePrefix, academyClass, currSubject, existingGrades);
         }
         return fillWithEmptyGradeListOfGradeType(allStudentsInAcademyClass, gradeTypePrefix, academyClass, currSubject, existingGrades);
     }
@@ -104,16 +105,16 @@ public class GradeServiceImpl implements GradeService {
         Object gradeByStudent = new HashMap<>();
         switch (component) {
             case "firstSemester":
-                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, startYear, true), true);
+                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, startYear, true), true, studentId);
                 break;
             case "secondSemester":
-                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, endYear, false), false);
+                gradeByStudent = fillMissingSubjects(classId, gradeRepository.findGradeBySemester(classId, endYear, false), false, studentId);
                 break;
             case "anual":
-                gradeByStudent = fillMissingSubjectsAnual(classId, getAnualGrades(classId, startYear, endYear));
+                gradeByStudent = fillMissingSubjectsAnual(classId, getAnualGrades(classId, startYear, endYear), studentId);
                 break;
             case "monthly":
-                gradeByStudent = getMonthlyGrades(classId, createDate);
+                gradeByStudent = getMonthlyGrades(classId, createDate, studentId);
                 break;
         }
         return gradeByStudent;
@@ -131,7 +132,7 @@ public class GradeServiceImpl implements GradeService {
         return result;
     }
 
-    private Map<Student, Map<Subject, BigDecimal>> getMonthlyGrades(Long classId, Date createDate) throws SGSException {
+    private Map<Student, Map<Subject, BigDecimal>> getMonthlyGrades(Long classId, Date createDate, Long studentId) throws SGSException {
         Map<Student, List<Grade>> gradelist = gradeRepository.findGradeByMonth(classId, createDate);
         Map<Student, Map<Subject, BigDecimal>> result = new HashMap<>();
         for (Student student : gradelist.keySet()) {
@@ -141,7 +142,7 @@ public class GradeServiceImpl implements GradeService {
             ));
             result.put(student, value);
         }
-        return fillMissingSubjects(classId, result);
+        return fillMissingSubjects(classId, result, studentId);
     }
 
     @Override
@@ -215,7 +216,7 @@ public class GradeServiceImpl implements GradeService {
                 ));
     }
 
-    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjectsAnual(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map) throws SGSException {
+    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjectsAnual(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map, Long studentId) throws SGSException {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
@@ -233,12 +234,16 @@ public class GradeServiceImpl implements GradeService {
                     newMap.put(subject, map1);
                 }
             }
+            if (studentId != null && student.getId() != studentId) {
+                map.remove(student);
+                continue;
+            }
             map.put(student, newMap);
         }
         return map;
     }
 
-    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map, boolean firstSemester) throws SGSException {
+    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map, boolean firstSemester, Long studentId) throws SGSException {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
@@ -259,12 +264,17 @@ public class GradeServiceImpl implements GradeService {
                     newMap.put(subject, emptyMap);
                 }
             }
+            if (studentId != null && student.getId() != studentId) {
+                map.remove(student);
+                continue;
+            }
             map.put(student, newMap);
         }
         return map;
     }
 
-    private Map<Student, Map<Subject, BigDecimal>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, BigDecimal>> map) throws SGSException {        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
+    private Map<Student, Map<Subject, BigDecimal>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, BigDecimal>> map, Long studentId) throws SGSException {
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
         for (Student student : studentList) {
@@ -276,6 +286,10 @@ public class GradeServiceImpl implements GradeService {
                 } else {
                     newMap.put(subject, BigDecimal.ZERO);
                 }
+            }
+            if (studentId != null && student.getId() != studentId) {
+                map.remove(student);
+                continue;
             }
             map.put(student, newMap);
         }

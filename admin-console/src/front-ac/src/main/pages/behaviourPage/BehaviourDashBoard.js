@@ -1275,7 +1275,7 @@ const BehaviourDashBoard = () => {
     const columnGroupingModelLong = [
         {
             groupId: 'student',
-            headerName: 'მოსწავლის გვარი, სახელი',
+            headerName: '',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
@@ -1357,7 +1357,7 @@ const BehaviourDashBoard = () => {
     const columnGroupingModel = [
         {
             groupId: 'student',
-            headerName: 'მოსწავლის გვარი, სახელი',
+            headerName: '',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
@@ -1462,8 +1462,8 @@ const BehaviourDashBoard = () => {
                     <DataGridSGS
                         sx={{
                             '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
-                                borderRight: `3px solid ${
-                                    '#f4f4f4'
+                                border: `1px solid ${
+                                    '#cce1ea'
                                 }`,
                             },
                            overflowX: 'scroll',

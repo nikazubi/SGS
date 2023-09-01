@@ -649,14 +649,13 @@ const SemesterGradeDashBoard = () => {
             <div style={{height: `calc(100vh - ${130}px)`, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS
-                        // sx={{
-                        //     overflowX: 'hidden',
-                        //     '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
-                        //         borderRight: `3px solid ${
-                        //             '#f4f4f4'
-                        //         }`,
-                        //     },
-                        // }}
+                        sx={{
+                            '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+                                border: `1px solid ${
+                                    '#cce1ea'
+                                }`,
+                            },
+                        }}
                         queryKey={"SEMESTER_GRADE"}
                         experimentalFeatures={{columnGrouping: true}}
                         columnGroupingModel={getGradeColumns()}
