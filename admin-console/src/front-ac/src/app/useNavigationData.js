@@ -1,19 +1,19 @@
 import React, {useMemo} from 'react';
 import {useUserContext} from "../contexts/user-context";
-import {Grading, Home, SwitchAccount} from "@mui/icons-material";
+import {Grading, SwitchAccount} from "@mui/icons-material";
 import DashBoard from "../main/pages/HomePage/DashBoard";
 import {
-  AssignmentLate,
-  ChangeHistory, Class,
-  DiscFull,
-  EventAvailable,
-  EventNote,
-  ExitToApp,
-  Grade, MenuBook, Person,
-  Today
+    AssignmentLate,
+    ChangeHistory,
+    Class,
+    EventAvailable,
+    EventNote,
+    Grade,
+    MenuBook,
+    Person,
+    Today
 } from "@material-ui/icons";
 import BehaviourDashBoard from "../main/pages/behaviourPage/BehaviourDashBoard";
-import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 import ChangeRequestDashBoard from "../main/pages/changeRequestPage/ChangeRequestDashBoard";
 import MonthlyGradeDashBoard from "../main/pages/MonthlyGradePage/MonthlyGradeDashBoard";
 import SemesterGradeDashBoard from "../main/pages/semesterPage/SemesterGradeDashBoard";
@@ -23,16 +23,18 @@ import SubjectDashBoard from "../main/pages/subjectPage/SubjectDashBoard";
 import StudentDashBoard from "../main/pages/studentPage/StudentDashBoard";
 import AcademyClassDashBoard from "../main/pages/academyClassPage/AcademyClassDashBoard";
 import SystemUserDashBoard from "../main/pages/systemUserPage/SystemUserDashBoard";
+import ClosePeriodDashBoard from "../main/pages/closePeriod/ClosePeriodDashBoard";
+import {TimeIcon} from "@material-ui/pickers/_shared/icons/TimeIcon";
 
 
 const useNavigationData = () => {
-  const {hasPermission, user} = useUserContext();
+    const {hasPermission, user} = useUserContext();
 
-  const pages = useMemo(() => ({
-    GRADES: {
-      id: 'GRADES',
-      name: 'ნიშნების ჟურნალი',
-      component: <DashBoard/>,
+    const pages = useMemo(() => ({
+        GRADES: {
+            id: 'GRADES',
+            name: 'ნიშნების ჟურნალი',
+            component: <DashBoard/>,
       icon: <Grading/>,
       show: false,
       permissions: ["ADD_GRADES", "MANAGE_GRADES"],
@@ -125,18 +127,27 @@ const useNavigationData = () => {
       icon: <SwitchAccount/>,
       show: false,
       permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
+        collapsible: false
     },
-    ACADEMY_CLASS: {
-      id: 'ACADEMY_CLASS',
-      name: 'კლასები',
-      component: <AcademyClassDashBoard/>,
-      icon: <Class/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
-    },
-  }), [user]);
+        ACADEMY_CLASS: {
+            id: 'ACADEMY_CLASS',
+            name: 'კლასები',
+            component: <AcademyClassDashBoard/>,
+            icon: <Class/>,
+            show: false,
+            permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
+            collapsible: false
+        },
+        CLOSE_PERIOD: {
+            id: 'CLOSE_PERIOD',
+            name: 'ნიშნების ჩაკეტვა',
+            component: <ClosePeriodDashBoard/>,
+            icon: <TimeIcon/>,
+            show: false,
+            permissions: ["VIEW_CLOSED_PERIOD"], //TODO
+            collapsible: false
+        },
+    }), [user]);
 
   return useMemo(() => {
     const createPageLabels = (page) => {

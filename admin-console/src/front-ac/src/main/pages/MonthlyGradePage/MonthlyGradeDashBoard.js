@@ -233,27 +233,27 @@ const MonthlyGradeDashBoard = () => {
             headerAlign: 'center'
         },
         {
-            headerName: "ეთიკური ნორმა",
-            renderCell: ({row}) => {
-                return (<div  >
-                    {row.ethic}
-                </div>);
-            },
-
-            field: 'ethic',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center'
-        },
-        {
             headerName: "რეიტინგი",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.rating}
                 </div>);
             },
 
             field: 'rating',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            headerName: "ეთიკური ნორმა",
+            renderCell: ({row}) => {
+                return (<div>
+                    {row.ethic}
+                </div>);
+            },
+
+            field: 'ethic',
             sortable: false,
             align: 'center',
             headerAlign: 'center'
@@ -322,21 +322,7 @@ const MonthlyGradeDashBoard = () => {
                     maxWidth: 200,
                 }]
             })
-            gradeClomuns2.push({
-                    headerName: "ეთიკური ნორმა",
-                    renderCell: ({row}) => {
-                        return (<div>
-                            {row.ethic}
-                        </div>);
-                    },
-
-                    field: 'ethic',
-                    sortable: false,
-                    align: 'center',
-                    headerAlign: 'center',
-                    width: 200,
-                    maxWidth: 200,
-                },
+            gradeClomuns2.push(
                 {
                     headerName: "რეიტინგი",
                     renderCell: ({row}) => {
@@ -346,6 +332,21 @@ const MonthlyGradeDashBoard = () => {
                     },
 
                     field: 'rating',
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center',
+                    width: 200,
+                    maxWidth: 200,
+                },
+                {
+                    headerName: "ეთიკური ნორმა",
+                    renderCell: ({row}) => {
+                        return (<div>
+                            {row.ethic}
+                        </div>);
+                    },
+
+                    field: 'ethic',
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',

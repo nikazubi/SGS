@@ -578,7 +578,7 @@ const DashBoard = () => {
         },
         {
             groupId: 'classwork',
-            headerName: 'შემოქმედებითობა II',
+            headerName: 'საკლასო სამუშაო II',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
@@ -643,8 +643,6 @@ const DashBoard = () => {
     ];
 
     const getGradeColumnModel = useCallback(() => {
-        console.log("hi")
-        console.log(filters.academyClass)
         if (filters.academyClass && filters.academyClass.isTransit) {
             console.log("isTransit")
             return columnGroupingModelTransit;

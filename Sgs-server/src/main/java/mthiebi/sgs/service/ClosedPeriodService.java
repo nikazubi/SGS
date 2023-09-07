@@ -4,6 +4,7 @@ package mthiebi.sgs.service;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.ClosedPeriod;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ClosedPeriodService {
@@ -15,5 +16,7 @@ public interface ClosedPeriodService {
     boolean getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId) throws SGSException;
 
     List<ClosedPeriod> getClosedPeriods();
+
+    List<ClosedPeriod> findAllOrdered(Long academyClass, Date dateFrom, Date dateTo);
 
 }

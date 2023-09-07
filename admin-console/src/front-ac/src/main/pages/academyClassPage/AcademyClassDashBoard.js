@@ -3,9 +3,9 @@ import DataGridPaper from "../../components/grid/DataGridPaper";
 import DataGridSGS from "../../components/grid/DataGrid";
 import useSubjects, {fetchAcademyClass} from "./useAcademyClass";
 import AcademyClassTableToolbar from "./AcademyClassTableToolbar";
-import DeleteTotalAbsenceGrades from "../totalAbsencePage/DeleteTotalAbsenceGrades";
 import DeleteSubject from "./DeleteAcademyClass";
 import EditAcademyClass from "./EditAcademyClass";
+import {Check, Close} from "@material-ui/icons";
 
 const AcademyClassDashBoard = () => {
     const [filters, setFilters] = useState({});
@@ -44,12 +44,22 @@ const AcademyClassDashBoard = () => {
             headerAlign: 'center'
         },
         {
+            headerName: "ტრანზიტული",
+            renderCell: ({row}) => {
+                return row.isTransit ? <Check/> : <Close/>;
+            },
+            field: 'isTransit',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
             field: 'actions',
             type: 'actions',
             width: 2 * 42 + 10,
             getActions: ({row}) => [
                 <EditAcademyClass data={row}/>,
-                <DeleteSubject data={row} />,
+                <DeleteSubject data={row}/>,
             ],
         },
     ]

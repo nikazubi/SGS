@@ -79,6 +79,11 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
         return closedPeriodRepository.findAll();
     }
 
+    @Override
+    public List<ClosedPeriod> findAllOrdered(Long academyClass, Date dateFrom, Date dateTo) {
+        return closedPeriodRepository.findAllOrderedByLastUpdateTime(academyClass, dateFrom, dateTo);
+    }
+
     private void createOrUpdateClosedPeriodByPrefix(long academyClassId, String prefix) {
         ClosedPeriod currClosedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(academyClassId, prefix);
         if (currClosedPeriod == null) {

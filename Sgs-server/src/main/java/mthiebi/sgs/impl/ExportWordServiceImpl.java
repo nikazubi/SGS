@@ -4,12 +4,10 @@ import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.ExportWordService;
 import org.apache.poi.xwpf.usermodel.*;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -133,6 +131,11 @@ public class ExportWordServiceImpl implements ExportWordService {
                 run.setFontSize(10);
                 table.getRow(0).getCell(i).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
             } else {
+                if (i == 1) {
+                    int twipsPerInch = 14400;
+                    table.getRow(1).setHeight((int) (twipsPerInch * 1 / 10)); //set height 1/10 inch.
+                    table.getRow(1).getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+                }
 //                table.getRow(0).getCell(k).setWidth("15%");
                 XWPFRun run = table.getRow(0).getCell(k).addParagraph().createRun();
                 run.setText(headers[i]);
@@ -140,7 +143,7 @@ public class ExportWordServiceImpl implements ExportWordService {
                 table.getRow(0).getCell(k).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
                 table.getRow(0).getCell(k).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
                 int a = 0;
-                for(int j = k + 1; j < k + months.length; j ++){
+                for (int j = k + 1; j < k + months.length; j++) {
                     table.getRow(0).getCell(j).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
                     table.getRow(0).getCell(j).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
                     a = j;
@@ -153,11 +156,14 @@ public class ExportWordServiceImpl implements ExportWordService {
             for (int j = 0; j < studentData[i-1].length; j++) {
                 if (i == 1) {
                     XWPFTableCell newCell = table.getRow(i).getCell(j);
+                    newCell.getCTTc().addNewTcPr().addNewTextDirection().setVal(STTextDirection.BT_LR);
+
                     XWPFParagraph paragraph = newCell.addParagraph();
                     XWPFRun run = paragraph.createRun();
                     paragraph.setAlignment(ParagraphAlignment.CENTER); // Set alignment
                     run.setText(studentData[i - 1][j].equals("0") ? " " : studentData[i - 1][j]);
                     run.setFontSize(10);
+
 
 //                    CTPPr ppr = paragraph.getCTP().getPPr();
 //                    if (ppr == null) ppr = paragraph.getCTP().addNewPPr();
