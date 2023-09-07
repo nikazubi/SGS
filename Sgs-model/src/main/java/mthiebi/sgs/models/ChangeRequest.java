@@ -26,6 +26,9 @@ public class ChangeRequest extends Audit{
     @Column(columnDefinition = "nvarchar(max)")
     private String description;
 
+    @Column(columnDefinition = "nvarchar(max)")
+    private String directorDescription;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -72,6 +75,14 @@ public class ChangeRequest extends Audit{
 
     public void setStatus(ChangeRequestStatus status) {
         this.status = status;
+    }
+
+    public String getDirectorDescription() {
+        return directorDescription;
+    }
+
+    public void setDirectorDescription(String directorDescription) {
+        this.directorDescription = directorDescription;
     }
 
     public String getDescription() {

@@ -3,6 +3,8 @@ package mthiebi.sgs.impl;
 import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
+import mthiebi.sgs.SMTP.EmailDetails;
+import mthiebi.sgs.SMTP.EmailService;
 import mthiebi.sgs.models.*;
 import mthiebi.sgs.repository.*;
 import mthiebi.sgs.service.ChangeRequestService;
@@ -34,6 +36,9 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     @Autowired
     private SubjectRepository subjectRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public ChangeRequest createChangeRequest(ChangeRequest changeRequest, String username) throws SGSException {
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
@@ -51,14 +56,20 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
 
     @Override
     @Transactional
-    public void changeRequestStatus(Long changeRequestId, ChangeRequestStatus changeRequestStatus) throws SGSException {
+    public void changeRequestStatus(Long changeRequestId, ChangeRequestStatus changeRequestStatus, String description) throws SGSException {
         ChangeRequest changeRequest = changeRequestRepository.findById(changeRequestId)
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.CHANGE_REQUEST_NOT_FOUND));
         if (changeRequestStatus == ChangeRequestStatus.APPROVED) {
             Grade prevGrade = changeRequest.getPrevGrade();
             prevGrade.setValue(changeRequest.getNewValue());
             gradeRepository.save(prevGrade);
+            emailService.sendSimpleMail(EmailDetails.builder()
+                    .recipient(prevGrade.getStudent().getOwnerMail())
+                    .subject("IB მთიები - ნიშნის ცვლილება")
+                    .msgBody(description)
+                    .build());
         }
+        changeRequest.setDirectorDescription(description);
         changeRequest.setStatus(changeRequestStatus);
         changeRequestRepository.save(changeRequest);
     }

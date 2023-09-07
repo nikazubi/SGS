@@ -12,6 +12,18 @@ public class Subject extends Audit {
 
     private String name;
 
+    @Column(columnDefinition = "nvarchar(max)")
+
+    private String teacher;
+
+    public String getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+    }
+
     // todo: შუალედური წერები და დამატებითი აქტივობების კონფიგურაცია
 
     public void setId(Long id) {

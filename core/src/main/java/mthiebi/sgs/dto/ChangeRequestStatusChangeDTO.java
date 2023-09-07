@@ -14,4 +14,6 @@ public class ChangeRequestStatusChangeDTO {
 
     private ChangeRequestStatus changeRequestStatus;
 
+    private String description;
+
 }

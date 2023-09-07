@@ -30,11 +30,6 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
             .then(({data}) => {
                 setLastCloseDateInDateFormat(new Date(data))
                 setLastCloseDate(data ? moment.utc(data).local().format("DD-MM-YYYY") : "")
-                console.log(new Date().getUTCFullYear() === new Date(new Date(data)).getUTCFullYear())
-                console.log(new Date().getUTCMonth())
-                console.log(new Date(new Date(data)).getUTCMonth())
-                console.log(new Date().getUTCDay())
-                console.log(new Date(new Date(data)).getUTCDay())
             })
     }, []);
 

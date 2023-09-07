@@ -1,14 +1,7 @@
 import React from "react";
-import AddIcon from "@material-ui/icons/Add";
-import { Grid } from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import FlexBox from "../../../components/FlexBox";
 import FormikTextField from "../../components/formik/FormikTextField";
-import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
-import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
-import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
-import {useFormikContext} from "formik";
-import useCreateSubject from "./useCreateSubject";
-import {updateSubject} from "./useUpdateSubject";
 
 const SubjectForm = ({modalOpenMode}) => {
 
@@ -24,6 +17,11 @@ const SubjectForm = ({modalOpenMode}) => {
                                         name={"name"}
                                         // variant={"standard"}
                                         label={"საგნის სახელი"}
+                                    />
+                                    <FormikTextField
+                                        name={"name"}
+                                        // variant={"standard"}
+                                        label={"მასწავლებლის სახელი და გვარი"}
                                     />
                                 </Grid>
                             </Grid>

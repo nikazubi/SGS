@@ -11,7 +11,7 @@ public interface ChangeRequestService {
 
     ChangeRequest createChangeRequest(ChangeRequest changeRequest, String username) throws SGSException;
 
-    void changeRequestStatus(Long changeRequestId, ChangeRequestStatus changeRequestStatus) throws SGSException;
+    void changeRequestStatus(Long changeRequestId, ChangeRequestStatus changeRequestStatus, String description) throws SGSException;
 
     List<ChangeRequest> getChangeRequests(String username, Long classId, Long studentId, Date date) throws SGSException;
 
