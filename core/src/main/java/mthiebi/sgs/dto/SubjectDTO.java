@@ -13,4 +13,6 @@ public class SubjectDTO {
 
     private String name;
 
+    private String teacher;
+
 }

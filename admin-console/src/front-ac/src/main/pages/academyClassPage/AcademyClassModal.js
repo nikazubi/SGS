@@ -1,7 +1,5 @@
 import FormModal from "../../../components/modal/FormModal";
-import {useState} from "react";
 import useCreateAcademyClass from "./useCreateAcademyClass";
-import {useFormikContext} from "formik";
 import useUpdateAcademyClass from "./useUpdateAcademyClass";
 import AcademyClassForm from "./AcademyClassForm";
 import {ModalOpenMode} from "../../../utils/constants";
@@ -22,9 +20,9 @@ const AcademyClassModal = ({open, subject, onClose, modalOpenMode, submitButton,
             cancelText={'დახურვა'}
             saveText={'შენახვა'}
             width={700}
-            height={250}
+            height={350}
             maxWidth={700}
-            maxHeight={250}
+            maxHeight={350}
             initialValues={
 
                 {

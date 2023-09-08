@@ -5,8 +5,7 @@ import SemesterGradeToolbar from "./SemesterGradeToolbar";
 import "./header.css"
 import useGradeSemester from "./useGradeSemester";
 import {getFiltersOfPage} from "../../../utils/filters";
-import useSubjects, {fetchSubjects} from "../../../hooks/useSubjects";
-import axios from "../../../utils/axios";
+import {fetchSubjects} from "../../../hooks/useSubjects";
 
 const SemesterGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("SEMESTER_GRADE")});
@@ -14,14 +13,14 @@ const SemesterGradeDashBoard = () => {
     const [checked, setChecked] = useState(false);
     const {data, isLoading, isError, error, isSuccess} = useGradeSemester(filters);
 
-    useEffect(()=>{
-       const getSubjects = async () => {
-           const param = {queryKey: ""};
-           const subjectArr = await fetchSubjects(param);
-           setSubjects(subjectArr);
-       }
-       getSubjects();
-    },[])
+    useEffect(() => {
+        const getSubjects = async () => {
+            const param = {queryKey: ""};
+            const subjectArr = await fetchSubjects(param);
+            setSubjects(subjectArr);
+        }
+        getSubjects();
+    }, [])
 
     const getMonthFields = useCallback(() => {
         if (!subjects) {
@@ -30,35 +29,34 @@ const SemesterGradeDashBoard = () => {
 
         const monthFields = [];
         const monthNames = [
-            'იანვარი-თებერვალი',
+            'იან-თებ',
             'მარტი',
             'აპრილი',
             'მაისი',
             'ივნისი',
-            'სექტემბერი-ოქტომბერი',
-            'ნოემბერი',
-            'დეკემბერი'
+            'სექტ-ოქტ',
+            'ნოემბ',
+            'დეკემბ'
         ];
 
         const secondSemesterMonths = [
-            { month: 1, ind: 0 },  // ianvari-tebervali
-            { month: 3, ind: 1 },  // marti
-            { month: 4, ind: 2 },  // aprili
-            { month: 5, ind: 3 },  // maisu
-            { month: 6, ind: 4 } // ivnisi
+            {month: 1, ind: 0},  // ianvari-tebervali
+            {month: 3, ind: 1},  // marti
+            {month: 4, ind: 2},  // aprili
+            {month: 5, ind: 3},  // maisu
+            {month: 6, ind: 4} // ivnisi
         ];
         const firstSemesterMonths = [
-            { month: 9, ind: 5 },  // September-October
-            { month: 11, ind: 6 },  // noemberi
-            { month: 12, ind: 7 }
+            {month: 9, ind: 5},  // September-October
+            {month: 11, ind: 6},  // noemberi
+            {month: 12, ind: 7}
         ];
 
         const selectedMonths = filters.semesterN?.value === 'firstSemester' ? firstSemesterMonths : secondSemesterMonths;
-        console.log("selectedMonths", selectedMonths)
         monthFields.push({
             headerName: "მოსწავლის გვარი, სახელი",
-            renderCell: ({ row }) => {
-                return <div style={{ height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+            renderCell: ({row}) => {
+                return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
                     {row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
@@ -81,13 +79,15 @@ const SemesterGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[month.month];
 
-                        return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     field: subject.name + "-" + month.month,
                     sortable: false,
                     align: 'center',
-                    headerAlign: 'center'
+                    headerAlign: 'center',
+                    width: 100,
+                    maxWidth: 100,
                 });
             }
         }
@@ -103,7 +103,7 @@ const SemesterGradeDashBoard = () => {
                     }));
                     const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-1];
 
-                    return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
+                    return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
                 field: subject.name + "--1",
@@ -112,7 +112,7 @@ const SemesterGradeDashBoard = () => {
                 headerAlign: 'center'
             });
             monthFields.push({
-                headerName: 'შემოქმედებითობა',
+                headerName: 'შემოქმედებითობა (პროექტი)',
                 description: '',
                 renderCell: ({row}) => {
                     const transformedArray = row.gradeList.map(item => ({
@@ -121,7 +121,7 @@ const SemesterGradeDashBoard = () => {
                     }));
                     const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-2];
 
-                    return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
+                    return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
                 field: subject.name + "--2",
@@ -575,7 +575,7 @@ const SemesterGradeDashBoard = () => {
 
     let gradeClomuns2 = []
 
-    const getFieldName = (o, num) =>{
+    const getFieldName = (o, num) => {
         return o.subject.name + "-" + num;
     }
 
@@ -663,6 +663,7 @@ const SemesterGradeDashBoard = () => {
                         getRowId={(row) => {
                             return row.student.id;
                         }}
+                        headerHeight={400}
                         getRowHeight={() => 50}
                         disableColumnMenu
                         filters={filters}

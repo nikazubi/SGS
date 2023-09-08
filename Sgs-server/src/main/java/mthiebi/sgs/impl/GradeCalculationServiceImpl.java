@@ -77,13 +77,13 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 BigDecimal monthlyHomework = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_HOMEWORK");
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlyGeneralSummeryPercent.doubleValue())), GradeType.GENERAL_HOMEWORK_MONTHLY, date);
 
-                BigDecimal monthlyHomeworkPercent = BigDecimal.ZERO.equals(monthlyHomework)? BigDecimal.ZERO : monthlyHomework.multiply(BigDecimal.valueOf(3)).divide(BigDecimal.valueOf(10));
+                BigDecimal monthlyHomeworkPercent = BigDecimal.ZERO.equals(monthlyHomework) ? BigDecimal.ZERO : monthlyHomework.divide(BigDecimal.valueOf(4));
                 saveGrade(subject, academyClass, student, monthlyHomeworkPercent, GradeType.GENERAL_HOMEWORK_PERCENT, date);
 
                 BigDecimal monthlySchoolWork = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_SCHOOL_WORK");
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlySchoolWork.doubleValue())), GradeType.GENERAL_SCHOOL_WORK_MONTH, date);
 
-                BigDecimal monthlySchoolWorkPercent =BigDecimal.ZERO.equals(monthlySchoolWork)? BigDecimal.ZERO :  monthlySchoolWork.divide(BigDecimal.valueOf(5));
+                BigDecimal monthlySchoolWorkPercent = BigDecimal.ZERO.equals(monthlySchoolWork) ? BigDecimal.ZERO : monthlySchoolWork.divide(BigDecimal.valueOf(4));
                 saveGrade(subject, academyClass, student, monthlySchoolWorkPercent, GradeType.GENERAL_SCHOOL_WORK_PERCENT, date);
 
                 BigDecimal sum = monthlyHomeworkPercent.add(monthlyGeneralSummeryPercent).add(monthlySchoolWorkPercent);
@@ -186,13 +186,17 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 .collect(Collectors.toList());
         if (generalSummeryAssignment1.isEmpty()) {
             if (generalSummeryAssignment2.isEmpty()) {
-                throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GENERAL_SUMMERY_GRADES_NOT_PRESENT);
+                Optional<Grade> generalSummeryAssignmentRestoration = gradeList.stream().findFirst().filter(grade -> grade.getGradeType().equals(GradeType.GENERAL_SUMMARY_ASSIGMENT_RESTORATION));
+                if (generalSummeryAssignmentRestoration.isEmpty() || generalSummeryAssignmentRestoration.get().getValue() == null) {
+                    throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GENERAL_SUMMERY_GRADES_NOT_PRESENT);
+                }
+                return generalSummeryAssignmentRestoration.get().getValue();
             } else {
                 return getRestorationGrade(gradeList, generalSummeryAssignment2.get(0));
             }
         } else {
             if (generalSummeryAssignment2.isEmpty() || generalSummeryAssignment2.get(0).getValue() == null) {
-                return getRestorationGrade(gradeList, generalSummeryAssignment2.get(0));
+                return getRestorationGrade(gradeList, generalSummeryAssignment1.get(0));
             } else {
                 BigDecimal sum = generalSummeryAssignment2.get(0).getValue()
                         .add(generalSummeryAssignment1.get(0).getValue());
@@ -210,13 +214,17 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 .collect(Collectors.toList());
         if (generalSummeryAssignment1.isEmpty()) {
             if (generalSummeryAssignment2.isEmpty()) {
-                throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GENERAL_SUMMERY_GRADES_NOT_PRESENT);
+                Optional<Grade> generalSummeryAssignmentRestoration = gradeList.stream().findFirst().filter(grade -> grade.getGradeType().equals(GradeType.GENERAL_SUMMARY_ASSIGMENT_RESTORATION));
+                if (generalSummeryAssignmentRestoration.isEmpty() || generalSummeryAssignmentRestoration.get().getValue() == null) {
+                    throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GENERAL_SUMMERY_GRADES_NOT_PRESENT);
+                }
+                return generalSummeryAssignmentRestoration.get().getValue();
             } else {
                 return getRestorationGradeTransit(gradeList, generalSummeryAssignment2.get(0));
             }
         } else {
             if (generalSummeryAssignment2.isEmpty() || generalSummeryAssignment2.get(0).getValue() == null) {
-                return getRestorationGradeTransit(gradeList, generalSummeryAssignment2.get(0));
+                return getRestorationGradeTransit(gradeList, generalSummeryAssignment1.get(0));
             } else {
                 BigDecimal sum = generalSummeryAssignment2.get(0).getValue()
                         .add(generalSummeryAssignment1.get(0).getValue());
@@ -228,7 +236,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
     private BigDecimal getRestorationGrade(List<Grade> gradeList, Grade generalSummeryAssignment2) throws SGSException {
         Optional<Grade> generalSummeryAssignmentRestoration = gradeList.stream().findFirst().filter(grade -> grade.getGradeType().equals(GradeType.GENERAL_SUMMARY_ASSIGMENT_RESTORATION));
         if (generalSummeryAssignmentRestoration.isEmpty() || generalSummeryAssignmentRestoration.get().getValue() == null) {
-            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GENERAL_SUMMERY_GRADES_NOT_PRESENT);
+            return generalSummeryAssignment2.getValue();
         }
         BigDecimal sum = generalSummeryAssignment2.getValue()
                 .add(generalSummeryAssignmentRestoration.get().getValue());
@@ -238,7 +246,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
     private BigDecimal getRestorationGradeTransit(List<Grade> gradeList, Grade generalSummeryAssignment2) throws SGSException {
         Optional<Grade> generalSummeryAssignmentRestoration = gradeList.stream().findFirst().filter(grade -> grade.getGradeType().equals(GradeType.TRANSIT_SUMMARY_ASSIGMENT_RESTORATION));
         if (generalSummeryAssignmentRestoration.isEmpty() || generalSummeryAssignmentRestoration.get().getValue() == null) {
-            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GENERAL_SUMMERY_GRADES_NOT_PRESENT);
+            return generalSummeryAssignment2.getValue();
         }
         BigDecimal sum = generalSummeryAssignment2.getValue()
                 .add(generalSummeryAssignmentRestoration.get().getValue());

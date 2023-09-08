@@ -7,7 +7,6 @@ import mthiebi.sgs.dto.GradeMapper;
 import mthiebi.sgs.models.ChangeRequest;
 import mthiebi.sgs.models.ChangeRequestStatus;
 import mthiebi.sgs.service.ChangeRequestService;
-import mthiebi.sgs.service.SystemUserService;
 import mthiebi.sgs.utils.AuthConstants;
 import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,8 @@ public class ChangeRequestController {
     @PutMapping("/change-request-status")
     @Secured({AuthConstants.MANAGE_CHANGE_REQUESTS})
     public void changeRequestStatus(@RequestBody ChangeRequestStatusChangeDTO changeRequestStatus) throws SGSException {
-        changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(), changeRequestStatus.getChangeRequestStatus());
+        changeRequestService.changeRequestStatus(changeRequestStatus.getChangeRequestId(),
+                changeRequestStatus.getChangeRequestStatus(), changeRequestStatus.getDescription());
     }
 
     @GetMapping("/get-last-update-time")

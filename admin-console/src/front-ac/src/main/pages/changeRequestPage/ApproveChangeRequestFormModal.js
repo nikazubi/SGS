@@ -1,23 +1,21 @@
 import FormModal from "../../../components/modal/FormModal";
-import useCreateSubject from "./useCreateSubject";
-import useUpdateSubject from "./useUpdateSubject";
-import SubjectForm from "./SubjectForm";
-import {ModalOpenMode} from "../../../utils/constants";
-
+import {useNotification} from "../../../contexts/notification-context";
+import ApproveChangeRequestForm from "./ApproveChangeRequestForm";
 
 const initialValues = {
-    name: "",
-    teacher: ""
+    description: "",
 };
 
-const SubjectModal = ({open, subject, onClose, modalOpenMode, submitButton, ...props}) => {
-    const {mutate: onCreate} = useCreateSubject();
-    const {mutate: onUpdate} = useUpdateSubject();
+const ApproveChangeRequestFormModal = ({open, onClose, modalOpenMode, submitButton, submit, ...props}) => {
+    const {setNotification, setErrorMessage} = useNotification();
 
+    const onSubmit = (values) => {
+        submit(values)
+    }
     return (
         <FormModal
             open={open}
-            title={"დამატება"}
+            title={"ნიშნის ცვლილების თანხმობა"}
             cancelText={'დახურვა'}
             saveText={'შენახვა'}
             width={700}
@@ -28,15 +26,14 @@ const SubjectModal = ({open, subject, onClose, modalOpenMode, submitButton, ...p
 
                 {
                     ...initialValues,
-                    ...subject,
                 }
             }
             formProps={{
                 modalOpenMode
             }}
-            form={SubjectForm}
+            form={ApproveChangeRequestForm}
             // validationSchema={validateNewsFormData(!!news, t)}
-            onSubmit={modalOpenMode === ModalOpenMode.add ? onCreate : onUpdate}
+            onSubmit={onSubmit}
             onClose={onClose}
             submitButton={submitButton}
             {...props}
@@ -44,4 +41,4 @@ const SubjectModal = ({open, subject, onClose, modalOpenMode, submitButton, ...p
     );
 };
 
-export default SubjectModal;
+export default ApproveChangeRequestFormModal;

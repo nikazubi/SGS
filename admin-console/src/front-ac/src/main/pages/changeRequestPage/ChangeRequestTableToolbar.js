@@ -5,9 +5,7 @@ import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useFetchStudents from "../../../hooks/useStudents";
 import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useEffect, useState} from "react";
-import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
-import Button from "../../../components/buttons/Button";
 import {useUserContext} from "../../../contexts/user-context";
 import axios from "../../../utils/axios";
 import moment from "moment";
@@ -32,11 +30,6 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
             .then(({data}) => {
                 setLastCloseDateInDateFormat(new Date(data))
                 setLastCloseDate(data ? moment.utc(data).local().format("DD-MM-YYYY") : "")
-                console.log(new Date().getUTCFullYear() === new Date(new Date(data)).getUTCFullYear())
-                console.log(new Date().getUTCMonth())
-                console.log(new Date(new Date(data)).getUTCMonth())
-                console.log(new Date().getUTCDay())
-                console.log(new Date(new Date(data)).getUTCDay())
             })
     }, []);
 
@@ -106,42 +99,42 @@ const ChangeRequestTableToolbar = ({setFilters, filters}) => {
                                     }}
                                 />
                             </div>
-                            {hasManageClosePeriodPermission &&
-                                <div style={{marginLeft: 15,display: 'flex', flexDirection: 'row'}}>
-                                    <div style={{display: 'flex', flexDirection: 'column', alignItems:'center'}}>
-                                        <div>{"დახურვის თარიღი: "}</div>
-                                        <div style={{color: "#e46c0a", fontWeight:'bold'}}>{lastCloseDate}</div>
-                                    </div>
-                                    <div>
-                                        <Button style={{
-                                            backgroundColor: new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&
-                                                new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&
-                                                new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay()?
-                                            "grey" :
-                                            "#e46c0a",
-                                            color: "#fff",
-                                            marginLeft: 15,
-                                            marginBottom: -20,
-                                            fontSize: 16
-                                        }}
-                                                disabled={new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&
-                                                    new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&
-                                                new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay()}
-                                                onClick={async () => {
-                                                    setOpenModal(true)
-                                                    // closePeriod().then(() =>{
-                                                    //     setNotification({
-                                                    //         message: 'თვის ნიშანი წარმატებით დაითვალა',
-                                                    //         severity: 'success'
-                                                    //     });
-                                                    // }).catch((error) => {
-                                                    //     setErrorMessage(error);
-                                                    // });
-                                                }}>
-                                            {"პერიოდის დახურვა"}
-                                        </Button>
-                                    </div>
-                                </div>}
+                            {/*{hasManageClosePeriodPermission &&*/}
+                            {/*    <div style={{marginLeft: 15,display: 'flex', flexDirection: 'row'}}>*/}
+                            {/*        <div style={{display: 'flex', flexDirection: 'column', alignItems:'center'}}>*/}
+                            {/*            <div>{"დახურვის თარიღი: "}</div>*/}
+                            {/*            <div style={{color: "#e46c0a", fontWeight:'bold'}}>{lastCloseDate}</div>*/}
+                            {/*        </div>*/}
+                            {/*        <div>*/}
+                            {/*            <Button style={{*/}
+                            {/*                backgroundColor: new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&*/}
+                            {/*                    new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&*/}
+                            {/*                    new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay()?*/}
+                            {/*                "grey" :*/}
+                            {/*                "#e46c0a",*/}
+                            {/*                color: "#fff",*/}
+                            {/*                marginLeft: 15,*/}
+                            {/*                marginBottom: -20,*/}
+                            {/*                fontSize: 16*/}
+                            {/*            }}*/}
+                            {/*                    disabled={new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&*/}
+                            {/*                        new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&*/}
+                            {/*                    new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay()}*/}
+                            {/*                    onClick={async () => {*/}
+                            {/*                        setOpenModal(true)*/}
+                            {/*                        // closePeriod().then(() =>{*/}
+                            {/*                        //     setNotification({*/}
+                            {/*                        //         message: 'თვის ნიშანი წარმატებით დაითვალა',*/}
+                            {/*                        //         severity: 'success'*/}
+                            {/*                        //     });*/}
+                            {/*                        // }).catch((error) => {*/}
+                            {/*                        //     setErrorMessage(error);*/}
+                            {/*                        // });*/}
+                            {/*                    }}>*/}
+                            {/*                {"პერიოდის დახურვა"}*/}
+                            {/*            </Button>*/}
+                            {/*        </div>*/}
+                            {/*    </div>}*/}
                         </div>)}
                 </Formik>
             </FlexBox>

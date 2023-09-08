@@ -1,17 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import {Grid} from "@material-ui/core";
 import FlexBox from "../../../components/FlexBox";
 import FormikTextField from "../../components/formik/FormikTextField";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
 import useSubjects from "../../../hooks/useSubjects";
 import useFetchStudents from "../../../hooks/useStudents";
-import {CheckBox} from "@material-ui/icons";
 import {useFormikContext} from "formik";
+import Switch from "@mui/material/Switch";
 
 const AcademyClassForm = ({modalOpenMode}) => {
     const {mutateAsync: onFetchSubjects} = useSubjects();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
-    const {setFieldValue} = useFormikContext();
+    const {setFieldValue, values} = useFormikContext();
+    const [checked, setChecked] = useState(values.isTransit);
 
     return (
         <Grid>
@@ -54,18 +55,21 @@ const AcademyClassForm = ({modalOpenMode}) => {
                                         label={"კლასის საფეხური"}
                                     />
                                 </Grid>
-                                {/*<Grid item xs={12} sm={12}>*/}
-                                {/*    <CheckBox*/}
-                                {/*        onChange={() =>{*/}
-                                {/*            setFieldValue("isTransit")*/}
-                                {/*        }*/}
-                                {/*        }*/}
-                                {/*        name={"classLevel"}*/}
-                                {/*        type={"number"}*/}
-                                {/*        // variant={"standard"}*/}
-                                {/*        label={"კლასის საფეხური"}*/}
-                                {/*    />*/}
-                                {/*</Grid>*/}
+                                <Grid item xs={12} sm={12}>
+                                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                        <div>
+                                            {"ტრანზიტული კლასი"}
+                                        </div>
+                                        <Switch
+                                            checked={checked}
+                                            onChange={() => {
+                                                setFieldValue("isTransit", !checked);
+                                                setChecked(!checked);
+                                            }}
+                                            inputProps={{'aria-label': 'controlled'}}
+                                        />
+                                    </div>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>

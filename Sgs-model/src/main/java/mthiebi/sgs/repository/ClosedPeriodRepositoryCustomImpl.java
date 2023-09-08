@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryCustom{
@@ -38,5 +39,15 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
                 .where(qClosedPeriod.gradePrefix.eq(gradePrefix))
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
                 .fetchOne();
+    }
+
+    @Override
+    public List<ClosedPeriod> findAllOrderedByLastUpdateTime(Long academyClass, Date dateFrom, Date dateTo) {
+        return qf.selectFrom(qClosedPeriod)
+                .where(QueryUtils.longEq(qClosedPeriod.academyClassId, academyClass))
+                .where(QueryUtils.dateTimeMore(qClosedPeriod.createTime, dateFrom))
+                .where(QueryUtils.dateTimeLess(qClosedPeriod.createTime, dateTo))
+                .orderBy(qClosedPeriod.lastUpdateTime.desc())
+                .fetch();
     }
 }
