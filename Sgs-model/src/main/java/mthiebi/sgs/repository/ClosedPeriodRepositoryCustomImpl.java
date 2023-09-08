@@ -45,8 +45,8 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
     public List<ClosedPeriod> findAllOrderedByLastUpdateTime(Long academyClass, Date dateFrom, Date dateTo) {
         return qf.selectFrom(qClosedPeriod)
                 .where(QueryUtils.longEq(qClosedPeriod.academyClassId, academyClass))
-                .where(QueryUtils.dateTimeMore(qClosedPeriod.createTime, dateFrom))
-                .where(QueryUtils.dateTimeLess(qClosedPeriod.createTime, dateTo))
+                .where(QueryUtils.dateTimeMore(qClosedPeriod.lastUpdateTime, dateFrom))
+                .where(QueryUtils.dateTimeLess(qClosedPeriod.lastUpdateTime, dateTo))
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
                 .fetch();
     }

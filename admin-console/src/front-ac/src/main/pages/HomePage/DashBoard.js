@@ -100,7 +100,7 @@ const DashBoard = () => {
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'GENERAL_SUMMARY_ASSIGMENT_MONTH',
             sortable: false,
@@ -118,7 +118,7 @@ const DashBoard = () => {
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'GENERAL_SUMMARY_ASSIGMENT_PERCENT',
             sortable: false,
@@ -172,7 +172,7 @@ const DashBoard = () => {
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'GENERAL_SCHOOL_WORK_MONTH',
             sortable: false,
@@ -184,13 +184,13 @@ const DashBoard = () => {
             maxWidth: 78,
         },
         {
-            headerName: "20%",
+            headerName: "25%",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_PERCENT");
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'GENERAL_SCHOOL_WORK_PERCENT',
             sortable: false,
@@ -244,7 +244,7 @@ const DashBoard = () => {
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'GENERAL_HOMEWORK_MONTHLY',
             sortable: false,
@@ -256,13 +256,13 @@ const DashBoard = () => {
             maxWidth: 78,
         },
         {
-            headerName: "30%",
+            headerName: "25%",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_PERCENT");
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'GENERAL_HOMEWORK_PERCENT',
             sortable: false,
@@ -280,7 +280,7 @@ const DashBoard = () => {
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'GENERAL_COMPLETE_MONTHLY',
             sortable: false,

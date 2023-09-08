@@ -50,9 +50,9 @@ const ClosePeriodDashBoard = () => {
             headerAlign: 'center'
         },
         {
-            headerName: "შექმნის თარიღი",
+            headerName: "დაკეტვის თარიღი",
             renderCell: ({row}) => {
-                return moment.utc(Date.parse(row.createTime)).local().format("DD-MM-YYYY");
+                return moment.utc(Date.parse(row.lastUpdateTime)).local().format("DD-MM-YYYY");
             },
             field: 'createTime',
             sortable: false,

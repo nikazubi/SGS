@@ -75,7 +75,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent, GradeType.GENERAL_SUMMARY_ASSIGMENT_PERCENT, date);
 
                 BigDecimal monthlyHomework = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_HOMEWORK");
-                saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlyGeneralSummeryPercent.doubleValue())), GradeType.GENERAL_HOMEWORK_MONTHLY, date);
+                saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlyHomework.doubleValue())), GradeType.GENERAL_HOMEWORK_MONTHLY, date);
 
                 BigDecimal monthlyHomeworkPercent = BigDecimal.ZERO.equals(monthlyHomework) ? BigDecimal.ZERO : monthlyHomework.divide(BigDecimal.valueOf(4));
                 saveGrade(subject, academyClass, student, monthlyHomeworkPercent, GradeType.GENERAL_HOMEWORK_PERCENT, date);

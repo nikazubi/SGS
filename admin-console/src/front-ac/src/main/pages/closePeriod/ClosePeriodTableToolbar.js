@@ -108,7 +108,7 @@ const ClosePeriodTableToolbar = ({setFilters, filters}) => {
                                         <Button style={{
                                             backgroundColor: new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&
                                             new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&
-                                            new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay() ?
+                                            new Date().getUTCDate() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDate() ?
                                                 "grey" :
                                                 "#e46c0a",
                                             color: "#fff",
@@ -118,7 +118,7 @@ const ClosePeriodTableToolbar = ({setFilters, filters}) => {
                                         }}
                                                 disabled={new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&
                                                     new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&
-                                                    new Date().getUTCDay() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDay()}
+                                                    new Date().getUTCDate() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDate()}
                                                 onClick={async () => {
                                                     setOpenModal(true)
                                                     // closePeriod().then(() =>{

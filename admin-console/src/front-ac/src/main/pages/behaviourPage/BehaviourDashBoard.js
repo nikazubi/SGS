@@ -167,7 +167,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY',
             sortable: false,
@@ -294,7 +294,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_STUDENT_DELAYS_MONTHLY',
             sortable: false,
@@ -420,7 +420,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_CLASSROOM_INVENTORY_MONTHLY',
             sortable: false,
@@ -546,7 +546,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_STUDENT_HYGIENE_MONTHLY',
             sortable: false,
@@ -672,7 +672,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_STUDENT_BEHAVIOR_MONTHLY',
             sortable: false,
@@ -690,7 +690,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_MONTHLY',
             sortable: false,
@@ -796,7 +796,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY',
             sortable: false,
@@ -887,7 +887,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_STUDENT_DELAYS_MONTHLY',
             sortable: false,
@@ -1032,7 +1032,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_CLASSROOM_INVENTORY_MONTHLY',
             sortable: false,
@@ -1142,7 +1142,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_STUDENT_HYGIENE_MONTHLY',
             sortable: false,
@@ -1234,7 +1234,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_STUDENT_BEHAVIOR_MONTHLY',
             sortable: false,
@@ -1252,7 +1252,7 @@ const BehaviourDashBoard = () => {
                 if(summary2.length === 0){
                     return ""
                 }
-                return summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value;
             },
             field: 'BEHAVIOUR_MONTHLY',
             sortable: false,
