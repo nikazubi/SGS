@@ -40,6 +40,13 @@ public class GradeServiceImpl implements GradeService {
         Student student = studentRepository.findById(grade.getStudent().getId()).orElseThrow();
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
         Subject subject = grade.getSubject() == null ? null : subjectRepository.findById(grade.getSubject().getId()).orElseThrow();
+        Date exactDate = grade.getExactMonth();
+        if (exactDate.getMonth() == Calendar.FEBRUARY) {
+            exactDate.setMonth(Calendar.JANUARY);
+        } else if (exactDate.getMonth() == Calendar.OCTOBER) {
+            exactDate.setMonth(Calendar.SEPTEMBER);
+        }
+        grade.setExactMonth(exactDate);
         grade.setStudent(student);
         grade.setAcademyClass(academyClass);
         grade.setSubject(subject);

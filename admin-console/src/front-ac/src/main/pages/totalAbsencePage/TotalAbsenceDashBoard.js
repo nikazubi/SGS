@@ -25,7 +25,7 @@ const TotalAbsenceDashBoard = () => {
         {
             headerName: "კლასი",
             renderCell: ({row}) => {
-                return row.academyClass.className + '-' + row.academyClass.classLevel;
+                return row.academyClass.className ;
             },
             field: 'academyClass',
             sortable: false,

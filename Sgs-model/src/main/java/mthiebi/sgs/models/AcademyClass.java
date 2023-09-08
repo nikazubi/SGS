@@ -92,7 +92,7 @@ public class AcademyClass extends mthiebi.sgs.models.Audit {
     }
 
     public void setIsTransit(Boolean isTransit) {
-        isTransit = isTransit;
+        this.isTransit = isTransit;
     }
 
     @Transient

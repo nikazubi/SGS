@@ -127,13 +127,13 @@ public class ExportWordServiceImpl implements ExportWordService {
         int k = 1;
         for (int i = 0; i < headers.length; i++) {
             if (i == 0) {
-//                table.getRow(0).getCell(i).setWidth("20%");
+                table.getRow(0).getCell(i).setWidth("20%");
                 XWPFRun run = table.getRow(0).getCell(i).addParagraph().createRun();
                 run.setText(headers[i]);
                 run.setFontSize(10);
                 table.getRow(0).getCell(i).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
             } else {
-//                table.getRow(0).getCell(k).setWidth("15%");
+                table.getRow(0).getCell(k).setWidth("15%");
                 XWPFRun run = table.getRow(0).getCell(k).addParagraph().createRun();
                 run.setText(headers[i]);
                 run.setFontSize(10);

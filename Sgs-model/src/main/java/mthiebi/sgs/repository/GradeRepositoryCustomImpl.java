@@ -114,7 +114,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 .where(datePredicate)
                 .where(academyClassIdPredicate)
                 .where(gradeTypePredicate)
-                .orderBy(qGrade.createTime.desc())
+                .orderBy(qGrade.student.lastName.desc())
                 .fetch();
         return gradeList.stream().collect(Collectors.groupingBy(Grade::getStudent));
     }

@@ -77,7 +77,7 @@ const AnualGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[semester.ind];
 
-                        return <div>{monthValue === 0 ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 ? '' : monthValue === '' ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     editable: semester.val === "გამოცდა",

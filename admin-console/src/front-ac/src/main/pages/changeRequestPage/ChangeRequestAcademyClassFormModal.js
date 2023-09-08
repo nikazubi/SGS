@@ -14,7 +14,7 @@ const ChangeRequestAcademyClassFormModal = ({open, onClose, modalOpenMode, submi
         closePeriod(values.academyClasses).then(() =>{
             onClose();
             setNotification({
-                message: 'თვის ნიშანი წარმატებით დაითვალა',
+                message: 'პერიოდი წარმატებით დაიხურა',
                 severity: 'success'
             });
         }).catch((error) => {
