@@ -165,6 +165,61 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
+
+        {
+            headerName: "3",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_3");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "4",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_4");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_4',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "5",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_5");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_5',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
         {
             headerName: "თვის ნიშანი",
             renderCell: ({row}) => {
@@ -229,6 +284,42 @@ const DashBoard = () => {
                 return summary2[0].value;
             },
             field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "3",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_3");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "4",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_4");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_4',
             sortable: false,
             align: 'center',
             headerAlign: 'center',
@@ -470,6 +561,42 @@ const DashBoard = () => {
             maxWidth: 78,
         },
         {
+            headerName: "4",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_4");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'TRANSIT_SCHOOL_WORK_4',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "5",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_5");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'TRANSIT_SCHOOL_WORK_5',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
             headerName: "თვის ნიშანი",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_MONTH");
@@ -584,7 +711,7 @@ const DashBoard = () => {
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
             children: [{field: 'TRANSIT_SCHOOL_WORK_1'}, {field: 'TRANSIT_SCHOOL_WORK_2'}, {field: 'TRANSIT_SCHOOL_WORK_3'},
-                {field: 'TRANSIT_SCHOOL_WORK_MONTH'}, {field: 'TRANSIT_SCHOOL_WORK_MONTH_PERCENT'}],
+                {field: 'TRANSIT_SCHOOL_WORK_MONTH'}, {field: 'TRANSIT_SCHOOL_WORK_MONTH_PERCENT'}, {field: 'TRANSIT_SCHOOL_WORK_4'}, {field: 'TRANSIT_SCHOOL_WORK_5'}],
             align: 'center',
             headerAlign: 'center'
         },
@@ -622,7 +749,7 @@ const DashBoard = () => {
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
             // ),
-            children: [{field: 'GENERAL_SCHOOL_WORK_1'}, {field: 'GENERAL_SCHOOL_WORK_2'}, {field: 'GENERAL_SCHOOL_WORK_MONTH'},
+            children: [{field: 'GENERAL_SCHOOL_WORK_1'}, {field: 'GENERAL_SCHOOL_WORK_2'},{field: 'GENERAL_SCHOOL_WORK_3'}, {field: 'GENERAL_SCHOOL_WORK_4'}, {field: 'GENERAL_SCHOOL_WORK_5'}, {field: 'GENERAL_SCHOOL_WORK_MONTH'},
                 {field: 'GENERAL_SCHOOL_WORK_PERCENT'}],
             align: 'center',
             headerAlign: 'center'
@@ -636,7 +763,7 @@ const DashBoard = () => {
             // ),
             children: [{field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_1'}, {field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_2'},
                 // {field: 'GENERAL_HOMEWORK_CREATIVE_ASSIGMENT'},
-                {field: 'GENERAL_HOMEWORK_MONTHLY'}, {field: 'GENERAL_HOMEWORK_PERCENT'}],
+                {field: 'GENERAL_HOMEWORK_MONTHLY'}, {field: 'GENERAL_HOMEWORK_PERCENT'}, {field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_3'}, {field: 'GENERAL_HOMEWORK_WRITE_ASSIGMENT_4'}],
             align: 'center',
             headerAlign: 'center'
         },
