@@ -4,14 +4,14 @@ import useUpdateSystemUserGroup from "./useUpdateSystemUserGroup";
 import SystemUserGroupForm from "./SystemUserGroupForm";
 import {ModalOpenMode} from "../../../utils/constants";
 
-const AcademyClassModal = ({open, subject, onClose, modalOpenMode, submitButton, ...props}) => {
+const AcademyClassModal = ({open, groupName, groupStatus, subject, onClose, modalOpenMode, submitButton, ...props}) => {
     const {mutate: onCreate} = useCreateSystemUserGroup();
     const {mutate: onUpdate} = useUpdateSystemUserGroup();
 
     const initialValues = {
-        name: "",
-        active: false,
-        permission: ""
+        name: groupName? groupName : "",
+        active: !!groupStatus,
+        permission: subject? subject : ""
     };
 
     return (
@@ -28,7 +28,6 @@ const AcademyClassModal = ({open, subject, onClose, modalOpenMode, submitButton,
 
                 {
                     ...initialValues,
-                    ...subject,
                 }
             }
             formProps={{

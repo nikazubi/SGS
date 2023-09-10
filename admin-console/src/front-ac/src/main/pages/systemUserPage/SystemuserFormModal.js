@@ -2,20 +2,23 @@ import FormModal from "../../../components/modal/FormModal";
 import {useState} from "react";
 import SystemUserForm from "./SystemUserForm";
 import useCreateSystemuser from "./useCreateSystemuser";
+import {ModalOpenMode} from "../../../utils/constants";
+import useUpdateSystemUser from "./useUpdateSystemUser";
 
 
-const initialValues = {
-    username: '',
-    academyClasses: [],
-    systemGroup: [],
-    name: '',
-    password: '',
-    email: ''
-};
+const SystemUserModal = ({data, open, news, onClose, modalOpenMode, submitButton, ...props}) => {
 
-const SystemUserModal = ({open, news, onClose, modalOpenMode, submitButton, ...props}) => {
+    const {mutate: onUpdate} = useUpdateSystemUser();
     const {mutate: onCreate} = useCreateSystemuser();
-    const [date, setDate] = useState(new Date());
+
+    const initialValues = {
+        username: data?.username? data.username : '',
+        academyClasses: data?.academyClasses? data.academyClasses : [],
+        systemGroup: data?.systemGroup? data.systemGroup : [],
+        name: data?.name? data.name : '',
+        password: data?.password? data.password : '',
+        email: data?.email? data.email : ''
+    };
 
     return (
         <FormModal
@@ -30,8 +33,7 @@ const SystemUserModal = ({open, news, onClose, modalOpenMode, submitButton, ...p
             initialValues={
 
                 {
-                    ...initialValues,
-                    ...news,
+                    ...initialValues
                 }
             }
             formProps={{
@@ -39,7 +41,7 @@ const SystemUserModal = ({open, news, onClose, modalOpenMode, submitButton, ...p
             }}
             form={SystemUserForm}
             // validationSchema={validateNewsFormData(!!news, t)}
-            onSubmit={onCreate}
+            onSubmit={modalOpenMode === ModalOpenMode.add ? onCreate : onUpdate}
             onClose={onClose}
             submitButton={submitButton}
             {...props}

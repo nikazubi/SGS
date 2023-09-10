@@ -21,5 +21,8 @@ public class SystemUserDTO {
 
     private Boolean active;
 
+    private List<AcademyClassDTO> academyClassList;
+
+    private List<SystemUserGroupDTO> groups;
 }
 

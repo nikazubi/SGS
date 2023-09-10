@@ -1,20 +1,15 @@
-import useUpdateSystemUserGroup from "./useUpdateSystemUserGroup";
+
 import {useState} from "react";
 import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 import {Edit} from "@material-ui/icons";
-import AcademyClassModal from "./SystemUserGroupModal";
 import {ModalOpenMode} from "../../../utils/constants";
-import {PERMISSIONS} from "./permissions";
+import SystemUserModal from "./SystemuserFormModal";
 
 
-const EditSystemUserGroup = ({data, disabled = false}) => {
+const EditSystemUser = ({data, disabled = false}) => {
     const [open, setOpen] = useState(false);
-    const {mutate: onUpdate} = useUpdateSystemUserGroup();
-    const parsedData = data.permissions.toString().split(",")
-        .map(val => {
-            return {value: val, label: PERMISSIONS[val]}
-        })
-    console.log(data)
+
+    console.log("shexeeeee aqaaa", data)
     return (
         <>
             <IconButtonWithTooltip
@@ -24,12 +19,9 @@ const EditSystemUserGroup = ({data, disabled = false}) => {
                 disabled={disabled}
             />
             {open && (
-                <AcademyClassModal
+                <SystemUserModal
+                    data={data}
                     open={open}
-                    groupName={data.name}
-                    groupStatus={data.active}
-                    subject={parsedData}
-                    onSubmit={onUpdate}
                     onClose={() => setOpen(false)}
                     modalOpenMode={ModalOpenMode.edit}
                 />
@@ -38,4 +30,4 @@ const EditSystemUserGroup = ({data, disabled = false}) => {
     )
 }
 
-export default EditSystemUserGroup;
+export default EditSystemUser;

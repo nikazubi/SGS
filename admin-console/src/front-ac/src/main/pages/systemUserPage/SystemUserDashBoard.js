@@ -5,6 +5,7 @@ import SystemUserTableToolbar from "./SystemUserTableToolbar";
 import useFetchSystemuser from "./useSystemuserGrades";
 import {getFiltersOfPage} from "../../../utils/filters";
 import DeleteTotalSystemUser from "./DeleteSystemUser";
+import EditSystemUser from "./EditSystemUser";
 
 const SystemUserDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("SYSTEM_USER")});
@@ -57,6 +58,7 @@ const SystemUserDashBoard = () => {
             type: 'actions',
             width: 42 + 10,
             getActions: ({row}) => [
+                 <EditSystemUser data={row}/>,
                  <DeleteTotalSystemUser data={row} />,
             ],
         },

@@ -9,6 +9,7 @@ import FormikTextField from "../../components/formik/FormikTextField";
 import SystemUserModal from "./SystemuserFormModal";
 import {setFiltersOfPage} from "../../../utils/filters";
 import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
+import {ModalOpenMode} from "../../../utils/constants";
 
 const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral({});
@@ -87,6 +88,7 @@ const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
             </FlexBox>
             {open && (
                 <SystemUserModal
+                    modalOpenMode={ModalOpenMode.add}
                     open={open}
                     onClose={() => setOpen(false)}
                 />
