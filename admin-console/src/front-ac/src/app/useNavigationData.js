@@ -25,6 +25,7 @@ import AcademyClassDashBoard from "../main/pages/academyClassPage/AcademyClassDa
 import SystemUserDashBoard from "../main/pages/systemUserPage/SystemUserDashBoard";
 import ClosePeriodDashBoard from "../main/pages/closePeriod/ClosePeriodDashBoard";
 import {TimeIcon} from "@material-ui/pickers/_shared/icons/TimeIcon";
+import SystemUserGroupDashBoard from "../main/pages/systemUserGroup/SystemUserGroupDashBoard";
 
 
 const useNavigationData = () => {
@@ -145,6 +146,15 @@ const useNavigationData = () => {
             icon: <TimeIcon/>,
             show: false,
             permissions: ["VIEW_CLOSED_PERIOD"], //TODO
+            collapsible: false
+        },
+        SYSTEM_USER_GROUP: {
+            id: 'SYSTEM_USER_GROUP',
+            name: 'უფლებათა ჯგუფები',
+            component: <SystemUserGroupDashBoard/>,
+            icon: <TimeIcon/>,
+            show: false,
+            permissions: ["VIEW_SYSTEM_USER_GROUP"], //TODO
             collapsible: false
         },
     }), [user]);

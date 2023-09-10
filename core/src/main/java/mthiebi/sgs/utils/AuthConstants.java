@@ -15,4 +15,5 @@ public class AuthConstants {
     public static final String VIEW_CHANGE_REQUESTS = "VIEW_CHANGE_REQUESTS";
     public static final String MANAGE_CLOSED_PERIOD = "MANAGE_CLOSED_PERIOD";
     public static final String VIEW_CLOSED_PERIOD = "VIEW_CLOSED_PERIOD";
+    public static final String VIEW_SYSTEM_USER_GROUP = "VIEW_SYSTEM_USER_GROUP";
 }

@@ -17,12 +17,17 @@ public class SystemGroupServiceImpl implements SystemGroupService {
     private SystemGroupRepository systemGroupRepository;
 
     @Override
-    public List<SystemUserGroup> getAll(){
+    public List<SystemUserGroup> getAll() {
         return systemGroupRepository.findAll();
     }
 
     @Override
-    public SystemUserGroup getById(Long id){
+    public List<SystemUserGroup> getByNameAndPermission(String name, String permission) {
+        return systemGroupRepository.findByNameAndPermission(name, permission);
+    }
+
+    @Override
+    public SystemUserGroup getById(Long id) {
         return systemGroupRepository.findById(id).orElseThrow();
     }
 
