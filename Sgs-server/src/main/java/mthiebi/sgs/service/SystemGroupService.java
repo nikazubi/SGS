@@ -4,11 +4,12 @@ import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.SystemUserGroup;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface SystemGroupService {
 
     List<SystemUserGroup> getAll();
+
+    List<SystemUserGroup> getByNameAndPermission(String name, String permission);
 
     SystemUserGroup getById(Long id);
 
