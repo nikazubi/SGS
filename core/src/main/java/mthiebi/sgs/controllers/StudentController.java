@@ -64,6 +64,14 @@ public class StudentController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/get-students-by-name-without-validation")
+    @Secured({AuthConstants.VIEW_STUDENT})
+    public List<StudentDTO> getStudents(@RequestParam String queryKey) throws Exception {
+        return studentService.findByNameAndSurname(queryKey).stream()
+                .map(student -> studentMapper.studentDTO(student))
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/get-student/{id}")
     @Secured({AuthConstants.VIEW_STUDENT})
     public StudentDTO getStudents(@PathVariable Long id) throws SGSException {
@@ -72,7 +80,7 @@ public class StudentController {
 
     @DeleteMapping("/delete-students/{id}")
     @Secured({AuthConstants.MANAGE_STUDENT})
-    public void deleteStudent(@PathVariable Long id){
+    public void deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
     }
 }

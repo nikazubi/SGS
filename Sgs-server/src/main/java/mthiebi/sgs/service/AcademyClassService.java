@@ -1,13 +1,13 @@
 package mthiebi.sgs.service;
 
-import java.util.List;
-
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.AcademyClass;
 
+import java.util.List;
+
 public interface AcademyClassService {
 
-    AcademyClass createAcademyClass(AcademyClass academyClass);
+    AcademyClass createAcademyClass(AcademyClass academyClass, String username) throws SGSException;
 
     AcademyClass updateAcademyClass(AcademyClass academyClass) throws SGSException;
 

@@ -22,6 +22,8 @@ public interface StudentService {
 
     List<Student> findByNameAndSurname(String username, String queryKey) throws SGSException;
 
+    List<Student> findByNameAndSurname(String queryKey) throws SGSException;
+
     Student findStudentById(Long studentId) throws SGSException;
 
 }

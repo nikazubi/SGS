@@ -1,8 +1,5 @@
 import React, {createContext, useContext, useState} from "react";
-import {deleteAuth, setAuth} from "../utils/auth";
-import {useLoggedInUser} from "../hooks/useLoggedInUser";
-import ErrorPage from "../components/ErrorPage";
-import Progress from "../components/Progress";
+import {deleteAuth} from "../utils/auth";
 import useAxios from "../hooks/useAxios";
 
 const UserContext = createContext(null);
@@ -76,10 +73,12 @@ export const UserContextProvider = props => {
           user: user,
           login: () => login(),
           logout: () => logout(),
-         hasPermission: (permission) => true,
-         userUpdated: () => {},
-         userGroupUpdated: () => {},
-         loggedIn: loggedIn
+          hasPermission: (permission) => hasPermission(permission),
+          userUpdated: () => {
+          },
+          userGroupUpdated: () => {
+          },
+          loggedIn: loggedIn
       }} {...props}/>;
 
 };

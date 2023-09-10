@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.security.MessageDigest;
 import java.util.List;
 
 @Service
@@ -74,6 +73,11 @@ public class StudentServiceImpl implements StudentService {
         }
         List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
         return studentRepository.findByNameAndSurname(academyClassList, queryKey);
+    }
+
+    @Override
+    public List<Student> findByNameAndSurname(String queryKey) throws SGSException {
+        return studentRepository.findByNameAndSurname(queryKey);
     }
 
     @Override

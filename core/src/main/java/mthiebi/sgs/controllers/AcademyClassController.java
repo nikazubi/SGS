@@ -1,7 +1,10 @@
 package mthiebi.sgs.controllers;
 
 import mthiebi.sgs.SGSException;
-import mthiebi.sgs.dto.*;
+import mthiebi.sgs.dto.AcademyClassDTO;
+import mthiebi.sgs.dto.AcademyClassMapper;
+import mthiebi.sgs.dto.StudentListDTO;
+import mthiebi.sgs.dto.SubjectListDTO;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.utils.AuthConstants;
@@ -28,8 +31,10 @@ public class AcademyClassController {
 
     @PostMapping("/create-academy-class")
     @Secured({AuthConstants.MANAGE_ACADEMY_CLASS})
-    public AcademyClassDTO createAcademyClass(@RequestBody AcademyClassDTO academyClassDTO){
-        AcademyClass academyClass = academyClassService.createAcademyClass(academyClassMapper.academyClass(academyClassDTO));
+    public AcademyClassDTO createAcademyClass(@RequestHeader("authorization") String authHeader, @RequestBody AcademyClassDTO academyClassDTO) throws Exception {
+        String username = utilsJwt.getUsernameFromHeader(authHeader);
+
+        AcademyClass academyClass = academyClassService.createAcademyClass(academyClassMapper.academyClass(academyClassDTO), username);
         return academyClassMapper.academyClassDTO(academyClass);
     }
 

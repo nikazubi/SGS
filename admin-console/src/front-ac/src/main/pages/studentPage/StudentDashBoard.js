@@ -1,15 +1,16 @@
 import {useState} from "react";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import DataGridSGS from "../../components/grid/DataGrid";
-import useStudents, {fetchStudents} from "./useStudents";
+import {fetchStudents} from "./useStudents";
 import StudentTableToolbar from "./StudentTableToolbar";
 import DeleteSubject from "./DeleteStudent";
 import EditStudent from "./EditStudent";
+import useFetchStudentsWithoutValidation from "../../../hooks/useStudentWithoutValidation";
 
 const StudentDashBoard = () => {
     const [filters, setFilters] = useState({});
 
-    const {data, isLoading, isError, error} = useStudents(filters);
+    const {data, isLoading, isError, error} = useFetchStudentsWithoutValidation(filters);
 
     const columns = [
         {

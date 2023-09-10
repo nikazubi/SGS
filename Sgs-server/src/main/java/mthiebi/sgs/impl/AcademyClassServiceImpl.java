@@ -14,9 +14,11 @@ import mthiebi.sgs.repository.SystemUserRepository;
 import mthiebi.sgs.service.AcademyClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AcademyClassServiceImpl implements AcademyClassService {
@@ -34,8 +36,25 @@ public class AcademyClassServiceImpl implements AcademyClassService {
     private SystemUserRepository systemUserRepository;
 
     @Override
-    public AcademyClass createAcademyClass(AcademyClass academyClass) {
-        return academyClassRepository.save(academyClass);
+    @Transactional
+    public AcademyClass createAcademyClass(AcademyClass academyClass, String username) throws SGSException {
+        List<Student> students = studentRepository.findByIds(academyClass.getStudentList().stream().map(Student::getId).collect(Collectors.toList()));
+        List<Subject> subjects = subjectRepository.findByIds(academyClass.getSubjectList().stream().map(Subject::getId).collect(Collectors.toList()));
+        academyClass.setSubjectList(subjects);
+        academyClass.setStudentList(students);
+
+        AcademyClass result = academyClassRepository.save(academyClass);
+
+        SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
+        if (systemUser == null) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_NOT_FOUND);
+        }
+        List<AcademyClass> systemUserAcademyClasses = systemUser.getAcademyClassList();
+        systemUserAcademyClasses.add(result);
+        systemUser.setAcademyClassList(systemUserAcademyClasses);
+        systemUserRepository.save(systemUser);
+
+        return result;
         // todo validations - exceptions
     }
 
@@ -46,6 +65,7 @@ public class AcademyClassServiceImpl implements AcademyClassService {
         oldAcademyClass.setClassLevel(academyClass.getClassLevel());
         oldAcademyClass.setClassName(academyClass.getClassName());
         oldAcademyClass.setStudentList(academyClass.getStudentList());
+        oldAcademyClass.setSubjectList(academyClass.getSubjectList());
         academyClassRepository.save(oldAcademyClass);
         return oldAcademyClass;
     }

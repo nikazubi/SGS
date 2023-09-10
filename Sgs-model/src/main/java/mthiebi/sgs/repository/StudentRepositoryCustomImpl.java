@@ -61,6 +61,18 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     }
 
     @Override
+    public List<Student> findByNameAndSurname(String queryKey) {
+
+        BooleanExpression likeNameAndSurname = qStudent.firstName.concat(" " + qStudent.lastName)
+                .likeIgnoreCase(Expressions.asString("%") + queryKey + Expressions.asString("%"));
+
+        return qf.selectFrom(qStudent)
+                .where(likeNameAndSurname)
+                .orderBy(qStudent.createTime.desc())
+                .fetch();
+    }
+
+    @Override
     public List<Student> findAllByAcademyClass(long academyClassId) {
         return qf.select(qStudent)
                 .from(qStudent)
@@ -77,5 +89,13 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .where(qStudent.username.eq(username))
                 .where(qStudent.password.eq(password))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Student> findByIds(List<Long> ids) {
+        return qf.select(qStudent)
+                .from(qStudent)
+                .where(QueryUtils.longIn(qStudent.id, ids))
+                .fetch();
     }
 }

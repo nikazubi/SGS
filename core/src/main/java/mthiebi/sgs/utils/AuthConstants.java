@@ -4,7 +4,7 @@ public class AuthConstants {
     public static final String MANAGE_STUDENT = "MANAGE_STUDENT";
     public static final String VIEW_STUDENT = "VIEW_STUDENT";
     public static final String MANAGE_ACADEMY_CLASS = "MANAGE_ACADEMY_CLASS";
-    public static final String VIEW_ACADEMY_CLASS = "MANAGE_ACADEMY_CLASS";
+    public static final String VIEW_ACADEMY_CLASS = "VIEW_ACADEMY_CLASS";
     public static final String MANAGE_SUBJECT = "MANAGE_SUBJECT";
     public static final String VIEW_SUBJECT = "VIEW_SUBJECT";
     public static final String ADD_GRADES = "ADD_GRADES";

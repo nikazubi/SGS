@@ -515,7 +515,7 @@ const DashBoard = () => {
                 }
                 return summary2[0].value;
             },
-            field: 'TRANSIT_SCHOOL_WORK_1',
+            field: 'GENERAL_SCHOOL_WORK_1',
             sortable: false,
             align: 'center',
             headerAlign: 'center',
@@ -533,7 +533,7 @@ const DashBoard = () => {
                 }
                 return summary2[0].value;
             },
-            field: 'TRANSIT_SCHOOL_WORK_2',
+            field: 'GENERAL_SCHOOL_WORK_2',
             sortable: false,
             align: 'center',
             headerAlign: 'center',
@@ -551,7 +551,7 @@ const DashBoard = () => {
                 }
                 return summary2[0].value;
             },
-            field: 'TRANSIT_SCHOOL_WORK_3',
+            field: 'GENERAL_SCHOOL_WORK_3',
             sortable: false,
             align: 'center',
             headerAlign: 'center',
@@ -569,7 +569,7 @@ const DashBoard = () => {
                 }
                 return summary2[0].value;
             },
-            field: 'TRANSIT_SCHOOL_WORK_4',
+            field: 'GENERAL_SCHOOL_WORK_4',
             sortable: false,
             align: 'center',
             headerAlign: 'center',
@@ -587,7 +587,61 @@ const DashBoard = () => {
                 }
                 return summary2[0].value;
             },
-            field: 'TRANSIT_SCHOOL_WORK_5',
+            field: 'GENERAL_SCHOOL_WORK_5',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "6",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_6");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_6',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "7",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_7");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_7',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 78,
+            maxWidth: 78,
+        },
+        {
+            headerName: "8",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_8");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'GENERAL_SCHOOL_WORK_8',
             sortable: false,
             align: 'center',
             headerAlign: 'center',

@@ -68,66 +68,66 @@ const useNavigationData = () => {
       collapsible: false
     },
     MONTHLY_GRADE: {
-      id: 'MONTHLY_GRADE',
-      name: 'თვის შემაჯამებელი ნიშნები',
-      component: <MonthlyGradeDashBoard/>,
-      icon: <Today/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
+        id: 'MONTHLY_GRADE',
+        name: 'თვის შემაჯამებელი ნიშნები',
+        component: <MonthlyGradeDashBoard/>,
+        icon: <Today/>,
+        show: false,
+        permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+        collapsible: false
     },
     SEMESTER_GRADE: {
-      id: 'SEMESTER_GRADE',
-      name: 'სემესტრის ნიშნები',
-      component: <SemesterGradeDashBoard/>,
-      icon: <EventNote/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
+        id: 'SEMESTER_GRADE',
+        name: 'სემესტრის ნიშნები',
+        component: <SemesterGradeDashBoard/>,
+        icon: <EventNote/>,
+        show: false,
+        permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+        collapsible: false
     },
     ANNUAL_GRADE: {
-      id: 'ANNUAL_GRADE',
-      name: 'წლიური ნიშნები',
-      component: <AnualGradeDashBoard/>,
-      icon: <EventAvailable/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
+        id: 'ANNUAL_GRADE',
+        name: 'წლიური ნიშნები',
+        component: <AnualGradeDashBoard/>,
+        icon: <EventAvailable/>,
+        show: false,
+        permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+        collapsible: false
     },
     TOTAL_ABSENCE: {
-      id: 'TOTAL_ABSENCE',
-      name: 'ჯამური გაცდენები',
-      component: <TotalAbsenceDashBoard/>,
-      icon: <AssignmentLate/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
+        id: 'TOTAL_ABSENCE',
+        name: 'ჯამური გაცდენები',
+        component: <TotalAbsenceDashBoard/>,
+        icon: <AssignmentLate/>,
+        show: false,
+        permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+        collapsible: false
     },
     SYSTEM_USER: {
-      id: 'SYSTEM_USER',
-      name: 'სისტემური მომხმარებელი',
-      component: <SystemUserDashBoard/>,
-      icon: <Person/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
+        id: 'SYSTEM_USER',
+        name: 'სისტემური მომხმარებელი',
+        component: <SystemUserDashBoard/>,
+        icon: <Person/>,
+        show: false,
+        permissions: ["MANAGE_SYSTEM_USER"], //TODO
+        collapsible: false
     },
     SUBJECTS: {
-      id: 'SUBJECTS',
-      name: 'საგანები',
-      component: <SubjectDashBoard/>,
-      icon: <MenuBook/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
-      collapsible: false
+        id: 'SUBJECTS',
+        name: 'საგანები',
+        component: <SubjectDashBoard/>,
+        icon: <MenuBook/>,
+        show: false,
+        permissions: ["MANAGE_SUBJECT", "VIEW_SUBJECT"], //TODO
+        collapsible: false
     },
     STUDENTS: {
-      id: 'STUDENTS',
-      name: 'მოსწავლეები',
-      component: <StudentDashBoard/>,
-      icon: <SwitchAccount/>,
-      show: false,
-      permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
+        id: 'STUDENTS',
+        name: 'მოსწავლეები',
+        component: <StudentDashBoard/>,
+        icon: <SwitchAccount/>,
+        show: false,
+        permissions: ["VIEW_STUDENT", "MANAGE_STUDENT"], //TODO
         collapsible: false
     },
         ACADEMY_CLASS: {
@@ -136,7 +136,7 @@ const useNavigationData = () => {
             component: <AcademyClassDashBoard/>,
             icon: <Class/>,
             show: false,
-            permissions: ["MANAGE_CHANGE_REQUESTS"], //TODO
+            permissions: ["MANAGE_ACADEMY_CLASS", "VIEW_ACADEMY_CLASS"], //TODO
             collapsible: false
         },
         CLOSE_PERIOD: {
@@ -145,7 +145,7 @@ const useNavigationData = () => {
             component: <ClosePeriodDashBoard/>,
             icon: <TimeIcon/>,
             show: false,
-            permissions: ["VIEW_CLOSED_PERIOD"], //TODO
+            permissions: ["VIEW_CLOSED_PERIOD", "MANAGE_CLOSED_PERIOD"], //TODO
             collapsible: false
         },
         SYSTEM_USER_GROUP: {
@@ -175,6 +175,7 @@ const useNavigationData = () => {
 
     const hasAnyPermission = (page, hasPermission) => {
       const requiredPermissions = page.permissions;
+        console.log(requiredPermissions)
 
       if (!requiredPermissions) {
         return true;

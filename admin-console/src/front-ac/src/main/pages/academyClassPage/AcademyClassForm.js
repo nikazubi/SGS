@@ -4,13 +4,13 @@ import FlexBox from "../../../components/FlexBox";
 import FormikTextField from "../../components/formik/FormikTextField";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
 import useSubjects from "../../../hooks/useSubjects";
-import useFetchStudents from "../../../hooks/useStudents";
 import {useFormikContext} from "formik";
 import Switch from "@mui/material/Switch";
+import useFetchStudentsWithoutValidation from "../../../hooks/useStudentWithoutValidation";
 
 const AcademyClassForm = ({modalOpenMode}) => {
     const {mutateAsync: onFetchSubjects} = useSubjects();
-    const {mutateAsync: onFetchStudents} = useFetchStudents();
+    const {mutateAsync: onFetchStudents} = useFetchStudentsWithoutValidation();
     const {setFieldValue, values} = useFormikContext();
     const [checked, setChecked] = useState(values.isTransit);
 
@@ -29,7 +29,7 @@ const AcademyClassForm = ({modalOpenMode}) => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
-                                    <FormikAutocomplete name="subject"
+                                    <FormikAutocomplete name="subjectList"
                                                         multiple={true}
                                                         label={"საგანი"}
                                                         onFetch={onFetchSubjects}
@@ -39,7 +39,7 @@ const AcademyClassForm = ({modalOpenMode}) => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
-                                    <FormikAutocomplete name="student"
+                                    <FormikAutocomplete name="studentList"
                                                         multiple={true}
                                                         label={"მოსწავლე"}
                                                         onFetch={onFetchStudents}

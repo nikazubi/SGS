@@ -1,8 +1,6 @@
 package mthiebi.sgs.repository;
 
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.QAcademyClass;
@@ -18,14 +16,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public interface SubjectRepository extends JpaRepository<Subject, Long>, QuerydslPredicateExecutor<Subject> {
+public interface SubjectRepository extends JpaRepository<Subject, Long>, SubjectRepositoryCustom, QuerydslPredicateExecutor<Subject> {
 
     default List<Subject> findAllSubject(int limit,
                                          int page,
                                          Long id,
                                          String name,
                                          List<AcademyClass> academyClassList,
-                                         EntityManager em){
+                                         EntityManager em) {
 
         QSubject qSubject = QSubject.subject;
         QAcademyClass qAcademyClass = QAcademyClass.academyClass;
