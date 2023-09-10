@@ -11,5 +11,4 @@ public interface AcademyClassMapper {
     AcademyClassDTO academyClassDTO(AcademyClass academyClass);
 
     AcademyClass academyClass(AcademyClassDTO academyClassDTO);
-
 }
