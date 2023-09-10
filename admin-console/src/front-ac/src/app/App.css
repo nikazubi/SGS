@@ -196,6 +196,11 @@ body {
     flex-direction: column !important;
 }
 
+.HeaderTabNav .MuiTabs-flexContainer.css-k008qs {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
 .HeaderTabNav .MuiBox-root-19{
     height: fit-content !important;
 }

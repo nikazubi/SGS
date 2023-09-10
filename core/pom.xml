@@ -6,6 +6,7 @@
         <artifactId>SGS</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+    <packaging>war</packaging>
     <artifactId>core</artifactId>
     <name>Sgs-core</name>
     <url>http://maven.apache.org</url>

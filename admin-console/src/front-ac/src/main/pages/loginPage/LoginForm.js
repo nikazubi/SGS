@@ -45,7 +45,7 @@ const LoginPage = () => {
         // e.preventDefault();
         // Handle login logic here
 
-        await axios.post("http://localhost:8080/authenticate", {
+        await axios.post("authenticate", {
             username: email,
             password: password
         }).then(async (response) => {

@@ -2,7 +2,8 @@ import axios from 'axios';
 import { deleteAuth, getAccessToken, getRefreshToken, setAuth } from "./auth";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
+    baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
+  // baseURL: 'http://195.69.143.211:8080/sgs-core',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
   }
