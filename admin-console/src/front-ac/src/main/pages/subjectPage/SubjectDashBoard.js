@@ -34,6 +34,16 @@ const SubjectDashBoard = () => {
             headerAlign: 'center'
         },
         {
+            headerName: "მასწავლებელი",
+            renderCell: ({row}) => {
+                return row.teacher;
+            },
+            field: 'teacher',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
             field: 'actions',
             type: 'actions',
             width: 2 * 42 + 10,

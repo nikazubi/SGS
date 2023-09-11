@@ -19,7 +19,7 @@ const SubjectForm = ({modalOpenMode}) => {
                                         label={"საგნის სახელი"}
                                     />
                                     <FormikTextField
-                                        name={"name"}
+                                        name={"teacher"}
                                         // variant={"standard"}
                                         label={"მასწავლებლის სახელი და გვარი"}
                                     />

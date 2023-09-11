@@ -7,7 +7,7 @@ export const fetchAcademyClass = async config => {
     //     name: filters?.name,
     //     // activePeriod: Date.parse(filters?.date),
     // }
-    const {data} = await axios.get("academy-class/get-academy-classes", {params});
+    const {data} = await axios.get("academy-class/get-academy-class", {params});
     return data;
 }
 

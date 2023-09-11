@@ -76,8 +76,8 @@ public class AcademyClassServiceImpl implements AcademyClassService {
     }
 
     @Override
-    public List<AcademyClass> getAcademyClasses() {
-        return academyClassRepository.findAll();
+    public List<AcademyClass> getAcademyClasses(String queryKey) {
+        return academyClassRepository.getAcademyClasses(queryKey);
     }
 
     @Override

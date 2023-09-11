@@ -13,7 +13,7 @@ public interface AcademyClassService {
 
     void deleteAcademyClass(Long id);
 
-    List<AcademyClass> getAcademyClasses();
+    List<AcademyClass> getAcademyClasses(String queryKey);
 
     List<AcademyClass> getAcademyClasses(String username, String queryKey) throws SGSException;
 

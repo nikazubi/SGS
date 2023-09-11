@@ -47,8 +47,8 @@ public class AcademyClassController {
 
     @GetMapping("/get-academy-class")
     @Secured({AuthConstants.VIEW_ACADEMY_CLASS})
-    public List<AcademyClassDTO> getAcademyClasses(){
-        return academyClassService.getAcademyClasses().stream()
+    public List<AcademyClassDTO> getAcademyClasses(@RequestParam(required = false) String queryKey){
+        return academyClassService.getAcademyClasses(queryKey).stream()
                 .map(academyClass -> academyClassMapper.academyClassDTO(academyClass))
                 .collect(Collectors.toList());
     }

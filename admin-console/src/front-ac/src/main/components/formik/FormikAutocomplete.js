@@ -157,7 +157,7 @@ export const FormikAutocomplete = ({
           loading={loading}
           multiple={multiple}
           options={options}
-          value={value === '' ? [] : value}
+          value={value === '' ? multiple ? [] : null : value}
           // filterSelectedOptions
           getOptionSelected={getOptionSelected}
           getOptionLabel={getOptionLabel}

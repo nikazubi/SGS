@@ -47,8 +47,7 @@ public class SystemUserServiceImpl implements SystemUserService {
             SystemUser user = systemUserOptional.get();
             if (systemUser.getUsername().isEmpty() ||
                     systemUser.getName().isEmpty() ||
-                    systemUser.getEmail().isEmpty() ||
-                    systemUser.getGroups().size() < 1) {
+                    systemUser.getEmail().isEmpty() ) {
 
                 logger.info("Need to fill all fields");
                 throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_FIELDS_INVALID);

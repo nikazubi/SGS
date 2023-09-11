@@ -26,6 +26,7 @@ const TotalAbsenceFormForm = ({modalOpenMode}) => {
                                                         onFetch={onFetchAcademyClass}
                                                         getOptionSelected={(option, value) => option.id === value.id}
                                                         getOptionLabel={(option) => option.className}
+                                                        hideTagsOnOverflow={true}
                                                         />
                                 </Grid>
                                 <Grid item xs={8} sm={8}>

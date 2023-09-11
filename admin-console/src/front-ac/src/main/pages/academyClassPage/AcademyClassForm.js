@@ -3,13 +3,13 @@ import {Grid} from "@material-ui/core";
 import FlexBox from "../../../components/FlexBox";
 import FormikTextField from "../../components/formik/FormikTextField";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
-import useSubjects from "../../../hooks/useSubjects";
 import {useFormikContext} from "formik";
 import Switch from "@mui/material/Switch";
 import useFetchStudentsWithoutValidation from "../../../hooks/useStudentWithoutValidation";
+import useSubjectsForAcademyClass from "./useSubjectsForAcademyClass";
 
 const AcademyClassForm = ({modalOpenMode}) => {
-    const {mutateAsync: onFetchSubjects} = useSubjects();
+    const {mutateAsync: onFetchSubjects} = useSubjectsForAcademyClass();
     const {mutateAsync: onFetchStudents} = useFetchStudentsWithoutValidation();
     const {setFieldValue, values} = useFormikContext();
     const [checked, setChecked] = useState(values.isTransit);
@@ -35,6 +35,7 @@ const AcademyClassForm = ({modalOpenMode}) => {
                                                         onFetch={onFetchSubjects}
                                                         getOptionSelected={(option, value) => option.id === value.id}
                                                         getOptionLabel={(option) => option.name}
+                                                        hideTagsOnOverflow={true}
 
                                     />
                                 </Grid>
@@ -44,6 +45,7 @@ const AcademyClassForm = ({modalOpenMode}) => {
                                                         label={"მოსწავლე"}
                                                         onFetch={onFetchStudents}
                                                         getOptionSelected={(option, value) => option.id === value.id}
+                                                        hideTagsOnOverflow={true}
                                                         getOptionLabel={(option) => option.firstName + " " + option.lastName}
                                     />
                                 </Grid>

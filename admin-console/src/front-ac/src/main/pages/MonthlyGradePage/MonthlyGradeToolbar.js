@@ -61,7 +61,8 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.firstName + " " + option.lastName}
                                                 setInitialVulue={(options) =>{
-                                                    if(options.length === 1){
+                                                    console.log(options)
+                                                    if(options.length === 1 && options[0] !== 'undefined undefined'){
                                                         return options[0]
                                                     }
                                                 }}/>

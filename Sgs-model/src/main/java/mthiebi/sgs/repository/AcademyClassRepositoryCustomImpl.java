@@ -28,6 +28,15 @@ public class AcademyClassRepositoryCustomImpl implements mthiebi.sgs.repository.
     }
 
     @Override
+    public List<AcademyClass> getAcademyClasses(String queryKey) {
+        BooleanExpression likeName = mthiebi.sgs.repository.QueryUtils.stringLike(qAcademyClass.className, queryKey);
+        return qf.selectFrom(qAcademyClass)
+                .where(likeName)
+                .orderBy(qAcademyClass.createTime.desc())
+                .fetch();
+    }
+
+    @Override
     public Optional<AcademyClass> getAcademyClassByStudent(long studentId) {
         return Optional.ofNullable(qf.selectFrom(qAcademyClass)
                 .where(qAcademyClass.studentList.any().id.eq(studentId))
