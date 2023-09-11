@@ -825,7 +825,6 @@ const DashBoard = () => {
 
     const getGradeColumnModel = useCallback(() => {
         if (filters.academyClass && filters.academyClass.isTransit) {
-            console.log("isTransit")
             return columnGroupingModelTransit;
         } else {
             return columnGroupingModel;

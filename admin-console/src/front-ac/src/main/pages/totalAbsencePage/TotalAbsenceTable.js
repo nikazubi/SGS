@@ -12,7 +12,6 @@ const CustomTable = () => {
       }
 
     function handleBlur(event) {
-        console.log(event.target.value)
     }
 
     useEffect(()=>{

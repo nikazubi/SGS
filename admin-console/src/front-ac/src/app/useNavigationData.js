@@ -175,7 +175,6 @@ const useNavigationData = () => {
 
     const hasAnyPermission = (page, hasPermission) => {
       const requiredPermissions = page.permissions;
-        console.log(requiredPermissions)
 
       if (!requiredPermissions) {
         return true;

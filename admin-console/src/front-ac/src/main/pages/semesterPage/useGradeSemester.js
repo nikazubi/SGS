@@ -12,7 +12,6 @@ export const fetchGradesSemester = async (filters) => {
         component: filters.semesterN.value
     }
     const {data} = await axios.get("/grade/get-grades-by-semester", {params});
-    console.log("mamaaa", data)
     return data;
 }
 

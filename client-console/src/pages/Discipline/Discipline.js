@@ -30,11 +30,9 @@ const Discipline = ({ match }) => {
         // setWidth(window.innerWidth)
           
           // if(!!sidebarOpen){
-          //   console.log('a TEST123')
           //   asideRef.current.classList.add('open');
           // }
           // else{
-          //   console.log('b TEST123')
           //   asideRef.current.classList.remove('open');
           // }
           asideRef.current.classList.add('open')
@@ -43,7 +41,6 @@ const Discipline = ({ match }) => {
           // if(!!sidebarOpen){
           //   setSidebarOpen(!sidebarOpen);
           // }
-          console.log('backgroundRef.current', backgroundRef.current)
           // backgroundRef.current.classList.remove("open")
 
       };

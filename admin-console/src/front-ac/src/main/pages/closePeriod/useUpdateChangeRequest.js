@@ -5,7 +5,6 @@ export const changeRequestStatus = async (filters) => {
     // if (filters.academyClass.length === 0 || filters.subject.length ===0) {
     //     return [];
     // }
-    console.log(filters)
     const params = {
         changeRequestId: filters?.changeRequestId,
         changeRequestStatus: filters?.changeRequestStatus,

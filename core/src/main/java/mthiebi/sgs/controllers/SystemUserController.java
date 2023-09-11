@@ -78,15 +78,17 @@ public class SystemUserController {
     public ResponseEntity updateUser(@RequestBody SystemUserCreateDTO systemUserCreateDTO) {
         SystemUser systemUser = systemUserMapper.systemUser(systemUserCreateDTO.getSystemUserDTO());
         systemUser.setGroups(adjustSystemGroup(systemUserCreateDTO.getGroupIdList()));
+        systemUser.setAcademyClassList(adjustAcademyClassList(systemUserCreateDTO.getClassIdList()));
+
         log.info("Starting user update");
         try {
-            log.info("Required Changes=" + systemUser + " \nTo user: " + systemUserService.findById(systemUser.getId()));
+            log.info("Required Changes=" + systemUser + " \nTo user: " + systemUser.getUsername());
             SystemUser sysUser = systemUserService.updateUser(systemUser);
             log.info("User successfully changed");
             return ResponseEntity.ok(systemUserMapper.systemUserDTO(sysUser));
         } catch (Exception e) {
-            log.info("Error in updateUser controller");
-            log.info(e.getMessage());
+            log.error("Error in updateUser controller");
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -97,7 +99,7 @@ public class SystemUserController {
                                         @RequestParam(required = false) String name,
                                         @RequestParam(required = false) Boolean active){
         return systemUserService.filterUsers(username, name, active).stream()
-                .map(sys -> systemUserMapper.systemUserDTO(sys)).collect(Collectors.toList());
+                .map(sys -> systemUserMapper.systemUserDtoWithAcademyClasses(sys)).collect(Collectors.toList());
     }
 
     @DeleteMapping("/delete/{userId}")

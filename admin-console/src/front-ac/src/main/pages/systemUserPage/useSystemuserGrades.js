@@ -8,7 +8,6 @@ export const fetchSystemuser = async (filters) => {
         active: filters.active,
     }
     const {data} = await axios.get("system-user/filter", {params});
-    console.log("aaaaaaaaaaaaaaa", data);
     return data;
 }
 

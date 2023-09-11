@@ -31,8 +31,7 @@ const handleLineClick = (event, data) => {
     //API semestruli
 
     //ak aris axios requesti
-    console.log('Line clicked:', data);
-    
+
 };
 
 export default function Chart({id}) {

@@ -64,6 +64,7 @@ public class SystemUserServiceImpl implements SystemUserService {
                 user.setUsername(systemUser.getUsername());
                 user.setEmail(systemUser.getEmail());
                 user.setGroups(systemUser.getGroups());
+                user.setAcademyClassList(systemUser.getAcademyClassList());
                 return systemUserRepository.findById(systemUserOptional.get().getId()).orElseThrow();
             }
         } else {

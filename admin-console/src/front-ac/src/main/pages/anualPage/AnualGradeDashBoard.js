@@ -508,7 +508,6 @@ const AnualGradeDashBoard = () => {
                     maxWidth: 200,
                 }]
             })
-            console.log(gradeClomuns2)
             return gradeClomuns2
         }
         return gradeColumns

@@ -132,7 +132,6 @@ const SemesterGradeDashBoard = () => {
         }
 
 
-        console.log("before sort", monthFields);
         monthFields.sort((a, b) => {
             const [subjectA, monthA] = a.field.split('-');
 
@@ -143,7 +142,6 @@ const SemesterGradeDashBoard = () => {
                 return parseInt(monthA) - parseInt(monthB);
             }
         });
-        console.log("after sort", monthFields);
         return monthFields;
     }, [data, subjects, filters.semesterN?.value, checked]);
 
@@ -602,7 +600,6 @@ const SemesterGradeDashBoard = () => {
                 width: 200,
                 maxWidth: 200,
             }];
-            console.log("data[0].gradeList", data[0].gradeList)
             data[0].gradeList.forEach((o, index) => {
                 gradeClomuns2 = [...gradeClomuns2, {
                     groupId: o.subject.name,

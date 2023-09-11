@@ -126,7 +126,6 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                             //     severity: 'success'
                                             // });
                                         }).catch((error) => {
-                                            console.log(error)
                                             setErrorMessage(error);
                                             setNotification({
                                                 message: 'ნიშნის კალკულაცია ვერ მოხერხდა გთხოვთ შეავსოთ ყველა ნიშანი და სცადოთ მოგვიანებით',

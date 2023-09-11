@@ -14,7 +14,6 @@ const EditSystemUserGroup = ({data, disabled = false}) => {
         .map(val => {
             return {value: val, label: PERMISSIONS[val]}
         })
-    console.log(data)
     return (
         <>
             <IconButtonWithTooltip

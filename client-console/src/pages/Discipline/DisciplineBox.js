@@ -42,7 +42,6 @@ const DisciplineBox = () => {
                 return "orange"
         }
     }
-    console.log(allData, 'TEST123 ALL DATA')
     return (
         allData.map(m =>
             

@@ -4,12 +4,13 @@ import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithToo
 import {Edit} from "@material-ui/icons";
 import {ModalOpenMode} from "../../../utils/constants";
 import SystemUserModal from "./SystemuserFormModal";
+import useUpdateSystemUser from "./useUpdateSystemUser";
 
 
 const EditSystemUser = ({data, disabled = false}) => {
     const [open, setOpen] = useState(false);
+    const {mutate: onUpdate} = useUpdateSystemUser();
 
-    console.log("shexeeeee aqaaa", data)
     return (
         <>
             <IconButtonWithTooltip
@@ -22,6 +23,7 @@ const EditSystemUser = ({data, disabled = false}) => {
                 <SystemUserModal
                     data={data}
                     open={open}
+                    onUpdate={onUpdate}
                     onClose={() => setOpen(false)}
                     modalOpenMode={ModalOpenMode.edit}
                 />

@@ -20,7 +20,6 @@ const LoginPage = () => {
             const currentDate = new Date();
             const timeDifference = currentDate.getTime() - initialDate.getTime();
             const fiveHoursInMillis = 5 * 60 * 60 * 1000;
-            console.log(timeDifference)
             if (timeDifference >= fiveHoursInMillis) {
                 deleteAuth();
                 return;
@@ -49,7 +48,6 @@ const LoginPage = () => {
             username: email,
             password: password
         }).then(async (response) => {
-            console.log("in then")
             if (response?.data?.jwtToken) {
                 await setAuth(response?.data?.jwtToken);
                 await login()
@@ -63,9 +61,7 @@ const LoginPage = () => {
         })
 
         // then((response) => {
-        //     console.log("hoii")
         //     setLoggedIn(true);
-        //     console.log(response)
         //     setAuth(response.jwtToken)
         // }).catch(() => {
         //     setLoggedIn(false)

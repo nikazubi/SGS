@@ -3,7 +3,6 @@ import axios from "../../../utils/axios";
 
 
 export const createSystemUser = async totalAbsence => {
-    console.log("looook at hereeeeeeeeeeeeee", totalAbsence)
     const groupIdList = totalAbsence.systemGroup.map(o => o.id);
     const classIdList = totalAbsence.academyClasses.map(o => o.id);
     const {data} = await axios.post("system-user/add-User", {

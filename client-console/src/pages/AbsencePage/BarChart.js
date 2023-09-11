@@ -15,7 +15,6 @@ import {
 
 // Custom tick formatter function to display values as percentages
 // const formatPercentage = (value) => {
-//     console.log(value, 'TEST123 JIB')
 //   if (value === 3000) return "100%"; // Maximum value
 //   return `${((value / 3000) * 100).toFixed(1)}%`;
 // };
@@ -30,7 +29,6 @@ export default function CustomBar({color, attend, attendMax, layout, data}) {
     //   ];
 
     const formatPercentage = (value) => {
-        console.log(value, 'TEST123 JIB')
       if (value === attendMax) return "100%"; // Maximum value
       return `${((value / attendMax) * 100)}%`;
     };

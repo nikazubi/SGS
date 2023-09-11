@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 
 const SmallBox = ({testID, boxdetails, mark}) => {
-    console.log(boxdetails,'boxDetail')
-    
+
     const [studentResult, setStudentResult] = useState([])
     const [grade, setGrade] = useState(0)
     useEffect(()=>{

@@ -32,7 +32,6 @@ const DisciplineBox = () => {
 
 {/* id=1 means it's  შემაჯამებელი დავალება*/}
 
-    console.log(allData, 'TEST123 ALL DATA')
     // /min-width: 310px;
     //     height: 230px;
     //     border-radius: 0px 30px 30px 30px;
