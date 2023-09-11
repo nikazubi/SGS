@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import DataGridPaper from "../../components/grid/DataGridPaper";
 import DataGridSGS from "../../components/grid/DataGrid";
 import SystemUserTableToolbar from "./SystemUserTableToolbar";
@@ -56,10 +56,10 @@ const SystemUserDashBoard = () => {
         {
             field: 'actions',
             type: 'actions',
-            width: 42 + 10,
+            width: 70 + 10,
             getActions: ({row}) => [
-                 <EditSystemUser data={row}/>,
-                 <DeleteTotalSystemUser data={row} />,
+                <EditSystemUser data={row}/>,
+                <DeleteTotalSystemUser data={row}/>,
             ],
         },
     ]
