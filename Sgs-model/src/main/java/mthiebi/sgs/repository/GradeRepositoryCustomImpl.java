@@ -1,7 +1,6 @@
 package mthiebi.sgs.repository;
 
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.DatePath;
 import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.models.*;
@@ -89,10 +88,22 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         countOfSchoolWork++;
                     }
                 }
-                BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum))? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+                BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
                 BigDecimal averageOfSchoolWork = countOfSchoolWork == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(sumOfSchoolWork).divide(BigDecimal.valueOf(countOfSchoolWork), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, average);
                 gradeByMonth.put(-2, averageOfSchoolWork);
+                //TODO OOOO!!!!
+                List<Grade> diagnostics = qf.selectFrom(qGrade)
+                        .where(dateYearPredicate)
+                        .where(dateMonthPredicate)
+                        .where(academyClassIdPredicate)
+                        .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1).or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2)))
+                        .orderBy(qGrade.createTime.desc())
+                        .fetch();
+                List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
+                List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
+                gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
+                gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
                 bySubject.put(subject, gradeByMonth);
             }
             result.put(student, bySubject);

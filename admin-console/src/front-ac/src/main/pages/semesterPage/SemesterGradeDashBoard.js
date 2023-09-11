@@ -6,12 +6,14 @@ import "./header.css"
 import useGradeSemester from "./useGradeSemester";
 import {getFiltersOfPage} from "../../../utils/filters";
 import {fetchSubjects} from "../../../hooks/useSubjects";
+import useUpdateGrade from "../HomePage/useUpdateGrade";
 
 const SemesterGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("SEMESTER_GRADE")});
     const [subjects, setSubjects] = useState([]);
     const [checked, setChecked] = useState(false);
     const {data, isLoading, isError, error, isSuccess} = useGradeSemester(filters);
+    const {mutateAsync: mutateRow} = useUpdateGrade();
 
     useEffect(() => {
         const getSubjects = async () => {
@@ -93,6 +95,46 @@ const SemesterGradeDashBoard = () => {
         }
 
         for (const subject of subjects) {
+            if (filters.semesterN?.value === 'firstSemester') {
+                monthFields.push({
+                    headerName: 'დიაგნოსტიკური 1',
+                    description: '',
+                    renderCell: ({row}) => {
+                        const transformedArray = row.gradeList.map(item => ({
+                            subjectName: item.subject.name,
+                            value: item.value
+                        }));
+                        const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-3];
+
+                        return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+                    },
+                    field: subject.name + "--3",
+                    sortable: false,
+                    align: 'center',
+                    editable: true,
+                    headerAlign: 'center'
+                });
+                monthFields.push({
+                    headerName: 'დიაგნოსტიკური 2',
+                    description: '',
+                    renderCell: ({row}) => {
+                        const transformedArray = row.gradeList.map(item => ({
+                            subjectName: item.subject.name,
+                            value: item.value
+                        }));
+                        const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-4];
+
+                        return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+                    },
+                    field: subject.name + "--4",
+                    sortable: false,
+                    editable: true,
+                    align: 'center',
+                    headerAlign: 'center'
+                });
+            }
             monthFields.push({
                 headerName: 'სემესტრული',
                 description: '',
@@ -638,6 +680,11 @@ const SemesterGradeDashBoard = () => {
 
     let columnGroupingModel = [];
 
+    const processRowUpdate = useCallback(
+        async (newRow) => {
+            console.log(newRow)
+        }, [mutateRow, filters]
+    );
 
     return (
         <div className={"semesterGradeCnt"}>
@@ -660,6 +707,7 @@ const SemesterGradeDashBoard = () => {
                         getRowId={(row) => {
                             return row.student.id;
                         }}
+                        processRowUpdate={processRowUpdate}
                         headerHeight={400}
                         getRowHeight={() => 50}
                         disableColumnMenu
