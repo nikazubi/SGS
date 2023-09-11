@@ -66,7 +66,7 @@ public class StudentController {
 
     @GetMapping("/get-students-by-name-without-validation")
     @Secured({AuthConstants.VIEW_STUDENT})
-    public List<StudentDTO> getStudents(@RequestParam String queryKey) throws Exception {
+    public List<StudentDTO> getStudents(@RequestParam(required = false) String queryKey) throws Exception {
         return studentService.findByNameAndSurname(queryKey).stream()
                 .map(student -> studentMapper.studentDTO(student))
                 .collect(Collectors.toList());

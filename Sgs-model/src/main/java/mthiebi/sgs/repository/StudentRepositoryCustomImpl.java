@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static mthiebi.sgs.repository.QueryUtils.True;
+
 @Repository
 public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
 
@@ -65,6 +67,10 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
 
         BooleanExpression likeNameAndSurname = qStudent.firstName.concat(" " + qStudent.lastName)
                 .likeIgnoreCase(Expressions.asString("%") + queryKey + Expressions.asString("%"));
+
+        if (queryKey == null) {
+            likeNameAndSurname = True();
+        }
 
         return qf.selectFrom(qStudent)
                 .where(likeNameAndSurname)

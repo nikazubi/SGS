@@ -5,12 +5,12 @@ import FormikTextField from "../../components/formik/FormikTextField";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
 import {useFormikContext} from "formik";
 import Switch from "@mui/material/Switch";
-import useFetchStudentsWithoutValidation from "../../../hooks/useStudentWithoutValidation";
 import useSubjectsForAcademyClass from "./useSubjectsForAcademyClass";
+import useFetchStudentsQuerykey from "../../../hooks/useStudentsWithQuerykey";
 
 const AcademyClassForm = ({modalOpenMode}) => {
     const {mutateAsync: onFetchSubjects} = useSubjectsForAcademyClass();
-    const {mutateAsync: onFetchStudents} = useFetchStudentsWithoutValidation();
+    const {mutateAsync: onFetchStudents} = useFetchStudentsQuerykey();
     const {setFieldValue, values} = useFormikContext();
     const [checked, setChecked] = useState(values.isTransit);
 
