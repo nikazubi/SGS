@@ -310,8 +310,13 @@ const MonthlyGradeDashBoard = () => {
                 gradeClomuns2 = [ ...gradeClomuns2, {
                     headerName: o.subject.name,
                     renderCell: ({row}) => {
-                        return ( <div>
-                            {row.gradeList[index]?.value === 0 ? '' : row.gradeList[index].value}
+                        if (row.student.id === -6) {
+                            return (<div>
+                                {!row.gradeList[index] || !row.gradeList[index].subject ? '' : row.gradeList[index].subject.teacher}
+                            </div>)
+                        }
+                        return (<div>
+                            {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : row.gradeList[index].value}
                         </div>);
                     },
                     field: '' + o.subject.name,

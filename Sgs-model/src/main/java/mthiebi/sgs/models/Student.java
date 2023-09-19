@@ -1,5 +1,9 @@
 package mthiebi.sgs.models;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,6 +11,9 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity(name = "STUDENTS")
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Student extends Audit{
 
     @Id

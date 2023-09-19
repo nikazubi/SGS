@@ -259,10 +259,13 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                         !grade.getGradeType().name().contains("MONTHLY") && !grade.getGradeType().name().contains("PERCENT"))
                 .collect(Collectors.toList());
         BigDecimal sum = eligibleGrades.stream().map(Grade::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP);
+        return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP);
     }
 
-    private Grade saveGrade(Subject subject, AcademyClass academyClass, Student student, BigDecimal value, GradeType gradeType, Date exactMonth) {
+    private void saveGrade(Subject subject, AcademyClass academyClass, Student student, BigDecimal value, GradeType gradeType, Date exactMonth) {
+        if (value.equals(BigDecimal.ZERO)) {
+            return;
+        }
         Grade grade = Grade.builder()
                 .gradeType(gradeType)
                 .subject(subject)
@@ -271,6 +274,6 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 .value(value)
                 .exactMonth(exactMonth)
                 .build();
-        return gradeRepository.save(grade);
+        gradeRepository.save(grade);
     }
 }
