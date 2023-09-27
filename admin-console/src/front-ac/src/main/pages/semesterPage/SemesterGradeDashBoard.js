@@ -662,7 +662,9 @@ const SemesterGradeDashBoard = () => {
                         {field: getFieldName(o, "7")},
                         {field: getFieldName(o, "8")},
                         {field: getFieldName(o, "-1")},
-                        {field: getFieldName(o, "-2")}
+                        {field: getFieldName(o, "-2")},
+                        {field: getFieldName(o, "-3")},
+                        {field: getFieldName(o, "-4")},
                     ],
                     sortable: false,
                     align: 'center',

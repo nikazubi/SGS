@@ -107,20 +107,34 @@ const SemestruliShefaseba = () => {
     
         return ( 
             <>
-            <div className="ib__center column">
-                <div className="pageName">მოსწავლის სემესტრული შეფასება</div>
-                <div style={{display:'flex', alignItems:'center', marginTop:'25px'}}>
-                {dropdown()}
-                    <div style={{marginLeft:'10px'}}>
-                        <Button onClick={handleSearch} disabled={!selectedData} style={{ fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
+                <div className="ib__center column">
+                    <div className="pageName">მოსწავლის სემესტრული შეფასება</div>
+                    <div style={{display: 'flex', alignItems: 'center', marginTop: '25px'}}>
+                        {dropdown()}
+                        <div style={{marginLeft: '10px'}}>
+                            <Button onClick={handleSearch} disabled={!selectedData}
+                                    style={{fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {!!currentData.length && <div className="absenceMain shefaseba term horizontal">
-                <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">I სემესტრი
-                </div>
-                <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
-            </div>}
+                {/*<div>*/}
+                {/*    <DataGrid*/}
+                {/*        columns={[{ field: 'username' }, { field: 'age' }]}*/}
+                {/*        rows={[*/}
+                {/*            {*/}
+                {/*                id: 1,*/}
+                {/*                username: '@MUI',*/}
+                {/*                age: 20,*/}
+                {/*            },*/}
+                {/*        ]}*/}
+                {/*        sx={DataGridStyles()}*/}
+                {/*    />*/}
+                {/*</div>*/}
+                {!!currentData.length && <div className="absenceMain shefaseba term horizontal">
+                    <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">I სემესტრი
+                    </div>
+                    <CustomShefasebaBar color={'#45c1a4'} data={currentData}/>
+                </div>}
 
                 {!!currentDataTerm2.length && <div className="absenceMain shefaseba term horizontal">
                     <div style={{fontWeight: 'unset', marginBottom: 10, marginTop: -25}} className="pageName">II

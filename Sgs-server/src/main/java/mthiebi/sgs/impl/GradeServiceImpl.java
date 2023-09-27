@@ -141,6 +141,7 @@ public class GradeServiceImpl implements GradeService {
         Integer minYear = gradeRepository.getMinYear();
         Integer maxYear = gradeRepository.getMaxYear();
         List<String> result = new ArrayList<>();
+        if (Objects.equals(minYear, maxYear)) return List.of(minYear + "-" + (minYear + 1));
         for (; minYear < maxYear; minYear++) {
             result.add(String.valueOf(minYear) + "-" + String.valueOf(minYear + 1));
         }

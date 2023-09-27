@@ -165,10 +165,10 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     public Grade findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, Date exactMonth) {
         return qf.select(qGrade)
                 .from(qGrade)
-                .where(qGrade.academyClass.id.eq(academyClassId)
-                        .and(qGrade.student.id.eq(studentId))
+                .where(QueryUtils.longEq(qGrade.academyClass.id, academyClassId)
+                        .and(QueryUtils.longEq(qGrade.student.id, studentId))
                         .and(qGrade.gradeType.eq(gradeType))
-                        .and(qGrade.subject.id.eq(subjectId)
+                        .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
                                 .and(qGrade.exactMonth.month().eq(exactMonth.getMonth() + 1))))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetchFirst();
