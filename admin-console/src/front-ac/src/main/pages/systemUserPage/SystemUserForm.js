@@ -1,15 +1,19 @@
-import React from "react";
-import { Grid } from "@material-ui/core";
+import React, {useState} from "react";
+import {Grid} from "@material-ui/core";
 import FlexBox from "../../../components/FlexBox";
 import FormikTextField from "../../components/formik/FormikTextField";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
 import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useSystemGroup from "./useSystemGroup";
+import {Tooltip} from "@mui/material";
+import MTIconButton from "@material-ui/core/IconButton";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 
 const SystemUserForm = ({modalOpenMode}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchSystemGroup} = useSystemGroup();
+    const [isVisible, setIsVisible] = useState(false);
 
     return (
         <div>
@@ -43,12 +47,23 @@ const SystemUserForm = ({modalOpenMode}) => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
-                                    <FormikTextField
-                                        name={"password"}
-                                        type={"password"}
-                                        // variant={"standard"}
-                                        label={"პაროლი"}
-                                    />
+                                    <div style={{display: "flex", flexDirection: 'row'}}>
+                                        <FormikTextField
+                                            name={"password"}
+                                            type={isVisible ? "text" : "password"}
+                                            // variant={"standard"}
+                                            label={"პაროლი"}
+                                            style={{width: 630}}
+                                        />
+                                        <Tooltip title={isVisible ? "დამალვა" : "გამოჩენა"}>
+                                            <MTIconButton
+                                                color="primary"
+                                                onClick={() => setIsVisible(!isVisible)}
+                                            >
+                                                {isVisible ? <VisibilityOff/> : <Visibility/>}
+                                            </MTIconButton>
+                                        </Tooltip>
+                                    </div>
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
                                     <FormikAutocomplete name="academyClasses"

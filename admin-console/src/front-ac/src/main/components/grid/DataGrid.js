@@ -33,21 +33,21 @@ const DataGridSGS = ({
                     fullyHideFooter = false,
                     ...props
                   }) => {
-  const maxPageSize = 100;
-  const resolvedColumns = useMemo(() => resolveColumns(columns), [columns]);
-  const rowsPerPageOptions = [20, 50, 70, 100];
-  const [selectionModel, setSelectionModel] = useState([]);
-  const [pageParams, setPageParams] = useState({page: 0, size: 20});
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    isFetching,
-  } = useQueryWithoutCache([queryKey, filtersData, pageParams],
-    fetchData,
-    {
-      select: data => resolveQueryData(data, resolveQueryResult, pagination, maxPageSize),
-      enabled: !rows,
+  const maxPageSize = 5000;
+    const resolvedColumns = useMemo(() => resolveColumns(columns), [columns]);
+    const rowsPerPageOptions = [5000];
+    const [selectionModel, setSelectionModel] = useState([]);
+    const [pageParams, setPageParams] = useState({page: 0, size: 5000});
+    const {
+        data,
+        isLoading,
+        isSuccess,
+        isFetching,
+    } = useQueryWithoutCache([queryKey, filtersData, pageParams],
+        fetchData,
+        {
+            select: data => resolveQueryData(data, resolveQueryResult, pagination, maxPageSize),
+            enabled: !rows,
       ...useQueryOptions,
       ...queryParams
     });
@@ -85,27 +85,27 @@ const DataGridSGS = ({
   return (
     <div style={{display: 'flex', position: "relative", height: '100%', width: '100%'}}>
       <DataGrid
-        columns={resolvedColumns}
-        rows={!!rows ? rows : (isSuccess && data ? data.content : [])}
-        paginationMode={"server"}
-        pagination={pagination}
-        rowsPerPageOptions={rowsPerPageOptions}
-        pageSize={pageParams.size}
-        rowCount={isSuccess && data? data.totalElements : 0}
-        onPageChange={(page) => setPageParams((prev) => ({...prev, page}))}
-        onPageSizeChange={(size) => setPageParams((prev) => ({...prev, size}))}
+          columns={resolvedColumns}
+          rows={!!rows ? rows : (isSuccess && data ? data.content : [])}
+          paginationMode={"server"}
+          pagination={pagination}
+          rowsPerPageOptions={rowsPerPageOptions}
+          pageSize={pageParams.size}
+          rowCount={isSuccess && data? data.totalElements : 0}
+          onPageChange={(page) => setPageParams((prev) => ({...prev, page}))}
+          onPageSizeChange={(size) => setPageParams((prev) => ({...prev, size}))}
         // loading={isLoading || isFetching || loading}
-        disableColumnFilter
-        rowBuffer={10}
-        columnBuffer={columns.length}
-        getRowId={(row) => row[rowIdField]}
-        getRowClassName={getRowClassName}
-        onCellEditCommit={handleCellCommit}
-        checkboxSelection={checkboxSelection}
-        selectionModel={selectionModel}
-        onSelectionModelChange={handleSelectionModalChange}
-        initialState={{...initialState}}
-        components={{
+          disableColumnFilter
+          rowBuffer={5000}
+          columnBuffer={columns.length}
+          getRowId={(row) => row[rowIdField]}
+          getRowClassName={getRowClassName}
+          onCellEditCommit={handleCellCommit}
+          checkboxSelection={checkboxSelection}
+          selectionModel={selectionModel}
+          onSelectionModelChange={handleSelectionModalChange}
+          initialState={{...initialState}}
+          components={{
           // Toolbar: GridToolBar,
           LoadingOverlay: Progress,
           NoRowsOverlay: CustomNoRowsOverlay,
@@ -113,12 +113,12 @@ const DataGridSGS = ({
           Footer: fullyHideFooter? HiddenFooter : GridFooter,
           ...components,
         }}
-        componentsProps={{
+          componentsProps={{
           footer: {selectedRowCount: selectedRowCount},
           ...componentsProps
         }}
-        sx={DataGridStyles(colorGroups)}
-        {...props}
+          sx={DataGridStyles(colorGroups)}
+          {...props}
       />
     </div>
   );

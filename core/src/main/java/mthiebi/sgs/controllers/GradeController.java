@@ -11,10 +11,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -62,9 +59,11 @@ public class GradeController {
                     .collect(Collectors.groupingBy(GradeDTO::getStudent))
                     .entrySet().stream()
                     .map(k -> GradeWrapperByStudent.builder()
-                                                    .student(k.getKey())
-                                                    .grades(k.getValue())
-                                                    .build())
+                            .student(k.getKey())
+                            .grades(k.getValue())
+                            .build())
+                    .sorted(Comparator.comparing(gradeWrapper -> (gradeWrapper.getStudent().getLastName() + " "
+                            + gradeWrapper.getStudent().getLastName())))
                     .collect(Collectors.toList());
         } else {
             return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subjectId, studentId, date1, gradeTypePrefix)
@@ -107,7 +106,8 @@ public class GradeController {
             gradeComponentWrapper.setGradeList(gradeList);
             list.add(gradeComponentWrapper);
         }
-        return list;
+        return list.stream().sorted(Comparator.comparing(gradeWrapper -> (gradeWrapper.getStudent().getLastName() + " "
+                + gradeWrapper.getStudent().getLastName()))).collect(Collectors.toList());
     }
 
     @GetMapping("/get-grades-by-semester")

@@ -34,7 +34,7 @@ const AcademyClassForm = ({modalOpenMode}) => {
                                                         label={"საგანი"}
                                                         onFetch={onFetchSubjects}
                                                         getOptionSelected={(option, value) => option.id === value.id}
-                                                        getOptionLabel={(option) => option.name}
+                                                        getOptionLabel={(option) => option.name + " " + option.teacher}
                                                         hideTagsOnOverflow={true}
 
                                     />
