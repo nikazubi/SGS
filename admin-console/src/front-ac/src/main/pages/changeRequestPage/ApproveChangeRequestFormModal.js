@@ -9,8 +9,9 @@ const initialValues = {
 const ApproveChangeRequestFormModal = ({open, onClose, modalOpenMode, submitButton, submit, ...props}) => {
     const {setNotification, setErrorMessage} = useNotification();
 
-    const onSubmit = (values) => {
-        submit(values)
+    const onSubmit = async (values) => {
+        await submit(values);
+        onClose();
     }
     return (
         <FormModal

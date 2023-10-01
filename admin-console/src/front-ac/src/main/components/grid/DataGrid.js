@@ -33,11 +33,11 @@ const DataGridSGS = ({
                     fullyHideFooter = false,
                     ...props
                   }) => {
-  const maxPageSize = 100;
+  const maxPageSize = 5000;
   const resolvedColumns = useMemo(() => resolveColumns(columns), [columns]);
-  const rowsPerPageOptions = [20, 50, 70, 100];
+  const rowsPerPageOptions = [5000];
   const [selectionModel, setSelectionModel] = useState([]);
-  const [pageParams, setPageParams] = useState({page: 0, size: 20});
+  const [pageParams, setPageParams] = useState({page: 0, size: 5000});
   const {
     data,
     isLoading,
