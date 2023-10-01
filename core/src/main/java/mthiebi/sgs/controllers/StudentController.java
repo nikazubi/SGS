@@ -43,12 +43,12 @@ public class StudentController {
 
     @GetMapping("/get-students")
     @Secured({AuthConstants.VIEW_STUDENT})
-    public List<StudentDTO> getStudents(@RequestParam(defaultValue = "10") int limit,
+    public List<StudentDTO> getStudents(@RequestParam(defaultValue = "5000") int limit,
                                         @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "0") Long id,
                                         @RequestParam(required = false) String firstName,
                                         @RequestParam(required = false) String lastName,
-                                        @RequestParam(required = false) String personalNumber){
+                                        @RequestParam(required = false) String personalNumber) {
         return studentService.getStudents(limit, page, id, firstName, lastName, personalNumber).stream()
                 .map(student -> studentMapper.studentDTO(student))
                 .collect(Collectors.toList());

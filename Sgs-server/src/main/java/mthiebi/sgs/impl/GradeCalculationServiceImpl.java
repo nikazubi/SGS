@@ -55,15 +55,8 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
 
                 BigDecimal sum = (monthlyGeneralSummeryPercent).add(monthlySchoolWorkPercent);
                 BigDecimal monthly = BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP);
-                Grade grade = Grade.builder()
-                        .gradeType(GradeType.GENERAL_COMPLETE_MONTHLY)
-                        .subject(subject)
-                        .academyClass(academyClass)
-                        .student(student)
-                        .value(BigDecimal.valueOf(Math.round(monthly.doubleValue())))
-                        .exactMonth(date)
-                        .build();
-                gradeRepository.save(grade);
+                saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthly.doubleValue())),
+                        GradeType.GENERAL_COMPLETE_MONTHLY, date);
             }
         } else {
             for (Student student : studentList) {
@@ -71,7 +64,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 BigDecimal monthlyGeneralSummery = calculateGeneralSummeryMonthlyGrade(gradeList).setScale(1, RoundingMode.HALF_UP);
                 saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthlyGeneralSummery.doubleValue())), GradeType.GENERAL_SUMMARY_ASSIGMENT_MONTH, date);
 
-                BigDecimal monthlyGeneralSummeryPercent = BigDecimal.ZERO.equals(monthlyGeneralSummery)? BigDecimal.ZERO : monthlyGeneralSummery.divide(BigDecimal.valueOf(2));
+                BigDecimal monthlyGeneralSummeryPercent = BigDecimal.ZERO.equals(monthlyGeneralSummery) ? BigDecimal.ZERO : monthlyGeneralSummery.divide(BigDecimal.valueOf(2));
                 saveGrade(subject, academyClass, student, monthlyGeneralSummeryPercent, GradeType.GENERAL_SUMMARY_ASSIGMENT_PERCENT, date);
 
                 BigDecimal monthlyHomework = calculateSimpleAverageOfPrefix(gradeList, "GENERAL_HOMEWORK");
@@ -87,16 +80,9 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 saveGrade(subject, academyClass, student, monthlySchoolWorkPercent, GradeType.GENERAL_SCHOOL_WORK_PERCENT, date);
 
                 BigDecimal sum = monthlyHomeworkPercent.add(monthlyGeneralSummeryPercent).add(monthlySchoolWorkPercent);
-                BigDecimal monthly = BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP);
-                Grade grade = Grade.builder()
-                        .gradeType(GradeType.GENERAL_COMPLETE_MONTHLY)
-                        .subject(subject)
-                        .academyClass(academyClass)
-                        .student(student)
-                        .value(BigDecimal.valueOf(Math.round(monthly.doubleValue())))
-                        .exactMonth(date)
-                        .build();
-                gradeRepository.save(grade);
+                BigDecimal monthly = BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(1L), RoundingMode.HALF_UP);
+                saveGrade(subject, academyClass, student, BigDecimal.valueOf(Math.round(monthly.doubleValue())),
+                        GradeType.GENERAL_COMPLETE_MONTHLY, date);
             }
         }
     }
@@ -108,67 +94,30 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
         for (Student student : studentList) {
             List<Grade> gradeList = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(academyClassId, null, student.getId(), date);
             BigDecimal monthlyUniform = calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_APPEARING_IN_UNIFORM");
-            Grade gradeUniform = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY)
-                    .subject(null)
-                    .academyClass(academyClass)
-                    .student(student)
-                    .value(BigDecimal.valueOf(Math.round(monthlyUniform.doubleValue())))
-                    .exactMonth(date)
-                    .build();
-            gradeRepository.save(gradeUniform);
+            saveGrade(null, academyClass, student, BigDecimal.valueOf(Math.round(monthlyUniform.doubleValue())),
+                    GradeType.BEHAVIOUR_APPEARING_IN_UNIFORM_MONTHLY, date);
             BigDecimal delays = calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_STUDENT_DELAYS");
-            Grade delaysMonthly = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_STUDENT_DELAYS_MONTHLY)
-                    .subject(null)
-                    .academyClass(academyClass)
-                    .student(student)
-                    .value(BigDecimal.valueOf(Math.round(delays.doubleValue())))
-                    .exactMonth(date)
-                    .build();
-            gradeRepository.save(delaysMonthly);
+            saveGrade(null, academyClass, student, BigDecimal.valueOf(Math.round(delays.doubleValue())),
+                    GradeType.BEHAVIOUR_STUDENT_DELAYS_MONTHLY, date);
             BigDecimal inventory = calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_CLASSROOM_INVENTORY");
-            Grade inventoryMonthly = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_CLASSROOM_INVENTORY_MONTHLY)
-                    .subject(null)
-                    .academyClass(academyClass)
-                    .student(student)
-                    .value(BigDecimal.valueOf(Math.round(inventory.doubleValue())))
-                    .exactMonth(date)
-                    .build();
-            gradeRepository.save(inventoryMonthly);
+            saveGrade(null, academyClass, student, BigDecimal.valueOf(Math.round(inventory.doubleValue())),
+                    GradeType.BEHAVIOUR_CLASSROOM_INVENTORY_MONTHLY, date);
             BigDecimal hygiene = calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_STUDENT_HYGIENE");
-            Grade hygieneMonthly = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_STUDENT_HYGIENE_MONTHLY)
-                    .subject(null)
-                    .academyClass(academyClass)
-                    .student(student)
-                    .value(BigDecimal.valueOf(Math.round(hygiene.doubleValue())))
-                    .exactMonth(date)
-                    .build();
-            gradeRepository.save(hygieneMonthly);
+            saveGrade(null, academyClass, student, BigDecimal.valueOf(Math.round(hygiene.doubleValue())),
+                    GradeType.BEHAVIOUR_STUDENT_HYGIENE_MONTHLY, date);
             BigDecimal behaviourStudentBehavior = calculateSimpleAverageOfPrefix(gradeList, "BEHAVIOUR_STUDENT_BEHAVIOR");
-            Grade behaviourStudentBehaviorMonthly = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_STUDENT_HYGIENE_MONTHLY)
-                    .subject(null)
-                    .academyClass(academyClass)
-                    .student(student)
-                    .value(BigDecimal.valueOf(Math.round(behaviourStudentBehavior.doubleValue())))
-                    .exactMonth(date)
-                    .build();
-            gradeRepository.save(behaviourStudentBehaviorMonthly);
+            saveGrade(null, academyClass, student, BigDecimal.valueOf(Math.round(behaviourStudentBehavior.doubleValue())),
+                    GradeType.BEHAVIOUR_STUDENT_BEHAVIOR_MONTHLY, date);
+            for (int i = 1; i <= 6; i++) {
+                BigDecimal behaviorWeek = calculateSimpleAverageOfPrefixAndWeek(gradeList, "BEHAVIOUR", i);
+                String enumName = "BEHAVIOUR_WEEK_AVERAGE_";
+                saveGrade(null, academyClass, student, BigDecimal.valueOf(Math.round(behaviorWeek.doubleValue())),
+                        GradeType.valueOf(enumName + i), date);
+            }
             BigDecimal sum = monthlyUniform.add(delays).add(inventory).add(hygiene).add(behaviourStudentBehavior);
-            BigDecimal monthly = BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(5L), RoundingMode.HALF_UP);
-            Grade grade = Grade.builder()
-                    .gradeType(GradeType.BEHAVIOUR_MONTHLY)
-                    .subject(null)
-                    .academyClass(academyClass)
-                    .student(student)
-                    .value(BigDecimal.valueOf(Math.round(monthly.doubleValue())))
-                    .exactMonth(date)
-                    .build();
-
-            gradeRepository.save(grade);
+            BigDecimal monthly = BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(5L), RoundingMode.HALF_UP);
+            saveGrade(null, academyClass, student, BigDecimal.valueOf(Math.round(monthly.doubleValue())),
+                    GradeType.BEHAVIOUR_MONTHLY, date);
         }
     }
 
@@ -200,7 +149,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             } else {
                 BigDecimal sum = generalSummeryAssignment2.get(0).getValue()
                         .add(generalSummeryAssignment1.get(0).getValue());
-                return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+                return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
             }
         }
     }
@@ -228,7 +177,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             } else {
                 BigDecimal sum = generalSummeryAssignment2.get(0).getValue()
                         .add(generalSummeryAssignment1.get(0).getValue());
-                return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+                return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
             }
         }
     }
@@ -240,7 +189,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
         }
         BigDecimal sum = generalSummeryAssignment2.getValue()
                 .add(generalSummeryAssignmentRestoration.get().getValue());
-        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+        return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
     }
 
     private BigDecimal getRestorationGradeTransit(List<Grade> gradeList, Grade generalSummeryAssignment2) throws SGSException {
@@ -250,7 +199,7 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
         }
         BigDecimal sum = generalSummeryAssignment2.getValue()
                 .add(generalSummeryAssignmentRestoration.get().getValue());
-        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
+        return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(2L), RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateSimpleAverageOfPrefix(List<Grade> gradeList, String prefix) {
@@ -259,10 +208,38 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                         !grade.getGradeType().name().contains("MONTHLY") && !grade.getGradeType().name().contains("PERCENT"))
                 .collect(Collectors.toList());
         BigDecimal sum = eligibleGrades.stream().map(Grade::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP);
+        return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP);
     }
 
-    private Grade saveGrade(Subject subject, AcademyClass academyClass, Student student, BigDecimal value, GradeType gradeType, Date exactMonth) {
+    private BigDecimal calculateSimpleAverageOfPrefixAndWeek(List<Grade> gradeList, String prefix, int index) {
+        List<Grade> eligibleGrades = gradeList.stream()
+                .filter(grade -> grade.getGradeType().name().startsWith(prefix) &&
+                        grade.getGradeType().name().contains(String.valueOf(index)) &&
+                        !grade.getGradeType().name().contains("MONTHLY") && !grade.getGradeType().name().contains("PERCENT"))
+                .collect(Collectors.toList());
+        BigDecimal sum = eligibleGrades.stream().map(Grade::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(eligibleGrades.size()), RoundingMode.HALF_UP);
+    }
+
+    private void saveGrade(Subject subject, AcademyClass academyClass, Student student, BigDecimal value, GradeType gradeType, Date exactMonth) {
+        if (value.equals(BigDecimal.ZERO)) {
+            return;
+        }
+
+        Grade existing;
+        if (subject == null) {
+            existing = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(academyClass.getId(),
+                    null, student.getId(), gradeType, exactMonth);
+        } else {
+            existing = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(academyClass.getId(),
+                    subject.getId(), student.getId(), gradeType, exactMonth);
+        }
+        if (existing != null) {
+            existing.setValue(value);
+            gradeRepository.save(existing);
+            return;
+        }
+
         Grade grade = Grade.builder()
                 .gradeType(gradeType)
                 .subject(subject)
@@ -271,6 +248,6 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
                 .value(value)
                 .exactMonth(exactMonth)
                 .build();
-        return gradeRepository.save(grade);
+        gradeRepository.save(grade);
     }
 }

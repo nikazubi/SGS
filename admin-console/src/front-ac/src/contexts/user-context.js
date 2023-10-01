@@ -38,7 +38,8 @@ export const UserContextProvider = props => {
   };
 
   const logout = () => {
-    deleteAuth();
+      console.log("inlogout")
+      deleteAuth();
     setLoggedIn(false)
     // refetch();
   };

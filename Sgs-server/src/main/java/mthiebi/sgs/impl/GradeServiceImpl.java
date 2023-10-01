@@ -35,15 +35,26 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     public Grade insertStudentGrade(Grade grade) {
-        Student student = studentRepository.findById(grade.getStudent().getId()).orElseThrow();
-        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
-        Subject subject = grade.getSubject() == null ? null : subjectRepository.findById(grade.getSubject().getId()).orElseThrow();
         Date exactDate = grade.getExactMonth();
         if (exactDate.getMonth() == Calendar.FEBRUARY) {
             exactDate.setMonth(Calendar.JANUARY);
         } else if (exactDate.getMonth() == Calendar.OCTOBER) {
             exactDate.setMonth(Calendar.SEPTEMBER);
         }
+        Student student = studentRepository.findById(grade.getStudent().getId()).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        Subject subject = grade.getSubject() == null ? null : subjectRepository.findById(grade.getSubject().getId()).orElseThrow();
+
+
+        Grade existing = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(academyClass.getId(),
+                subject == null ? null : subject.getId(), student.getId(), grade.getGradeType(), exactDate);
+
+        if (existing != null) {
+            existing.setValue(grade.getValue());
+            gradeRepository.save(existing);
+            return existing;
+        }
+
         grade.setExactMonth(exactDate);
         grade.setStudent(student);
         grade.setAcademyClass(academyClass);
@@ -130,6 +141,7 @@ public class GradeServiceImpl implements GradeService {
         Integer minYear = gradeRepository.getMinYear();
         Integer maxYear = gradeRepository.getMaxYear();
         List<String> result = new ArrayList<>();
+        if (Objects.equals(minYear, maxYear)) return List.of(minYear + "-" + (minYear + 1));
         for (; minYear < maxYear; minYear++) {
             result.add(String.valueOf(minYear) + "-" + String.valueOf(minYear + 1));
         }
@@ -288,12 +300,21 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
+        Map<Subject, BigDecimal> sums = new HashMap<>();
         for (Student student : studentList) {
             Map<Subject, BigDecimal> existMap = map.get(student);
             Map<Subject, BigDecimal> newMap = new HashMap<>();
             for (Subject subject : subjectList) {
                 if (existMap != null && existMap.get(subject) != null) {
-                    newMap.put(subject, existMap.get(subject));
+                    BigDecimal val = existMap.get(subject);
+                    newMap.put(subject, val);
+                    BigDecimal currSum = sums.get(subject);
+                    if (currSum == null) {
+                        currSum = val;
+                    } else {
+                        currSum = currSum.add(val);
+                    }
+                    sums.put(subject, currSum);
                 } else {
                     newMap.put(subject, BigDecimal.ZERO);
                 }
@@ -304,6 +325,15 @@ public class GradeServiceImpl implements GradeService {
             }
             map.put(student, newMap);
         }
+        for (Subject subject : sums.keySet()) {
+            BigDecimal sum = sums.get(subject);
+            BigDecimal average = sum.divide(BigDecimal.valueOf(studentList.size()), RoundingMode.HALF_UP);
+            sums.put(subject, average);
+        }
+        Student average = Student.builder().id(-5).firstName("საშუალო").lastName("ქულა").build();
+        map.put(average, sums);
+        Student teacher = Student.builder().id(-6).firstName("მასწავლებელი").lastName("").build();
+        map.put(teacher, sums);
         return map;
     }
 }
