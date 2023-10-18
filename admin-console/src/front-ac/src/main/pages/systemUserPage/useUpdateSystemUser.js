@@ -14,6 +14,7 @@ export const updateSystemUser = async systemUser => {
             name: systemUser?.name,
             email: systemUser?.email,
             active: true
+
             // groups: [],
             // academyClassList: []
         },

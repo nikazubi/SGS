@@ -32,10 +32,10 @@ const useNavigationData = () => {
     const {hasPermission, user} = useUserContext();
 
     const pages = useMemo(() => ({
-        GRADES: {
-            id: 'GRADES',
-            name: 'ნიშნების ჟურნალი',
-            component: <DashBoard/>,
+    GRADES: {
+        id: 'GRADES',
+        name: 'ნიშნების ჟურნალი',
+        component: <DashBoard/>,
       icon: <Grading/>,
       show: false,
       permissions: ["ADD_GRADES", "MANAGE_GRADES"],
@@ -100,7 +100,7 @@ const useNavigationData = () => {
         component: <TotalAbsenceDashBoard/>,
         icon: <AssignmentLate/>,
         show: false,
-        permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+        permissions: ["ADD_GRADES", "MANAGE_GRADES"], // todo
         collapsible: false
     },
     SYSTEM_USER: {

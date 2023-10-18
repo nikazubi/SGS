@@ -6,14 +6,15 @@ import "./header.css"
 import useGradeSemester from "./useGradeSemester";
 import {getFiltersOfPage} from "../../../utils/filters";
 import {fetchSubjects} from "../../../hooks/useSubjects";
-import useUpdateGrade from "../HomePage/useUpdateGrade";
+import useUpdateSemesterDiagnosticGrade from "./useUpdateSemesterDiagnosticGrade";
 
 const SemesterGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("SEMESTER_GRADE")});
     const [subjects, setSubjects] = useState([]);
     const [checked, setChecked] = useState(false);
     const {data, isLoading, isError, error, isSuccess} = useGradeSemester(filters);
-    const {mutateAsync: mutateRow} = useUpdateGrade();
+    const {mutateAsync: mutateRow} = useUpdateSemesterDiagnosticGrade();
+
 
     useEffect(() => {
         const getSubjects = async () => {
@@ -61,7 +62,7 @@ const SemesterGradeDashBoard = () => {
                 return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
                     {row.student.lastName + " " + row.student.firstName}</div>
             },
-            field: 'firstName',
+            field: '0-firstName',
             sortable: false,
             headerAlign: 'center',
             align: 'center',
@@ -84,7 +85,7 @@ const SemesterGradeDashBoard = () => {
                         return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
-                    field: subject.name + "-" + month.month,
+                    field: subject.id + "-" + month.month,
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',
@@ -109,7 +110,7 @@ const SemesterGradeDashBoard = () => {
                         return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
-                    field: subject.name + "--3",
+                    field: subject.id + "--3",
                     sortable: false,
                     align: 'center',
                     editable: true,
@@ -128,7 +129,7 @@ const SemesterGradeDashBoard = () => {
                         return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
-                    field: subject.name + "--4",
+                    field: subject.id + "--4",
                     sortable: false,
                     editable: true,
                     align: 'center',
@@ -148,7 +149,7 @@ const SemesterGradeDashBoard = () => {
                     return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
-                field: subject.name + "--1",
+                field: subject.id + "--1",
                 sortable: false,
                 align: 'center',
                 headerAlign: 'center'
@@ -166,7 +167,7 @@ const SemesterGradeDashBoard = () => {
                     return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
-                field: subject.name + "--2",
+                field: subject.id + "--2",
                 sortable: false,
                 align: 'center',
                 headerAlign: 'center'
@@ -200,7 +201,7 @@ const SemesterGradeDashBoard = () => {
                     {'მოსწავლე'}
                 </div>
             ),
-            field: 'name',
+            field: '0-name',
             sortable: false,
             align: 'center',
             headerAlign: 'center',
@@ -616,7 +617,7 @@ const SemesterGradeDashBoard = () => {
     let gradeClomuns2 = []
 
     const getFieldName = (o, num) => {
-        return o.subject.name + "-" + num;
+        return o.subject.id + "-" + num;
     }
 
     const getGradeColumns = useCallback(() => {
@@ -634,7 +635,7 @@ const SemesterGradeDashBoard = () => {
                         {'მოსწავლე'}
                     </div>
                 ),
-                children: [{field: 'firstName'}],
+                children: [{field: '0-firstName'}],
                 // field: 'name',
                 // sortable: false,
                 align: 'center',
@@ -684,7 +685,15 @@ const SemesterGradeDashBoard = () => {
 
     const processRowUpdate = useCallback(
         async (newRow) => {
+            const gradeType = Object.keys(newRow).filter(field => field.endsWith("--4") || field.endsWith("--3"))[0]
+            const subjectIdAndType = gradeType.split("-", 1);
             console.log(newRow)
+            console.log("subjectidAndType", subjectIdAndType)
+            newRow.subject = newRow.gradeList.filter(g => g.subject.id == subjectIdAndType[0])[0].subject;
+            newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(new Date());
+            newRow.value = newRow[gradeType];
+            console.log("newrow", newRow);
+            return await mutateRow(newRow);
         }, [mutateRow, filters]
     );
 
