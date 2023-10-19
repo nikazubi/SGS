@@ -4,8 +4,11 @@ import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.AcademyClass;
+import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.models.SystemUser;
+import mthiebi.sgs.repository.AcademyClassRepository;
+import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.repository.SubjectRepository;
 import mthiebi.sgs.repository.SystemUserRepository;
 import mthiebi.sgs.service.SubjectService;
@@ -24,6 +27,12 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Autowired
     private SystemUserRepository systemUserRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private AcademyClassRepository academyClassRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -59,6 +68,16 @@ public class SubjectServiceImpl implements SubjectService {
         }
         List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
         return subjectRepository.findAllSubject(limit, page, id, name, academyClassList, em);
+    }
+
+    @Override
+    public List<Subject> getSubjectsForStudent(String username) throws SGSException {
+        Student student = studentRepository.findByUsername(username).orElseThrow(
+                () -> new SGSException(SGSExceptionCode.BAD_REQUEST, "სტუდენტი ვერ მოიძებნა"));
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow(
+                () -> new SGSException(SGSExceptionCode.BAD_REQUEST, "კლასი ვერ მოიძებნა"));
+
+        return academyClass.getSubjectList();
     }
 
     @Override

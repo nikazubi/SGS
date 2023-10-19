@@ -3,7 +3,6 @@ package mthiebi.sgs.service;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.Subject;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface SubjectService {
@@ -19,6 +18,8 @@ public interface SubjectService {
                               Long id,
                               String name,
                               String userName) throws SGSException;
+
+    List<Subject> getSubjectsForStudent(String username) throws SGSException;
 
     List<Subject> getSubjects(int limit,
                               int page,

@@ -5,58 +5,72 @@ import {MyContext, useUpdate} from "../../context/userDataContext";
 import HomeIcon from '@mui/icons-material/Home';
 import {Box, List, ListItem, ListItemIcon} from '@mui/material';
 import Sidebar from "../../utils/Sidebar";
-import DisciplineBox from "../ethicalPage/EthicalBox";
+import DisciplineBox from "../ethicalPage/DisciplineBox";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
+import {MONTHS} from "../utils/date";
+import useSubjects from "./useSubjects";
 
 
-const Discipline = ({ match }) => {
+const Discipline = ({match}) => {
     const id = match.params.id
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [selectedData, setSelectedData] = useState('ივნისი');
-    const [currentData, setCurrentData] = useState([]);
+    const [selectedData, setSelectedData] = useState([MONTHS[new Date().getUTCMonth()].value]);
+    const [currentData, setCurrentData] = useState();
+    const {data: subjectData, isLoading, isError, error, isSuccess} = useSubjects();
+//TODO getGradeForSubject
 
-    const updateData = useUpdate()
+    useEffect(() => {
+        console.log(subjectData);
+    }, [subjectData])
 
     const asideRef = useRef();
     const backgroundRef = useRef();
     const hamburgerIcon = useRef();
-    // const allStudentsData = useUserData()
-    // const [width, setWidth] = useState(window.innerWidth);
-    
-      const handleResize = () => {
+
+    const month = [
+        'სექტემბერი-ოქტომბერი',
+        'ნოემბერი',
+        'დეკემბერი',
+        'იანვარი-თებერვალი',
+        'მარტი',
+        'აპრილი',
+        'მაისი',
+        'ივნისი'
+    ];
+    const handleResize = () => {
+
         // setWidth(window.innerWidth)
-          
-          // if(!!sidebarOpen){
-          //   asideRef.current.classList.add('open');
-          // }
-          // else{
-          //   asideRef.current.classList.remove('open');
-          // }
-          asideRef.current.classList.add('open')
-          // asideRef.current.classList.remove('open');
-          // hamburgerIcon.current.classList.remove("open")
-          // if(!!sidebarOpen){
-          //   setSidebarOpen(!sidebarOpen);
-          // }
-          // backgroundRef.current.classList.remove("open")
+        // if(!!sidebarOpen){
+        //   asideRef.current.classList.add('open');
+        // }
+        // else{
+        //   asideRef.current.classList.remove('open');
+        // }
+        asideRef.current.classList.add('open')
+        // asideRef.current.classList.remove('open');
+        // hamburgerIcon.current.classList.remove("open")
+        // if(!!sidebarOpen){
+        //   setSidebarOpen(!sidebarOpen);
+        // }
 
-      };
+        // backgroundRef.current.classList.remove("open")
 
-    useEffect(()=>{
-        const allStudentData = [
-            {
-                name:'შემაჯამებელი დავალება I - 50%',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-                boxdetails: [
-                    {
+    };
+
+    const data = [
+        {
+            name: 'შემაჯამებელი დავალება I - 50%',
+            testNumber: null,
+            precent: null,
+            month: null,
+            monthGrade: null,
+            absence: null,
+            absenceGrade: null,
+            boxdetails: [
+                {
                         label: '1',
                         grade: 5,
                     },
@@ -167,40 +181,6 @@ const Discipline = ({ match }) => {
 
         ]
 
-        updateData(allStudentData)
-
-        return () => {
-            updateData([])
-        }
-
-    },[])
-
-    // useEffect(() => {
-    //   window.addEventListener('resize', handleResize);
-    //   if(width <= 960){
-    //     document.querySelector('.mtavari').style.display = 'none';
-    //   }
-    //   else{
-    //     document.querySelector('.mtavari').style.display = 'block';
-    //   }
-    //   return () => {
-    //     window.removeEventListener('resize', handleResize);
-    //
-    //   };
-    // }, [width]);
-    const month = [
-        'სექტემბერი',
-        'ოქტომბერი',
-        'ნოემბერი',
-        'დეკემბერი',
-        'იანვარი',
-        'თებერვალი',
-        'მარტი',
-        'აპრილი',
-        'მაისი',
-        'ივნისი'
-    ];
-
     const toggleSidebar = () => {
       hamburgerIcon.current.classList.toggle("open")
       backgroundRef.current.classList.toggle("open")
@@ -280,7 +260,7 @@ const Discipline = ({ match }) => {
                   {dropdown()}
               </div>
               <div className="termEstCnt">
-                  <DisciplineBox />
+                  <DisciplineBox data={data}/>
               </div>
               <div className="ibChart" style={{marginLeft: -50, marginTop:65}}>
                   <Chart id={id}/>

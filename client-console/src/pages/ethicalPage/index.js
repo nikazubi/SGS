@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useUpdate} from "../../context/userDataContext";
-import DisciplineBox from "./EthicalBox";
+import DisciplineBox from "./DisciplineBox";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";

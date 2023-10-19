@@ -1,4 +1,10 @@
-import { createContext, useContext, useState } from "react";
+import {createContext, useContext, useState} from "react";
+import {HashRouter} from "react-router-dom";
+import {UserContextProvider} from "./user-context";
+import {NotificationProvider} from "./notification-context";
+import {BackdropProvider} from "./backdrop-context";
+import {ConvertErrorProvider} from "./convertError";
+import {ReactQueryProvider} from "./react-query-context";
 
 const MyContext = createContext();
 const MyContext2 = createContext();
@@ -11,21 +17,35 @@ export const useUpdate = () => {
 }
 
 
-const UserDataProvider = ({ children }) => {
-  
-  const [fetchStudent, setFetchStudent] = useState([])
+const UserDataProvider = ({children}) => {
 
-  const fetchUser = (data) => {
-    setFetchStudent(data)
-  }
+    const [fetchStudent, setFetchStudent] = useState([])
 
-  return (
-    <MyContext.Provider value={fetchStudent}>
-      <MyContext2.Provider value={fetchUser}>
-        {children}
-      </MyContext2.Provider>
-    </MyContext.Provider>
-  );
+    const fetchUser = (data) => {
+        setFetchStudent(data)
+    }
+
+    return (
+        <HashRouter>
+            <ReactQueryProvider>
+                <ConvertErrorProvider>
+                    <UserContextProvider>
+                        {/*<InitialDataProvider>*/}
+                        {/*<NavigationProvider>*/}
+                        <NotificationProvider>
+                            <BackdropProvider>
+                                {/*<MuiThemeProvider theme={theme}>*/}
+                                {children}
+                                {/*</MuiThemeProvider>*/}
+                            </BackdropProvider>
+                        </NotificationProvider>
+                        {/*</NavigationProvider>*/}
+                        {/*</InitialDataProvider>*/}
+                    </UserContextProvider>
+                </ConvertErrorProvider>
+            </ReactQueryProvider>
+        </HashRouter>
+    );
 };
 
 export default UserDataProvider;

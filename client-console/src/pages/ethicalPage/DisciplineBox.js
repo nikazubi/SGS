@@ -1,10 +1,9 @@
-import { useUserData} from "../../context/userDataContext";
 import FooterBox from "./FooterBox";
-import SmallBox from "./SmallBox";
 // {title, number, precent,id, data}=argumentebia ->DisciplineBox
-const DisciplineBox = () => {
- 
-    const allData = useUserData()
+const DisciplineBox = ({data}) => {
+    console.log(data)
+    const allData = data;
+
     // ArrayOfObj = [{
     //     name: 'შემაჯამებელი დავალება' | 'საშინაო დავალება' | 'საკლასო დავალება' | null,
     //     number: romauli ricxvebi iyo -> III ან I ა.შ | null,

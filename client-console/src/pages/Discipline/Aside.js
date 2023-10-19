@@ -16,7 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 function ResponsiveDrawer(props) {
   const { window } = props;

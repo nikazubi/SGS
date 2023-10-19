@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import './LoginPage.css';
 import imageSrc from './ib.png';
 import {useHistory} from "react-router-dom";
+import {useUserContext} from "../../context/user-context";
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const history = useHistory(); // Add this line
-
+    const {login} = useUserContext();
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -18,15 +19,16 @@ const LoginPage = () => {
     };
 
     const handleSubmit = async (e) => {
-        const isLoggedIn = true;
-
-        if (isLoggedIn) {
-            setEmail('');
-            setPassword('');
-
-            // Redirect to the AfterLoginPage
-            history.push('/'); // This will redirect to the root route
-        }
+        login({username: email, password: password});
+        // const isLoggedIn = true;
+        //
+        // if (isLoggedIn) {
+        //     setEmail('');
+        //     setPassword('');
+        //
+        //     // Redirect to the AfterLoginPage
+        //     history.push('/'); // This will redirect to the root route
+        // }
     };
 
     return (

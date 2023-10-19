@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static mthiebi.sgs.repository.QueryUtils.True;
 
@@ -103,5 +104,15 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .from(qStudent)
                 .where(QueryUtils.longIn(qStudent.id, ids))
                 .fetch();
+    }
+
+    @Override
+    public Optional<Student> findByUsername(String username) {
+        return Optional.ofNullable(
+                qf.select(qStudent)
+                        .from(qStudent)
+                        .where(QueryUtils.stringEq(qStudent.username, username))
+                        .fetchOne()
+        );
     }
 }

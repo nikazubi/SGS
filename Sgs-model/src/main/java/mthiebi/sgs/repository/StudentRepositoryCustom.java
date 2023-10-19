@@ -4,6 +4,7 @@ import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Student;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentRepositoryCustom {
 
@@ -23,5 +24,7 @@ public interface StudentRepositoryCustom {
     Student authStudent(String username, String password);
 
     List<Student> findByIds(List<Long> ids);
+
+    Optional<Student> findByUsername(String username);
 
 }

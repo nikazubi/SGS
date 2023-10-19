@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import IconButton from "../components/IconButton";
-import { ExitToApp, Person } from "@material-ui/icons";
+import {ExitToApp, Person} from "@material-ui/icons";
 import FlexBox from "../components/FlexBox";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -10,6 +10,7 @@ import Avatar from "@material-ui/core/Avatar";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import AvatarWithLabel from "./avatar/AvatarWithLabel";
 import {useHistory} from "react-router-dom";
+import {useUserContext} from "../context/user-context";
 // import { useUserContext } from "../../contexts/user-context";
 // import { useToggle } from "../../hooks/useToggle";
 
@@ -17,7 +18,9 @@ import {useHistory} from "react-router-dom";
 const UserBar = () => {
 
   const history = useHistory(); // Add this line
+    const {user, logout} = useUserContext();
 
+    console.log(user)
   const useStyles = makeStyles((theme) => ({
     avatar: {
       width: theme.spacing(4),
@@ -70,31 +73,32 @@ const UserBar = () => {
 
   return (
     <FlexBox>
-      <IconButton color="secondary"
-                  component="span"
-                  size="small"
-                  aria-controls="user-bar-menu"
-                  aria-haspopup="true"
-                  onClick={handleToggle}
-                  icon={<AvatarWithLabel avatar={Avatar} label={'ნიკა ზუბიაშვილი'} classes={classes}/>}/>
-      <Menu
-        id="user-bar-menu"
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem classes={{root: classes.menuitem}}>
-          <ListItemIcon>
-            <Person/>
-          </ListItemIcon>
-          <ListItemText primary={'ნიკა ზუბიაშვილი'}/>
-        </MenuItem>
-        <MenuItem classes={{root: classes.menuitem}} onClick={() => {history.push('/')}}>
-          <ListItemIcon>
-            <ExitToApp/>
-          </ListItemIcon>
-          <ListItemText primary={"გამოსვლა"}/>
-        </MenuItem>
+        <IconButton color="secondary"
+                    component="span"
+                    size="small"
+                    aria-controls="user-bar-menu"
+                    aria-haspopup="true"
+                    onClick={handleToggle}
+                    icon={<AvatarWithLabel avatar={Avatar} label={user?.firstName + " " + user?.lastName}
+                                           classes={classes}/>}/>
+        <Menu
+            id="user-bar-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+        >
+            <MenuItem classes={{root: classes.menuitem}}>
+                <ListItemIcon>
+                    <Person/>
+                </ListItemIcon>
+                <ListItemText primary={user?.firstName + " " + user?.lastName}/>
+            </MenuItem>
+            <MenuItem classes={{root: classes.menuitem}} onClick={logout}>
+                <ListItemIcon>
+                    <ExitToApp/>
+                </ListItemIcon>
+                <ListItemText primary={"გამოსვლა"}/>
+            </MenuItem>
       </Menu>
       {/*{modalOpen && (*/}
       {/*  <UserFormModal*/}
