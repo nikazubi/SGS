@@ -132,7 +132,7 @@ public class ExportWordServiceImpl implements ExportWordService {
                 table.getRow(0).getCell(i).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
             } else {
                 if (i == 1) {
-                    int twipsPerInch = 14400;
+                    int twipsPerInch = 18000;
                     table.getRow(1).setHeight((int) (twipsPerInch * 1 / 10)); //set height 1/10 inch.
                     table.getRow(1).getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
                 }

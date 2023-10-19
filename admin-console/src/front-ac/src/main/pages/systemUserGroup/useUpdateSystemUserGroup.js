@@ -4,11 +4,12 @@ import axios from "../../../utils/axios";
 
 export const updateAcademyClass = async academyClass => {
     const params = {
+        id: academyClass.id,
         name: academyClass.name,
         active: academyClass.active,
         permissions: academyClass.permission.map(v => v.value).join(",")
     }
-    const {data} = await axios.put("system-user-group/edit", params);
+    const {data} = await axios.post("system-user-group/edit", params);
     return data;
 };
 

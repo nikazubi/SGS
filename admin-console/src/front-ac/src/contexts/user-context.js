@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useState} from "react";
 import {deleteAuth} from "../utils/auth";
 import useAxios from "../hooks/useAxios";
+import axios from "../utils/axios";
 
 const UserContext = createContext(null);
 
@@ -17,7 +18,6 @@ export const useUserContext = () => {
 export const UserContextProvider = props => {
     const [loggedIn, setLoggedIn ]= useState(false);
     const [user, setUser ]= useState(false);
-    const {axios} = useAxios();
     // const {data, refetch, isLoading, isError, error} = useLoggedInUser();
     // const user = data?.user;
   // const language = data?.user?.systemUserConfig?.languageTag;
@@ -29,7 +29,7 @@ export const UserContextProvider = props => {
   // });
   //
   const login = async (auth) => {
-      const {data} = await axios.get("/user-and-permissions")
+      const {data} = await axios.get("user-and-permissions")
       setUser(data)
       setLoggedIn(true)
       localStorage.setItem("loginTime", new Date().toString())

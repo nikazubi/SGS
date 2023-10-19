@@ -63,8 +63,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
 
         Map<Student, List<Grade>> gradeMap = gradeList.stream().collect(Collectors.groupingBy(Grade::getStudent));
         Map<Student, Map<Subject, Map<Integer, BigDecimal>>> result = new HashMap<>();
-        Map<Subject, Map<Integer, BigDecimal>> bySubject = new HashMap<>();
         for (Student student : gradeMap.keySet()) {
+            Map<Subject, Map<Integer, BigDecimal>> bySubject = new HashMap<>();
             List<Grade> old = gradeMap.get(student);
             Map<Subject, List<Grade>> newGradeList = old.stream().collect(Collectors.groupingBy(Grade::getSubject));
 
@@ -97,6 +97,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .where(dateYearPredicate)
                         .where(dateMonthPredicate)
                         .where(academyClassIdPredicate)
+                        .where(qGrade.subject.eq(subject))
+                        .where(qGrade.student.id.eq(student.getId()))
                         .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1).or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2)))
                         .orderBy(qGrade.createTime.desc())
                         .fetch();

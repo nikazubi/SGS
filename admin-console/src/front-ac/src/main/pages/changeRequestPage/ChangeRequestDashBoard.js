@@ -54,7 +54,7 @@ const ChangeRequestDashBoard = () => {
         {
             headerName: "საგანი",
             renderCell: ({row}) => {
-                return row.prevGrade.subject.name;
+                return row.prevGrade?.subject?.name;
             },
             field: 'subjectName',
             sortable: false,

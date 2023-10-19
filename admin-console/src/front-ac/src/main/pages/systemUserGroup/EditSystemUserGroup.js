@@ -25,6 +25,7 @@ const EditSystemUserGroup = ({data, disabled = false}) => {
             {open && (
                 <AcademyClassModal
                     open={open}
+                    groupId={data.id}
                     groupName={data.name}
                     groupStatus={data.active}
                     subject={parsedData}

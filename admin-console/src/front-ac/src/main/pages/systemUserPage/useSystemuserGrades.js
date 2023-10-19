@@ -5,7 +5,7 @@ export const fetchSystemuser = async (filters) => {
     const params = {
         username: filters.username,
         name: filters.name,
-        active: filters.active,
+        active: filters.active?.value,
     }
     const {data} = await axios.get("system-user/filter", {params});
     return data;

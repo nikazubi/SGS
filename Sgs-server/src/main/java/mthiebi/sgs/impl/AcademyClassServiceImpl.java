@@ -42,7 +42,7 @@ public class AcademyClassServiceImpl implements AcademyClassService {
         List<Subject> subjects = subjectRepository.findByIds(academyClass.getSubjectList().stream().map(Subject::getId).collect(Collectors.toList()));
         academyClass.setSubjectList(subjects);
         academyClass.setStudentList(students);
-
+        academyClass.setIsTransit(academyClass.getIsTransit() != null ? academyClass.getIsTransit() : false);
         AcademyClass result = academyClassRepository.save(academyClass);
 
         SystemUser systemUser = systemUserRepository.findSystemUserByUsername(username);
@@ -66,6 +66,7 @@ public class AcademyClassServiceImpl implements AcademyClassService {
         oldAcademyClass.setClassName(academyClass.getClassName());
         oldAcademyClass.setStudentList(academyClass.getStudentList());
         oldAcademyClass.setSubjectList(academyClass.getSubjectList());
+        oldAcademyClass.setIsTransit(academyClass.getIsTransit());
         academyClassRepository.save(oldAcademyClass);
         return oldAcademyClass;
     }
