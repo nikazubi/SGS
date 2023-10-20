@@ -15,11 +15,13 @@ const SubjectForm = ({modalOpenMode}) => {
                                 <Grid item xs={12} sm={12}>
                                     <FormikTextField
                                         name={"name"}
+                                        type={"text"}
                                         // variant={"standard"}
                                         label={"საგნის სახელი"}
                                     />
                                     <FormikTextField
                                         name={"teacher"}
+                                        type={"text"}
                                         // variant={"standard"}
                                         label={"მასწავლებლის სახელი და გვარი"}
                                     />

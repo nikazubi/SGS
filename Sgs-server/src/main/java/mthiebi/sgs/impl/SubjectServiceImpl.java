@@ -47,6 +47,7 @@ public class SubjectServiceImpl implements SubjectService {
         Subject oldSubject = subjectRepository.findById(subject.getId())
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SUBJECT_NOT_FOUND));
         oldSubject.setName(subject.getName());
+        oldSubject.setTeacher(subject.getTeacher());
         return subjectRepository.save(oldSubject);
     }
 

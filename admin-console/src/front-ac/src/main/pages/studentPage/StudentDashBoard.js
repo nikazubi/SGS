@@ -14,16 +14,6 @@ const StudentDashBoard = () => {
 
     const columns = [
         {
-            headerName: "ნუმერაცია",
-            renderCell: ({row}) => {
-                return row.index;
-            },
-            field: 'index',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center'
-        },
-        {
             headerName: "იდენტიფიკატორი",
             renderCell: ({row}) => {
                 return row.id;

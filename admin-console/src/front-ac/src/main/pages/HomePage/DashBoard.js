@@ -30,7 +30,7 @@ const DashBoard = () => {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
                 return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
-                    {row.student.lastName + " " + row.student.firstName}</div>
+                    {row.index + ". " + row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
             sortable: false,
@@ -407,7 +407,7 @@ const DashBoard = () => {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
                 return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
-                    {row.student.lastName + " " + row.student.firstName}</div>
+                    {row.index + ". " + row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
             sortable: false,
@@ -881,7 +881,7 @@ const DashBoard = () => {
                 <DataGridPaper>
                     {filters.subject?
                         <div style={{ textAlign:'center', marginTop: 10,marginBottom: 10, width: '100%',  backgroundColor:'white', fontSize:20, fontWeight:'bold'}}>
-                           <div> {filters.subject.name}</div>
+                           <div> {filters.subject.name + " - " + (filters.subject.teacher? filters.subject.teacher : "")}</div>
                         </div>
                         :
                         null}

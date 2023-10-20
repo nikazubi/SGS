@@ -64,7 +64,7 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                                 label={"საგანი"}
                                                 onFetch={onFetchSubjects}
                                                 getOptionSelected={(option, value) => option.id === value.id}
-                                                getOptionLabel={(option) => option.name}
+                                                getOptionLabel={(option) => option.name + " - " + (option.teacher? option.teacher : "")}
                                                 setInitialVulue={(options) =>{
                                                     if(options.length === 1){
                                                         return options[0]

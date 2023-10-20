@@ -9,7 +9,7 @@ export const updateAcademyClass = async academyClass => {
         active: academyClass.active,
         permissions: academyClass.permission.map(v => v.value).join(",")
     }
-    const {data} = await axios.post("system-user-group/edit", params);
+    const {data} = await axios.put("system-user-group/edit", params);
     return data;
 };
 

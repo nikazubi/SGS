@@ -19,33 +19,33 @@ public class SystemGroupController {
     @Autowired
     private SystemGroupService systemGroupService;
 
-    @GetMapping("/get-all") // todo: change to filter
-    @Secured({AuthConstants.MANAGE_GRADES}) //todo
+    @GetMapping("/get-all")
+    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP})
     public List<SystemUserGroup> getSystemGroups() {
         return systemGroupService.getAll();
     }
 
-    @GetMapping("/filter") // todo: change to filter
-    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP}) //todo
+    @GetMapping("/filter")
+    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP})
     public List<SystemUserGroup> filterSystemGroups(@RequestParam(required = false) String name,
                                                     @RequestParam(required = false) String permission) {
         return systemGroupService.getByNameAndPermission(name, permission);
     }
 
-    @PostMapping("/edit") // todo: change to filter
-    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP}) //todo
+    @PutMapping("/edit")
+    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP})
     public SystemUserGroup editSystemGroups(@RequestBody SystemUserGroup systemUserGroup) throws SGSException {
         return systemGroupService.updateSystemUserGroup(systemUserGroup);
     }
 
-    @PostMapping("/create") // todo: change to filter
-    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP}) //todo
+    @PostMapping("/create")
+    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP})
     public SystemUserGroup createSystemGroups(@RequestBody SystemUserGroup systemUserGroup) throws SGSException {
         return systemGroupService.createSystemUserGroup(systemUserGroup);
     }
 
-    @DeleteMapping("/delete/{id}") // todo: change to filter
-    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP}) //todo
+    @DeleteMapping("/delete/{id}")
+    @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP})
     public void deleteSystemGroups(@PathVariable Long id) throws SGSException {
         systemGroupService.deleteSystemUserGroup(id);
     }

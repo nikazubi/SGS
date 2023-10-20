@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -45,6 +47,10 @@ public class StudentServiceImpl implements StudentService {
         oldStudent.setFirstName(student.getFirstName());
         oldStudent.setLastName(student.getLastName());
         oldStudent.setAge(student.getAge());
+        oldStudent.setPersonalNumber(student.getPersonalNumber());
+        oldStudent.setUsername(student.getUsername());
+        String encodedPassword = DigestUtils.md5Hex(student.getPassword().getBytes()).toUpperCase();
+        student.setPassword(encodedPassword);
         oldStudent.setOwnerMail(student.getOwnerMail());
         studentRepository.save(oldStudent);
         return oldStudent;
@@ -62,7 +68,9 @@ public class StudentServiceImpl implements StudentService {
                                      String firstName,
                                      String lastName,
                                      String personalNumber) {
-        return studentRepository.findAllStudent(limit, page, id, firstName, lastName, personalNumber);
+        return studentRepository.findAllStudent(limit, page, id, firstName, lastName, personalNumber).stream()
+                .sorted(Comparator.comparing(Student::getLastName))
+                .collect(Collectors.toList());
     }
 
     @Override

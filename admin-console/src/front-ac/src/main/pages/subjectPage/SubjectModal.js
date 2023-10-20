@@ -5,14 +5,16 @@ import SubjectForm from "./SubjectForm";
 import {ModalOpenMode} from "../../../utils/constants";
 
 
-const initialValues = {
-    name: "",
-    teacher: ""
-};
 
 const SubjectModal = ({open, subject, onClose, modalOpenMode, submitButton, ...props}) => {
     const {mutate: onCreate} = useCreateSubject();
     const {mutate: onUpdate} = useUpdateSubject();
+
+    const initialValues = {
+        name: subject.name? subject.name : "",
+        teacher: subject.teacher? subject.teacher : "",
+        id: subject.id? subject.id : 0
+    };
 
     return (
         <FormModal
@@ -28,7 +30,6 @@ const SubjectModal = ({open, subject, onClose, modalOpenMode, submitButton, ...p
 
                 {
                     ...initialValues,
-                    ...subject,
                 }
             }
             formProps={{

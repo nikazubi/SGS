@@ -14,6 +14,11 @@ export const fetchGradesGrouped = async (filters) => {
         groupByClause: filters.groupByClause
     }
     const {data} = await axios.get("grade/get-grades-grouped", {params});
+    data.map((row, index) => {
+        let copyRow = row;
+        copyRow.index = index + 1;
+        return copyRow;
+    });
     return data;
 }
 
