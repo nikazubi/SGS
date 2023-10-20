@@ -8,12 +8,11 @@ export const PERMISSIONS = {
     "ADD_GRADES": "ქულების დამატება",
     "MANAGE_GRADES": "ქულების მართვა",
     "MANAGE_SYSTEM_USER": "მომხმარებლების მართვა",
-    "MANAGE_SYSTEM_USER_GROUP": "მომხმარებელთა უფლებების ჯგუფების მართვა",
-    "MANAGE_CHANGE_REQUESTS": "ნიშნის ცვლილების მოთხოვნათა მართვა",
-    "VIEW_CHANGE_REQUESTS": "ნიშნის ცვლილების მოთხოვნათა დათვალიერება",
+    "MANAGE_CHANGE_REQUESTS": "ნიშნის ცვლილების მოთხოვნის მართვა",
+    "VIEW_CHANGE_REQUESTS": "ნიშნის ცვლილების მოთხოვნის დათვალიერება",
     "MANAGE_CLOSED_PERIOD": "პერიოდის დახურვის მართვა",
-    "VIEW_CLOSED_PERIOD": "პერიოდის დახურვის დათვალიერება",
-    "VIEW_SYSTEM_USER_GROUP": "მომხმარებელთა უფლებების ჯგუფების დათვალიერება"
+    "VIEW_SYSTEM_USER_GROUP": "უფლებათა ჯგუფების დათვალიერება",
+    "MANAGE_TOTAL_ABSENCE": "ჯამური გაცდენების მართვა"
 }
 
 export const PERMISSION_OPTIONS = [
@@ -26,10 +25,9 @@ export const PERMISSION_OPTIONS = [
     {label: "ქულების დამატება", value: "ADD_GRADES"},
     {label: "ქულების მართვა", value: "MANAGE_GRADES"},
     {label: "მომხმარებლების მართვა", value: "MANAGE_SYSTEM_USER"},
-    {label: "მომხმარებელთა უფლებების ჯგუფების მართვა", value: "MANAGE_SYSTEM_USER_GROUP"},
-    {label: "ნიშნის ცვლილების მოთხოვნათა მართვა", value: "MANAGE_CHANGE_REQUESTS"},
-    {label: "ნიშნის ცვლილების მოთხოვნათა დათვალიერება", value: "VIEW_CHANGE_REQUESTS"},
+    {label: "უფლებათა ჯგუფების დათვალიერება", value: "VIEW_SYSTEM_USER_GROUP"},
+    {label: "ნიშნის ცვლილების მოთხოვნის მართვა", value: "MANAGE_CHANGE_REQUESTS"},
+    {label: "ნიშნის ცვლილების მოთხოვნის დათვალიერება", value: "VIEW_CHANGE_REQUESTS"},
     {label: "პერიოდის დახურვის მართვა", value: "MANAGE_CLOSED_PERIOD"},
-    {label: "პერიოდის დახურვის დათვალიერება", value: "VIEW_CLOSED_PERIOD"},
-    {label: "მომხმარებელთა უფლებების ჯგუფების დათვალიერება", value: "VIEW_SYSTEM_USER_GROUP"}
+    {label: "ჯამური გაცდენების მართვა", value: "MANAGE_TOTAL_ABSENCE"},
 ]

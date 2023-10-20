@@ -32,7 +32,7 @@ public class AbsenceController {
     private TotalAbsenceMapper totalAbsenceMapper;
 
     @PostMapping("/create")
-    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS}) //TODO
+    @Secured({AuthConstants.MANAGE_TOTAL_ABSENCE}) //TODO
     public void createTotalAbsences(@RequestBody TotalAbsenceCreateRequest createRequest) throws SGSException {
         totalAbsenceService.addTotalAbsenceToAcademyClasses(createRequest.getAcademyClasses(),
                 createRequest.getTotalAcademyHour(),
@@ -40,6 +40,7 @@ public class AbsenceController {
     }
 
     @GetMapping("/filter")
+    @Secured({AuthConstants.MANAGE_TOTAL_ABSENCE}) //TODO
     public List<TotalAbsenceDto> getTotalAbsences(@RequestParam(required = false) Long academyClassId,
                                                   @RequestParam(required = false) String activePeriod) {
         Date date1 = new Date();;
@@ -53,7 +54,7 @@ public class AbsenceController {
     }
 
     @DeleteMapping("{id}")
-    @Secured({AuthConstants.MANAGE_ACADEMY_CLASS}) //TODO
+    @Secured({AuthConstants.MANAGE_TOTAL_ABSENCE}) //TODO
     ResponseEntity<Void> deleteCardRequest(@Positive @PathVariable long id) throws SGSException {
         totalAbsenceService.deleteById(id);
         return ResponseEntity.ok().build();

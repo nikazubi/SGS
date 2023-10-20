@@ -100,7 +100,7 @@ const useNavigationData = () => {
         component: <TotalAbsenceDashBoard/>,
         icon: <AssignmentLate/>,
         show: false,
-        permissions: ["ADD_GRADES", "MANAGE_GRADES"], // todo
+        permissions: ["MANAGE_TOTAL_ABSENCE"],
         collapsible: false
     },
     SYSTEM_USER: {
@@ -109,7 +109,7 @@ const useNavigationData = () => {
         component: <SystemUserDashBoard/>,
         icon: <Person/>,
         show: false,
-        permissions: ["MANAGE_SYSTEM_USER"], //TODO
+        permissions: ["MANAGE_SYSTEM_USER"],
         collapsible: false
     },
     SUBJECTS: {
@@ -118,7 +118,7 @@ const useNavigationData = () => {
         component: <SubjectDashBoard/>,
         icon: <MenuBook/>,
         show: false,
-        permissions: ["MANAGE_SUBJECT", "VIEW_SUBJECT"], //TODO
+        permissions: ["MANAGE_SUBJECT"],
         collapsible: false
     },
     STUDENTS: {
@@ -127,7 +127,7 @@ const useNavigationData = () => {
         component: <StudentDashBoard/>,
         icon: <SwitchAccount/>,
         show: false,
-        permissions: ["VIEW_STUDENT", "MANAGE_STUDENT"], //TODO
+        permissions: ["MANAGE_STUDENT"],
         collapsible: false
     },
         ACADEMY_CLASS: {
@@ -136,7 +136,7 @@ const useNavigationData = () => {
             component: <AcademyClassDashBoard/>,
             icon: <Class/>,
             show: false,
-            permissions: ["MANAGE_ACADEMY_CLASS", "VIEW_ACADEMY_CLASS"], //TODO
+            permissions: ["MANAGE_ACADEMY_CLASS"],
             collapsible: false
         },
         CLOSE_PERIOD: {
@@ -145,7 +145,7 @@ const useNavigationData = () => {
             component: <ClosePeriodDashBoard/>,
             icon: <TimeIcon/>,
             show: false,
-            permissions: ["VIEW_CLOSED_PERIOD", "MANAGE_CLOSED_PERIOD"], //TODO
+            permissions: ["MANAGE_CLOSED_PERIOD"],
             collapsible: false
         },
         SYSTEM_USER_GROUP: {
