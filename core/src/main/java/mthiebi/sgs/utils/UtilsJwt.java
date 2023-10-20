@@ -107,6 +107,7 @@ public class UtilsJwt implements Serializable {
 	public String generateTokenForStudent(String username) {
 		return Jwts.builder()
 				.setSubject(username)
+				.claim(ROLES_CLAIM_NAME, "")
 				.signWith(SignatureAlgorithm.HS512, secretKey)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
