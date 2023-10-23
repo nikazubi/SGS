@@ -40,4 +40,14 @@ public interface GradeService {
 
     byte[] exportPdfMonthlyGrade(Long classId, Long studentId, Date month);
 
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(String studentUsername,
+                                                                                      Long subjectId,
+                                                                                      Long month,
+                                                                                      Long year,
+                                                                                      String gradeTypePrefix);
+
+    List<Grade> findAllMonthlyGradesForSubjectInYear(String studentUsername, Long subjectId, Long year);
+
+    List<Grade> findAllMonthlyGradesForMonthAndYear(String studentUsername, Long month, Long year);
+
 }

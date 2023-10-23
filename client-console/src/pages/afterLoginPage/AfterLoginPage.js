@@ -1,11 +1,19 @@
 import Box from "./Box";
+import useSubjects from "../Discipline/useSubjects";
 const AfterLoginPage = () => {
+
+    const {data: subjectData, isLoading, isError, error, isSuccess} = useSubjects();
+
+    if(isLoading) {
+        return <></>
+    }
+
     return ( 
         <>
         <div className="boxCnt">
             <div className="boxWrap">
                 <div className="boxWrap__div">
-                    <Box text={'მოსწავლის შეფასება აკადემიური საგნობრივი დისციპლინის მიხედვით'} link={'/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit/ქართული'} />
+                    <Box text={'მოსწავლის შეფასება აკადემიური საგნობრივი დისციპლინის მიხედვით'} link={`/grades/${subjectData? subjectData[0].name: ''}`} />
                 </div>
 
                 <div className="boxWrap__div">

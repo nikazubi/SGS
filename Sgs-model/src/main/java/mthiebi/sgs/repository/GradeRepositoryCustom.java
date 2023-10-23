@@ -29,4 +29,8 @@ public interface GradeRepositoryCustom {
 
     Grade findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, Date exactMonth);
 
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, int month, int year);
+
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int month, int year);
+
 }

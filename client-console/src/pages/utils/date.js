@@ -52,6 +52,43 @@ export const MONTHS = [
     }
 ]
 
+export const MONTHS_SCHOOL = [
+
+    {
+        key: 0,
+        value: 'იანვარი-თებერვალი'
+    },
+    {
+        key: 2,
+        value: 'მარტი'
+    },
+    {
+        key: 3,
+        value: 'აპრილი'
+    },
+    {
+        key: 4,
+        value: 'მაისი'
+    },
+    {
+        key: 5,
+        value: 'ივნისი'
+    },
+    {
+        key: 8,
+        value: 'სექტემბერი-ოქტომბერი'
+    },
+
+    {
+        key: 10,
+        value: 'ნოემბერი'
+    },
+    {
+        key: 11,
+        value: 'დეკემბერი'
+    }
+]
+
 export const getFirstSemestMonths = () => {
     return [MONTHS[5], MONTHS[6], MONTHS[7]]
 }

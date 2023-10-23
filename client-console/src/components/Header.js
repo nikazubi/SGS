@@ -51,7 +51,7 @@ const Header = () => {
                     <Link to="/"><div className='headerLogoImg'></div></Link>
                 </div>
                 <div>
-                    <Link className="headerCnt__aTag" >
+                    <Link className="headerCnt__aTag" to="" >
                         <UserBar />
                     </Link>
                 </div>

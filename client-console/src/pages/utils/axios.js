@@ -2,7 +2,7 @@ import axios from 'axios';
 import secureLocalStorage from "react-secure-storage";
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/client',
+    baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
     // baseURL: 'http://195.69.143.211:8080/sgs-core',
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -93,6 +93,7 @@ axiosInstance.interceptors.request.use(
         if (!!jwt && !config.headers.authorization) {
             config.headers.authorization = `Bearer ${jwt}`;
         }
+        console.log(config)
         return config;
     },
     error => error

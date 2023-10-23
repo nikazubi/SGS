@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useState} from "react";
 import useAxios from "../hooks/useAxios";
 import {LOGIN_ENDPOINT} from "../pages/utils/constants";
 import secureLocalStorage from "react-secure-storage";
+import {useHistory} from "react-router-dom";
 
 const UserContext = createContext(null);
 
@@ -19,6 +20,7 @@ export const UserContextProvider = props => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [user, setUser] = useState();
     const {axios} = useAxios();
+    const history = useHistory();
 
     useEffect(() => {
         if (secureLocalStorage.getItem("jwtToken")) {
@@ -40,7 +42,8 @@ export const UserContextProvider = props => {
 
     const logout = () => {
         secureLocalStorage.clear();
-        // setLoggedIn(false)
+        history.push('/');
+        setLoggedIn(false)
         // refetch();
     };
 

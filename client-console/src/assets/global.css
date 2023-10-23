@@ -445,7 +445,7 @@ body{
 .disciplineAside .css-12i7wg6-MuiPaper-root-MuiDrawer-paper{
     position: absolute;
     top: unset;
-    height: calc(140vh - 50px) !important;
+    height: calc(120vh - 80px) !important;
     background-color: #fff;
     border: none;
     box-shadow: 4px 0 5px 0px #888;

@@ -17,6 +17,9 @@ public interface GradeMapper {
 
     GradeDTO gradeDTO(Grade grade);
 
+    @Mapping(target = "academyClass", ignore = true)
+    GradeDTO gradeDTOWithoutAcademyClass(Grade grade);
+
     @Named("stringGradeTypeToEnum")
     default GradeType stringToEnum(String gradeType) {
         return GradeType.valueOf(gradeType);

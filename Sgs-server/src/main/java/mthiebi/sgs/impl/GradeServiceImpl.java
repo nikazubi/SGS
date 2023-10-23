@@ -96,10 +96,10 @@ public class GradeServiceImpl implements GradeService {
                                                                        Date createTime,
                                                                        String gradeTypePrefix) {
         List<Student> allStudentsInAcademyClass = studentRepository.findAllByAcademyClass(classId);
-        Subject currSubject = subjectId == null? null : subjectRepository.findById(subjectId).orElse(null);
+        Subject currSubject = subjectId == null ? null : subjectRepository.findById(subjectId).orElse(null);
         AcademyClass academyClass = academyClassRepository.findById(classId).orElse(null);
 
-        List<Grade> existingGrades =  gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)
+        List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)
                 .stream()
                 .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
                 .collect(Collectors.toList());
@@ -143,14 +143,14 @@ public class GradeServiceImpl implements GradeService {
         List<String> result = new ArrayList<>();
         if (Objects.equals(minYear, maxYear)) return List.of(minYear + "-" + (minYear + 1));
         for (; minYear < maxYear; minYear++) {
-            result.add(String.valueOf(minYear) + "-" + String.valueOf(minYear + 1));
+            result.add(minYear + "-" + (minYear + 1));
         }
         return result;
     }
 
-    private BigDecimal getFinalExamValueByStudentIdAndSubjectId(long academyClassId, long subjectId, Long studentId, int maxYear){
-        List<Grade> grades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(academyClassId, subjectId, studentId,  GradeType.FINAL_EXAM, maxYear);
-        return grades == null || grades.isEmpty()? BigDecimal.ZERO : grades.get(0).getValue();
+    private BigDecimal getFinalExamValueByStudentIdAndSubjectId(long academyClassId, long subjectId, Long studentId, int maxYear) {
+        List<Grade> grades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(academyClassId, subjectId, studentId, GradeType.FINAL_EXAM, maxYear);
+        return grades == null || grades.isEmpty() ? BigDecimal.ZERO : grades.get(0).getValue();
     }
 
     private Map<Student, Map<Subject, BigDecimal>> getMonthlyGrades(Long classId, Date createDate, Long studentId) throws SGSException {
@@ -172,18 +172,71 @@ public class GradeServiceImpl implements GradeService {
         return new byte[0];
     }
 
+    @Override
+    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(String studentUsername,
+                                                                                             Long subjectId,
+                                                                                             Long month,
+                                                                                             Long year,
+                                                                                             String gradeTypePrefix) {
+        Student student = studentRepository.findByUsername(studentUsername).orElseThrow();
+        Subject currSubject = subjectId == null ? null : subjectRepository.findById(subjectId).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, month.intValue());
+        if (year != null) {
+            calendar.set(Calendar.YEAR, year.intValue());
+        }
+
+        List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndExactMonthAndYear(academyClass.getId(),
+                        subjectId, student.getId(), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))
+                .stream()
+                .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
+                .collect(Collectors.toList());
+
+        return fillWithEmptyGradeListOfGradeType(List.of(student), gradeTypePrefix, academyClass, currSubject, existingGrades);
+    }
+
+    @Override
+    public List<Grade> findAllMonthlyGradesForSubjectInYear(String studentUsername, Long subjectId, Long year) {
+        Student student = studentRepository.findByUsername(studentUsername).orElseThrow();
+        Subject currSubject = subjectId == null ? null : subjectRepository.findById(subjectId).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        Calendar calendar = Calendar.getInstance();
+        if(year != null){
+            calendar.set(Calendar.YEAR, year.intValue());
+        }
+        List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(academyClass.getId(),
+                subjectId, student.getId(), GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.YEAR));
+        return fillWithEmptyGradeListOfGradeType(List.of(student), "GENERAL_COMPLETE_MONTHLY", academyClass, currSubject, existingGrades);
+    }
+
+    @Override
+    public List<Grade> findAllMonthlyGradesForMonthAndYear(String studentUsername, Long month, Long year) {
+        Student student = studentRepository.findByUsername(studentUsername).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, month.intValue());
+        if (year != null) {
+            calendar.set(Calendar.YEAR, year.intValue());
+        }
+        List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(academyClass.getId(),
+                null, student.getId(), GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+        return existingGrades;
+
+    }
+
     private List<Grade> fillWithEmptyGradeListOfGradeType(List<Student> students,
                                                           String gradeTypePrefix,
                                                           AcademyClass academyClass,
                                                           Subject subject,
-                                                          List<Grade> existingGrades){
+                                                          List<Grade> existingGrades) {
         List<GradeType> gradeTypes = Arrays.stream(GradeType.values())
                 .filter(gradeType -> gradeType.toString().startsWith(gradeTypePrefix))
                 .collect(Collectors.toList());
         List<Grade> result = new ArrayList<>(existingGrades);
         for (Student student : students) {
-            for(GradeType gradeType : gradeTypes){
-                if (existingGrades.stream().filter(grade -> grade.getGradeType() == gradeType && student.getId() == grade.getStudent().getId()).findAny().isEmpty()){
+            for (GradeType gradeType : gradeTypes) {
+                if (existingGrades.stream().filter(grade -> grade.getGradeType() == gradeType && student.getId() == grade.getStudent().getId()).findAny().isEmpty()) {
                     Grade grade = buildGradeOfGradeType(gradeType, academyClass, student, subject);
                     result.add(grade);
                 }
@@ -192,8 +245,8 @@ public class GradeServiceImpl implements GradeService {
         return result;
     }
 
-    private Grade buildGradeOfGradeType(GradeType gradeType, AcademyClass academyClass, Student student, Subject subject){
-        return  Grade.builder()
+    private Grade buildGradeOfGradeType(GradeType gradeType, AcademyClass academyClass, Student student, Subject subject) {
+        return Grade.builder()
                 .gradeType(gradeType)
                 .academyClass(academyClass)
                 .student(student)
@@ -202,9 +255,9 @@ public class GradeServiceImpl implements GradeService {
                 .build();
     }
 
-    private static BigDecimal calculateAverage(BigDecimal value1, BigDecimal value2,  BigDecimal value3) {
+    private static BigDecimal calculateAverage(BigDecimal value1, BigDecimal value2, BigDecimal value3) {
         BigDecimal sum = value1.add(value2).add(value3);
-        return BigDecimal.ZERO.equals(sum)? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(3), RoundingMode.HALF_UP); // Assuming you want the average of two values
+        return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(3), RoundingMode.HALF_UP); // Assuming you want the average of two values
     }
 
     private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> getAnualGrades(Long classId, int startYear, int endYear) throws SGSException {
@@ -280,7 +333,7 @@ public class GradeServiceImpl implements GradeService {
                     newMap.put(subject, existMap.get(subject));
                 } else {
                     Map<Integer, BigDecimal> emptyMap = new HashMap<>();
-                    for (Integer semesterKey : mapKeys){
+                    for (Integer semesterKey : mapKeys) {
                         emptyMap.put(semesterKey, BigDecimal.ZERO);
                     }
 //                    mapKeys.stream().map(key -> emptyMap.put(key, BigDecimal.ZERO));

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis,  CartesianGrid, Tooltip, activeDot, LabelList } from 'recharts';
+import {MONTHS} from "../utils/date";
 
 const pData = [5, 3, 4, 5, 6, 7, 2, 5];
 const xLabels = [
@@ -34,9 +35,14 @@ const handleLineClick = (event, data) => {
 
 };
 
-export default function Chart({id}) {
+export default function Chart({id, monthData}) {
   // id -> am cvladis mixedvit wamoiget monacemebi bazidan
   const [isHovered, setIsHovered] = useState(false)
+
+    const parsed = monthData? monthData.map(grade => {
+        return {label: MONTHS[new Date(grade.exactMonth).getUTCMonth()]?.value,
+        value: grade.value}
+    }) : []
 
   useEffect(()=>{
     if (isHovered){
@@ -62,10 +68,10 @@ export default function Chart({id}) {
   };
 
   return (
-    <LineChart width={1290} height={300} data={xLabels.map((label, index) => ({ label, value: pData[index] }))} >
+    <LineChart width={1290} height={300} data={parsed} >
       <CartesianGrid strokeDasharray="0" vertical={false} />
-      <XAxis style={{cursor:'pointer'}} onClick={handleLineClick} padding={{ left: 80, right: 80 }} angle={0} dataKey="label" height={60} tick={<CustomTick />} />
-      <YAxis />
+      <XAxis scale="point" style={{cursor:'pointer'}} onClick={handleLineClick} padding={{ left: 80, right: 80 }} angle={0} dataKey="label" height={60} tick={<CustomTick />} />
+      <YAxis domain={[0, 7]}/>
       <Tooltip active={true} cursor={false} onClick={handleLineClick} wrapperStyle={{display: 'none'}} />
       <Line type="linear" dataKey="value" stroke="#009688" dot={{r:4, cursor: 'pointer'}} cursor={'pointer'} activeDot={{ onClick: handleLineClick, r: 9, onMouseLeave: () => setIsHovered(false), onMouseEnter: () => setIsHovered(true) }} >
       <LabelList content={<CustomizedLabel />} />

@@ -26,8 +26,7 @@ export const App = () => {
                             <Route path="/ethicalPage" component={EthicPage}/>
                             <Route path="/absence-page" component={AbsencePage}/>
                             {/* <Route exact path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit" component={Discipline}/> */}
-                            <Route path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit/:id"
-                                   component={Discipline}/>
+                            <Route path="/grades/:id" component={Discipline}/>
                             <Route path="/tsliuri-shefaseba" component={TsliuriShefaseba}/>
                             <Route path="/tvis-reitingi" component={MonthlyGrade}/>
                         </Switch>

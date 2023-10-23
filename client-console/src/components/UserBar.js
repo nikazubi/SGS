@@ -20,7 +20,6 @@ const UserBar = () => {
   const history = useHistory(); // Add this line
     const {user, logout} = useUserContext();
 
-    console.log(user)
   const useStyles = makeStyles((theme) => ({
     avatar: {
       width: theme.spacing(4),

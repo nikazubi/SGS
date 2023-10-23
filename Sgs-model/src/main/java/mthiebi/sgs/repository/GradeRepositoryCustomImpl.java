@@ -175,4 +175,31 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 .orderBy(qGrade.exactMonth.desc())
                 .fetchFirst();
     }
+
+    @Override
+    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, int month, int year) {
+        return qf.select(qGrade)
+                .from(qGrade)
+                .where(QueryUtils.longEq(qGrade.academyClass.id, academyClassId)
+                        .and(QueryUtils.longEq(qGrade.student.id, studentId))
+                        .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
+                                .and(qGrade.exactMonth.month().eq(month + 1)))
+                        .and(qGrade.exactMonth.year().eq(year)))
+                .orderBy(qGrade.exactMonth.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int month, int year) {
+        return qf.select(qGrade)
+                .from(qGrade)
+                .where(QueryUtils.longEq(qGrade.academyClass.id, academyClassId)
+                        .and(QueryUtils.longEq(qGrade.student.id, studentId))
+                        .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
+                                .and(QueryUtils.enumEq(qGrade.gradeType, GradeType.GENERAL_COMPLETE_MONTHLY))
+                                .and(qGrade.exactMonth.month().eq(month + 1)))
+                        .and(qGrade.exactMonth.year().eq(year)))
+                .orderBy(qGrade.exactMonth.desc())
+                .fetch();
+    }
 }
