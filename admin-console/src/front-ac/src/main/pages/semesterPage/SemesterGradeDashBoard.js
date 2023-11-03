@@ -687,12 +687,9 @@ const SemesterGradeDashBoard = () => {
         async (newRow) => {
             const gradeType = Object.keys(newRow).filter(field => field.endsWith("--4") || field.endsWith("--3"))[0]
             const subjectIdAndType = gradeType.split("-", 1);
-            console.log(newRow)
-            console.log("subjectidAndType", subjectIdAndType)
             newRow.subject = newRow.gradeList.filter(g => g.subject.id == subjectIdAndType[0])[0].subject;
             newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(new Date());
             newRow.value = newRow[gradeType];
-            console.log("newrow", newRow);
             return await mutateRow(newRow);
         }, [mutateRow, filters]
     );

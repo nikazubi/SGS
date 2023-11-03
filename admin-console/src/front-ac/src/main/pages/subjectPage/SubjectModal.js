@@ -11,9 +11,9 @@ const SubjectModal = ({open, subject, onClose, modalOpenMode, submitButton, ...p
     const {mutate: onUpdate} = useUpdateSubject();
 
     const initialValues = {
-        name: subject.name? subject.name : "",
-        teacher: subject.teacher? subject.teacher : "",
-        id: subject.id? subject.id : 0
+        name: subject?.name ? subject.name : "",
+        teacher: subject?.teacher ? subject.teacher : "",
+        id: subject?.id ? subject.id : 0
     };
 
     return (

@@ -8,7 +8,7 @@ import useGradeMonthly from "./useGradeMonthly";
 
 const MonthlyGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("MONTHLY_GRADE")});
-
+    const [checked, setChecked] = useState(false);
     const {data, isLoading, isError, error, isSuccess} = useGradeMonthly(filters);
     const gradeColumns = [
         {
@@ -22,6 +22,8 @@ const MonthlyGradeDashBoard = () => {
             sortable: false,
             align: 'center',
             headerAlign: 'center',
+            width: 300,
+            maxWidth: 300
         },
         {
             headerName: "ქართული ლიტ",
@@ -296,15 +298,15 @@ const MonthlyGradeDashBoard = () => {
                 headerName: "მოსწავლე",
                 renderCell: ({row}) => {
                     return ( <div>
-                        {row.student.firstName + ' ' + row.student.lastName}
+                        {row.index + ". " + row.student.lastName + " " + row.student.firstName}
                     </div>);
                 },
                 field: 'name',
                 sortable: false,
                 align: 'center',
                 headerAlign: 'center',
-                width: 200,
-                maxWidth: 200,
+                width: 300,
+                maxWidth: 300,
             }];
             data[0].gradeList.forEach((o, index) => {
                 gradeClomuns2 = [ ...gradeClomuns2, {
@@ -316,7 +318,7 @@ const MonthlyGradeDashBoard = () => {
                             </div>)
                         }
                         return (<div>
-                            {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : row.gradeList[index].value}
+                            {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : checked? row.gradeList[index].value + 3 : row.gradeList[index].value}
                         </div>);
                     },
                     field: '' + o.subject.name,
@@ -376,7 +378,7 @@ const MonthlyGradeDashBoard = () => {
             return gradeClomuns2
         }
         return gradeColumns
-    }, [data])
+    }, [data, checked])
 
 
 
@@ -405,7 +407,7 @@ const MonthlyGradeDashBoard = () => {
 
     return (
         <div className={"monthlyGradeCnt"}>
-            <MonthlyGradeToolbar filters={filters} setFilters={setFilters}/>
+            <MonthlyGradeToolbar filters={filters} setFilters={setFilters} checked={checked} setChecked={setChecked}/>
             <div style={{height: `calc(100vh - ${130}px)`, width: '100%'}}>
                 <DataGridPaper>
                     <DataGridSGS

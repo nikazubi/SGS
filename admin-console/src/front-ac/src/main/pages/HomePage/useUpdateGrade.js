@@ -4,7 +4,7 @@ import useMutationWithInvalidation from "../../../hooks/useMutationWithInvalidat
 
 
 export const updateGrade = async grade => {
-    const gradeType = Object.keys(grade).filter(field => field.startsWith("BEHAVIOUR") || field.startsWith("GENERAL"))[0];
+    const gradeType = Object.keys(grade).filter(field => field.startsWith("BEHAVIOUR") || field.startsWith("GENERAL") || field.startsWith("TRANSIT"))[0];
     const request = {
         // id: grade.grades.filter(g => g.gradeType === gradeType)[0].id,
         value: grade[gradeType],

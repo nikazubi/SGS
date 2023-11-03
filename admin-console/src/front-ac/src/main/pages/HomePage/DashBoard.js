@@ -419,7 +419,7 @@ const DashBoard = () => {
         {
             headerName: "1",
             renderCell: ({row}) => {
-                const summary1 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_1");
+                const summary1 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SUMMARY_ASSIGMENT_1");
                 if (summary1.length === 0) {
                     return ""
                 }
@@ -437,7 +437,7 @@ const DashBoard = () => {
         {
             headerName: "2",
             renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_2");
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SUMMARY_ASSIGMENT_2");
                 if (summary2.length === 0) {
                     return ""
                 }
@@ -455,7 +455,7 @@ const DashBoard = () => {
         {
             headerName: "აღდგენა",
             renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_RESTORATION");
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SUMMARY_ASSIGMENT_RESTORATION");
                 if (summary2.length === 0) {
                     return ""
                 }
@@ -473,7 +473,7 @@ const DashBoard = () => {
         {
             headerName: "თვის ნიშანი",
             renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_MONTH");
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SUMMARY_ASSIGMENT_MONTH");
                 if (summary2.length === 0) {
                     return ""
                 }
@@ -491,7 +491,7 @@ const DashBoard = () => {
         {
             headerName: "%",
             renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_PERCENT");
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SUMMARY_ASSIGMENT_PERCENT");
                 if (summary2.length === 0) {
                     return ""
                 }

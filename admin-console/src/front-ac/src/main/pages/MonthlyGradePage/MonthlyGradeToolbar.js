@@ -9,8 +9,10 @@ import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import {setFiltersOfPage} from "../../../utils/filters";
 import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
+import Switch from "@mui/material/Switch";
+import {Tooltip} from "@mui/material";
 
-const MonthlyGradeToolbar = ({setFilters, filters}) => {
+const MonthlyGradeToolbar = ({setFilters, filters, checked, setChecked}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
     const {mutateAsync: onFetchStudents} = useFetchStudents();
     const [date, setDate] = useState(new Date())
@@ -61,7 +63,6 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                                                 getOptionSelected={(option, value) => option.id === value.id}
                                                 getOptionLabel={(option) => option.firstName + " " + option.lastName}
                                                 setInitialVulue={(options) =>{
-                                                    console.log(options)
                                                     if(options.length === 1 && options[0] !== 'undefined undefined'){
                                                         return options[0]
                                                     }
@@ -90,6 +91,15 @@ const MonthlyGradeToolbar = ({setFilters, filters}) => {
                                 }}
                             />
                         </div>
+                        <Tooltip title={checked? "10 ბალიანი სისტემა" : "7 ბალიანი სისტემა"}>
+                            <div style={{marginLeft: 0, width: 50}}>
+                                <Switch
+                                    checked={checked}
+                                    onChange={()=> setChecked(!checked)}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                            </div>
+                        </Tooltip>
                     </div>)}
                 </Formik>
             </FlexBox>

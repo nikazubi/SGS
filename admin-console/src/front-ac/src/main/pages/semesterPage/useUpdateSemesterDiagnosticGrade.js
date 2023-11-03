@@ -9,7 +9,6 @@ export const updateSemesterDiagnosticGrade = async grade => {
     } else if (gradeType.endsWith('--4')) {
         gradeType = 'DIAGNOSTICS_2'
     }
-    console.log("gradee", grade)
     const request = {
         // id: grade.grades.filter(g => g.gradeType === gradeType)[0].id,
         value: grade.value,

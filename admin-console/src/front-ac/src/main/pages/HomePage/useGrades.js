@@ -11,7 +11,8 @@ export const fetchGradesGrouped = async (filters) => {
         subjectId: filters.subject.id,
         studentId: filters.student?.id,
         date: Date.parse(filters.date),
-        groupByClause: filters.groupByClause
+        groupByClause: filters.groupByClause,
+        gradeTypePrefix: filters.academyClass.isTransit? "TRANSIT" : "GENERAL"
     }
     const {data} = await axios.get("grade/get-grades-grouped", {params});
     data.map((row, index) => {

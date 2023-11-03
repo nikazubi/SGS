@@ -5,7 +5,6 @@ import useMutationWithInvalidation from "../../../hooks/useMutationWithInvalidat
 export const updateSystemUser = async systemUser => {
     const groupIdList = systemUser.systemGroup.map(o => o.id);
     const classIdList = systemUser.academyClasses.map(o => o.id);
-    console.log(systemUser)
     const {data} = await axios.put("system-user/update", {
         systemUserDTO: {
             id: systemUser?.id,
