@@ -93,7 +93,6 @@ axiosInstance.interceptors.request.use(
         if (!!jwt && !config.headers.authorization) {
             config.headers.authorization = `Bearer ${jwt}`;
         }
-        console.log(config)
         return config;
     },
     error => error
