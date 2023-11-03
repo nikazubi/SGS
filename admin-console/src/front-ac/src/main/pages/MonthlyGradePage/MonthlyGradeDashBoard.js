@@ -308,26 +308,34 @@ const MonthlyGradeDashBoard = () => {
                 width: 300,
                 maxWidth: 300,
             }];
+            let absenceIndex = -10;
+            let behaviourIndex = -10;
             data[0].gradeList.forEach((o, index) => {
-                gradeClomuns2 = [ ...gradeClomuns2, {
-                    headerName: o.subject.name,
-                    renderCell: ({row}) => {
-                        if (row.student.id === -6) {
+                if (o.subject.name === 'absence') {
+                    absenceIndex = index;
+                } else if (o.subject.name === 'behaviour') {
+                    behaviourIndex = index;
+                } else {
+                    gradeClomuns2 = [ ...gradeClomuns2, {
+                        headerName: o.subject.name,
+                        renderCell: ({row}) => {
+                            if (row.student.id === -6) {
+                                return (<div>
+                                    {!row.gradeList[index] || !row.gradeList[index].subject ? '' : row.gradeList[index].subject.teacher}
+                                </div>)
+                            }
                             return (<div>
-                                {!row.gradeList[index] || !row.gradeList[index].subject ? '' : row.gradeList[index].subject.teacher}
-                            </div>)
-                        }
-                        return (<div>
-                            {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : checked? row.gradeList[index].value + 3 : row.gradeList[index].value}
-                        </div>);
-                    },
-                    field: '' + o.subject.name,
-                    sortable: false,
-                    align: 'center',
-                    headerAlign: 'center',
-                    width: 200,
-                    maxWidth: 200,
-                }]
+                                {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : checked? row.gradeList[index].value + 3 : row.gradeList[index].value}
+                            </div>);
+                        },
+                        field: '' + o.subject.name,
+                        sortable: false,
+                        align: 'center',
+                        headerAlign: 'center',
+                        width: 200,
+                        maxWidth: 200,
+                    }]
+                }
             })
             gradeClomuns2.push(
                 {
@@ -349,7 +357,7 @@ const MonthlyGradeDashBoard = () => {
                     headerName: "ეთიკური ნორმა",
                     renderCell: ({row}) => {
                         return (<div>
-                            {row.ethic}
+                            {!row.gradeList[behaviourIndex] || row.gradeList[behaviourIndex]?.value === 0 ? '' : row.gradeList[behaviourIndex].value}
                         </div>);
                     },
 
@@ -364,7 +372,7 @@ const MonthlyGradeDashBoard = () => {
                     headerName: "გაცდენილი საათი",
                     renderCell: ({row}) => {
                         return (<div>
-                            {row.absent}
+                            {!row.gradeList[absenceIndex] || row.gradeList[absenceIndex]?.value === 0 ? '' : row.gradeList[absenceIndex].value}
                         </div>);
                     },
 

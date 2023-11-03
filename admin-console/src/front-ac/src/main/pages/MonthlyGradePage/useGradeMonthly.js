@@ -12,19 +12,20 @@ export const fetchGradesMonthly = async (filters) => {
         component: "monthly"
     }
     const {data} = await axios.get("/grade/get-grades-by-component", {params});
-    data.sort((a, b) => {
+    const newData = data.filter(item => item.student.firstName !== 'საშუალო' && item.student.firstName !== 'მასწავლებელი')
+    newData.sort((a, b) => {
         if (a.student?.lastName < b.student.lastName)
+            return -1
+        if (a.student?.lastName > b.student.lastName)
             return 1
-        if (a.student?.lastName === b.student.lastName)
-            return 0
-        else return -1
+        else return 0
     })
-    data.map((row, index) => {
+    newData.map((row, index) => {
         let copyRow = row;
         copyRow.index = index + 1;
         return copyRow;
     });
-    return data.filter(item => item.student.firstName !== 'საშუალო' && item.student.firstName !== 'მასწავლებელი');
+    return newData;
 }
 
 const useGradeMonthly = (filterData) => useQuery(["MONTHLY_GRADE",filterData],

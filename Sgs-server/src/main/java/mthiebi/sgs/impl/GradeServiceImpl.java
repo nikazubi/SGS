@@ -50,11 +50,18 @@ public class GradeServiceImpl implements GradeService {
                 subject == null ? null : subject.getId(), student.getId(), grade.getGradeType(), exactDate);
 
         if (existing != null) {
+            if (grade.getValue() == null) {
+                gradeRepository.deleteById(existing.getId());
+                return new Grade();
+            }
             existing.setValue(grade.getValue());
             gradeRepository.save(existing);
             return existing;
         }
 
+        if (grade.getValue() == null) {
+            return new Grade();
+        }
         grade.setExactMonth(exactDate);
         grade.setStudent(student);
         grade.setAcademyClass(academyClass);
@@ -163,7 +170,7 @@ public class GradeServiceImpl implements GradeService {
             ));
             result.put(student, value);
         }
-        return fillMissingSubjects(classId, result, studentId);
+        return fillMissingSubjects(classId, result, studentId, createDate);
     }
 
     @Override
@@ -349,7 +356,7 @@ public class GradeServiceImpl implements GradeService {
         return map;
     }
 
-    private Map<Student, Map<Subject, BigDecimal>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, BigDecimal>> map, Long studentId) throws SGSException {
+    private Map<Student, Map<Subject, BigDecimal>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, BigDecimal>> map, Long studentId, Date createDate) throws SGSException {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
@@ -371,6 +378,14 @@ public class GradeServiceImpl implements GradeService {
                 } else {
                     newMap.put(subject, BigDecimal.ZERO);
                 }
+                Subject junkSubject = new Subject();
+                junkSubject.setName("absence");
+                junkSubject.setId(8888L);
+                newMap.put(junkSubject, gradeRepository.findTotalAbsenceHours(student.getId()));
+                Subject behaviourSubject = new Subject();
+                behaviourSubject.setName("behaviour");
+                behaviourSubject.setId(9999L);
+                newMap.put(behaviourSubject, gradeRepository.findBehaviourMonth(student.getId(), createDate));
             }
             if (studentId != null && student.getId() != studentId) {
                 map.remove(student);
@@ -378,15 +393,15 @@ public class GradeServiceImpl implements GradeService {
             }
             map.put(student, newMap);
         }
-        for (Subject subject : sums.keySet()) {
-            BigDecimal sum = sums.get(subject);
-            BigDecimal average = sum.divide(BigDecimal.valueOf(studentList.size()), RoundingMode.HALF_UP);
-            sums.put(subject, average);
-        }
-        Student average = Student.builder().id(-5).firstName("საშუალო").lastName("ქულა").build();
-        map.put(average, sums);
-        Student teacher = Student.builder().id(-6).firstName("მასწავლებელი").lastName("").build();
-        map.put(teacher, sums);
+//        for (Subject subject : sums.keySet()) {
+//            BigDecimal sum = sums.get(subject);
+//            BigDecimal average = sum.divide(BigDecimal.valueOf(studentList.size()), RoundingMode.HALF_UP);
+//            sums.put(subject, average);
+//        }
+//        Student average = Student.builder().id(-5).firstName("საშუალო").lastName("ქულა").build();
+//        map.put(average, sums);
+//        Student teacher = Student.builder().id(-6).firstName("მასწავლებელი").lastName("").build();
+//        map.put(teacher, sums);
         return map;
     }
 }

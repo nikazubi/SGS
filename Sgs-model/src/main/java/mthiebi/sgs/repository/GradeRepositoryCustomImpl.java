@@ -120,7 +120,9 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         Predicate datePredicate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createDate);
-        datePredicate = qGrade.createTime.month().eq(calendar.get(Calendar.MONTH) + 1).and(qGrade.createTime.year().eq(calendar.get(Calendar.YEAR)));
+//        datePredicate = qGrade.createTime.month().eq(calendar.get(Calendar.MONTH) + 1).and(qGrade.createTime.year().eq(calendar.get(Calendar.YEAR)));
+        int month = calendar.get(Calendar.MONTH) == Calendar.FEBRUARY ? 0 : calendar.get(Calendar.MONTH) == Calendar.OCTOBER ? 8 : calendar.get(Calendar.MONTH);
+        datePredicate = qGrade.exactMonth.month().eq(month + 1).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR)));
 
         Predicate gradeTypePredicate = qGrade.gradeType.eq(GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList =  qf.selectFrom(qGrade)
@@ -201,5 +203,24 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .and(qGrade.exactMonth.year().eq(year)))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
+    }
+
+    @Override
+    public BigDecimal findTotalAbsenceHours(long studentId) {
+        return qf.select(qGrade.value.sum())
+                .from(qGrade)
+                .where(qGrade.gradeType.eq(GradeType.GENERAL_ABSENCE_MONTHLY)
+                        .and(qGrade.student.id.eq(studentId)))
+                .fetchOne();
+    }
+
+    @Override
+    public BigDecimal findBehaviourMonth(long id, Date createDate) {
+        return qf.select(qGrade.value)
+                .from(qGrade)
+                .where(qGrade.gradeType.eq(GradeType.BEHAVIOUR_MONTHLY)
+                        .and(qGrade.student.id.eq(id))
+                        .and(qGrade.exactMonth.month().eq(createDate.getMonth() + 1)))
+                .fetchOne();
     }
 }
