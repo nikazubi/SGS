@@ -228,8 +228,31 @@ public class GradeServiceImpl implements GradeService {
         }
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(academyClass.getId(),
                 null, student.getId(), GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+        return fillWithEmptyGradeListOfGradeType(student, "GENERAL_COMPLETE_MONTHLY", academyClass, academyClass.getSubjectList(), existingGrades);
+
+    }
+
+    @Override
+    public List<Grade> findAllBehaviourGradesForMonthAndYear(String studentUsername, Long month, Long year) {
+        Student student = studentRepository.findByUsername(studentUsername).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, month.intValue());
+        if (year != null) {
+            calendar.set(Calendar.YEAR, year.intValue());
+        }
+        List<Grade> existingGrades = getStudentGradeByClassAndSubjectIdAndCreateTime(academyClass.getId(),
+                null, student.getId(), calendar.getTime(), "BEHAVIOUR");
+
         return existingGrades;
 
+    }
+
+    @Override
+    public Object getGradeByComponent(String userName, String yearRange, Date date, String component) throws SGSException {
+        Student student = studentRepository.findByUsername(userName).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        return getGradeByComponent(academyClass.getId(), student.getId(), yearRange, date, component);
     }
 
     private List<Grade> fillWithEmptyGradeListOfGradeType(List<Student> students,
@@ -244,6 +267,26 @@ public class GradeServiceImpl implements GradeService {
         for (Student student : students) {
             for (GradeType gradeType : gradeTypes) {
                 if (existingGrades.stream().filter(grade -> grade.getGradeType() == gradeType && student.getId() == grade.getStudent().getId()).findAny().isEmpty()) {
+                    Grade grade = buildGradeOfGradeType(gradeType, academyClass, student, subject);
+                    result.add(grade);
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<Grade> fillWithEmptyGradeListOfGradeType(Student student,
+                                                          String gradeTypePrefix,
+                                                          AcademyClass academyClass,
+                                                          List<Subject> subjects,
+                                                          List<Grade> existingGrades) {
+        List<GradeType> gradeTypes = Arrays.stream(GradeType.values())
+                .filter(gradeType -> gradeType.toString().startsWith(gradeTypePrefix))
+                .collect(Collectors.toList());
+        List<Grade> result = new ArrayList<>(existingGrades);
+        for (Subject subject : subjects) {
+            for (GradeType gradeType : gradeTypes) {
+                if (existingGrades.stream().filter(grade -> grade.getGradeType() == gradeType && subject.getId() == grade.getSubject().getId()).findAny().isEmpty()) {
                     Grade grade = buildGradeOfGradeType(gradeType, academyClass, student, subject);
                     result.add(grade);
                 }
@@ -327,6 +370,36 @@ public class GradeServiceImpl implements GradeService {
     }
 
     private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjects(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map, boolean firstSemester, Long studentId) throws SGSException {
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
+        List<Subject> subjectList = academyClass.getSubjectList();
+        List<Student> studentList = academyClass.getStudentList();
+        List<Integer> mapKeys = firstSemester ? List.of(-4, -3, -2, -1, 9, 11, 12) : List.of(-2, -1, 1, 3, 4, 5, 6);
+
+        for (Student student : studentList) {
+            Map<Subject, Map<Integer, BigDecimal>> existMap = map.get(student);
+            Map<Subject, Map<Integer, BigDecimal>> newMap = new HashMap<>();
+            for (Subject subject : subjectList) {
+                if (existMap != null && existMap.get(subject) != null) {
+                    newMap.put(subject, existMap.get(subject));
+                } else {
+                    Map<Integer, BigDecimal> emptyMap = new HashMap<>();
+                    for (Integer semesterKey : mapKeys) {
+                        emptyMap.put(semesterKey, BigDecimal.ZERO);
+                    }
+//                    mapKeys.stream().map(key -> emptyMap.put(key, BigDecimal.ZERO));
+                    newMap.put(subject, emptyMap);
+                }
+            }
+            if (studentId != null && student.getId() != studentId) {
+                map.remove(student);
+                continue;
+            }
+            map.put(student, newMap);
+        }
+        return map;
+    }
+
+    private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> fillMissingSubjectsClient(Long classId, Map<Student, Map<Subject, Map<Integer, BigDecimal>>> map, boolean firstSemester, Long studentId) throws SGSException {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();

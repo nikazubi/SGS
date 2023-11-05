@@ -1,4 +1,4 @@
-import {adjustBrightness} from "../../../utils/StyleUtils";
+import {adjustBrightness} from "../StyleUtils";
 
 export const DataGridStyles = (colorGroups) => {
 

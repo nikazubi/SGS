@@ -50,4 +50,7 @@ public interface GradeService {
 
     List<Grade> findAllMonthlyGradesForMonthAndYear(String studentUsername, Long month, Long year);
 
+    List<Grade> findAllBehaviourGradesForMonthAndYear(String studentUsername, Long month, Long year);
+
+    Object getGradeByComponent(String userName, String yearRange, Date date, String component) throws SGSException;
 }

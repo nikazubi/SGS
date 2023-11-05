@@ -95,3 +95,31 @@ export const getFirstSemestMonths = () => {
 export const getSecondSemestMonths = () => {
     return [MONTHS[0], MONTHS[1], MONTHS[2], MONTHS[3], MONTHS[4]]
 }
+
+export const getSemesterOfMonth = (month) => {
+    if (month === 8 || month === 9 || month === 10 || month === 11) {
+        return {
+            value: 'firstSemester',
+            label: 'I სემესტრი'
+        }
+    }
+
+    return {
+        value: 'secondSemester',
+        label: 'II სემესტრი'
+    }
+}
+
+export const getRomanByInt = (num) => {
+    if (isNaN(num))
+        return NaN;
+    var digits = String(+num).split(""),
+        key = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM",
+            "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC",
+            "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"],
+        roman = "",
+        i = 3;
+    while (i--)
+        roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+    return Array(+digits.join("") + 1).join("M") + roman;
+}

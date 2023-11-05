@@ -1,32 +1,32 @@
 import React from "react";
 import {Bar, BarChart, CartesianGrid, LabelList, Tooltip, XAxis, YAxis} from "recharts";
 
-export default function CustomShefasebaBar({color, data}) {
+export default function CustomShefasebaBar({color, data, width = 1280, height = 440, left = 30}) {
+
+    const formatPercentage = (value) => {
+        return value;
+    };
+
+    const displayPrecent = (v) => {
+        return v.value;
+    }
 
     console.log(data)
 
-    const formatPercentage = (value) => {
-      return value;
-    };
-
-    const displayPrecent = (v) =>{
-      return v.value;
-    }
-
-  return (
-    <BarChart
-        width={1280}
-        height={440}
-        data={data}
-        layout={'horizontal'}
-        margin={{
-        top: 20,
-        right: 30,
-        left: 20,
-        bottom: 5
-      }}
-    >
-      <CartesianGrid fill="#fff" strokeDasharray="3 3" />
+    return (
+        <BarChart
+            width={width}
+            height={height}
+            data={data}
+            layout={'horizontal'}
+            margin={{
+                top: 20,
+                right: 30,
+                left: left,
+                bottom: 5
+            }}
+        >
+            <CartesianGrid fill="#fff" strokeDasharray="3 3"/>
       <XAxis dataKey="name" />
 
       <YAxis
