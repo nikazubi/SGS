@@ -371,14 +371,14 @@ const DashBoard = () => {
                 if (summary2.length === 0) {
                     return ""
                 }
-                return summary2[0].value === 0 ? '' : summary2[0].value;
+                return summary2[0].value === 0 ? '' : summary2[0].value === -50 ? 'ჩთ' : summary2[0].value;
             },
             field: 'GENERAL_COMPLETE_MONTHLY',
             sortable: false,
             align: 'center',
             headerAlign: 'center',
             editable: true,
-            type: "number",
+            type: "text",
             width: 78,
             maxWidth: 78,
         },

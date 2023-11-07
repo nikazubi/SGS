@@ -172,8 +172,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 50,
-            maxWidth: 50,
+            width: 70,
+            maxWidth: 70,
         },
 
         {
@@ -425,8 +425,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 50,
-            maxWidth: 50,
+            width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "I კვირა",
@@ -551,8 +551,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 50,
-            maxWidth: 50,
+            width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "I კვირა",
@@ -677,8 +677,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 50,
-            maxWidth: 50,
+            width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "I კვირა",
@@ -803,8 +803,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 50,
-            maxWidth: 50,
+            width: 70,
+            maxWidth: 70,
         },
         {
             headerName: "ქულა",
@@ -821,8 +821,8 @@ const BehaviourDashBoard = () => {
             headerAlign: 'center',
             editable: true,
             type: "number",
-            width: 50,
-            maxWidth: 50,
+            width: 70,
+            maxWidth: 70,
         },
     ];
 

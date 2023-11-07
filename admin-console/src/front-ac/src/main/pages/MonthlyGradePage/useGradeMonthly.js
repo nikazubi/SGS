@@ -1,5 +1,6 @@
 import {useQuery} from "react-query";
 import axios from "../../../utils/axios";
+import {subjectPattern} from "./Helper";
 
 export const fetchGradesMonthly = async (filters) => {
     if (!filters.academyClass) {
@@ -20,6 +21,23 @@ export const fetchGradesMonthly = async (filters) => {
             return 1
         else return 0
     })
+    newData.forEach(o => {
+        o.gradeList.sort((a, b) => {
+            const indexA = subjectPattern.indexOf(a.subject.name);
+            const indexB = subjectPattern.indexOf(b.subject.name);
+            if (indexA === -1 && indexB === -1) {
+                return 0;
+            }
+            if (indexA === -1) {
+                return 1;
+            }
+            if (indexB === -1) {
+                return -1;
+            }
+            return indexA - indexB;
+        });
+    })
+
     newData.map((row, index) => {
         let copyRow = row;
         copyRow.index = index + 1;

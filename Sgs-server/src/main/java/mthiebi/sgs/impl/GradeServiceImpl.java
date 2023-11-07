@@ -378,19 +378,23 @@ public class GradeServiceImpl implements GradeService {
                 } else {
                     newMap.put(subject, BigDecimal.ZERO);
                 }
-                Subject junkSubject = new Subject();
-                junkSubject.setName("absence");
-                junkSubject.setId(8888L);
-                newMap.put(junkSubject, gradeRepository.findTotalAbsenceHours(student.getId()));
-                Subject behaviourSubject = new Subject();
-                behaviourSubject.setName("behaviour");
-                behaviourSubject.setId(9999L);
-                newMap.put(behaviourSubject, gradeRepository.findBehaviourMonth(student.getId(), createDate));
             }
             if (studentId != null && student.getId() != studentId) {
                 map.remove(student);
                 continue;
             }
+            Subject ratingSubject = new Subject();
+            ratingSubject.setName("rating");
+            ratingSubject.setId(7777L);
+            newMap.put(ratingSubject, adjustStudentRating(newMap));
+            Subject junkSubject = new Subject();
+            junkSubject.setName("absence");
+            junkSubject.setId(8888L);
+            newMap.put(junkSubject, gradeRepository.findTotalAbsenceHours(student.getId()));
+            Subject behaviourSubject = new Subject();
+            behaviourSubject.setName("behaviour");
+            behaviourSubject.setId(9999L);
+            newMap.put(behaviourSubject, gradeRepository.findBehaviourMonth(student.getId(), createDate));
             map.put(student, newMap);
         }
 //        for (Subject subject : sums.keySet()) {
@@ -403,5 +407,21 @@ public class GradeServiceImpl implements GradeService {
 //        Student teacher = Student.builder().id(-6).firstName("მასწავლებელი").lastName("").build();
 //        map.put(teacher, sums);
         return map;
+    }
+
+    private BigDecimal adjustStudentRating(Map<Subject, BigDecimal> newMap) {
+        BigDecimal sum = BigDecimal.valueOf(0);
+        long count = 0L;
+        for (Subject s : newMap.keySet()) {
+            BigDecimal value = newMap.get(s);
+            if (value != null && value.compareTo(BigDecimal.ZERO) > 0) {
+                sum = sum.add(value);
+                count++;
+            }
+        }
+        if (Objects.equals(sum, BigDecimal.ZERO) || count == 0) {
+            return BigDecimal.ZERO;
+        }
+        return sum.divide(new BigDecimal(count), RoundingMode.CEILING);
     }
 }

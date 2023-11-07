@@ -14,14 +14,13 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: testforsmtp6@gmail.com
-    password: avncxlaclvgqtdhc
+    username: ibmthiebi.student.rating@gmail.com
+    password: hyqglxbcpwhvtsf
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-#            todo: need to create new email for Mtiebi and generate app password
 jwt:
   secret: secretkey123

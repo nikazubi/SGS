@@ -5,6 +5,7 @@ import MonthlyGradeToolbar from "./MonthlyGradeToolbar";
 import "./header.css"
 import {getFiltersOfPage} from "../../../utils/filters";
 import useGradeMonthly from "./useGradeMonthly";
+import {subjectPattern} from "./Helper";
 
 const MonthlyGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("MONTHLY_GRADE")});
@@ -310,11 +311,14 @@ const MonthlyGradeDashBoard = () => {
             }];
             let absenceIndex = -10;
             let behaviourIndex = -10;
+            let ratingIndex = -10;
             data[0].gradeList.forEach((o, index) => {
                 if (o.subject.name === 'absence') {
                     absenceIndex = index;
                 } else if (o.subject.name === 'behaviour') {
                     behaviourIndex = index;
+                } else if (o.subject.name === 'rating') {
+                    ratingIndex = index;
                 } else {
                     gradeClomuns2 = [ ...gradeClomuns2, {
                         headerName: o.subject.name,
@@ -325,7 +329,8 @@ const MonthlyGradeDashBoard = () => {
                                 </div>)
                             }
                             return (<div>
-                                {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : checked? row.gradeList[index].value + 3 : row.gradeList[index].value}
+                                {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : row.gradeList[index].value === -50 ? 'ჩთ' :
+                                    checked? row.gradeList[index].value + 3 : row.gradeList[index].value}
                             </div>);
                         },
                         field: '' + o.subject.name,
@@ -342,7 +347,7 @@ const MonthlyGradeDashBoard = () => {
                     headerName: "რეიტინგი",
                     renderCell: ({row}) => {
                         return (<div>
-                            {row.rating}
+                            {!row.gradeList[ratingIndex] || row.gradeList[ratingIndex]?.value === 0 ? '' : row.gradeList[ratingIndex].value}
                         </div>);
                     },
 

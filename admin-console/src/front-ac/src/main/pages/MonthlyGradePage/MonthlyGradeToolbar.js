@@ -11,6 +11,8 @@ import {setFiltersOfPage} from "../../../utils/filters";
 import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
 import Switch from "@mui/material/Switch";
 import {Tooltip} from "@mui/material";
+import {FileDownload} from "@mui/icons-material";
+import {fetchGradeMonthly, fetchGradesSemester} from "../semesterPage/useExportWord";
 
 const MonthlyGradeToolbar = ({setFilters, filters, checked, setChecked}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -100,6 +102,15 @@ const MonthlyGradeToolbar = ({setFilters, filters, checked, setChecked}) => {
                                 />
                             </div>
                         </Tooltip>
+                        <div style={{marginLeft: -10, width: 40}}>
+                            <IconButtonWithTooltip
+                                icon={<FileDownload/>}
+                                tooltip={"ექსპორტი"}
+                                onClick={async () => {
+                                    await fetchGradeMonthly(filters, checked)
+                                }}
+                            />
+                        </div>
                     </div>)}
                 </Formik>
             </FlexBox>
