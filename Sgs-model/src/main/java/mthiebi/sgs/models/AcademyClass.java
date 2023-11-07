@@ -99,7 +99,7 @@ public class AcademyClass extends mthiebi.sgs.models.Audit {
     public TotalAbsence getActiveTotalAbsence() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        return getTotalAbsenceForYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1);
+        return getTotalAbsenceForYearAndMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) ); //erased + 1
     }
 
     @Transient
@@ -109,14 +109,14 @@ public class AcademyClass extends mthiebi.sgs.models.Audit {
                     calendar.setTime(totalAbsence.getActivePeriod());
                     if (month.equals(1) || month.equals(2)) {
                         return calendar.get(Calendar.YEAR) == year &&
-                                (calendar.get(Calendar.MONTH) + 1 == 1 || calendar.get(Calendar.MONTH) + 1 == 2);
+                                (calendar.get(Calendar.MONTH)  == 1 || calendar.get(Calendar.MONTH) == 2); //erased + 1
                     }
                     if (month.equals(9) || month.equals(10)) {
                         return calendar.get(Calendar.YEAR) == year &&
-                                (calendar.get(Calendar.MONTH) + 1 == 9 || calendar.get(Calendar.MONTH) + 1 == 10);
+                                (calendar.get(Calendar.MONTH)  == 9 || calendar.get(Calendar.MONTH) == 10); //erased + 1
                     }
                     return calendar.get(Calendar.YEAR) == year &&
-                            (calendar.get(Calendar.MONTH) + 1 == month);
+                            (calendar.get(Calendar.MONTH)  == month); //erased + 1
                 })
                 .max(Comparator.comparing(Audit::getCreateTime))
                 .orElse(TotalAbsence.builder()

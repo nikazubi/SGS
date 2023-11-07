@@ -40,7 +40,7 @@ const BehaviourDashBoard = () => {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
                 return <div style={{height:50, justifyContent:'center', alignItems: 'center',}}>
-                    {row.student.lastName + " " + row.student.firstName}</div>
+                    {row.index + ". " + row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
             sortable: false,
@@ -831,7 +831,7 @@ const BehaviourDashBoard = () => {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
                 return <div style={{height:50, justifyContent:'center', alignItems: 'center',}}>
-                    {row.student.lastName + " " + row.student.firstName}</div>
+                    {row.index + ". " + row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
             sortable: false,
@@ -1369,6 +1369,96 @@ const BehaviourDashBoard = () => {
             maxWidth: 50,
         },
         {
+            headerName: "I კვირა",
+            renderCell: ({row}) => {
+                const summary1 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_WEEK_AVERAGE_1");
+                if (summary1.length === 0) {
+                    return ""
+                }
+                return summary1[0].value;
+            },
+            field: 'BEHAVIOUR_WEEK_AVERAGE_1',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 70,
+            maxWidth: 70,
+        },
+        {
+            headerName: "II კვირა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_WEEK_AVERAGE_2");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_WEEK_AVERAGE_2',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 70,
+            maxWidth: 70,
+        },
+        {
+            headerName: "III კვირა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_WEEK_AVERAGE_3");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_WEEK_AVERAGE_3',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 70,
+            maxWidth: 70,
+        },
+        {
+            headerName: "IV კვირა",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_WEEK_AVERAGE_4");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value;
+            },
+            field: 'BEHAVIOUR_WEEK_AVERAGE_4',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 70,
+            maxWidth: 70,
+        },
+        {
+            headerName: "თვე",
+            renderCell: ({row}) => {
+                const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_WEEK_AVERAGE_MONTHLY");
+                if (summary2.length === 0) {
+                    return ""
+                }
+                return summary2[0].value === 0 ? '' : summary2[0].value;
+            },
+            field: 'BEHAVIOUR_WEEK_AVERAGE_MONTHLY',
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            editable: true,
+            type: "number",
+            width: 70,
+            maxWidth: 70,
+        },
+        {
             headerName: "ქულა",
             renderCell: ({row}) => {
                 const summary2 = row.grades?.filter(grade => grade.gradeType === "BEHAVIOUR_MONTHLY");
@@ -1568,6 +1658,19 @@ const BehaviourDashBoard = () => {
             children: [{ field: 'BEHAVIOUR_STUDENT_BEHAVIOR_1' }, {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_2'},
                 {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_3'}, {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_4'},
                 {field: 'BEHAVIOUR_STUDENT_BEHAVIOR_5'},{field: 'BEHAVIOUR_STUDENT_BEHAVIOR_MONTHLY'}],
+            align: 'center',
+            headerAlign: 'center'
+        },
+        {
+            groupId: 'weekly',
+            headerName: 'ჯამური ქულები',
+            description: '',
+            // renderHeaderGroup: (params) => (
+            //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />
+            // ),
+            children: [{field: 'BEHAVIOUR_WEEK_AVERAGE_1'}, {field: 'BEHAVIOUR_WEEK_AVERAGE_2'},
+                {field: 'BEHAVIOUR_WEEK_AVERAGE_3'}, {field: 'BEHAVIOUR_WEEK_AVERAGE_4'},
+                {field: 'BEHAVIOUR_WEEK_AVERAGE_MONTHLY'}],
             align: 'center',
             headerAlign: 'center'
         },

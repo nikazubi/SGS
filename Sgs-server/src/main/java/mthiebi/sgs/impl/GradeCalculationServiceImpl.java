@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -238,6 +239,12 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             existing.setValue(value);
             gradeRepository.save(existing);
             return;
+        }
+
+        if (exactMonth.getMonth() == Calendar.FEBRUARY) {
+            exactMonth.setMonth(Calendar.JANUARY);
+        } else if (exactMonth.getMonth() == Calendar.OCTOBER) {
+            exactMonth.setMonth(Calendar.SEPTEMBER);
         }
 
         Grade grade = Grade.builder()

@@ -102,7 +102,7 @@ const MonthlyGradeToolbar = ({setFilters, filters, checked, setChecked}) => {
                                 />
                             </div>
                         </Tooltip>
-                        <div style={{marginLeft: -10, width: 40}}>
+                        <div style={{marginLeft: 0, width: 40}}>
                             <IconButtonWithTooltip
                                 icon={<FileDownload/>}
                                 tooltip={"ექსპორტი"}

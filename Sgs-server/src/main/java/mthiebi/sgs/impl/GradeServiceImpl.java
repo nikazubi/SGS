@@ -108,7 +108,7 @@ public class GradeServiceImpl implements GradeService {
 
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndCreateTime(classId, subjectId, studentId, createTime)
                 .stream()
-                .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
+                .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix) || grade.getGradeType().toString().equalsIgnoreCase("GENERAL_ABSENCE_MONTHLY"))
                 .collect(Collectors.toList());
         if (studentId != null) {
             Student student = studentRepository.findById(studentId).orElseThrow();
@@ -390,7 +390,7 @@ public class GradeServiceImpl implements GradeService {
             Subject junkSubject = new Subject();
             junkSubject.setName("absence");
             junkSubject.setId(8888L);
-            newMap.put(junkSubject, gradeRepository.findTotalAbsenceHours(student.getId()));
+            newMap.put(junkSubject, gradeRepository.findTotalAbsenceHours(student.getId(), createDate));
             Subject behaviourSubject = new Subject();
             behaviourSubject.setName("behaviour");
             behaviourSubject.setId(9999L);

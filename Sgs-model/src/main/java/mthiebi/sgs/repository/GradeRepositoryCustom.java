@@ -1,5 +1,6 @@
 package mthiebi.sgs.repository;
 
+import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.Grade;
 import mthiebi.sgs.models.GradeType;
 import mthiebi.sgs.models.Student;
@@ -19,7 +20,7 @@ public interface GradeRepositoryCustom {
 
     Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester);
 
-    Map<Student, List<Grade>> findGradeByMonth(Long classId, Date createDate);
+    Map<Student, List<Grade>> findGradeByMonth(Long classId, Date createDate) throws SGSException;
 
     Integer getMinYear();
 
@@ -33,7 +34,7 @@ public interface GradeRepositoryCustom {
 
     List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int month, int year);
 
-    BigDecimal findTotalAbsenceHours(long id);
+    BigDecimal findTotalAbsenceHours(long id, Date createDate);
 
     BigDecimal findBehaviourMonth(long id, Date createDate);
 }

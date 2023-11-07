@@ -3,6 +3,9 @@ package mthiebi.sgs.repository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import mthiebi.sgs.ExceptionKeys;
+import mthiebi.sgs.SGSException;
+import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,6 +23,9 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     private static final QGrade qGrade = QGrade.grade;
     @Autowired
     private JPAQueryFactory qf;
+
+    @Autowired
+    private AcademyClassRepository academyClassRepository;
 
     @Override
     public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
@@ -115,15 +121,16 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     }
 
     @Override
-    public Map<Student, List<Grade>> findGradeByMonth(Long classId, Date createDate) {
-        Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
+    public Map<Student, List<Grade>> findGradeByMonth(Long classId, Date createDate) throws SGSException {
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
+        Predicate academyClassIdPredicate = qGrade.academyClass.id.eq(classId);
         Predicate datePredicate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createDate);
         int month = calendar.get(Calendar.MONTH) == Calendar.FEBRUARY ? 0 : calendar.get(Calendar.MONTH) == Calendar.OCTOBER ? 8 : calendar.get(Calendar.MONTH);
         datePredicate = qGrade.exactMonth.month().eq(month + 1).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR)));
 
-        Predicate gradeTypePredicate = qGrade.gradeType.eq(GradeType.GENERAL_COMPLETE_MONTHLY);
+        Predicate gradeTypePredicate = qGrade.gradeType.eq(academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList =  qf.selectFrom(qGrade)
                 .where(datePredicate)
                 .where(academyClassIdPredicate)
@@ -166,13 +173,17 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
 
     @Override
     public Grade findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, Date exactMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(exactMonth);
+        int month = calendar.get(Calendar.MONTH) == Calendar.FEBRUARY ? 0 : calendar.get(Calendar.MONTH) == Calendar.OCTOBER ? 8 : calendar.get(Calendar.MONTH);
+        Predicate datePredicate = qGrade.exactMonth.month().eq(month).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR))); //erased + 1
         return qf.select(qGrade)
                 .from(qGrade)
                 .where(QueryUtils.longEq(qGrade.academyClass.id, academyClassId)
                         .and(QueryUtils.longEq(qGrade.student.id, studentId))
                         .and(qGrade.gradeType.eq(gradeType))
-                        .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
-                                .and(qGrade.exactMonth.month().eq(exactMonth.getMonth() + 1))))
+                        .and(QueryUtils.longEq(qGrade.subject.id, subjectId))
+                        .and(datePredicate))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetchFirst();
     }
@@ -205,11 +216,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     }
 
     @Override
-    public BigDecimal findTotalAbsenceHours(long studentId) {
+    public BigDecimal findTotalAbsenceHours(long studentId, Date createDate) {
         return qf.select(qGrade.value.sum())
                 .from(qGrade)
                 .where(qGrade.gradeType.eq(GradeType.GENERAL_ABSENCE_MONTHLY)
-                        .and(qGrade.student.id.eq(studentId)))
+                        .and(qGrade.student.id.eq(studentId))
+                        .and(qGrade.exactMonth.month().eq(createDate.getMonth())))//erased + 1
                 .fetchOne();
     }
 
