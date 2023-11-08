@@ -10,9 +10,14 @@ import TsliuriShefaseba from './pages/TsliuriShefaseba';
 import MonthlyGrade from './pages/MonthlyGrade';
 import LoginPage from "./pages/loginPage/LoginForm";
 import {useUserContext} from "./context/user-context";
+import {useEffect} from "react";
 
 export const App = () => {
     const {loggedIn} = useUserContext();
+
+    useEffect(() => {
+        console.log(loggedIn)
+    }, [loggedIn])
 
     return (
         <div>
