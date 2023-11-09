@@ -1,110 +1,116 @@
 import CustomBar from "./BarChart";
-import {useEffect, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import Dropdown from "./Dropdown";
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
+import useFetchYear from "../semestruli-shefaseba/useYear";
+import {MONTHS, MONTHS_SCHOOL} from "../utils/date";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 
 const AbsencePage = () => {
 
-  // useEffect(()=>{
-    //   const monthData = ;
-    //   setMonth(monthData)
-    //
-    //   const yearsData =
-    //   setYear(yearsData)
-    // },[])
-
-
-    const [absenceBySubject, setAbsenceBySubject] = useState([]);
-
-    const [selectedMonth, setSelectedMonth] = useState('ივნისი');
-    const [selectedYear, setSelectedYear] = useState(2023);
-
-
-    const [month, setMonth] = useState([
-        'სექტემბერი',
-        'ოქტომბერი',
+    const month = [
+        'სექტემბერი-ოქტომბერი',
         'ნოემბერი',
         'დეკემბერი',
-        'იანვარი',
-        'თებერვალი',
+        'იანვარი-თებერვალი',
         'მარტი',
-      'აპრილი',
-      'მაისი',
-      'ივნისი'
-  ])
-  const [year, setYear] = useState([2021 ,2022, 2023])
-  //API CALL
-  const [attendMax, setAttendMAx] = useState(0) //chatarebuli saatebi
-  const [absence, setAbsence] = useState(0) //gaacdina sul
+        'აპრილი',
+        'მაისი',
+        'ივნისი'
+    ];
 
-    const allAbsenceData = [
-        {
-          name: 'გაცდენა',
-          არა: absence, 
-        },
-      ];
+    const {data: yearData, isLoading: isYearLoading} = useFetchYear();
+    const [chosenYear, setChosenYear] = useState();
 
-    useEffect(()=> {
-        handleSearch();
-    }, [])
+    const [selectedMonth, setSelectedMonth] = useState(MONTHS[new Date().getUTCMonth()]);
 
-    const handleSearch = async () =>{
-      if(!!selectedMonth && !!selectedYear) {
-    //60 miviget jamshi anu sul gacdenebis raodenoba rac werie "absence"
+    const chosenMonth = useMemo(
+        () => selectedMonth ? MONTHS.filter((month) => month.value === selectedMonth.value)[0] : new Date().getUTCMonth(),
+        [selectedMonth]
+    );
+    const handleChangeMonth = (event) => {
+        setSelectedMonth(MONTHS.filter(month => month.value === event.target.value)[0]);
+    };
 
-    const subjectAbsence = [
-        {
-            name: 'ქართული ენა და ლიტერატურა',
-            არა: 10,
-        },
+    const handleChangeYear = (event) => {
+        setChosenYear(event.target.value);
+    };
 
-        {
-            name: 'მათემატიკა',
-            არა: 8,
-        },
-
-        {
-            name: 'ინგლისური',
-            არა: 7,
-        },
-        {
-            name: 'ისტორია',
-            არა: 3,
-        },
-        {
-            name: 'გეოგრაფია',
-            არა: 7,
-        }
-      ];
-          setAbsenceBySubject(subjectAbsence)
-          setAbsence(35)
-          setAttendMAx(120)
-      }
-  }
-
-    return ( 
-        <>
-        <div className="ib__center column">
-            <div className="pageName">მოსწავლის მიერ გაცდენილი საათები</div>
-            <div className="absenceDropdown">
-                <Dropdown data={month} value={selectedMonth} select={setSelectedMonth} label={'თვე'}/>
-                <Dropdown data={year} value={selectedYear} select={setSelectedYear} label={'წელი'}/>
-                <div style={{marginLeft: '10px', marginTop: '6px'}}>
-                    <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear}
-                            style={{fontWeight: 'bold', height: '40px'}} variant="contained">ძიება<SearchIcon/></Button>
-                </div>
+    function dropdown() {
+        return (
+            <div className="yearDropwdown">
+                <TextField
+                    select
+                    label="აირჩიე თვე"
+                    value={selectedMonth.value}
+                    onChange={handleChangeMonth}
+                    variant="outlined"
+                >
+                    {MONTHS_SCHOOL.map((m) => (
+                        <MenuItem key={m.key} value={m.value}>
+                            {m.value}
+                        </MenuItem>
+                    ))}
+                </TextField>
             </div>
+        );
+    }
 
-        </div>
-        {!!absence && <div className="absenceMain">
-            <CustomBar color={'#01619b'} attend={absence} attendMax={attendMax} layout={'vertical'} data={allAbsenceData}/>
-        </div>}
-        {!!absenceBySubject.length && <div className="absenceMain horizontal">
-            <CustomBar color={'#FF5722'} attendMax={absence} keyLabel={'არა'} layout={'horizontal'} data={absenceBySubject} />
-        </div>}
+    const getYearDropdown = useCallback(
+        () => {
+            if (!yearData) {
+                return <div></div>
+            }
+
+            return (
+                <div className="yearDropwdown">
+                    <TextField
+                        select
+                        label="აირჩიეთ სასწავლო წელი"
+                        value={chosenYear || yearData[yearData.length - 1]}
+                        onChange={handleChange}
+                        variant="outlined"
+                    >
+                        {yearData.map((m) => (
+                            <MenuItem key={m} value={m}>
+                                {m}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </div>
+            );
+        },
+        [yearData, chosenYear, handleChange],
+    );
+
+    return (
+        <>
+            <div className="ib__center column">
+                <div className="pageName">მოსწავლის მიერ გაცდენილი საათები</div>
+                <div className="absenceDropdown">
+                    <Dropdown data={month} value={selectedMonth} select={setSelectedMonth} label={'თვე'}/>
+                    {dropdown()}
+                    {getYearDropdown()}
+                    <div style={{marginLeft: '10px', marginTop: '6px'}}>
+                        <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear}
+                                style={{fontWeight: 'bold', height: '40px'}}
+                                variant="contained">ძიება<SearchIcon/></Button>
+                    </div>
+                </div>
+
+            </div>
+            {!!absence && <div className="absenceMain">
+                <CustomBar color={'#01619b'} attend={absence} attendMax={attendMax} layout={'vertical'}
+                           data={allAbsenceData}/>
+            </div>}
+            {!!absenceBySubject.length && <div className="absenceMain horizontal">
+                <CustomBar color={'#FF5722'} attendMax={absence} keyLabel={'არა'} layout={'horizontal'}
+                           data={absenceBySubject}/>
+            </div>}
         </>
-     );
+    );
 }
- 
+
 export default AbsencePage;

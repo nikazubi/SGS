@@ -1,12 +1,11 @@
 import React, {useEffect, useMemo, useState} from "react";
 import CustomNoRowsOverlay from "./CustomNoRowsOverlay";
-import Progress from "../Progress";
 import PropTypes from "prop-types";
 import GridFooter from "./GridFooter";
 import {DataGridStyles} from "./DataGridStyles";
 import {DataGrid} from "@mui/x-data-grid";
-import {useQueryWithoutCache} from "../../../hooks/useQueryWithoutCache";
 import {resolveColumns, resolveQueryData} from "./resolvers";
+import {useQueryWithoutCache} from "../../hooks/useQueryWithoutCache";
 
 
 const DataGridSGS = ({
@@ -33,11 +32,11 @@ const DataGridSGS = ({
                          fullyHideFooter = false,
                          ...props
                      }) => {
-    const maxPageSize = 100;
+    const maxPageSize = 5000;
     const resolvedColumns = useMemo(() => resolveColumns(columns), [columns]);
-    const rowsPerPageOptions = [20, 50, 70, 100];
+    const rowsPerPageOptions = [5000];
     const [selectionModel, setSelectionModel] = useState([]);
-    const [pageParams, setPageParams] = useState({page: 0, size: 20});
+    const [pageParams, setPageParams] = useState({page: 0, size: 5000});
     const {
         data,
         isLoading,
@@ -96,7 +95,7 @@ const DataGridSGS = ({
                 onPageSizeChange={(size) => setPageParams((prev) => ({...prev, size}))}
                 // loading={isLoading || isFetching || loading}
                 disableColumnFilter
-                rowBuffer={10}
+                rowBuffer={5000}
                 columnBuffer={columns.length}
                 getRowId={(row) => row[rowIdField]}
                 getRowClassName={getRowClassName}
@@ -107,7 +106,7 @@ const DataGridSGS = ({
                 initialState={{...initialState}}
                 components={{
                     // Toolbar: GridToolBar,
-                    LoadingOverlay: Progress,
+                    // LoadingOverlay: Progress,
                     NoRowsOverlay: CustomNoRowsOverlay,
                     NoResultsOverlay: CustomNoRowsOverlay,
                     Footer: fullyHideFooter ? HiddenFooter : GridFooter,

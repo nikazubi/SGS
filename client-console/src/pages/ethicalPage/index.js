@@ -1,215 +1,250 @@
-import {useEffect, useState} from "react";
-import {useUpdate} from "../../context/userDataContext";
+import React, {useMemo, useState} from "react";
 import DisciplineBox from "./DisciplineBox";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import SearchIcon from "@mui/icons-material/Search";
+import {getRomanByInt, MONTHS, MONTHS_SCHOOL} from "../utils/date";
+import useFetchBehaviour from "./useBehaviour";
 
 const EthicPage = () => {
-    const updateData = useUpdate()
+    const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const chosenMonth = useMemo(
+        () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : new Date().getUTCMonth(),
+        [selectedData]
+    );
 
-    const [selectedData, setSelectedData] = useState('ივნისი');
+    const {data: gradeData, isLoading, isError, error, isSuccess} = useFetchBehaviour({month: chosenMonth.key});
     const month = [
-        'სექტემბერი',
-        'ოქტომბერი',
+        'სექტემბერი-ოქტომბერი',
         'ნოემბერი',
         'დეკემბერი',
-        'იანვარი',
-        'თებერვალი',
+        'იანვარი-თებერვალი',
         'მარტი',
         'აპრილი',
         'მაისი',
         'ივნისი'
     ];
     const handleChange = (event) => {
-        setSelectedData(event.target.value);
+        setSelectedData(MONTHS.filter(month => month.value === event.target.value)[0]);
     };
 
-    useEffect(()=>{
-        const allStudentData = [
-            {
-                name:'მოსწავლის ფორმითი გამოცხადებ',
-                testNumber: null,
-                precent: null,
-                boxdetails: [
-                    {
-                        label: 'I კვირა',
-                        grade: 7,
-                    },
+    const parsedData = useMemo(() => {
 
-                    {
-                        label: 'II კვირა',
-                        grade: 7,
-                    },
-
-                    {
-                        label: 'III კვირა',
-                        grade: 6,
-                    },
-
-                    {
-                        label: 'IV კვირა',
-                        grade: 7,
-                    },
-          
-                ]
-            },
-          
-            {
-                name:'მოსწავლის დაგვიანება',
-                testNumber: null,
-                precent: null,
-                boxdetails: [
-                    {
-                        label: 'I კვირა',
-                        grade: 7,
-                    },
-
-                    {
-                        label: 'II კვირა',
-                        grade: 7,
-                    },
-
-                    {
-                        label: 'III კვირა',
-                        grade: 7,
-                    },
-
-                    {
-                        label: 'IV კვირა',
-                        grade: 7,
-                    },
-          
-                ]
-            },
-          
-            {
-                name:'საკლასო ინვენტარის მოვლა',
-                testNumber: null,
-                precent: null,
-                boxdetails: [
-                    {
-                        label: 'I კვირა',
-                        grade: 5,
-                    },
-
-                    {
-                        label: 'II კვირა',
-                        grade: 6,
-                    },
-
-                    {
-                        label: 'III კვირა',
-                        grade: 5,
-                    },
-
-                    {
-                        label: 'IV კვირა',
-                        grade: 5,
-                    },
-          
-                ]
-            },
-
-            {
-                name:'მოსწავლის მიერ ჰიგიენური ნორმების დაცვა',
-                testNumber: null,
-                precent: null,
-                boxdetails: [
-                    {
-                        label: 'I კვირა',
-                        grade: 7,
-                    },
-
-                    {
-                        label: 'II კვირა',
-                        grade: 7,
-                    },
-
-                    {
-                        label: 'III კვირა',
-                        grade: 7,
-                    },
-
-                    {
-                        label: 'IV კვირა',
-                        grade: 7,
-                    },
-          
-                ]
-            },
-
-            {
-                name:'მოსწავლის ყოფაქცევა',
-                testNumber: null,
-                precent: null,
-                boxdetails: [
-                    {
-                        label: 'I კვირა',
-                        grade: 5,
-                    },
-
-                    {
-                        label: 'II კვირა',
-                        grade: 5,
-                    },
-
-                    {
-                        label: 'III კვირა',
-                        grade: 6,
-                    },
-
-                    {
-                        label: 'IV კვირა',
-                        grade: 7,
-                    },
-          
-                ]
-            }
-          
-          ]
-
-        updateData(allStudentData)
-
-        return () => {
-          updateData([])
+        if (!gradeData) {
+            return []
         }
+        const uniformBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_APPEARING_IN_UNIFORM"))
+            .sort((a, b) => {
+                if (a.gradeType?.toString().includes("MONTH")) {
+                    return 1;
+                }
+                if (b.gradeType?.toString().includes("MONTH")) {
+                    return -1;
+                }
+                const lastNumberA = parseInt(a.gradeType?.toString().match(/\d+$/)[0]);
+                const lastNumberB = parseInt(b.gradeType?.toString().match(/\d+$/)[0]);
+                return lastNumberA - lastNumberB;
+            })
+            .map((grade, index) => {
+                if (grade.gradeType.toString().includes("MONTH")) {
+                    return ({
+                        label: `თვის ნიშანი`,
+                        grade: grade.value
+                    })
+                }
+                return ({
+                    label: `${getRomanByInt(grade.gradeType.toString().charAt(grade.gradeType.toString().length - 1))} კვირა`,
+                    grade: grade.value
+                })
+            })
+        const delaysBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_DELAYS"))
+            .sort((a, b) => {
+                if (a.gradeType?.toString().includes("MONTH")) {
+                    return 1;
+                }
+                if (b.gradeType?.toString().includes("MONTH")) {
+                    return -1;
+                }
+                const lastNumberA = parseInt(a.gradeType?.toString().match(/\d+$/)[0]);
+                const lastNumberB = parseInt(b.gradeType?.toString().match(/\d+$/)[0]);
+                return lastNumberA - lastNumberB;
+            })
+            .map((grade, index) => {
+                if (grade.gradeType.toString().includes("MONTH")) {
+                    return ({
+                        label: `თვის ნიშანი`,
+                        grade: grade.value
+                    })
+                }
+                return ({
+                    label: `${getRomanByInt(grade.gradeType.toString().charAt(grade.gradeType.toString().length - 1))} კვირა`,
+                    grade: grade.value
+                })
+            })
+        const inventoryBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_CLASSROOM_INVENTORY"))
+            .sort((a, b) => {
+                if (a.gradeType?.toString().includes("MONTH")) {
+                    return 1;
+                }
+                if (b.gradeType?.toString().includes("MONTH")) {
+                    return -1;
+                }
+                const lastNumberA = parseInt(a.gradeType?.toString().match(/\d+$/)[0]);
+                const lastNumberB = parseInt(b.gradeType?.toString().match(/\d+$/)[0]);
+                return lastNumberA - lastNumberB;
+            })
+            .map((grade, index) => {
+                if (grade.gradeType.toString().includes("MONTH")) {
+                    return ({
+                        label: `თვის ნიშანი`,
+                        grade: grade.value
+                    })
+                }
+                return ({
+                    label: `${getRomanByInt(grade.gradeType.toString().charAt(grade.gradeType.toString().length - 1))} კვირა`,
+                    grade: grade.value
+                })
+            })
+        const hygeneBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_HYGIENE"))
+            .sort((a, b) => {
+                if (a.gradeType?.toString().includes("MONTH")) {
+                    return 1;
+                }
+                if (b.gradeType?.toString().includes("MONTH")) {
+                    return -1;
+                }
+                const lastNumberA = parseInt(a.gradeType?.toString().match(/\d+$/)[0]);
+                const lastNumberB = parseInt(b.gradeType?.toString().match(/\d+$/)[0]);
+                return lastNumberA - lastNumberB;
+            })
+            .map((grade, index) => {
+                if (grade.gradeType.toString().includes("MONTH")) {
+                    return ({
+                        label: `თვის ნიშანი`,
+                        grade: grade.value
+                    })
+                }
+                return ({
+                    label: `${getRomanByInt(grade.gradeType.toString().charAt(grade.gradeType.toString().length - 1))} კვირა`,
+                    grade: grade.value
+                })
+            })
+        const behaviourBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_BEHAVIOR"))
+            .sort((a, b) => {
+                if (a.gradeType?.toString().includes("MONTH")) {
+                    return 1;
+                }
+                if (b.gradeType?.toString().includes("MONTH")) {
+                    return -1;
+                }
+                const lastNumberA = parseInt(a.gradeType?.toString().match(/\d+$/)[0]);
+                const lastNumberB = parseInt(b.gradeType?.toString().match(/\d+$/)[0]);
+                return lastNumberA - lastNumberB;
+            })
+            .map((grade, index) => {
+                if (grade.gradeType.toString().includes("MONTH")) {
+                    return ({
+                        label: `თვის ნიშანი`,
+                        grade: grade.value
+                    })
+                }
+                return ({
+                    label: `${getRomanByInt(grade.gradeType.toString().charAt(grade.gradeType.toString().length - 1))} კვირა`,
+                    grade: grade.value
+                })
+            })
+        return [
+            {
+                name: 'მოსწავლის ფორმითი გამოცხადება',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
 
-      },[])
+                boxdetails: uniformBoxDetails
+            },
+            {
+                name: 'მოსწავლის დაგვიანება',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
 
-    function dropdown(){
+                boxdetails: delaysBoxDetails
+            },
+            {
+                name: 'საკლასო ინვენტარის მოვლა',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
+
+                boxdetails: inventoryBoxDetails
+            },
+            {
+                name: 'მოსწავლის მიერ ჰიგიენური ნორმების დაცვა',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
+
+                boxdetails: hygeneBoxDetails
+            },
+            {
+                name: 'მოსწავლის ყოფაქცევა',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
+
+                boxdetails: behaviourBoxDetails
+            },
+
+        ]
+
+    }, [gradeData])
+
+
+    function dropdown() {
         return (
             <div className="yearDropwdown">
                 <TextField
                     select
                     label="აირჩიე თვე"
-                    value={selectedData}
+                    value={selectedData.value}
                     onChange={handleChange}
                     variant="outlined"
                 >
-                    {month.map((m) => (
-                        <MenuItem key={m} value={m}>
-                            {m}
+                    {MONTHS_SCHOOL.map((m) => (
+                        <MenuItem key={m.key} value={m.value}>
+                            {m.value}
                         </MenuItem>
                     ))}
-                </TextField>&nbsp;&nbsp;&nbsp;
-                <Button onClick={()=>{}} disabled={!selectedData} style={{ fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
+                </TextField>
             </div>
         );
     }
 
-    return ( 
+    return (
         <>
-        <div className="pageName">მოსწავლის შეფასება ეთიკური ნორმების მიხედვით</div>
-        <div className="ibCnt">
-            {dropdown()}
-            <div className="termEstCnt">
-                <DisciplineBox />
+            <div className="pageName">მოსწავლის შეფასება ეთიკური ნორმების მიხედვით</div>
+            <div className="ibCnt">
+                {dropdown()}
+                <div className="termEstCnt">
+                    <DisciplineBox data={parsedData}/>
+                </div>
             </div>
-        </div>
         </>
-     );
+    );
 }
- 
+
 export default EthicPage;

@@ -1,13 +1,13 @@
 import {Avatar, Box, Tooltip} from "@mui/material";
 import * as React from 'react';
-import {useEffect, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
+import {useEffect, useMemo, useRef, useState} from "react";
 import {styled} from "@mui/material/styles";
 import {resolveGridCellTextValue} from "./resolvers";
 import ListToolTipTitle from "./ListToolTipTitle";
 
-const CustomWidthTooltip = styled(({className, children, ...props}) => (
-    <Tooltip {...props} classes={{popper: className}} children={children}/>
+const CustomWidthTooltip = styled(({className, ...props}) => (
+    <Tooltip {...props} classes={{popper: className}}/>
 ))(({width}) => ({
     maxWidth: width
 }));
@@ -19,10 +19,15 @@ function isOverflown(element) {
     );
 }
 
-const GridCellExpand = React.memo(({value, width, valueProps, avatar, avatarProps, translate}) => {
+const FormGridCellExpand = React.memo((props) => {
+    const {value, width, valueProps, avatarProps, translate, field, isValid, setValid, rowId} = props;
     const cellValue = useRef(null);
     const [showToolTip, setShowToolTip] = useState(false);
     const resolvedValue = resolveGridCellTextValue(value, valueProps, translate);
+
+    const isFieldValid = useMemo(() => {
+        return isValid();
+    }, [isValid])
 
     const resolveAvatar = () => {
         let alt;
@@ -30,7 +35,7 @@ const GridCellExpand = React.memo(({value, width, valueProps, avatar, avatarProp
             alt = avatarProps.alt(resolvedValue);
         }
         return (
-            <Avatar src={avatar}
+            <Avatar src={value.avatar}
                     variant={!!avatarProps?.variant ? avatarProps.variant : "circular"}
                     sx={{marginRight: 1}}
             >
@@ -71,6 +76,17 @@ const GridCellExpand = React.memo(({value, width, valueProps, avatar, avatarProp
         };
     }, [setShowToolTip, showToolTip]);
 
+    useEffect(() => {
+        setValid(prev => ({
+            ...prev,
+            [rowId]:
+                {
+                    ...prev[rowId],
+                    [field]: isFieldValid
+                }
+        }))
+    }, [field, isFieldValid, value, setValid, rowId])
+
     return (
         <Box
             onMouseEnter={handleMouseEnter}
@@ -84,7 +100,7 @@ const GridCellExpand = React.memo(({value, width, valueProps, avatar, avatarProp
                 display: 'flex',
             }}
         >
-            {avatar !== null && resolvedValue != null && (
+            {value.avatar !== undefined && (
                 resolveAvatar()
             )}
             <CustomWidthTooltip
@@ -104,27 +120,30 @@ const GridCellExpand = React.memo(({value, width, valueProps, avatar, avatarProp
     );
 });
 
-GridCellExpand.propTypes = {
+FormGridCellExpand.propTypes = {
     value: PropTypes.any.isRequired,
     width: PropTypes.number.isRequired,
 };
 
-const renderCellExpand = (params) => {
+const renderFormCellExpand = (params) => {
     return (
-        <GridCellExpand
-            value={params.value}
+        <FormGridCellExpand
+            value={params.value || ''}
             width={params.colDef.computedWidth}
             valueProps={params.valueProps}
             avatarProps={params.avatarProps}
             translate={params.translate}
-            avatar={params.avatar}
+            setValid={params.setValid}
+            isValid={params.isValid}
+            field={params.field}
+            rowId={params.id}
         />
     );
 }
 
-renderCellExpand.propTypes = {
+renderFormCellExpand.propTypes = {
     colDef: PropTypes.object.isRequired,
     value: PropTypes.any.isRequired,
 };
 
-export default renderCellExpand;
+export default renderFormCellExpand;

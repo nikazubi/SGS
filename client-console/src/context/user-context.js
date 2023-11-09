@@ -32,9 +32,8 @@ export const UserContextProvider = props => {
     const login = async ({username, password}) => {
         const params = {username: username, password: password};
         const {data} = await axios.post(LOGIN_ENDPOINT, params);
-        console.log(data?.student)
-        secureLocalStorage.setItem("jwtToken", data?.jwtToken);
-        secureLocalStorage.setItem("student", data?.student);
+        await secureLocalStorage.setItem("jwtToken", data?.jwtToken);
+        await secureLocalStorage.setItem("student", data?.student);
         setLoggedIn(true)
         setUser(data?.student)
         // localStorage.setItem("loginTime", new Date().toString())

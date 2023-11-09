@@ -29,7 +29,8 @@ const DisciplineBox = ({data}) => {
     // }]
 
 
-{/* id=1 means it's  შემაჯამებელი დავალება*/}
+{/* id=1 means it's  შემაჯამებელი დავალება*/
+}
 
     // /min-width: 310px;
     //     height: 230px;
@@ -39,16 +40,25 @@ const DisciplineBox = ({data}) => {
     //     font-size: 20px;
     //     padding: 0 15px;
     //     flex-grow: 1;
+    if (!allData) {
+        return <></>
+    }
     return (
         allData.map(m =>
-            
-          (m.boxdetails[0] !== 'თვის ქულა' && m.boxdetails[0] !== 'გაცდენილი საათები') ? 
-          (
-            <div style={{minWidth: "310px",
-                height: m.month || m.absence ? 150: 200,
-                // maxHeight: m.month === "თვის ქულა" || m.month === "გაცდენილი საათები"? 100: 200,
-                borderRadius: "0px 30px 30px 30px",backgroundColor:'#01619b', textAlign:'center', fontSize: '20px', flexGrow:1}} key={m.name} >
-              <div className="ethical__title">{m.name}</div>
+
+            (m.boxdetails[0] !== 'თვის ქულა' && m.boxdetails[0] !== 'გაცდენილი საათები') ?
+                (
+                    <div style={{
+                        minWidth: "310px",
+                        height: m.month || m.absence ? 150 : 200,
+                        // maxHeight: m.month === "თვის ქულა" || m.month === "გაცდენილი საათები"? 100: 200,
+                        borderRadius: "0px 30px 30px 30px",
+                        backgroundColor: '#01619b',
+                        textAlign: 'center',
+                        fontSize: '20px',
+                        flexGrow: 1
+                    }} key={m.name}>
+                        <div className="ethical__title">{m.name}</div>
               <div>{m.testNumber}</div>
               <div className="ethical__precent">{m.precent}</div>
                 {m.month &&
