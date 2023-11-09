@@ -694,6 +694,10 @@ const SemesterGradeDashBoard = () => {
         }, [mutateRow, filters]
     );
 
+    const onProcessRowUpdateError = useCallback(async (newRow) => {
+
+    }, [filters]);
+
     return (
         <div className={"semesterGradeCnt"}>
             <SemesterGradeToolbar filters={filters} setFilters={setFilters} checked={checked} setChecked={setChecked}/>
@@ -716,6 +720,7 @@ const SemesterGradeDashBoard = () => {
                             return row.student.id;
                         }}
                         processRowUpdate={processRowUpdate}
+                        onProcessRowUpdateError={onProcessRowUpdateError}
                         headerHeight={400}
                         getRowHeight={() => 50}
                         disableColumnMenu

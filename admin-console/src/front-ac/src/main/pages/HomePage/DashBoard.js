@@ -731,7 +731,9 @@ const DashBoard = () => {
             return gradeColumns;
         }
     }, [filters]);
+    const onProcessRowUpdateError = useCallback(async (newRow) => {
 
+    }, [filters]);
     const columnGroupingModelTransit = [
         {
             groupId: 'student',
@@ -874,6 +876,8 @@ const DashBoard = () => {
         return <div></div>
     }
 
+
+
     return (
         <div>
             <GradeTableToolbar filters={filters} setFilters={setFilters}/>
@@ -903,7 +907,7 @@ const DashBoard = () => {
                             return row.student.id;
                         }}
                         processRowUpdate={processRowUpdate}
-                        // onProcessRowUpdateError={handleProcessRowUpdateError}
+                        onProcessRowUpdateError={onProcessRowUpdateError}
                         getRowHeight={() => 'auto'}
                         disableColumnMenu
                         filters={filters}

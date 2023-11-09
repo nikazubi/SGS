@@ -36,10 +36,12 @@ public class GradeServiceImpl implements GradeService {
     @Override
     public Grade insertStudentGrade(Grade grade) {
         Date exactDate = grade.getExactMonth();
-        if (exactDate.getMonth() == Calendar.FEBRUARY) {
-            exactDate.setMonth(Calendar.JANUARY);
-        } else if (exactDate.getMonth() == Calendar.OCTOBER) {
-            exactDate.setMonth(Calendar.SEPTEMBER);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(exactDate);
+        if (calendar.get(Calendar.MONTH) == Calendar.FEBRUARY) {
+            calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        } else if (calendar.get(Calendar.MONTH) == Calendar.OCTOBER) {
+            calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
         }
         Student student = studentRepository.findById(grade.getStudent().getId()).orElseThrow();
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
@@ -62,7 +64,7 @@ public class GradeServiceImpl implements GradeService {
         if (grade.getValue() == null) {
             return new Grade();
         }
-        grade.setExactMonth(exactDate);
+        grade.setExactMonth(calendar.getTime());
         grade.setStudent(student);
         grade.setAcademyClass(academyClass);
         grade.setSubject(subject);

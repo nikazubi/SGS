@@ -1722,6 +1722,10 @@ const BehaviourDashBoard = () => {
         [mutateRow, filters],
     );
 
+    const onProcessRowUpdateError = useCallback(async (newRow) => {
+
+    }, [filters]);
+
     if (isLoading) {
         return <div></div>
     }
@@ -1749,7 +1753,7 @@ const BehaviourDashBoard = () => {
                             return row.student.id;
                         }}
                         processRowUpdate={processRowUpdate}
-                        // onProcessRowUpdateError={handleProcessRowUpdateError}
+                        onProcessRowUpdateError={onProcessRowUpdateError}
                         getRowHeight={() => 'auto'}
                         disableColumnMenu
                         filters={filters}

@@ -176,7 +176,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(exactMonth);
         int month = calendar.get(Calendar.MONTH) == Calendar.FEBRUARY ? 0 : calendar.get(Calendar.MONTH) == Calendar.OCTOBER ? 8 : calendar.get(Calendar.MONTH);
-        Predicate datePredicate = qGrade.exactMonth.month().eq(month).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR))); //erased + 1
+        Predicate datePredicate = qGrade.exactMonth.month().eq(month + 1).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR))); //erased + 1
         return qf.select(qGrade)
                 .from(qGrade)
                 .where(QueryUtils.longEq(qGrade.academyClass.id, academyClassId)
@@ -217,21 +217,25 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
 
     @Override
     public BigDecimal findTotalAbsenceHours(long studentId, Date createDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(createDate);
         return qf.select(qGrade.value.sum())
                 .from(qGrade)
                 .where(qGrade.gradeType.eq(GradeType.GENERAL_ABSENCE_MONTHLY)
                         .and(qGrade.student.id.eq(studentId))
-                        .and(qGrade.exactMonth.month().eq(createDate.getMonth())))//erased + 1
+                        .and(qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1)))//erased + 1
                 .fetchOne();
     }
 
     @Override
     public BigDecimal findBehaviourMonth(long id, Date createDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(createDate);
         return qf.select(qGrade.value)
                 .from(qGrade)
                 .where(qGrade.gradeType.eq(GradeType.BEHAVIOUR_MONTHLY)
                         .and(qGrade.student.id.eq(id))
-                        .and(qGrade.exactMonth.month().eq(createDate.getMonth() + 1)))
+                        .and(qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1)))
                 .fetchOne();
     }
 }

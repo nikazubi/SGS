@@ -240,11 +240,12 @@ public class GradeCalculationServiceImpl implements GradeCalculationService {
             gradeRepository.save(existing);
             return;
         }
-
-        if (exactMonth.getMonth() == Calendar.FEBRUARY) {
-            exactMonth.setMonth(Calendar.JANUARY);
-        } else if (exactMonth.getMonth() == Calendar.OCTOBER) {
-            exactMonth.setMonth(Calendar.SEPTEMBER);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(exactMonth);
+        if (calendar.get(Calendar.MONTH) == Calendar.FEBRUARY) {
+            calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        } else if (calendar.get(Calendar.MONTH) == Calendar.OCTOBER) {
+            calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
         }
 
         Grade grade = Grade.builder()
