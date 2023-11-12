@@ -50,4 +50,12 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
                 .fetch();
     }
+
+    @Override
+    public Date findCreateTimeOfLatestClosePeriodByClassId(Long academyClassId) {
+        return qf.select(qClosedPeriod.createTime.max())
+                .from(qClosedPeriod)
+                .where(QueryUtils.longEq(qClosedPeriod.academyClassId, academyClassId))
+                .fetchOne();
+    }
 }
