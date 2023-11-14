@@ -1,15 +1,10 @@
 package mthiebi.sgs.service;
 
 import mthiebi.sgs.SGSException;
-import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Grade;
-import mthiebi.sgs.models.Student;
-import mthiebi.sgs.models.Subject;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface GradeService {
 
@@ -30,11 +25,26 @@ public interface GradeService {
                                                                 Long studentId,
                                                                 Date createTime,
                                                                 String gradeTypePrefix);
+
+    List<Grade> getStudentGradeByClassAndSubjectIdAndCreateTime(Long classId,
+                                                                Long subjectId,
+                                                                Long studentId,
+                                                                Date createTime,
+                                                                String gradeTypePrefix,
+                                                                Date closedPeriod);
+
     Object getGradeByComponent(Long classId,
-                                                               Long studentId,
-                                                               String yearRange,
-                                                               Date createDate,
-                                                               String component) throws SGSException;
+                               Long studentId,
+                               String yearRange,
+                               Date createDate,
+                               String component) throws SGSException;
+
+    Object getGradeByComponent(Long classId,
+                               Long studentId,
+                               String yearRange,
+                               Date createDate,
+                               String component,
+                               Date closedPeriod) throws SGSException;
 
     List<String> getGradeYearGrouped();
 

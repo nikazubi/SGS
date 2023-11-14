@@ -12,4 +12,6 @@ public interface ClosedPeriodRepositoryCustom {
     ClosedPeriod findClosedPeriodByAcademyClassIdAndPrefix(Long academyClassId, String gradePrefix);
 
     List<ClosedPeriod> findAllOrderedByLastUpdateTime(Long academyClass, Date dateFrom, Date dateTo);
+
+    Date findCreateTimeOfLatestClosePeriodByClassId(Long academyClassId);
 }

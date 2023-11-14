@@ -18,7 +18,15 @@ public interface GradeRepositoryCustom {
                                                                    Long studentId,
                                                                    Date createTim);
 
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
+                                                                   Long subjectId,
+                                                                   Long studentId,
+                                                                   Date createTime,
+                                                                   Date closedPeriod);
+
     Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester);
+
+    Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester, Date closedPeriod);
 
     Map<Student, List<Grade>> findGradeByMonth(Long classId, Date createDate) throws SGSException;
 
@@ -28,11 +36,13 @@ public interface GradeRepositoryCustom {
 
     List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int maxYear);
 
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int maxYear, Date latest);
+
     Grade findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, Date exactMonth);
 
-    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, int month, int year);
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, int month, int year, Date latest);
 
-    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int month, int year);
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int month, int year, Date latest);
 
     BigDecimal findTotalAbsenceHours(long id, Date createDate);
 

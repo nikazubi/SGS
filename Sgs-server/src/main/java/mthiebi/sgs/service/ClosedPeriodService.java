@@ -19,4 +19,6 @@ public interface ClosedPeriodService {
 
     List<ClosedPeriod> findAllOrdered(Long academyClass, Date dateFrom, Date dateTo);
 
+    Date getLatestClosedPeriodBy(Long academyClassId);
+
 }
