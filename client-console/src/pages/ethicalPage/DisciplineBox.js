@@ -2,7 +2,7 @@ import FooterBox from "./FooterBox";
 // {title, number, precent,id, data}=argumentebia ->DisciplineBox
 const DisciplineBox = ({data}) => {
     const allData = data;
-
+console.log(data)
     // ArrayOfObj = [{
     //     name: 'შემაჯამებელი დავალება' | 'საშინაო დავალება' | 'საკლასო დავალება' | null,
     //     number: romauli ricxvebi iyo -> III ან I ა.შ | null,
@@ -49,6 +49,7 @@ const DisciplineBox = ({data}) => {
                 (
                     <div style={{
                         minWidth: "310px",
+                        maxWidth: m.name === 'თვის ქულა' ? "100px" : "100%",
                         height: m.month || m.absence ? 150 : 200,
                         // maxHeight: m.month === "თვის ქულა" || m.month === "გაცდენილი საათები"? 100: 200,
                         borderRadius: "0px 30px 30px 30px",

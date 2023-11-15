@@ -4,8 +4,10 @@ import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.AcademyClass;
+import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.TotalAbsence;
 import mthiebi.sgs.repository.AcademyClassRepository;
+import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.repository.TotalAbsenceRepository;
 import mthiebi.sgs.service.TotalAbsenceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,20 @@ public class TotalAbsenceServiceImpl implements TotalAbsenceService {
     @Autowired
     private TotalAbsenceRepository totalAbsenceRepository;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
+
     @Override
     public List<TotalAbsence> filter(Long academyClass, Date activePeriod) {
         return totalAbsenceRepository.filter(academyClass, activePeriod);
+    }
+
+    @Override
+    public List<TotalAbsence> filter(String username, Date activePeriod) {
+        Student student = studentRepository.findByUsername(username).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        return totalAbsenceRepository.filter(academyClass.getId(), activePeriod);
     }
 
     @Override

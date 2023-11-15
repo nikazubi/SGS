@@ -1,7 +1,7 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import Chart from "./Chart";
 import {NavLink} from 'react-router-dom'
-import {MyContext, useUpdate} from "../../context/userDataContext";
+import {MyContext} from "../../context/userDataContext";
 import HomeIcon from '@mui/icons-material/Home';
 import {Box, List, ListItem, ListItemIcon} from '@mui/material';
 import Sidebar from "../../utils/Sidebar";
@@ -58,6 +58,7 @@ const Discipline = ({match}) => {
             const generalSummaryAssignmentGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_SUMMARY_ASSIGMENT"))
             const generalSchoolWorkGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_SCHOOL_WORK"))
             const generalHomeWorkGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_HOMEWORK_"))
+            const completeMonthly = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_COMPLETE_MONTHLY"))
             return [
                 {
                     name: 'შემაჯამებელი დავალება I - 50%',
@@ -174,6 +175,21 @@ const Discipline = ({match}) => {
 
                     ]
                 },
+                {
+                    name: 'თვის ქულა',
+                    testNumber: null,
+                    precent: null,
+                    month: null,
+                    monthGrade: null,
+                    absence: null,
+                    absenceGrade: null,
+                    boxdetails: [
+                        {
+                            label: '',
+                            grade: completeMonthly[0]?.value || "",
+                        },
+                    ]
+                }
             ]
             // GENERAL_SUMMARY_ASSIGMENT
         },

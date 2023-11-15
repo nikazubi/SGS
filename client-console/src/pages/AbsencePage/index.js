@@ -7,6 +7,8 @@
 // import {MONTHS, MONTHS_SCHOOL} from "../utils/date";
 // import TextField from "@mui/material/TextField";
 // import MenuItem from "@mui/material/MenuItem";
+// import useFetchBehaviour from "../ethicalPage/useBehaviour";
+// import useTotalAbsence from "./useTotalAbsence";
 //
 // const AbsencePage = () => {
 //
@@ -30,6 +32,9 @@
 //         () => selectedMonth ? MONTHS.filter((month) => month.value === selectedMonth.value)[0] : new Date().getUTCMonth(),
 //         [selectedMonth]
 //     );
+//
+//     const {data: totalAbsenceData} = useTotalAbsence({month: chosenMonth.key, year: chosenYear});
+// console.log(totalAbsenceData)
 //     const handleChangeMonth = (event) => {
 //         setSelectedMonth(MONTHS.filter(month => month.value === event.target.value)[0]);
 //     };
@@ -70,7 +75,7 @@
 //                         select
 //                         label="აირჩიეთ სასწავლო წელი"
 //                         value={chosenYear || yearData[yearData.length - 1]}
-//                         onChange={handleChange}
+//                         onChange={handleChangeYear}
 //                         variant="outlined"
 //                     >
 //                         {yearData.map((m) => (
@@ -82,33 +87,35 @@
 //                 </div>
 //             );
 //         },
-//         [yearData, chosenYear, handleChange],
+//         [yearData, chosenYear, handleChangeYear],
 //     );
+//
+//     console.log("hii")
 //
 //     return (
 //         <>
 //             <div className="ib__center column">
 //                 <div className="pageName">მოსწავლის მიერ გაცდენილი საათები</div>
 //                 <div className="absenceDropdown">
-//                     <Dropdown data={month} value={selectedMonth} select={setSelectedMonth} label={'თვე'}/>
+//                     {/*<Dropdown data={month} value={selectedMonth} select={setSelectedMonth} label={'თვე'}/>*/}
 //                     {dropdown()}
 //                     {getYearDropdown()}
-//                     <div style={{marginLeft: '10px', marginTop: '6px'}}>
-//                         <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear}
-//                                 style={{fontWeight: 'bold', height: '40px'}}
-//                                 variant="contained">ძიება<SearchIcon/></Button>
-//                     </div>
+//                     {/*<div style={{marginLeft: '10px', marginTop: '6px'}}>*/}
+//                     {/*    <Button onClick={handleSearch} disabled={!selectedMonth || !selectedYear}*/}
+//                     {/*            style={{fontWeight: 'bold', height: '40px'}}*/}
+//                     {/*            variant="contained">ძიება<SearchIcon/></Button>*/}
+//                     {/*</div>*/}
 //                 </div>
 //
 //             </div>
-//             {!!absence && <div className="absenceMain">
-//                 <CustomBar color={'#01619b'} attend={absence} attendMax={attendMax} layout={'vertical'}
-//                            data={allAbsenceData}/>
-//             </div>}
-//             {!!absenceBySubject.length && <div className="absenceMain horizontal">
-//                 <CustomBar color={'#FF5722'} attendMax={absence} keyLabel={'არა'} layout={'horizontal'}
-//                            data={absenceBySubject}/>
-//             </div>}
+//             {/*{!!absence && <div className="absenceMain">*/}
+//             {/*    <CustomBar color={'#01619b'} attend={absence} attendMax={attendMax} layout={'vertical'}*/}
+//             {/*               data={allAbsenceData}/>*/}
+//             {/*</div>}*/}
+//             {/*{!!absenceBySubject.length && <div className="absenceMain horizontal">*/}
+//             {/*    <CustomBar color={'#FF5722'} attendMax={absence} keyLabel={'არა'} layout={'horizontal'}*/}
+//             {/*               data={absenceBySubject}/>*/}
+//             {/*</div>}*/}
 //         </>
 //     );
 // }

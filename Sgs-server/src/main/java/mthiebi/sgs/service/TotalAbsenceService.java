@@ -11,6 +11,8 @@ public interface TotalAbsenceService {
 
     List<TotalAbsence> filter(Long academyClass, Date activePeriod);
 
+    List<TotalAbsence> filter(String username, Date activePeriod);
+
     List<TotalAbsence> getCurrentAbsencesForEveryClass();
 
     void addTotalAbsenceToAcademyClass(long academyClassId, TotalAbsence totalAbsence) throws SGSException;

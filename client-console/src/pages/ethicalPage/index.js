@@ -32,7 +32,10 @@ const EthicPage = () => {
         if (!gradeData) {
             return []
         }
-        const uniformBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_APPEARING_IN_UNIFORM"))
+        console.log(gradeData)
+        //BEHAVIOUR_MONTHLY
+        const shouldBeSixWeeks = selectedData.key === 0 || selectedData.key === 8
+        let uniformBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_APPEARING_IN_UNIFORM"))
             .sort((a, b) => {
                 if (a.gradeType?.toString().includes("MONTH")) {
                     return 1;
@@ -56,7 +59,10 @@ const EthicPage = () => {
                     grade: grade.value
                 })
             })
-        const delaysBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_DELAYS"))
+        if (!shouldBeSixWeeks) {
+            uniformBoxDetails = [...uniformBoxDetails.slice(0, 4), uniformBoxDetails[uniformBoxDetails.length - 1]];
+        }
+        let delaysBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_DELAYS"))
             .sort((a, b) => {
                 if (a.gradeType?.toString().includes("MONTH")) {
                     return 1;
@@ -80,7 +86,10 @@ const EthicPage = () => {
                     grade: grade.value
                 })
             })
-        const inventoryBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_CLASSROOM_INVENTORY"))
+        if (!shouldBeSixWeeks) {
+            delaysBoxDetails = [...delaysBoxDetails.slice(0, 4), delaysBoxDetails[delaysBoxDetails.length - 1]];
+        }
+        let inventoryBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_CLASSROOM_INVENTORY"))
             .sort((a, b) => {
                 if (a.gradeType?.toString().includes("MONTH")) {
                     return 1;
@@ -104,7 +113,10 @@ const EthicPage = () => {
                     grade: grade.value
                 })
             })
-        const hygeneBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_HYGIENE"))
+        if (!shouldBeSixWeeks) {
+            inventoryBoxDetails = [...inventoryBoxDetails.slice(0, 4), inventoryBoxDetails[inventoryBoxDetails.length - 1]];
+        }
+        let hygeneBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_HYGIENE"))
             .sort((a, b) => {
                 if (a.gradeType?.toString().includes("MONTH")) {
                     return 1;
@@ -128,7 +140,10 @@ const EthicPage = () => {
                     grade: grade.value
                 })
             })
-        const behaviourBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_BEHAVIOR"))
+        if (!shouldBeSixWeeks) {
+            hygeneBoxDetails = [...hygeneBoxDetails.slice(0, 4), hygeneBoxDetails[hygeneBoxDetails.length - 1]];
+        }
+        let behaviourBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_STUDENT_BEHAVIOR"))
             .sort((a, b) => {
                 if (a.gradeType?.toString().includes("MONTH")) {
                     return 1;
@@ -152,6 +167,10 @@ const EthicPage = () => {
                     grade: grade.value
                 })
             })
+        if (!shouldBeSixWeeks) {
+            behaviourBoxDetails = [...behaviourBoxDetails.slice(0, 4), behaviourBoxDetails[behaviourBoxDetails.length - 1]];
+        }
+        const completeMonthly = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_MONTHLY"))
         return [
             {
                 name: 'მოსწავლის ფორმითი გამოცხადება',
@@ -208,7 +227,21 @@ const EthicPage = () => {
 
                 boxdetails: behaviourBoxDetails
             },
-
+            {
+                name: 'თვის ქულა',
+                testNumber: null,
+                precent: null,
+                month: null,
+                monthGrade: null,
+                absence: null,
+                absenceGrade: null,
+                boxdetails: [
+                    {
+                        label: '',
+                        grade: completeMonthly[0]?.value || "",
+                    },
+                ]
+            }
         ]
 
     }, [gradeData])
