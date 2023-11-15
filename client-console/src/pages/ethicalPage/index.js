@@ -47,7 +47,7 @@ const EthicPage = () => {
             .map((grade, index) => {
                 if (grade.gradeType.toString().includes("MONTH")) {
                     return ({
-                        label: `თვის ნიშანი`,
+                        label: `თვის ქულა`,
                         grade: grade.value
                     })
                 }
@@ -71,7 +71,7 @@ const EthicPage = () => {
             .map((grade, index) => {
                 if (grade.gradeType.toString().includes("MONTH")) {
                     return ({
-                        label: `თვის ნიშანი`,
+                        label: `თვის ქულა`,
                         grade: grade.value
                     })
                 }
@@ -95,7 +95,7 @@ const EthicPage = () => {
             .map((grade, index) => {
                 if (grade.gradeType.toString().includes("MONTH")) {
                     return ({
-                        label: `თვის ნიშანი`,
+                        label: `თვის ქულა`,
                         grade: grade.value
                     })
                 }
@@ -119,7 +119,7 @@ const EthicPage = () => {
             .map((grade, index) => {
                 if (grade.gradeType.toString().includes("MONTH")) {
                     return ({
-                        label: `თვის ნიშანი`,
+                        label: `თვის ქულა`,
                         grade: grade.value
                     })
                 }
@@ -143,7 +143,7 @@ const EthicPage = () => {
             .map((grade, index) => {
                 if (grade.gradeType.toString().includes("MONTH")) {
                     return ({
-                        label: `თვის ნიშანი`,
+                        label: `თვის ქულა`,
                         grade: grade.value
                     })
                 }

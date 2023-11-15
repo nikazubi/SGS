@@ -29,7 +29,7 @@ export const App = () => {
                             <Route exact path="/" component={AfterLoginPage}/>
                             <Route path="/semestruli-shefaseba" component={SemesterPage}/>
                             <Route path="/ethicalPage" component={EthicPage}/>
-                            <Route path="/absence-page" component={AbsencePage}/>
+                            {/*<Route path="/absence-page" component={AbsencePage}/>*/}
                             {/* <Route exact path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit" component={Discipline}/> */}
                             <Route path="/grades/:id" component={Discipline}/>
                             <Route path="/tsliuri-shefaseba" component={TsliuriShefaseba}/>

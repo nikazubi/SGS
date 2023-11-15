@@ -11,6 +11,11 @@ export const fetchMonthly = async (filters) => {
     }
 
     const {data} = await axios.get("/client/grade/get-grades-for-month", {params});
+    data.map((row, index) => {
+        let copyRow = row;
+        copyRow.index = index + 1;
+        return copyRow;
+    });
     return data;
 }
 

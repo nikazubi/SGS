@@ -1679,7 +1679,7 @@ const BehaviourDashBoard = () => {
 
     const processRowUpdate = useCallback(
         async (newRow) => {
-            const gradeType = Object.keys(newRow).filter(field => field !== "student" && field !== "grades")[0]
+            const gradeType = Object.keys(newRow).filter(field => field.startsWith('BEHAVIOUR_'))[0]
             const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType)
             newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
             if (gradesOfType.length > 0 && gradesOfType[0].value !== undefined && gradesOfType[0].value !== null) {

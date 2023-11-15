@@ -63,11 +63,13 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
             Grade prevGrade = changeRequest.getPrevGrade();
             prevGrade.setValue(changeRequest.getNewValue());
             gradeRepository.save(prevGrade);
-            emailService.sendSimpleMail(EmailDetails.builder()
-                    .recipient(prevGrade.getStudent().getOwnerMail())
-                    .subject("IB მთიები - ნიშნის ცვლილება")
-                    .msgBody(description)
-                    .build());
+            if (prevGrade.getStudent().getOwnerMail() != null && prevGrade.getStudent().getOwnerMail().length() > 5 ) {
+                emailService.sendSimpleMail(EmailDetails.builder()
+                        .recipient(prevGrade.getStudent().getOwnerMail())
+                        .subject("IB მთიები - ნიშნის ცვლილება")
+                        .msgBody(description)
+                        .build());
+            }
         }
         changeRequest.setDirectorDescription(description);
         changeRequest.setStatus(changeRequestStatus);

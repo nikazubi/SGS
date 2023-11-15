@@ -46,8 +46,9 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
         for (AcademyClass academyClass : toClose) {
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "GENERAL");
             createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "BEHAVIOUR");
+            createOrUpdateClosedPeriodByPrefix(academyClass.getId(), "TRANSIT");
             for(Student student : academyClass.getStudentList()){
-                if(student.getOwnerMail() == null){
+                if(student.getOwnerMail() == null || student.getOwnerMail().length() < 5){
                     continue;
                 }
                 EmailDetails  emailDetails = EmailDetails.builder()
@@ -70,7 +71,7 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
     public boolean getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId) throws SGSException {
         Grade grade = gradeRepository.findById(gradeId)
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GRADE_REQUEST_NOT_FOUND));
-        ClosedPeriod closedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(id, gradePrefix, grade.getExactMonth());
+        ClosedPeriod closedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(id, gradePrefix, grade.getLastUpdateTime());
         return closedPeriod != null;
     }
 

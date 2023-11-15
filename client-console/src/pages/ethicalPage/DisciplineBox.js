@@ -1,7 +1,6 @@
 import FooterBox from "./FooterBox";
 // {title, number, precent,id, data}=argumentebia ->DisciplineBox
 const DisciplineBox = ({data}) => {
-    console.log(data)
     const allData = data;
 
     // ArrayOfObj = [{

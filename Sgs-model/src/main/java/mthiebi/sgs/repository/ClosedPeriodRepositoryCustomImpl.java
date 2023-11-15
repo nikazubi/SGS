@@ -53,7 +53,7 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
 
     @Override
     public Date findCreateTimeOfLatestClosePeriodByClassId(Long academyClassId) {
-        return qf.select(qClosedPeriod.createTime.max())
+        return qf.select(qClosedPeriod.lastUpdateTime.max())
                 .from(qClosedPeriod)
                 .where(QueryUtils.longEq(qClosedPeriod.academyClassId, academyClassId))
                 .fetchOne();

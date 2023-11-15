@@ -57,7 +57,7 @@ const Discipline = ({match}) => {
             }
             const generalSummaryAssignmentGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_SUMMARY_ASSIGMENT"))
             const generalSchoolWorkGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_SCHOOL_WORK"))
-            const generalHomeWorkGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_HOMEWORK_WRITE_ASSIGMENT"))
+            const generalHomeWorkGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_HOMEWORK_"))
             return [
                 {
                     name: 'შემაჯამებელი დავალება I - 50%',
@@ -165,7 +165,7 @@ const Discipline = ({match}) => {
                         },
                         {
                             label: 'თვე',
-                            grade: generalHomeWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_MONTH")[0]?.value || "",
+                            grade: generalHomeWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_HOMEWORK_MONTHLY")[0]?.value || "",
                         },
                         {
                             label: '%',

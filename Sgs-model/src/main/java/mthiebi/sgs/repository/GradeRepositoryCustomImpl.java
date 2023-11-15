@@ -275,7 +275,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .and(qGrade.student.id.eq(studentId))
                         .and(qGrade.gradeType.eq(gradeType))
                         .and(qGrade.subject.id.eq(subjectId)
-                                .and(qGrade.exactMonth.before(latest))
+                                .and(qGrade.lastUpdateTime.before(latest))
                                 .and(qGrade.exactMonth.year().eq(maxYear))))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
@@ -307,7 +307,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
                                 .and(qGrade.exactMonth.month().eq(month + 1)))
                         .and(qGrade.exactMonth.year().eq(year))
-                        .and(qGrade.exactMonth.before(latest)))
+                        .and(qGrade.lastUpdateTime.before(latest)))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
     }
@@ -321,7 +321,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
                                 .and(QueryUtils.enumEq(qGrade.gradeType, GradeType.GENERAL_COMPLETE_MONTHLY))
                                 .and(qGrade.exactMonth.month().eq(month + 1)))
-                        .and(qGrade.exactMonth.before(latest))
+                        .and(qGrade.lastUpdateTime.before(latest))
                         .and(qGrade.exactMonth.year().eq(year)))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
@@ -331,11 +331,16 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     public BigDecimal findTotalAbsenceHours(long studentId, Date createDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createDate);
+        if (calendar.get(Calendar.MONTH) == Calendar.FEBRUARY) {
+            calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        } else if (calendar.get(Calendar.MONTH) == Calendar.OCTOBER) {
+            calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
+        }
         return qf.select(qGrade.value.sum())
                 .from(qGrade)
                 .where(qGrade.gradeType.eq(GradeType.GENERAL_ABSENCE_MONTHLY)
                         .and(qGrade.student.id.eq(studentId))
-                        .and(qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1)))//erased + 1
+                        .and(qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1)))// todo: დაამატე წელი
                 .fetchOne();
     }
 
@@ -343,6 +348,11 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     public BigDecimal findBehaviourMonth(long id, Date createDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(createDate);
+        if (calendar.get(Calendar.MONTH) == Calendar.FEBRUARY) {
+            calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        } else if (calendar.get(Calendar.MONTH) == Calendar.OCTOBER) {
+            calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
+        }
         return qf.select(qGrade.value)
                 .from(qGrade)
                 .where(qGrade.gradeType.eq(GradeType.BEHAVIOUR_MONTHLY)

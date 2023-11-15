@@ -70,10 +70,12 @@ const MonthlyGrade = () => {
             if (!monthData) {
                 return []
             }
-            return monthData[0]?.gradeList?.map(grade => {
+            return monthData[0]?.gradeList?.filter(grade => grade.subject.name !== 'rating'
+                && grade.subject.name !== 'behaviour'
+                && grade.subject.name !== 'absence').map(grade => {
                 return {
                     name: grade.subject.name,
-                    value: grade.value ? grade.value : 0
+                    value: grade.value ? grade.value === -50 ? 0 : grade.value : 0
                 }
             })
         }, [monthData]
@@ -379,11 +381,14 @@ const MonthlyGrade = () => {
             }];
             let absenceIndex = -10;
             let behaviourIndex = -10;
+            let ratingIndex = -10;
             monthData[0].gradeList.forEach((o, index) => {
                 if (o.subject.name === 'absence') {
                     absenceIndex = index;
                 } else if (o.subject.name === 'behaviour') {
                     behaviourIndex = index;
+                } else if (o.subject.name === 'rating') {
+                    ratingIndex = index;
                 } else {
                     gradeClomuns2 = [...gradeClomuns2, {
                         headerName: o.subject.name,
@@ -394,7 +399,7 @@ const MonthlyGrade = () => {
                                 </div>)
                             }
                             return (<div>
-                                {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : row.gradeList[index].value}
+                                {!row.gradeList[index] || row.gradeList[index]?.value === 0 ? '' : row.gradeList[index].value === -50 ? 'ჩთ' : row.gradeList[index].value}
                             </div>);
                         },
                         field: '' + o.subject.name,
@@ -411,7 +416,7 @@ const MonthlyGrade = () => {
                     headerName: "რეიტინგი",
                     renderCell: ({row}) => {
                         return (<div>
-                            {row.rating}
+                            {!row.gradeList[ratingIndex] || row.gradeList[ratingIndex]?.value === 0 ? '' : row.gradeList[ratingIndex].value}
                         </div>);
                     },
 

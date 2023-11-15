@@ -285,7 +285,7 @@ public class GradeServiceImpl implements GradeService {
         }
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(academyClass.getId(),
                 null, student.getId(), GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), latest);
-        return fillWithEmptyGradeListOfGradeType(student, "GENERAL_COMPLETE_MONTHLY", academyClass, academyClass.getSubjectList(), existingGrades);
+        return fillWithEmptyGradeListOfGradeType(student, "GENERAL_COMPLETE_MONTHLY", academyClass, academyClass.getSubjectList(), existingGrades, calendar);
 
     }
 
@@ -340,7 +340,8 @@ public class GradeServiceImpl implements GradeService {
                                                           String gradeTypePrefix,
                                                           AcademyClass academyClass,
                                                           List<Subject> subjects,
-                                                          List<Grade> existingGrades) {
+                                                          List<Grade> existingGrades,
+                                                          Calendar calendar) {
         List<GradeType> gradeTypes = Arrays.stream(GradeType.values())
                 .filter(gradeType -> gradeType.toString().startsWith(gradeTypePrefix))
                 .collect(Collectors.toList());
@@ -353,6 +354,33 @@ public class GradeServiceImpl implements GradeService {
                 }
             }
         }
+        Grade ratingGrade = new Grade();
+        ratingGrade.setId(1L);
+        Subject ratingSubject = new Subject();
+        ratingSubject.setName("rating");
+        ratingSubject.setId(7777L);
+        ratingGrade.setSubject(ratingSubject);
+        ratingGrade.setValue(adjustStudentRating(result));
+        result.add(ratingGrade);
+
+        Grade ebsenceGrade = new Grade();
+        ebsenceGrade.setId(2L);
+        Subject junkSubject = new Subject();
+        junkSubject.setName("absence");
+        junkSubject.setId(8888L);
+        ebsenceGrade.setSubject(junkSubject);
+        ebsenceGrade.setValue(gradeRepository.findTotalAbsenceHours(student.getId(), calendar.getTime()));
+        result.add(ebsenceGrade);
+
+        Grade behaviourGrade = new Grade();
+        behaviourGrade.setId(3L);
+        Subject behaviourSubject = new Subject();
+        behaviourSubject.setName("behaviour");
+        behaviourSubject.setId(9999L);
+        behaviourGrade.setSubject(behaviourSubject);
+        behaviourGrade.setValue(gradeRepository.findBehaviourMonth(student.getId(), calendar.getTime()));
+        result.add(behaviourGrade);
+
         return result;
     }
 
@@ -580,6 +608,22 @@ public class GradeServiceImpl implements GradeService {
         long count = 0L;
         for (Subject s : newMap.keySet()) {
             BigDecimal value = newMap.get(s);
+            if (value != null && value.compareTo(BigDecimal.ZERO) > 0) {
+                sum = sum.add(value);
+                count++;
+            }
+        }
+        if (Objects.equals(sum, BigDecimal.ZERO) || count == 0) {
+            return BigDecimal.ZERO;
+        }
+        return sum.divide(new BigDecimal(count), RoundingMode.CEILING);
+    }
+
+    private BigDecimal adjustStudentRating(List<Grade> list) {
+        BigDecimal sum = BigDecimal.valueOf(0);
+        long count = 0L;
+        for (Grade g : list) {
+            BigDecimal value = g.getValue();
             if (value != null && value.compareTo(BigDecimal.ZERO) > 0) {
                 sum = sum.add(value);
                 count++;
