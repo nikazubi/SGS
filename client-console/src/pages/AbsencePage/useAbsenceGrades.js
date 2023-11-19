@@ -2,7 +2,6 @@ import {useQuery} from "react-query";
 import axios from "../utils/axios";
 
 export const fetchAbsenceGrades = async (filters) => {
-    console.log("ffff", filters)
     const params = {
         month: filters.month,
         yearRange: filters.yearRange,
