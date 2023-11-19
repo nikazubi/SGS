@@ -63,4 +63,6 @@ public interface GradeService {
     List<Grade> findAllBehaviourGradesForMonthAndYear(String studentUsername, Long month, Long year);
 
     Object getGradeByComponent(String userName, String yearRange, Date date, String component) throws SGSException;
+
+    List<Grade> getAbsenceGrades(String username, String yearRange, Long month) throws SGSException;
 }

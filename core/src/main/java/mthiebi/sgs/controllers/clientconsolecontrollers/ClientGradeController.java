@@ -163,4 +163,15 @@ public class ClientGradeController {
         }
         return list;
     }
+
+    @GetMapping("/get-grades-absence")
+    public List<GradeDTO> getGradesAbsence(@RequestHeader("authorization") String authHeader,
+                                           @RequestParam(required = false) String yearRange,
+                                           @RequestParam(required = false) Long month) throws Exception {
+        String userName = utilsJwt.getUsernameFromHeader(authHeader);
+        return gradeService.getAbsenceGrades(userName, yearRange, month)
+                .stream()
+                .map(grade -> gradeMapper.gradeDTOWithoutAcademyClass(grade))
+                .collect(Collectors.toList());
+    }
 }

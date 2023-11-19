@@ -316,6 +316,23 @@ public class GradeServiceImpl implements GradeService {
         return getGradeByComponent(academyClass.getId(), student.getId(), yearRange, date, component, latest);
     }
 
+    @Override
+    public List<Grade> getAbsenceGrades(String username, String yearRange, Long month) throws SGSException {
+        int startYear = 2023, endYear = 2023;
+        if (yearRange != null) {
+            String[] arr = yearRange.split("-");
+            startYear = Integer.parseInt(arr[0]);
+            endYear = Integer.parseInt(arr[1]);
+        }
+
+        Student student = studentRepository.findByUsername(username).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+        Date latest = closedPeriodService.getLatestClosedPeriodBy(academyClass.getId());
+
+        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(academyClass.getId(),
+                null, student.getId(), GradeType.GENERAL_ABSENCE_MONTHLY, month, startYear, endYear, latest);
+    }
+
     private List<Grade> fillWithEmptyGradeListOfGradeType(List<Student> students,
                                                           String gradeTypePrefix,
                                                           AcademyClass academyClass,

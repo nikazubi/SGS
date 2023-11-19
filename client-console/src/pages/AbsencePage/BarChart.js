@@ -1,16 +1,5 @@
-import React, { useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LabelList
-} from "recharts";
-
+import React from "react";
+import {Bar, BarChart, CartesianGrid, LabelList, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 
 // Custom tick formatter function to display values as percentages
@@ -30,25 +19,25 @@ export default function CustomBar({color, attend, attendMax, layout, data}) {
 
     const formatPercentage = (value) => {
       if (value === attendMax) return "100%"; // Maximum value
-      return `${((value / attendMax) * 100)}%`;
+      return `${((value / attendMax) * 100).toFixed(2)}%`;
     };
 
     const displayPrecent = (v) =>{
-      return (((v.არა / attendMax) * 100).toFixed(2) + '%')
+        return (((v.value / attendMax) * 100).toFixed(2) + '%')
     }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-    <BarChart
-      width={1280}
-      height={300}
-      data={data}
-      layout={layout}
-      margin={{
-        top: 15,
-        right: 30,
-        left: 20,
-        bottom: 5
+      <ResponsiveContainer width="100%" height={220}>
+          <BarChart
+              width={1280}
+              height={300}
+              data={data}
+              layout={layout}
+              margin={{
+                  top: 15,
+                  right: 30,
+                  left: 20,
+                  bottom: 5
       }}
 
     >
@@ -67,11 +56,11 @@ export default function CustomBar({color, attend, attendMax, layout, data}) {
       <Tooltip />
       {layout === 'horizontal' ? '' : <Legend formatter={()=>((attend/attendMax) * 100).toFixed(2) + '%'} />}
       <Bar
-        dataKey={'არა'}
-        fill={color}
-        background={{ fill: "#eee" }}
-        barSize={layout === 'horizontal' ? 50 : 70} // Adjust the bar size based on the maximum value
-        radius={layout === 'horizontal' ? [20, 20, 0, 0] : [0, 20, 20, 0]}
+          dataKey={'value'}
+          fill={color}
+          background={{ fill: "#eee" }}
+          barSize={layout === 'horizontal' ? 50 : 70} // Adjust the bar size based on the maximum value
+          radius={layout === 'horizontal' ? [20, 20, 0, 0] : [0, 20, 20, 0]}
       >
         <LabelList dataKey={displayPrecent} position="top" />
       </Bar>
