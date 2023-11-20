@@ -116,9 +116,7 @@ const ClosePeriodTableToolbar = ({setFilters, filters}) => {
                                             marginBottom: -20,
                                             fontSize: 16
                                         }}
-                                                disabled={new Date().getUTCFullYear() === new Date(new Date(lastCloseDateInDateFormat)).getUTCFullYear() &&
-                                                    new Date().getUTCMonth() === new Date(new Date(lastCloseDateInDateFormat)).getUTCMonth() &&
-                                                    new Date().getUTCDate() === new Date(new Date(lastCloseDateInDateFormat)).getUTCDate()}
+                                                disabled={false}
                                                 onClick={async () => {
                                                     setOpenModal(true)
                                                     // closePeriod().then(() =>{

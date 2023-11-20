@@ -307,7 +307,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                                 .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
                                         .and(qGrade.exactMonth.month().eq(month + 1)))
                                 .and(qGrade.exactMonth.year().eq(year))
-//                        .and(qGrade.lastUpdateTime.before(latest))
+                        .and(qGrade.lastUpdateTime.before(latest))
                 )
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
