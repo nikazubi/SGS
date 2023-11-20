@@ -7,7 +7,7 @@ export const updateGrade = async grade => {
     const gradeType = Object.keys(grade).filter(field => field.startsWith("BEHAVIOUR") || field.startsWith("GENERAL") || field.startsWith("TRANSIT"))[0];
     const request = {
         // id: grade.grades.filter(g => g.gradeType === gradeType)[0].id,
-        value: gradeType === 'GENERAL_COMPLETE_MONTHLY' && grade[gradeType] === 'ჩთ' ? -50 : Number(grade[gradeType]),
+        value: (gradeType === 'GENERAL_COMPLETE_MONTHLY' || gradeType === 'TRANSIT_SCHOOL_COMPLETE_MONTHLY') && grade[gradeType] === 'ჩთ' ? -50 : Number(grade[gradeType]),
         gradeType: gradeType,
         student: grade.student,
         subject: grade.grades[0].subject, // TODO should be grade.subject because on no grades this will fail

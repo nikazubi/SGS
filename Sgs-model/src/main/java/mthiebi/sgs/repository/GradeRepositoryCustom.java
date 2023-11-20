@@ -44,7 +44,7 @@ public interface GradeRepositoryCustom {
 
     List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, int month, int year, Date latest);
 
-    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, Long month, int startYear, int endYear, Date latest);
+    List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long studentId, GradeType gradeType, Long month, int startYear, int endYear, Date latest);
 
     BigDecimal findTotalAbsenceHours(long id, Date createDate);
 

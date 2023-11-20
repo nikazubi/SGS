@@ -329,14 +329,13 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     }
 
     @Override
-    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long subjectId, Long studentId, GradeType gradeType, Long month, int startYear, int endYear, Date latest) {
+    public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(Long academyClassId, Long studentId, GradeType gradeType, Long month, int startYear, int endYear, Date latest) {
         int monthInt = month.intValue();
         return qf.select(qGrade)
                 .from(qGrade)
                 .where(QueryUtils.longEq(qGrade.academyClass.id, academyClassId)
                         .and(QueryUtils.longEq(qGrade.student.id, studentId))
-                        .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
-                                .and(QueryUtils.enumEq(qGrade.gradeType, gradeType))
+                        .and(QueryUtils.enumEq(qGrade.gradeType, gradeType)
                                 .and(qGrade.exactMonth.month().eq(monthInt + 1)))
                         .and(qGrade.lastUpdateTime.before(latest))
                         .and(qGrade.exactMonth.year().between(startYear, endYear)))

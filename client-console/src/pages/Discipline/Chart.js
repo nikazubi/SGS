@@ -40,8 +40,12 @@ export default function Chart({id, monthData}) {
   const [isHovered, setIsHovered] = useState(false)
 
     const parsed = monthData? monthData.map(grade => {
-        return {label: MONTHS[new Date(grade.exactMonth).getUTCMonth()]?.value,
-        value: grade.value}
+        if (grade?.value !== -50) {
+            return {
+                label: MONTHS[new Date(grade.exactMonth).getUTCMonth()]?.value,
+                value: grade.value
+            }
+        }
     }) : []
 
   useEffect(()=>{

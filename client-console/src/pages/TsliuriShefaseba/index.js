@@ -25,7 +25,7 @@ const TsliuriShefaseba = () => {
         }
         return data[0]?.gradeList?.map((grade) => ({
             name: grade.subject.name || "",
-            value: grade.value["4"] || 0
+            value: grade.value["4"] ? grade.value["4"] < 0 ? 0 : grade.value["4"] : 0
         }))
     }, [data])
 

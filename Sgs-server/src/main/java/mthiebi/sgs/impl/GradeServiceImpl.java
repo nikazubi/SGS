@@ -329,8 +329,7 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
         Date latest = closedPeriodService.getLatestClosedPeriodBy(academyClass.getId());
 
-        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(academyClass.getId(),
-                null, student.getId(), GradeType.GENERAL_ABSENCE_MONTHLY, month, startYear, endYear, latest);
+        return gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(academyClass.getId(), student.getId(), GradeType.GENERAL_ABSENCE_MONTHLY, month, startYear, endYear, latest);
     }
 
     private List<Grade> fillWithEmptyGradeListOfGradeType(List<Student> students,

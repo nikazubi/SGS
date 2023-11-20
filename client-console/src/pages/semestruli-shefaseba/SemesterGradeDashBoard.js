@@ -69,7 +69,7 @@ const SemesterGradeDashBoard = ({filters}) => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[month.month];
 
-                        return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 ? '' : monthValue === -50 ? 'ჩთ' : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     field: subject.id + "-" + month.month,
@@ -133,7 +133,7 @@ const SemesterGradeDashBoard = ({filters}) => {
                     }));
                     const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-1];
 
-                    return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                    return <div>{monthValue === 0 ? '' : monthValue === -50 ? 'ჩთ' : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
                 field: subject.id + "--1",
@@ -682,11 +682,12 @@ const SemesterGradeDashBoard = ({filters}) => {
                 value: item.value
             }));
             const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-1];
-
-            result.push({
-                name: subject.name || '',
-                value: monthValue === 0 ? 0 : checked ? Number(monthValue) + 3 : monthValue
-            })
+            if (monthValue !== -50) {
+                result.push({
+                    name: subject.name || '',
+                    value: monthValue === 0 ? 0 : checked ? Number(monthValue) + 3 : monthValue
+                })
+            }
         }
         return result;
     }, [data, subjects])
@@ -696,7 +697,7 @@ const SemesterGradeDashBoard = ({filters}) => {
         <div>
             <div className={"semesterGradeCnt"}>
                 {/*<SemesterGradeToolbar filters={filters} setFilters={setFilters} checked={checked} setChecked={setChecked}/>*/}
-                <div style={{height: `30vh`, width: '100%', marginTop: 30, paddingLeft: 40, paddingRight: 40}}>
+                <div style={{height: `33vh`, width: '100%', marginTop: 30, paddingLeft: 40, paddingRight: 40}}>
                     <DataGridPaper>
                         <DataGridSGS
                             sx={{

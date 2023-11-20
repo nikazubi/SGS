@@ -186,7 +186,7 @@ const Discipline = ({match}) => {
                     boxdetails: [
                         {
                             label: '',
-                            grade: completeMonthly[0]?.value || "",
+                            grade: completeMonthly[0]?.value ? completeMonthly[0]?.value === -50 ? 'ჩთ' : completeMonthly[0]?.value : "",
                         },
                     ]
                 }
