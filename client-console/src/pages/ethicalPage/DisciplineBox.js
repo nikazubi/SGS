@@ -2,7 +2,6 @@ import FooterBox from "./FooterBox";
 // {title, number, precent,id, data}=argumentebia ->DisciplineBox
 const DisciplineBox = ({data}) => {
     const allData = data;
-console.log(data)
     // ArrayOfObj = [{
     //     name: 'შემაჯამებელი დავალება' | 'საშინაო დავალება' | 'საკლასო დავალება' | null,
     //     number: romauli ricxvebi iyo -> III ან I ა.შ | null,

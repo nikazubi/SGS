@@ -8,6 +8,8 @@ import mthiebi.sgs.dto.SubjectComponentWrapper;
 import mthiebi.sgs.models.Grade;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
+import mthiebi.sgs.repository.StudentRepository;
+import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.service.GradeService;
 import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,12 @@ public class ClientGradeController {
 
     @Autowired
     private GradeService gradeService;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private AcademyClassService academyClassService;
 
     @Autowired
     private UtilsJwt utilsJwt;
@@ -173,5 +181,12 @@ public class ClientGradeController {
                 .stream()
                 .map(grade -> gradeMapper.gradeDTOWithoutAcademyClass(grade))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/get-transient")
+    public Boolean getTransient(@RequestHeader("authorization") String authHeader) throws Exception {
+        String userName = utilsJwt.getUsernameFromHeader(authHeader);
+        Student student = studentRepository.findByUsername(userName).orElseThrow();
+        return academyClassService.isStudentInTransitClass(student.getId());
     }
 }

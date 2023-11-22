@@ -19,6 +19,8 @@ public interface AcademyClassService {
 
     AcademyClass findAcademyClassById(Long id);
 
+    Boolean isStudentInTransitClass(Long studentId);
+
     void attachStudentsToAcademyClass(Long academyClassId, List<Long> studentIdList) throws SGSException;
 
     void attachSubjectsToAcademyClass(Long academyClassId, List<Long> subjectIdList) throws SGSException;

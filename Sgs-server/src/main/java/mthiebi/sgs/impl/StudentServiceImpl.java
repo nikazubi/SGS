@@ -50,7 +50,7 @@ public class StudentServiceImpl implements StudentService {
         oldStudent.setPersonalNumber(student.getPersonalNumber());
         oldStudent.setUsername(student.getUsername());
         String encodedPassword = DigestUtils.md5Hex(student.getPassword().getBytes()).toUpperCase();
-        student.setPassword(encodedPassword);
+        oldStudent.setPassword(encodedPassword);
         oldStudent.setOwnerMail(student.getOwnerMail());
         studentRepository.save(oldStudent);
         return oldStudent;

@@ -71,7 +71,7 @@ public class ClosedPeriodServiceImpl implements ClosedPeriodService {
     public boolean getClosedPeriodByClassId(Long id, String gradePrefix, Long gradeId) throws SGSException {
         Grade grade = gradeRepository.findById(gradeId)
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.GRADE_REQUEST_NOT_FOUND));
-        ClosedPeriod closedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(id, gradePrefix, grade.getLastUpdateTime());
+        ClosedPeriod closedPeriod = closedPeriodRepository.findClosedPeriodByAcademyClassIdAndPrefix(id, gradePrefix, grade.getCreateTime());
         return closedPeriod != null;
     }
 

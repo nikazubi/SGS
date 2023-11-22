@@ -75,7 +75,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 .where(subjectIdPredicate)
                 .where(studentIdPredicate)
                 .where(datePredicate)
-                .where(QueryUtils.dateTimeLess(qGrade.exactMonth, closedPeriod))
+                .where(QueryUtils.dateTimeLess(qGrade.createTime, closedPeriod))
 //                .where(booleanExpression)
                 .orderBy(qGrade.createTime.desc())
                 .fetch();
@@ -150,10 +150,11 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
 
     @Override
     public Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester, Date closedPeriod) {
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow();
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
         Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year);
         Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6);
-        Predicate gradeTypePredicate = qGrade.gradeType.eq(GradeType.GENERAL_COMPLETE_MONTHLY).or(qGrade.gradeType.eq(GradeType.GENERAL_SCHOOL_WORK_MONTH));
+        Predicate gradeTypePredicate = qGrade.gradeType.eq(academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList = qf.selectFrom(qGrade)
                 .where(dateYearPredicate)
                 .where(dateMonthPredicate)
@@ -175,26 +176,16 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 List<Grade> curr = newGradeList.get(subject);
                 Long sum = 0L;
                 int count = 0;
-                Long sumOfSchoolWork = 0L;
-                int countOfSchoolWork = 0;
                 for (Grade grade : curr) {
-                    if (grade.getGradeType() != GradeType.GENERAL_SCHOOL_WORK_MONTH) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(grade.getExactMonth());
-                        Integer month = calendar.get(Calendar.MONTH);
-                        gradeByMonth.put(month + 1, grade.getValue());
-                        sum += grade.getValue().longValue();
-                        count++;
-                    } else {
-                        sumOfSchoolWork += grade.getValue().longValue();
-                        countOfSchoolWork++;
-                    }
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(grade.getExactMonth());
+                    Integer month = calendar.get(Calendar.MONTH);
+                    gradeByMonth.put(month + 1, grade.getValue());
+                    sum += grade.getValue().longValue();
+                    count++;
                 }
                 BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                BigDecimal averageOfSchoolWork = countOfSchoolWork == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(sumOfSchoolWork).divide(BigDecimal.valueOf(countOfSchoolWork), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, average);
-                gradeByMonth.put(-2, averageOfSchoolWork);
-                //TODO OOOO!!!!
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
                         .where(dateMonthPredicate)
@@ -275,7 +266,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .and(qGrade.student.id.eq(studentId))
                         .and(qGrade.gradeType.eq(gradeType))
                         .and(qGrade.subject.id.eq(subjectId)
-                                .and(qGrade.lastUpdateTime.before(latest))
+                                .and(qGrade.createTime.before(latest))
                                 .and(qGrade.exactMonth.year().eq(maxYear))))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
@@ -307,7 +298,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                                 .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
                                         .and(qGrade.exactMonth.month().eq(month + 1)))
                                 .and(qGrade.exactMonth.year().eq(year))
-                        .and(qGrade.lastUpdateTime.before(latest))
+                        .and(qGrade.createTime.before(latest))
                 )
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
@@ -322,7 +313,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
                                 .and(QueryUtils.enumEq(qGrade.gradeType, gradeType))
                                 .and(qGrade.exactMonth.month().eq(month + 1)))
-                        .and(qGrade.lastUpdateTime.before(latest))
+                        .and(qGrade.createTime.before(latest))
                         .and(qGrade.exactMonth.year().eq(year)))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();
@@ -337,7 +328,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .and(QueryUtils.longEq(qGrade.student.id, studentId))
                         .and(QueryUtils.enumEq(qGrade.gradeType, gradeType)
                                 .and(qGrade.exactMonth.month().eq(monthInt + 1)))
-                        .and(qGrade.lastUpdateTime.before(latest))
+                        .and(qGrade.createTime.before(latest))
                         .and(qGrade.exactMonth.year().between(startYear, endYear)))
                 .orderBy(qGrade.exactMonth.desc())
                 .fetch();

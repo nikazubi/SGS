@@ -11,7 +11,6 @@ export default function CustomShefasebaBar({color, data, width = 1280, height = 
         return v.value;
     }
 
-    console.log(data)
 
     return (
         <BarChart

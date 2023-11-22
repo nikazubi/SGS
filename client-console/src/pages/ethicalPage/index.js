@@ -32,7 +32,6 @@ const EthicPage = () => {
         if (!gradeData) {
             return []
         }
-        console.log(gradeData)
         //BEHAVIOUR_MONTHLY
         const shouldBeSixWeeks = selectedData.key === 0 || selectedData.key === 8
         let uniformBoxDetails = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_APPEARING_IN_UNIFORM"))

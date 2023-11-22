@@ -29,7 +29,7 @@ public class ClosedPeriodRepositoryCustomImpl implements ClosedPeriodRepositoryC
                 .where(qClosedPeriod.gradePrefix.eq(gradePrefix))
                 .where(qClosedPeriod.lastUpdateTime.after(calendar.getTime()))
                 .orderBy(qClosedPeriod.lastUpdateTime.desc())
-                .fetchOne();
+                .fetchFirst();
     }
 
     @Override

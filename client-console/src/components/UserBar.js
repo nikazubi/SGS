@@ -18,7 +18,7 @@ import {useUserContext} from "../context/user-context";
 const UserBar = () => {
 
   const history = useHistory(); // Add this line
-    const {user, logout} = useUserContext();
+    const {user, logout} = useUserContext(); // aaaaaaaaaaaaaaaaaaaa
 
   const useStyles = makeStyles((theme) => ({
     avatar: {

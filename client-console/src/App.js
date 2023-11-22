@@ -16,7 +16,7 @@ export const App = () => {
     const {loggedIn} = useUserContext();
 
     useEffect(() => {
-        console.log(loggedIn)
+
     }, [loggedIn])
 
     return (

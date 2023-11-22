@@ -98,6 +98,12 @@ public class AcademyClassServiceImpl implements AcademyClassService {
     }
 
     @Override
+    public Boolean isStudentInTransitClass(Long studentId) {
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(studentId).orElseThrow();
+        return academyClass.getIsTransit();
+    }
+
+    @Override
     public void attachStudentsToAcademyClass(Long academyClassId, List<Long> studentIdList) throws SGSException {
         AcademyClass academyClass = academyClassRepository.findById(academyClassId)
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));

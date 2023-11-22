@@ -248,11 +248,12 @@ public class GradeServiceImpl implements GradeService {
         if (year != null) {
             calendar.set(Calendar.YEAR, year.intValue());
         }
-
+        gradeTypePrefix = academyClass.getIsTransit() ? "TRANSIT" : gradeTypePrefix;
+        final String pref = gradeTypePrefix;
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndExactMonthAndYear(academyClass.getId(),
                         subjectId, student.getId(), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), latest)
                 .stream()
-                .filter(grade -> grade.getGradeType().toString().startsWith(gradeTypePrefix))
+                .filter(grade -> grade.getGradeType().toString().startsWith(pref))
                 .collect(Collectors.toList());
 
         return fillWithEmptyGradeListOfGradeType(List.of(student), gradeTypePrefix, academyClass, currSubject, existingGrades);
@@ -269,8 +270,8 @@ public class GradeServiceImpl implements GradeService {
             calendar.set(Calendar.YEAR, year.intValue());
         }
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(academyClass.getId(),
-                subjectId, student.getId(), GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.YEAR), latest);
-        return fillWithEmptyGradeListOfGradeType(List.of(student), "GENERAL_COMPLETE_MONTHLY", academyClass, currSubject, existingGrades);
+                subjectId, student.getId(), academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.YEAR), latest);
+        return fillWithEmptyGradeListOfGradeType(List.of(student), academyClass.getIsTransit() ? "TRANSIT_SCHOOL_COMPLETE_MONTHLY" : "GENERAL_COMPLETE_MONTHLY", academyClass, currSubject, existingGrades);
     }
 
     @Override
@@ -284,8 +285,8 @@ public class GradeServiceImpl implements GradeService {
             calendar.set(Calendar.YEAR, year.intValue());
         }
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonthAndYear(academyClass.getId(),
-                null, student.getId(), GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), latest);
-        return fillWithEmptyGradeListOfGradeType(student, "GENERAL_COMPLETE_MONTHLY", academyClass, academyClass.getSubjectList(), existingGrades, calendar);
+                null, student.getId(), academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), latest);
+        return fillWithEmptyGradeListOfGradeType(student, academyClass.getIsTransit() ? "TRANSIT_SCHOOL_COMPLETE_MONTHLY" : "GENERAL_COMPLETE_MONTHLY", academyClass, academyClass.getSubjectList(), existingGrades, calendar);
 
     }
 

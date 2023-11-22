@@ -14,12 +14,15 @@ import {MONTHS} from "../utils/date";
 import useSubjects from "./useSubjects";
 import useGrades from "./useGrades";
 import useMonthlyGradesOfSubjectAndStudent from "./useMonthlyGradesOfSubjectAndStudent";
+import {useUserContext} from "../../context/user-context";
+import useTransit from "./useTransit";
 
 
 const Discipline = ({match}) => {
     const id = match.params.id
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const {user, isTransit} = useUserContext();
     const {data: subjectData, isLoading, isError, error, isSuccess} = useSubjects();
     const chosenSubject = useMemo(
         () => id && subjectData? subjectData.filter((data) => data.name === id)[0] : {},
@@ -31,6 +34,7 @@ const Discipline = ({match}) => {
     );
     const {data: gradeData, isLoading: isGradesLoading} = useGrades({month: chosenMonth.key, subject: chosenSubject});
     const {data: monthData, isLoading: isMonthLoading} = useMonthlyGradesOfSubjectAndStudent({subject: chosenSubject});
+    const {data: transit} = useTransit();
 
     const asideRef = useRef();
     const backgroundRef = useRef();
@@ -195,126 +199,127 @@ const Discipline = ({match}) => {
         },
         [gradeData]
     )
-    const data = [
-        {
-            name: 'შემაჯამებელი დავალება I - 50%',
-            testNumber: null,
-            precent: null,
-            month: null,
-            monthGrade: null,
-            absence: null,
-            absenceGrade: null,
-            boxdetails: [
+    console.log("transittransittransit", transit)
+    const columnsTransit = useMemo(
+        () => {
+            if(!gradeData){
+                return []
+            }
+
+            const generalSummaryAssignmentGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("TRANSIT_SUMMARY_ASSIGMENT"))
+            const generalSchoolWorkGrades = gradeData?.filter((grade) => grade.gradeType?.toString().includes("TRANSIT_SCHOOL_WORK"))
+            const completeMonthly = gradeData?.filter((grade) => grade.gradeType?.toString().includes("TRANSIT_SCHOOL_COMPLETE_MONTHLY"))
+            return [
                 {
-                        label: '1',
-                        grade: 5,
-                    },
+                    name: 'შემაჯამებელი დავალება I - 50%',
+                    testNumber: null,
+                    precent: null,
+                    month: null,
+                    monthGrade: null,
+                    absence: null,
+                    absenceGrade: null,
+                    boxdetails: [
+                        {
+                            label: '1',
+                            grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_1")[0]?.value || "",
+                        },
 
-                    {
-                        label: '2',
-                        grade: 6,
-                    },
+                        {
+                            label: '2',
+                            grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_2")[0]?.value || "",
+                        },
 
-                    { label: 'აღდ',
-                        grade: 0,
-                    },
+                        { label: 'აღდ',
+                            grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_RESTORATION")[0]?.value || "",
+                        },
 
-                    {
-                        label: 'თვე',
-                        grade: 6,
-                    },
-                    {
-                        label: '%',
-                        grade: 3.5,
-                    },
+                        {
+                            label: 'თვე',
+                            grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_MONTH")[0]?.value || "",
+                        },
+                        {
+                            label: '%',
+                            grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_PERCENT")[0]?.value || "",
+                        },
 
-                ]
-            },
+                    ]
+                },
+                {
+                    name: 'საკლასო სამუშაო II - 30%',
+                    testNumber: null,
+                    precent: null,
+                    month: null,
+                    monthGrade: null,
+                    absence: null,
+                    absenceGrade: null,
+                    boxdetails: [
+                        {
+                            label: '1',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_1")[0]?.value || "",
+                        },
 
-            {
-                name:'შემოქმედებითობა II - 20%',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-                boxdetails: [
-                    {
-                        label: '1',
-                        grade: 7,
-                    },
+                        {
+                            label: '2',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_2")[0]?.value || "",
+                        },
+                        {
+                            label: '3',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_3")[0]?.value || "",
+                        },
 
-                    {
-                        label: '2',
-                        grade: 7,
-                    },
+                        {
+                            label: '4',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_4")[0]?.value || "",
+                        },
 
-                    {
-                        label: 'თვე',
-                        grade: 7,
-                    },
-                    {
-                        label: '%',
-                        grade: 1.4,
-                    },
+                        {
+                            label: '5',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_5")[0]?.value || "",
+                        },
+                        {
+                            label: '6',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_6")[0]?.value || "",
+                        },
+                        {
+                            label: '7',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_7")[0]?.value || "",
+                        },
+                        {
+                            label: '8',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_8")[0]?.value || "",
+                        },
+                        {
+                            label: 'თვე',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_MONTH")[0]?.value || "",
+                        },
+                        {
+                            label: '%',
+                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_MONTH_PERCENT")[0]?.value || "",
+                        },
 
-                ]
-            },
+                    ]
+                },
+                {
+                    name: 'თვის ქულა',
+                    testNumber: null,
+                    precent: null,
+                    month: null,
+                    monthGrade: null,
+                    absence: null,
+                    absenceGrade: null,
+                    boxdetails: [
+                        {
+                            label: '',
+                            grade: completeMonthly[0]?.value ? completeMonthly[0]?.value === -50 ? 'ჩთ' : completeMonthly[0]?.value : "",
+                        },
+                    ]
+                }
+            ]
+            // GENERAL_SUMMARY_ASSIGMENT
+        },
+        [gradeData]
+    )
 
-            {
-                name:'საშინაო დავალება III - 30%',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-                boxdetails: [
-                    {
-                        label: '1',
-                        grade: 6,
-                    },
-
-                    {
-                        label: '2',
-                        grade: 6,
-                    },
-
-                    {
-                        label: 'თვე',
-                        grade: 6,
-                    },
-                    {
-                        label: '%',
-                        grade: 1.8,
-                    },
-
-                ]
-            },
-
-            {
-                name: '',
-                testNumber: null,
-                precent: null,
-                month: 'თვის ქულა: ',
-                monthGrade: 7,
-                absence: null,
-                absenceGrade: null,
-                boxdetails: []
-            },
-            {
-                name: '',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: 'გაცდენილი საათები: ',
-                absenceGrade: 6,
-                boxdetails: []
-            },
-
-        ]
 
     const toggleSidebar = () => {
       hamburgerIcon.current.classList.toggle("open")
@@ -397,7 +402,7 @@ const Discipline = ({match}) => {
                   {dropdown()}
               </div>
               <div className="termEstCnt">
-                  <DisciplineBox data={columns}/>
+                  <DisciplineBox data={transit? columnsTransit : columns}/>
               </div>
               <div className="ibChart" style={{marginLeft: -50, marginTop:65}}>
                   <Chart id={id} monthData={monthData}/>
