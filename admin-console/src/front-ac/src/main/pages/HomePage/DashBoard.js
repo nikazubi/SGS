@@ -842,7 +842,7 @@ const DashBoard = () => {
             const gradeType = Object.keys(newRow).filter(field => field.startsWith('GENERAL_') || field.startsWith('TRANSIT'))[0]
             const gradesOfType = newRow.grades?.filter(g => g.gradeType === gradeType);
             newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
-            if (gradesOfType.length > 0 && gradesOfType[0].value !== undefined && gradesOfType[0].value !== null) {
+            if (gradesOfType.length > 0 && gradesOfType[0].value !== undefined && gradesOfType[0].value !== null && gradesOfType[0].value !== 0) {
                 const params = {
                     academyClassId: gradesOfType[0].academyClass.id,
                     gradePrefix: "GENERAL",

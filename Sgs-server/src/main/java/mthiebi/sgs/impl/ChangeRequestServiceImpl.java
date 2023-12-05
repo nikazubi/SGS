@@ -64,11 +64,13 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
             prevGrade.setValue(changeRequest.getNewValue());
             gradeRepository.save(prevGrade);
             if (prevGrade.getStudent().getOwnerMail() != null && prevGrade.getStudent().getOwnerMail().length() > 5 ) {
-                emailService.sendSimpleMail(EmailDetails.builder()
-                        .recipient(prevGrade.getStudent().getOwnerMail())
-                        .subject("IB მთიები - ნიშნის ცვლილება")
-                        .msgBody(description)
-                        .build());
+                if (description != null && !description.equalsIgnoreCase("")) {
+                    emailService.sendSimpleMail(EmailDetails.builder()
+                            .recipient(prevGrade.getStudent().getOwnerMail())
+                            .subject("IB მთიები - ნიშნის ცვლილება")
+                            .msgBody(description)
+                            .build());
+                }
             }
         }
         changeRequest.setDirectorDescription(description);
