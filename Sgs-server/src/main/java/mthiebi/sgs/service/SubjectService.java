@@ -19,6 +19,8 @@ public interface SubjectService {
                               String name,
                               String userName) throws SGSException;
 
+    List<Subject> getSubjectsForClass(Long id) throws SGSException;
+
     List<Subject> getSubjectsForStudent(String username) throws SGSException;
 
     List<Subject> getSubjects(int limit,

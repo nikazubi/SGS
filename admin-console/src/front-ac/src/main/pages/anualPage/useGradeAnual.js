@@ -12,6 +12,11 @@ export const fetchGradesAnual = async (filters) => {
         component: "anual"
     }
     const {data} = await axios.get("/grade/get-grades-by-component", {params});
+    data.map((row, index) => {
+        let copyRow = row;
+        copyRow.index = index + 1;
+        return copyRow;
+    });
     return data;
 }
 

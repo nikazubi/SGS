@@ -7,6 +7,7 @@ import useGradeSemester from "./useGradeSemester";
 import {getFiltersOfPage} from "../../../utils/filters";
 import {fetchSubjects} from "../../../hooks/useSubjects";
 import useUpdateSemesterDiagnosticGrade from "./useUpdateSemesterDiagnosticGrade";
+import {fetchSubjectsForClass} from "./useSubjectsForClass";
 
 const SemesterGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("SEMESTER_GRADE")});
@@ -18,18 +19,17 @@ const SemesterGradeDashBoard = () => {
 
     useEffect(() => {
         const getSubjects = async () => {
-            const param = {queryKey: ""};
-            const subjectArr = await fetchSubjects(param);
+            const param = {classId: filters.academyClass?.id};
+            const subjectArr = await fetchSubjectsForClass(param);
             setSubjects(subjectArr);
         }
         getSubjects();
-    }, [])
+    }, [filters])
 
     const getMonthFields = useCallback(() => {
         if (!subjects) {
             return [];
         }
-
         const monthFields = [];
         const monthNames = [
             'იან-თებ',
@@ -60,7 +60,7 @@ const SemesterGradeDashBoard = () => {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({row}) => {
                 return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
-                    {row.student.lastName + " " + row.student.firstName}</div>
+                    {row.index + ". " + row.student.lastName + " " + row.student.firstName}</div>
             },
             field: '0-firstName',
             sortable: false,
@@ -82,7 +82,7 @@ const SemesterGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[month.month];
 
-                        return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     field: subject.id + "-" + month.month,
@@ -107,7 +107,7 @@ const SemesterGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-3];
 
-                        return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     field: subject.id + "--3",
@@ -126,7 +126,7 @@ const SemesterGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-4];
 
-                        return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     field: subject.id + "--4",
@@ -146,7 +146,7 @@ const SemesterGradeDashBoard = () => {
                     }));
                     const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-1];
 
-                    return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                    return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
                 field: subject.id + "--1",
@@ -164,7 +164,7 @@ const SemesterGradeDashBoard = () => {
                     }));
                     const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-2];
 
-                    return <div>{monthValue === 0 ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                    return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                     // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                 },
                 field: subject.id + "--2",
@@ -193,7 +193,7 @@ const SemesterGradeDashBoard = () => {
             headerName: "მოსწავლე",
             renderCell: ({row}) => {
                 return (<div>
-                    {row.name}
+                    {row.index + ". " + row.student.lastName + " " + row.student.firstName}
                 </div>);
             },
             renderHeader: (params) => (
@@ -627,7 +627,7 @@ const SemesterGradeDashBoard = () => {
                 headerName: "მოსწავლე",
                 renderCell: ({row}) => {
                     return (<div>
-                        {row.student.firstName + ' ' + row.student.lastName}
+                        {row.index + ". " + row.student.lastName + " " + row.student.firstName}
                     </div>);
                 },
                 renderHeader: (params) => (

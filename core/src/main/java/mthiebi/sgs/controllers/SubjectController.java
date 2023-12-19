@@ -55,6 +55,16 @@ public class SubjectController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/get-subjects-for-class")
+    @Secured({AuthConstants.VIEW_SUBJECT})
+    public List<SubjectDTO> getSubjectsForClass(@RequestHeader("authorization") String authHeader,
+                                        @RequestParam(required = false, defaultValue = "0") Long classId) throws Exception {
+
+        return subjectService.getSubjectsForClass(classId).stream()
+                .map(subject -> subjectMapper.subjectDTO(subject))
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/get-subjects-without-academy-class-filter")
     @Secured({AuthConstants.VIEW_SUBJECT})
     public List<SubjectDTO> getSubjectsWithoutFilter(@RequestParam(defaultValue = "5000") int limit,

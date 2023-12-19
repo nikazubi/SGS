@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Comparator;
 import java.util.List;
+
+import static mthiebi.sgs.Utils.SubjectOrderUtils.subjectPattern;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -69,6 +72,15 @@ public class SubjectServiceImpl implements SubjectService {
         }
         List<AcademyClass> academyClassList = systemUser.getAcademyClassList();
         return subjectRepository.findAllSubject(limit, page, id, name, academyClassList, em);
+    }
+
+    @Override
+    public List<Subject> getSubjectsForClass(Long id) throws SGSException {
+        AcademyClass academyClass = academyClassRepository.findById(id).orElseThrow();
+        List<Subject> subjectList = academyClass.getSubjectList();
+        subjectList.sort(Comparator.comparingInt(subject ->
+                subjectPattern.indexOf(subject.getName())));
+        return subjectList;
     }
 
     @Override

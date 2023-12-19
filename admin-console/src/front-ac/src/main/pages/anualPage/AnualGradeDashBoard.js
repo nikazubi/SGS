@@ -10,6 +10,7 @@ import axios from "../../../utils/axios";
 import ConfirmationModal from "../../../components/modals/ConfirmationModal";
 import useUpdateBehaviourGrade from "../behaviourPage/useUpdateBehaviourGrade";
 import useUpdateFinalExamGrade from "./useUpdateFinalExam";
+import {fetchSubjectsForClass} from "../semesterPage/useSubjectsForClass";
 
 const AnualGradeDashBoard = () => {
     const [filters, setFilters] = useState({...getFiltersOfPage("ANNUAL_GRADE")});
@@ -23,12 +24,12 @@ const AnualGradeDashBoard = () => {
 
     useEffect(()=>{
         const getSubjects = async () => {
-            const param = {queryKey: ""};
-            const subjectArr = await fetchSubjects(param);
+            const param = {classId: filters.academyClass.id};
+            const subjectArr = await fetchSubjectsForClass(param);
             setSubjects(subjectArr);
         }
         getSubjects();
-    },[])
+    },[filters])
 
     const getSemesterFields = useCallback(() => {
         if (!subjects) {
@@ -55,7 +56,7 @@ const AnualGradeDashBoard = () => {
             headerName: "მოსწავლის გვარი, სახელი",
             renderCell: ({ row }) => {
                 return <div style={{ height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
-                    {row.student.lastName + " " + row.student.firstName}</div>
+                    {row.index + ". " + row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
             sortable: false,
