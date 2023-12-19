@@ -5,7 +5,6 @@ import SemesterGradeToolbar from "./SemesterGradeToolbar";
 import "./header.css"
 import useGradeSemester from "./useGradeSemester";
 import {getFiltersOfPage} from "../../../utils/filters";
-import {fetchSubjects} from "../../../hooks/useSubjects";
 import useUpdateSemesterDiagnosticGrade from "./useUpdateSemesterDiagnosticGrade";
 import {fetchSubjectsForClass} from "./useSubjectsForClass";
 
@@ -688,7 +687,7 @@ const SemesterGradeDashBoard = () => {
             const gradeType = Object.keys(newRow).filter(field => field.endsWith("--4") || field.endsWith("--3"))[0]
             const subjectIdAndType = gradeType.split("-", 1);
             newRow.subject = newRow.gradeList.filter(g => g.subject.id == subjectIdAndType[0])[0].subject;
-            newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(new Date());
+            newRow.exactMonth = newRow.exactMonth ? newRow.exactMonth : Date.parse(new Date());
             newRow.value = newRow[gradeType];
             return await mutateRow(newRow);
         }, [mutateRow, filters]

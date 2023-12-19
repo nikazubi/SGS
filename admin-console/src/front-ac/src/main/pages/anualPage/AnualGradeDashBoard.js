@@ -5,10 +5,8 @@ import AnualGradeToolbar from "./AnualGradeToolbar";
 import "./header.css"
 import useGradeAnual from "./useGradeAnual";
 import {getFiltersOfPage} from "../../../utils/filters";
-import {fetchSubjects} from "../../../hooks/useSubjects";
 import axios from "../../../utils/axios";
 import ConfirmationModal from "../../../components/modals/ConfirmationModal";
-import useUpdateBehaviourGrade from "../behaviourPage/useUpdateBehaviourGrade";
 import useUpdateFinalExamGrade from "./useUpdateFinalExam";
 import {fetchSubjectsForClass} from "../semesterPage/useSubjectsForClass";
 
@@ -22,14 +20,14 @@ const AnualGradeDashBoard = () => {
 
     const {data, isLoading, isError, error, isSuccess} = useGradeAnual(filters);
 
-    useEffect(()=>{
+    useEffect(() => {
         const getSubjects = async () => {
             const param = {classId: filters.academyClass.id};
             const subjectArr = await fetchSubjectsForClass(param);
             setSubjects(subjectArr);
         }
         getSubjects();
-    },[filters])
+    }, [filters])
 
     const getSemesterFields = useCallback(() => {
         if (!subjects) {
@@ -54,8 +52,8 @@ const AnualGradeDashBoard = () => {
 
         semesterFields.push({
             headerName: "მოსწავლის გვარი, სახელი",
-            renderCell: ({ row }) => {
-                return <div style={{ height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+            renderCell: ({row}) => {
+                return <div style={{height: 50, justifyContent: 'center', alignItems: 'center', display: 'flex'}}>
                     {row.index + ". " + row.student.lastName + " " + row.student.firstName}</div>
             },
             field: 'firstName',
@@ -78,7 +76,7 @@ const AnualGradeDashBoard = () => {
                         }));
                         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[semester.ind];
 
-                        return <div>{monthValue === 0 ? '' : monthValue === '' || monthValue === undefined || monthValue === null ? '' : checked? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 ? '' : monthValue === '' || monthValue === undefined || monthValue === null ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     editable: semester.val === "გამოცდა",
@@ -108,12 +106,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "მოსწავლე",
             renderCell: ({row}) => {
-                return ( <div  >
+                return (<div>
                     {row.name}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'მოსწავლე'}
                 </div>
             ),
@@ -125,12 +123,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ქართული ლიტ",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.geo}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ქართული ლიტ '}
                 </div>
             ),
@@ -142,12 +140,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ქართული ენა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.geolang}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ქართული ენა'}
                 </div>
             ),
@@ -160,12 +158,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ქართული წერა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.write}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ქართული წერა'}
                 </div>
             ),
@@ -177,12 +175,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "მათემატიკა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.math}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'მათემატიკა'}
                 </div>
             ),
@@ -194,12 +192,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ინგლისური",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.eng}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ინგლისური'}
                 </div>
             ),
@@ -211,12 +209,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ინგლისური ლიტ",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.englit}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ინგლისური ლიტ'}
                 </div>
             ),
@@ -228,12 +226,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "გერმანული",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.german}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'გერმანული'}
                 </div>
             ),
@@ -245,12 +243,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "რუსული ენა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.russia}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'რუსული ენა'}
                 </div>
             ),
@@ -262,12 +260,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ბიოლოგია",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.bio}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ბიოლოგია'}
                 </div>
             ),
@@ -279,12 +277,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ქიმია",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.chemistry}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ქიმია'}
                 </div>
             ),
@@ -296,12 +294,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ფიზიკა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.phisic}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ფიზიკა'}
                 </div>
             ),
@@ -313,12 +311,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ისტორია",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.history}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ისტორია'}
                 </div>
             ),
@@ -330,12 +328,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "გეოგრაფია",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.geography}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'გეოგრაფია'}
                 </div>
             ),
@@ -347,12 +345,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "მოქალაქეობა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.nationaly}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'მოქალაქეობა'}
                 </div>
             ),
@@ -364,12 +362,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ჰუმ. აზროვნება",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.hum}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ჰუმ. აზროვნება'}
                 </div>
             ),
@@ -381,12 +379,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "სპორტი",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.sport}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'სპორტი'}
                 </div>
             ),
@@ -398,12 +396,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "ეთიკური ნორმა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.ethic}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'ეთიკური ნორმა'}
                 </div>
             ),
@@ -415,12 +413,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "რეიტინგი",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.rating}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'რეიტინგი'}
                 </div>
             ),
@@ -432,12 +430,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "გაცდენილი საათი",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.absent}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150, textAlign:'center', fontSize:16}}>
+                <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                     {'გაცდენილი საათი'}
                 </div>
             ),
@@ -449,12 +447,12 @@ const AnualGradeDashBoard = () => {
         {
             headerName: "შენიშვნა",
             renderCell: ({row}) => {
-                return (<div  >
+                return (<div>
                     {row.mistake}
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{writingMode: "vertical-rl", height:150,fontSize:16, textAlign:'center'}}>
+                <div style={{writingMode: "vertical-rl", height: 150, fontSize: 16, textAlign: 'center'}}>
                     {'შენიშვნა'}
                 </div>
             ),
@@ -468,17 +466,17 @@ const AnualGradeDashBoard = () => {
 
     let gradeClomuns2 = []
 
-    const getGradeColumns = useCallback(() =>{
-        if(data && data.length > 0){
-            gradeClomuns2 = [        {
+    const getGradeColumns = useCallback(() => {
+        if (data && data.length > 0) {
+            gradeClomuns2 = [{
                 headerName: "მოსწავლე",
                 renderCell: ({row}) => {
-                    return ( <div>
+                    return (<div>
                         {row.student.firstName + ' ' + row.student.lastName}
                     </div>);
                 },
                 renderHeader: (params) => (
-                    <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
+                    <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                         {'მოსწავლე'}
                     </div>
                 ),
@@ -490,11 +488,11 @@ const AnualGradeDashBoard = () => {
                 maxWidth: 200,
             }];
             data[0].gradeList.forEach((o, index) => {
-                gradeClomuns2 = [ ...gradeClomuns2, {
+                gradeClomuns2 = [...gradeClomuns2, {
                     groupId: o.subject.name,
                     headerName: o.subject.name,
                     renderHeader: (params) => (
-                        <div style={{writingMode: "vertical-rl", height:150,textAlign:'center', fontSize:16}}>
+                        <div style={{writingMode: "vertical-rl", height: 150, textAlign: 'center', fontSize: 16}}>
                         </div>
                     ),
                     children: [
@@ -526,9 +524,9 @@ const AnualGradeDashBoard = () => {
             //     setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
             //     setOpenRequestModal(true);
             // } else {
-                newRow.subject = filters.subject
-                newRow.exactMonth = newRow.exactMonth? newRow.exactMonth : Date.parse(filters.date);
-                return await mutateRow(newRow);
+            newRow.subject = filters.subject
+            newRow.exactMonth = newRow.exactMonth ? newRow.exactMonth : Date.parse(filters.date);
+            return await mutateRow(newRow);
             // }
         },
         [mutateRow, filters],

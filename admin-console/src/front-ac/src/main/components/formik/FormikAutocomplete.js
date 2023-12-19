@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import TextField from './TextField';
-import { useField, useFormikContext } from 'formik';
+import {useField, useFormikContext} from 'formik';
 import Progress from "../Progress";
-import { Chip } from "@material-ui/core";
-import { IconPickerItem } from "react-fa-icon-picker";
-import { Cancel } from "@mui/icons-material";
-import { Avatar, Tooltip } from "@mui/material";
+import {Chip} from "@material-ui/core";
+import {IconPickerItem} from "react-fa-icon-picker";
+import {Cancel} from "@mui/icons-material";
+import {Avatar, Tooltip} from "@mui/material";
 import * as S from "./styles.js";
 
 export const FormikAutocomplete = ({
@@ -72,17 +72,17 @@ export const FormikAutocomplete = ({
                 allOptions.unshift(...additionalOptions);
               }
               return allOptions.filter((opt, index, self) => {
-                return self.findIndex(el => getOptionSelected(el, opt)) === index;
+                  return self.findIndex(el => getOptionSelected(el, opt)) === index;
               });
             });
           }
         }
       });
     }
-    return () => {
-      active = false;
-    };
-  }, [value, inputField, query, onFetch, getOptionLabel, minLengthForSearch, resolveData, additionalOptions, setOptions]);
+      return () => {
+          active = false;
+      };
+  }, [value, inputField, query, onFetch, getOptionLabel, minLengthForSearch, additionalOptions, setOptions]);
 
   useEffect(() => {
     if (value === "" && options.length !== 0 && !!setInitialVulue && typeof setInitialVulue === 'function') {
