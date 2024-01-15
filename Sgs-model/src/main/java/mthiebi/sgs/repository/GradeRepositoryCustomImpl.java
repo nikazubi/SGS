@@ -85,7 +85,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     public Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester) {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow();
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
-        Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year);
+        Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year).or(qGrade.exactMonth.year().eq(year + 1)); //TODO this is problematic
         Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6);
         Predicate gradeTypePredicate = qGrade.gradeType.eq(academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList = qf.selectFrom(qGrade)
@@ -116,11 +116,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     sum += grade.getValue().longValue();
                     count++;
                 }
+                Predicate p = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12, 1) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6, 7); //TODO this is problematic
                 BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, average);
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
-                        .where(dateMonthPredicate)
+                        .where(p)
                         .where(academyClassIdPredicate)
                         .where(qGrade.subject.eq(subject))
                         .where(qGrade.student.id.eq(student.getId()))
@@ -175,8 +176,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     sum += grade.getValue().longValue();
                     count++;
                 }
-                BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                gradeByMonth.put(-1, average);
+                BigDecimal monthAverage = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count));
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
                         .where(dateMonthPredicate)
@@ -188,6 +188,10 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .fetch();
                 List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
                 List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
+                BigDecimal diagnosticsSum = first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                BigDecimal diagnosticsDivision = diagnosticsSum.divide(new BigDecimal(2));
+                BigDecimal semesterGrade = monthAverage.add(diagnosticsDivision).divide(BigDecimal.ONE, RoundingMode.HALF_UP); //TODO
+                gradeByMonth.put(-1, semesterGrade);
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
                 gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
                 bySubject.put(subject, gradeByMonth);

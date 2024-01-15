@@ -12,6 +12,13 @@ export const fetchGradesSemester = async (filters) => {
         component: filters.semesterN.value
     }
     const {data} = await axios.get("/grade/get-grades-by-semester", {params});
+    data.sort((a, b) => {
+        if (a.student?.lastName < b.student.lastName)
+            return -1
+        if (a.student?.lastName > b.student.lastName)
+            return 1
+        else return 0
+    })
     data.map((row, index) => {
         let copyRow = row;
         copyRow.index = index + 1;
