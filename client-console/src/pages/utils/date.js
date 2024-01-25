@@ -52,6 +52,18 @@ export const MONTHS = [
     }
 ]
 
+export const YEAR = [
+    {key: 2023, value: 2023},
+    {key: 2024, value: 2024},
+    {key: 2025, value: 2025},
+    {key: 2026, value: 2026},
+    {key: 2027, value: 2027},
+    {key: 2028, value: 2028},
+    {key: 2029, value: 2029},
+    {key: 2030, value: 2030},
+    {key: 2031, value: 2031}
+];
+
 export const MONTHS_SCHOOL = [
 
     {

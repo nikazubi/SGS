@@ -4,6 +4,7 @@ import axios from "../utils/axios";
 export const fetchGradesGrouped = async (filters) => {
     const params = {
         month: filters.month,
+        year: filters.year
     }
     const {data} = await axios.get("/client/grade/get-grades-behaviour", {params});
     return data;

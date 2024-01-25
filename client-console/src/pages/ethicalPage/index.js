@@ -2,17 +2,23 @@ import React, {useMemo, useState} from "react";
 import DisciplineBox from "./DisciplineBox";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
-import {getRomanByInt, MONTHS, MONTHS_SCHOOL} from "../utils/date";
+import {getRomanByInt, MONTHS, MONTHS_SCHOOL, YEAR} from "../utils/date";
 import useFetchBehaviour from "./useBehaviour";
 
 const EthicPage = () => {
     const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const [chosenYear, setChosenYear] = useState(new Date().getUTCFullYear());
     const chosenMonth = useMemo(
         () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : new Date().getUTCMonth(),
         [selectedData]
     );
 
-    const {data: gradeData, isLoading, isError, error, isSuccess} = useFetchBehaviour({month: chosenMonth.key});
+    const choosenYeeear = useMemo(
+        () => chosenYear? YEAR.filter((year) => year.value === chosenYear)[0] : new Date().getUTCFullYear(),
+        [chosenYear]
+    );
+
+    const {data: gradeData, isLoading, isError, error, isSuccess} = useFetchBehaviour({month: chosenMonth.key, year: choosenYeeear.key});
     const month = [
         'სექტემბერი-ოქტომბერი',
         'ნოემბერი',
@@ -26,6 +32,11 @@ const EthicPage = () => {
     const handleChange = (event) => {
         setSelectedData(MONTHS.filter(month => month.value === event.target.value)[0]);
     };
+
+    const handleYearChange = (event) => {
+        setChosenYear(event.target.value);
+    };
+
 
     const parsedData = useMemo(() => {
 
@@ -171,61 +182,61 @@ const EthicPage = () => {
         }
         const completeMonthly = gradeData?.filter((grade) => grade.gradeType?.toString().includes("BEHAVIOUR_MONTHLY"))
         return [
-            {
-                name: 'მოსწავლის ფორმითი გამოცხადება',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-
-                boxdetails: uniformBoxDetails
-            },
-            {
-                name: 'მოსწავლის დაგვიანება',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-
-                boxdetails: delaysBoxDetails
-            },
-            {
-                name: 'საკლასო ინვენტარის მოვლა',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-
-                boxdetails: inventoryBoxDetails
-            },
-            {
-                name: 'მოსწავლის მიერ ჰიგიენური ნორმების დაცვა',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-
-                boxdetails: hygeneBoxDetails
-            },
-            {
-                name: 'მოსწავლის ყოფაქცევა',
-                testNumber: null,
-                precent: null,
-                month: null,
-                monthGrade: null,
-                absence: null,
-                absenceGrade: null,
-
-                boxdetails: behaviourBoxDetails
-            },
+            // {
+            //     name: 'მოსწავლის ფორმითი გამოცხადება',
+            //     testNumber: null,
+            //     precent: null,
+            //     month: null,
+            //     monthGrade: null,
+            //     absence: null,
+            //     absenceGrade: null,
+            //
+            //     boxdetails: uniformBoxDetails
+            // },
+            // {
+            //     name: 'მოსწავლის დაგვიანება',
+            //     testNumber: null,
+            //     precent: null,
+            //     month: null,
+            //     monthGrade: null,
+            //     absence: null,
+            //     absenceGrade: null,
+            //
+            //     boxdetails: delaysBoxDetails
+            // },
+            // {
+            //     name: 'საკლასო ინვენტარის მოვლა',
+            //     testNumber: null,
+            //     precent: null,
+            //     month: null,
+            //     monthGrade: null,
+            //     absence: null,
+            //     absenceGrade: null,
+            //
+            //     boxdetails: inventoryBoxDetails
+            // },
+            // {
+            //     name: 'მოსწავლის მიერ ჰიგიენური ნორმების დაცვა',
+            //     testNumber: null,
+            //     precent: null,
+            //     month: null,
+            //     monthGrade: null,
+            //     absence: null,
+            //     absenceGrade: null,
+            //
+            //     boxdetails: hygeneBoxDetails
+            // },
+            // {
+            //     name: 'მოსწავლის ყოფაქცევა',
+            //     testNumber: null,
+            //     precent: null,
+            //     month: null,
+            //     monthGrade: null,
+            //     absence: null,
+            //     absenceGrade: null,
+            //
+            //     boxdetails: behaviourBoxDetails
+            // },
             {
                 name: 'თვის ქულა',
                 testNumber: null,
@@ -257,6 +268,19 @@ const EthicPage = () => {
                     variant="outlined"
                 >
                     {MONTHS_SCHOOL.map((m) => (
+                        <MenuItem key={m.key} value={m.value}>
+                            {m.value}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField
+                    select
+                    label="აირჩიე წელი"
+                    value={chosenYear}
+                    onChange={handleYearChange}
+                    variant="outlined"
+                >
+                    {YEAR.map((m) => (
                         <MenuItem key={m.key} value={m.value}>
                             {m.value}
                         </MenuItem>

@@ -4,7 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import CustomShefasebaBar from "../../components/CustomShefasebaBar";
-import {MONTHS, MONTHS_SCHOOL} from "../utils/date";
+import {MONTHS, MONTHS_SCHOOL, YEAR} from "../utils/date";
 import useGradesForMonth from "./useGradesForMonth";
 import useFetchYear from "../semestruli-shefaseba/useYear";
 import useSubjects from "../Discipline/useSubjects";
@@ -28,6 +28,7 @@ const MonthlyGrade = () => {
     const {data: yearData, isLoading: isYearLoading} = useFetchYear();
 
     const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const [chosenYear, setChosenYear] = useState(new Date().getUTCFullYear());
     const {data: subjects, isLoading, isError, error, isSuccess} = useSubjects();
 
     const [currentData, setCurrentData] = useState([]);
@@ -35,10 +36,18 @@ const MonthlyGrade = () => {
         () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : new Date().getUTCMonth(),
         [selectedData]
     );
-    const {data: monthData, isLoading: isMonthLoading} = useGradesForMonth({month: chosenMonth.key});
+    const choosenYeeear = useMemo(
+        () => chosenYear? YEAR.filter((year) => year.value === chosenYear)[0] : new Date().getUTCFullYear(),
+        [chosenYear]
+    );
+    const {data: monthData, isLoading: isMonthLoading} = useGradesForMonth({month: chosenMonth.key, year: choosenYeeear.key});
 
     const handleChange = (event) => {
         setSelectedData(MONTHS.filter(month => month.value === event.target.value)[0]);
+    };
+
+    const handleYearChange = (event) => {
+        setChosenYear(event.target.value);
     };
 
     useEffect(() => {
@@ -56,6 +65,19 @@ const MonthlyGrade = () => {
                     variant="outlined"
                 >
                     {MONTHS_SCHOOL.map((m) => (
+                        <MenuItem key={m.key} value={m.value}>
+                            {m.value}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField
+                    select
+                    label="აირჩიე წელი"
+                    value={chosenYear}
+                    onChange={handleYearChange}
+                    variant="outlined"
+                >
+                    {YEAR.map((m) => (
                         <MenuItem key={m.key} value={m.value}>
                             {m.value}
                         </MenuItem>
@@ -464,7 +486,7 @@ const MonthlyGrade = () => {
 
 
     const handleSearch = () => {
-        if (!!selectedData) {
+        if (!!selectedData || !!chosenYear) {
             const studentMonthlyGrades = [
                 {
                     name: 'ქართული ენა და ლიტერატურა',
@@ -501,7 +523,7 @@ const MonthlyGrade = () => {
                     <div style={{display: 'flex'}}>
                         {dropdown()}
                         <div style={{marginLeft: '10px'}}>
-                            <Button onClick={handleSearch} disabled={!selectedData}
+                            <Button onClick={handleSearch} disabled={!selectedData || !chosenYear}
                                     style={{fontWeight: 'bold', height: '50px'}}
                                     variant="contained">ძიება<SearchIcon/></Button>
                         </div>
@@ -529,7 +551,10 @@ const MonthlyGrade = () => {
                         headerHeight={400}
                         getRowHeight={() => 50}
                         disableColumnMenu
-                        filters={{month: chosenMonth.key}}
+                        filters={{
+                            month: chosenMonth.key,
+                            year: choosenYeeear.key
+                        }}
                     />
                 </DataGridPaper>
             </div>

@@ -2,7 +2,7 @@ import {useQuery} from "react-query";
 import axios from "../utils/axios";
 
 export const fetchGrades = async (filters) => {
-    if (! filters.subject || !filters.month) {
+    if (! filters.subject || !filters.year) {
         return [];
     }
     const params = {

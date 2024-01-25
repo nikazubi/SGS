@@ -1,4 +1,4 @@
-import {useMemo, useRef, useState} from "react";
+import React, {useCallback, useMemo, useRef, useState} from "react";
 import Chart from "./Chart";
 import {NavLink} from 'react-router-dom'
 import {MyContext} from "../../context/userDataContext";
@@ -10,18 +10,20 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
-import {MONTHS} from "../utils/date";
+import {MONTHS, YEAR} from "../utils/date";
 import useSubjects from "./useSubjects";
 import useGrades from "./useGrades";
 import useMonthlyGradesOfSubjectAndStudent from "./useMonthlyGradesOfSubjectAndStudent";
 import {useUserContext} from "../../context/user-context";
 import useTransit from "./useTransit";
+import useFetchYear from "../semestruli-shefaseba/useYear";
 
 
 const Discipline = ({match}) => {
     const id = match.params.id
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const [chosenYear, setChosenYear] = useState(new Date().getUTCFullYear());
     const {user, isTransit} = useUserContext();
     const {data: subjectData, isLoading, isError, error, isSuccess} = useSubjects();
     const chosenSubject = useMemo(
@@ -32,7 +34,12 @@ const Discipline = ({match}) => {
         () => selectedData? MONTHS.filter((month) => month.value === selectedData.value)[0] : new Date().getUTCMonth(),
         [selectedData]
     );
-    const {data: gradeData, isLoading: isGradesLoading} = useGrades({month: chosenMonth.key, subject: chosenSubject});
+
+    const choosenYeeear = useMemo(
+        () => chosenYear? YEAR.filter((year) => year.value === chosenYear)[0] : new Date().getUTCFullYear(),
+        [chosenYear]
+    );
+    const {data: gradeData, isLoading: isGradesLoading} = useGrades({month: chosenMonth.key, subject: chosenSubject, year: choosenYeeear.key});
     const {data: monthData, isLoading: isMonthLoading} = useMonthlyGradesOfSubjectAndStudent({subject: chosenSubject});
     const {data: transit} = useTransit();
 
@@ -50,6 +57,19 @@ const Discipline = ({match}) => {
         'მაისი',
         'ივნისი'
     ];
+
+    const year = [
+        2023,
+        2024,
+        2025,
+        2026,
+        2027,
+        2028,
+        2029,
+        2030,
+        2031
+    ];
+
     const handleResize = () => {
         asideRef.current.classList.add('open')
     };
@@ -328,6 +348,10 @@ const Discipline = ({match}) => {
       setSidebarOpen(!sidebarOpen);
     };
 
+    const handleYearChange = (event) => {
+        setChosenYear(event.target.value);
+    };
+
     const handleChange = (event) => {
         setSelectedData(MONTHS.filter(month => month.value === event.target.value)[0]);
     };
@@ -348,6 +372,20 @@ const Discipline = ({match}) => {
                         </MenuItem>
                     ))}
                 </TextField>&nbsp;&nbsp;&nbsp;
+                <TextField
+                    select
+                    label="აირჩიე წელი"
+                    value={chosenYear}
+                    onChange={handleYearChange}
+                    variant="outlined"
+                >
+                    {year.map((m) => (
+                        <MenuItem key={m} value={m}>
+                            {m}
+                        </MenuItem>
+                    ))}
+                </TextField>&nbsp;&nbsp;&nbsp;
+                {/*{getYearDropdown()}*/}
                 <Button onClick={()=>{}} disabled={!selectedData} style={{ fontWeight: 'bold', height: '50px'}} variant="contained">ძიება<SearchIcon/></Button>
             </div>
         );
