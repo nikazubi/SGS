@@ -150,6 +150,7 @@ const SemesterGradeDashBoard = () => {
                 },
                 field: subject.id + "--2",
                 sortable: false,
+                editable: true,
                 align: 'center',
                 headerAlign: 'center'
             });
@@ -684,7 +685,8 @@ const SemesterGradeDashBoard = () => {
 
     const processRowUpdate = useCallback(
         async (newRow) => {
-            const gradeType = Object.keys(newRow).filter(field => field.endsWith("--4") || field.endsWith("--3"))[0]
+            console.log('newRow', newRow);
+            const gradeType = Object.keys(newRow).filter(field => field.endsWith("--4") || field.endsWith("--3") || field.endsWith("--2"))[0]
             const subjectIdAndType = gradeType.split("-", 1);
             newRow.subject = newRow.gradeList.filter(g => g.subject.id == subjectIdAndType[0])[0].subject;
             newRow.exactMonth = newRow.exactMonth ? newRow.exactMonth : Date.parse(new Date());

@@ -90,5 +90,5 @@ public enum GradeType {
     FINAL_EXAM,
     DIAGNOSTICS_1,
     DIAGNOSTICS_2,
-
+    SHEMOKMEDEBITOBA
 }

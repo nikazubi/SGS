@@ -117,21 +117,35 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     count++;
                 }
                 Predicate p = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12, 1) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6, 7); //TODO this is problematic
-                BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                gradeByMonth.put(-1, average);
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
                         .where(p)
                         .where(academyClassIdPredicate)
                         .where(qGrade.subject.eq(subject))
                         .where(qGrade.student.id.eq(student.getId()))
-                        .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1).or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2)))
+                        .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1)
+                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2))
+                                .or(qGrade.gradeType.eq(GradeType.SHEMOKMEDEBITOBA)))
                         .orderBy(qGrade.createTime.desc())
                         .fetch();
                 List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
                 List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
+                List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
                 gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+                if (!first.isEmpty()) {
+                    average = average.add(first.get(0).getValue());
+                }
+
+                BigDecimal finalAverageSum =
+                        first.isEmpty() ? BigDecimal.ZERO
+                        : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO
+                        : second.get(0).getValue().add(shemok.isEmpty() ? BigDecimal.ZERO
+                        : shemok.get(0).getValue().add(average)));
+                BigDecimal finalAverage = finalAverageSum.divide(new BigDecimal(4), RoundingMode.HALF_UP);
+                gradeByMonth.put(-1, finalAverage);
                 bySubject.put(subject, gradeByMonth);
             }
             result.put(student, bySubject);
@@ -176,22 +190,28 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     sum += grade.getValue().longValue();
                     count++;
                 }
-                BigDecimal monthAverage = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count));
+                BigDecimal monthAverage = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
                         .where(dateMonthPredicate)
                         .where(academyClassIdPredicate)
                         .where(qGrade.subject.eq(subject))
                         .where(qGrade.student.id.eq(student.getId()))
-                        .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1).or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2)))
+                        .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1)
+                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2))
+                                .or(qGrade.gradeType.eq(GradeType.SHEMOKMEDEBITOBA)))
                         .orderBy(qGrade.createTime.desc())
                         .fetch();
                 List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
                 List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
-                BigDecimal diagnosticsSum = first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
-                BigDecimal diagnosticsDivision = diagnosticsSum.divide(new BigDecimal(2));
-                BigDecimal semesterGrade = monthAverage.add(diagnosticsDivision).divide(BigDecimal.ONE, RoundingMode.HALF_UP); //TODO
-                gradeByMonth.put(-1, semesterGrade);
+                List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
+                BigDecimal finalAverageSum = first.isEmpty() ? BigDecimal.ZERO
+                        : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO
+                        : second.get(0).getValue().add(shemok.isEmpty() ? BigDecimal.ZERO
+                        : shemok.get(0).getValue().add(monthAverage)));
+                BigDecimal finalAverage = finalAverageSum.divide(new BigDecimal(4), RoundingMode.HALF_UP);
+                gradeByMonth.put(-1, finalAverage);
+                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
                 gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
                 bySubject.put(subject, gradeByMonth);
