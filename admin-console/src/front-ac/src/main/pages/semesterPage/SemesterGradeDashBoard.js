@@ -685,7 +685,6 @@ const SemesterGradeDashBoard = () => {
 
     const processRowUpdate = useCallback(
         async (newRow) => {
-            console.log('newRow', newRow);
             const gradeType = Object.keys(newRow).filter(field => field.endsWith("--4") || field.endsWith("--3") || field.endsWith("--2"))[0]
             const subjectIdAndType = gradeType.split("-", 1);
             newRow.subject = newRow.gradeList.filter(g => g.subject.id == subjectIdAndType[0])[0].subject;

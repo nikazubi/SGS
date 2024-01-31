@@ -134,17 +134,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
                 gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
                 gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                sum += shemok.isEmpty() ? 0 : shemok.get(0).getValue().longValue();
+                count += 1;
                 BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                if (!first.isEmpty()) {
-                    average = average.add(first.get(0).getValue());
-                }
-
-                BigDecimal finalAverageSum =
-                        first.isEmpty() ? BigDecimal.ZERO
-                        : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO
-                        : second.get(0).getValue().add(shemok.isEmpty() ? BigDecimal.ZERO
-                        : shemok.get(0).getValue().add(average)));
-                BigDecimal finalAverage = finalAverageSum.divide(new BigDecimal(4), RoundingMode.HALF_UP);
+                BigDecimal diagnosticAverageSum = first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                BigDecimal diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, finalAverage);
                 bySubject.put(subject, gradeByMonth);
             }
@@ -190,7 +185,6 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     sum += grade.getValue().longValue();
                     count++;
                 }
-                BigDecimal monthAverage = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
                         .where(dateMonthPredicate)
@@ -205,11 +199,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
                 List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
                 List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
-                BigDecimal finalAverageSum = first.isEmpty() ? BigDecimal.ZERO
-                        : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO
-                        : second.get(0).getValue().add(shemok.isEmpty() ? BigDecimal.ZERO
-                        : shemok.get(0).getValue().add(monthAverage)));
-                BigDecimal finalAverage = finalAverageSum.divide(new BigDecimal(4), RoundingMode.HALF_UP);
+                sum += shemok.isEmpty() ? 0 : shemok.get(0).getValue().longValue();
+                count += 1;
+                BigDecimal monthAverage = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+                BigDecimal diagnosticAverageSum = first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                BigDecimal diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? monthAverage : diagnosticAverage.add(monthAverage).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, finalAverage);
                 gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
