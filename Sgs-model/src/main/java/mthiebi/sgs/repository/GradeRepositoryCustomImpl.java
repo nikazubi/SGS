@@ -133,12 +133,19 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
                 gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
-                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
-                sum += shemok.isEmpty() ? 0 : shemok.get(0).getValue().longValue();
-                count += 1;
+                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
+                if (!shemok.isEmpty()) {
+                    sum += shemok.get(0).getValue().longValue();
+                    count += 1;
+                }
                 BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                BigDecimal diagnosticAverageSum = first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
-                BigDecimal diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                BigDecimal diagnosticAverageSum = first.isEmpty() ? second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue() : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                BigDecimal diagnosticAverage;
+                if (first.isEmpty() || second.isEmpty()) {
+                    diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(1), RoundingMode.HALF_UP);
+                } else {
+                    diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                }
                 BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, finalAverage);
                 bySubject.put(subject, gradeByMonth);
@@ -153,8 +160,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     public Map<Student, Map<Subject, Map<Integer, BigDecimal>>> findGradeBySemester(Long classId, int year, boolean firstSemester, Date closedPeriod) {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow();
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
-        Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year);
-        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6);
+        Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year).or(qGrade.exactMonth.year().eq(year + 1)); //TODO this is problematic
+        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12, 1) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6);
         Predicate gradeTypePredicate = qGrade.gradeType.eq(academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList = qf.selectFrom(qGrade)
                 .where(dateYearPredicate)
@@ -199,12 +206,19 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
                 List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
                 List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
-                sum += shemok.isEmpty() ? 0 : shemok.get(0).getValue().longValue();
-                count += 1;
-                BigDecimal monthAverage = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                BigDecimal diagnosticAverageSum = first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
-                BigDecimal diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
-                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? monthAverage : diagnosticAverage.add(monthAverage).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                if (!shemok.isEmpty()) {
+                    sum += shemok.get(0).getValue().longValue();
+                    count += 1;
+                }
+                BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+                BigDecimal diagnosticAverageSum = first.isEmpty() ? second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue() : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                BigDecimal diagnosticAverage;
+                if (first.isEmpty() || second.isEmpty()) {
+                    diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(1), RoundingMode.HALF_UP);
+                } else {
+                    diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                }
+                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, finalAverage);
                 gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
