@@ -134,7 +134,7 @@ public class ExcelExportController {
         return isDecimalSystem
                 && !subjName.equalsIgnoreCase("rating")
                 && !subjName.equalsIgnoreCase("behaviour")
-                && !subjName.equalsIgnoreCase("absence") ? val.add(new BigDecimal(3)).toString() : val.toString();
+                && !subjName.equalsIgnoreCase("absence") ? String.valueOf(val.add(new BigDecimal(3)).longValue()) : String.valueOf(val.longValue());
     }
 
     private String adjustName(String name) {

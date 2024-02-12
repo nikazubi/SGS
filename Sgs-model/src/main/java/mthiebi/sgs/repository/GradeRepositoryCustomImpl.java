@@ -146,7 +146,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 } else {
                     diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 }
-                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), 0, RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, finalAverage);
                 bySubject.put(subject, gradeByMonth);
             }
@@ -218,7 +218,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 } else {
                     diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                 }
-                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), 0, RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, finalAverage);
                 gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
                 gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());

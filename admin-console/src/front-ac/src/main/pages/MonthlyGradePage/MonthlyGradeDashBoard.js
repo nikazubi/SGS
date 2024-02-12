@@ -382,6 +382,7 @@ const MonthlyGradeDashBoard = () => {
                     },
 
                     field: 'absent',
+                    editable: true,
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',

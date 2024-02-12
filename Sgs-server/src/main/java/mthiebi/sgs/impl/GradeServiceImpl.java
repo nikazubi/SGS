@@ -371,6 +371,16 @@ public class GradeServiceImpl implements GradeService {
                 }
             }
         }
+
+        Grade behaviourGrade = new Grade();
+        behaviourGrade.setId(3L);
+        Subject behaviourSubject = new Subject();
+        behaviourSubject.setName("behaviour");
+        behaviourSubject.setId(9999L);
+        behaviourGrade.setSubject(behaviourSubject);
+        behaviourGrade.setValue(gradeRepository.findBehaviourMonth(student.getId(), calendar.getTime()));
+        result.add(behaviourGrade);
+
         Grade ratingGrade = new Grade();
         ratingGrade.setId(1L);
         Subject ratingSubject = new Subject();
@@ -388,15 +398,6 @@ public class GradeServiceImpl implements GradeService {
         ebsenceGrade.setSubject(junkSubject);
         ebsenceGrade.setValue(gradeRepository.findTotalAbsenceHours(student.getId(), calendar.getTime()));
         result.add(ebsenceGrade);
-
-        Grade behaviourGrade = new Grade();
-        behaviourGrade.setId(3L);
-        Subject behaviourSubject = new Subject();
-        behaviourSubject.setName("behaviour");
-        behaviourSubject.setId(9999L);
-        behaviourGrade.setSubject(behaviourSubject);
-        behaviourGrade.setValue(gradeRepository.findBehaviourMonth(student.getId(), calendar.getTime()));
-        result.add(behaviourGrade);
 
         return result;
     }
@@ -594,6 +595,11 @@ public class GradeServiceImpl implements GradeService {
                 map.remove(student);
                 continue;
             }
+            Subject behaviourSubject = new Subject();
+            behaviourSubject.setName("behaviour");
+            behaviourSubject.setId(9999L);
+            newMap.put(behaviourSubject, gradeRepository.findBehaviourMonth(student.getId(), createDate));
+            map.put(student, newMap);
             Subject ratingSubject = new Subject();
             ratingSubject.setName("rating");
             ratingSubject.setId(7777L);
@@ -602,11 +608,6 @@ public class GradeServiceImpl implements GradeService {
             junkSubject.setName("absence");
             junkSubject.setId(8888L);
             newMap.put(junkSubject, gradeRepository.findTotalAbsenceHours(student.getId(), createDate));
-            Subject behaviourSubject = new Subject();
-            behaviourSubject.setName("behaviour");
-            behaviourSubject.setId(9999L);
-            newMap.put(behaviourSubject, gradeRepository.findBehaviourMonth(student.getId(), createDate));
-            map.put(student, newMap);
         }
 //        for (Subject subject : sums.keySet()) {
 //            BigDecimal sum = sums.get(subject);
@@ -633,7 +634,7 @@ public class GradeServiceImpl implements GradeService {
         if (Objects.equals(sum, BigDecimal.ZERO) || count == 0) {
             return BigDecimal.ZERO;
         }
-        return sum.divide(new BigDecimal(count), RoundingMode.CEILING);
+        return sum.divide(new BigDecimal(count), 0, RoundingMode.HALF_UP);
     }
 
     private BigDecimal adjustStudentRating(List<Grade> list) {
@@ -649,6 +650,6 @@ public class GradeServiceImpl implements GradeService {
         if (Objects.equals(sum, BigDecimal.ZERO) || count == 0) {
             return BigDecimal.ZERO;
         }
-        return sum.divide(new BigDecimal(count), RoundingMode.CEILING);
+        return sum.divide(new BigDecimal(count), 0, RoundingMode.HALF_UP);
     }
 }

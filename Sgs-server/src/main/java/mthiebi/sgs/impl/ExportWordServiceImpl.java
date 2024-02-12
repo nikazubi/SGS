@@ -50,7 +50,7 @@ public class ExportWordServiceImpl implements ExportWordService {
             List<Subject> subjects = new ArrayList<>(grades.get(students.get(0)).keySet());
             int numberOfMonths = semester ? 3 : 5;
             int numberOfColumns = 1 + (subjects.size() *  numberOfMonths);
-            BigDecimal numOfPages = BigDecimal.ZERO.equals(BigDecimal.valueOf(numberOfColumns))? BigDecimal.ZERO : BigDecimal.valueOf(numberOfColumns).divide(BigDecimal.valueOf(NUMBER_OF_SUBJECTS_PER_PAGE * numberOfMonths), RoundingMode.CEILING);
+            BigDecimal numOfPages = BigDecimal.ZERO.equals(BigDecimal.valueOf(numberOfColumns))? BigDecimal.ZERO : BigDecimal.valueOf(numberOfColumns).divide(BigDecimal.valueOf(NUMBER_OF_SUBJECTS_PER_PAGE * numberOfMonths), RoundingMode.HALF_UP);
             Map<String, Subject> subjectWithNames = subjects.stream().collect(Collectors.toMap(Subject::getName, Function.identity()));
             List<String> subjectNames =  new ArrayList<>(subjectWithNames.keySet());
             subjectNames.add(0, "მოსწავლის სახელი და გვარი");
