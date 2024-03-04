@@ -27,7 +27,7 @@ public class GradeController {
     @PostMapping("/insert-student-grade")
     @Secured({AuthConstants.ADD_GRADES})
     public GradeDTO insertGrade(@RequestBody GradeDTO gradeDTO){
-        return gradeMapper.gradeDTO(gradeService.insertStudentGrade(gradeMapper.grade(gradeDTO)));
+        return gradeMapper.gradeDTO(gradeService.insertStudentGrade(gradeMapper.grade(gradeDTO), gradeDTO.getSemester()));
     }
 
     @GetMapping("/get-grades")

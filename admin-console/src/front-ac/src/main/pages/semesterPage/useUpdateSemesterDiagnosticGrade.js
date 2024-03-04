@@ -11,13 +11,15 @@ export const updateSemesterDiagnosticGrade = async grade => {
     } else if (gradeType.endsWith('--2')) {
         gradeType = 'SHEMOKMEDEBITOBA'
     }
+    let semester = grade.semester;
     const request = {
         // id: grade.grades.filter(g => g.gradeType === gradeType)[0].id,
         value: grade.value,
         gradeType: gradeType,
         student: grade.student,
         subject: grade.subject,
-        exactMonth: grade.exactMonth
+        exactMonth: grade.exactMonth,
+        semester: semester
     }
     const {data} = await axios.post("/grade/insert-student-grade", request);
     return data;

@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:sqlserver://localhost:1433;databaseName=SGS;
-    username: sa
-    password: SGSadmin2023
+    username: frtadmin
+    password: admin
     driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     properties:

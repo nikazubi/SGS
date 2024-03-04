@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface GradeService {
 
-    Grade insertStudentGrade(Grade grade);
+    Grade insertStudentGrade(Grade grade, String semester);
 
     Grade updateStudentGrade(Grade grade);
 

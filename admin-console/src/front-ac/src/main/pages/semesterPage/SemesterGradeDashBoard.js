@@ -690,6 +690,7 @@ const SemesterGradeDashBoard = () => {
             newRow.subject = newRow.gradeList.filter(g => g.subject.id == subjectIdAndType[0])[0].subject;
             newRow.exactMonth = newRow.exactMonth ? newRow.exactMonth : Date.parse(new Date());
             newRow.value = newRow[gradeType];
+            newRow.semester = filters.semesterN.value;
             return await mutateRow(newRow);
         }, [mutateRow, filters]
     );

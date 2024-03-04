@@ -38,7 +38,7 @@ public class GradeServiceImpl implements GradeService {
 
 
     @Override
-    public Grade insertStudentGrade(Grade grade) {
+    public Grade insertStudentGrade(Grade grade, String semester) {
         Date exactDate = grade.getExactMonth();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(exactDate);
@@ -68,11 +68,24 @@ public class GradeServiceImpl implements GradeService {
         if (grade.getValue() == null) {
             return new Grade();
         }
-        grade.setExactMonth(calendar.getTime());
+        grade.setExactMonth(checkForDiagnostic(calendar, grade.getGradeType(), semester));
         grade.setStudent(student);
         grade.setAcademyClass(academyClass);
         grade.setSubject(subject);
         return gradeRepository.save(grade);
+    }
+
+    private Date checkForDiagnostic(Calendar calendar, GradeType gradeType, String semester) {
+        if (gradeType.equals(GradeType.DIAGNOSTICS_1) || gradeType.equals(GradeType.DIAGNOSTICS_2)) {
+            calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+        } else if (gradeType.equals(GradeType.SHEMOKMEDEBITOBA)) {
+            if (semester.equalsIgnoreCase("firstSemester")) {
+                calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+            } else if (semester.equalsIgnoreCase("secondSemester")) {
+                calendar.set(Calendar.MONTH, Calendar.JUNE);
+            }
+        }
+        return calendar.getTime();
     }
 
     @Override

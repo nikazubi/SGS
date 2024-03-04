@@ -33,4 +33,5 @@ public class GradeDTO extends AuditDTO{
 
     private Date exactMonth;
 
+    private String semester;
 }
