@@ -19,10 +19,12 @@ export default function CustomBar({color, attend, attendMax, layout, data}) {
 
     const formatPercentage = (value) => {
       if (value === attendMax) return "100%"; // Maximum value
+        if (!attendMax) return ''
       return `${((value / attendMax) * 100).toFixed(2)}%`;
     };
 
     const displayPrecent = (v) =>{
+        if (!attendMax) return ''
         return (((v.value / attendMax) * 100).toFixed(2) + '%')
     }
 
@@ -54,7 +56,8 @@ export default function CustomBar({color, attend, attendMax, layout, data}) {
       /> : <YAxis dataKey="name" type="category" />}
 
       <Tooltip />
-      {layout === 'horizontal' ? '' : <Legend formatter={()=>((attend/attendMax) * 100).toFixed(2) + '%'} />}
+              {layout === 'horizontal' ? '' : attendMax &&
+                  <Legend formatter={() => !attendMax ? "" : ((attend / attendMax) * 100).toFixed(2) + '%'}/>}
       <Bar
           dataKey={'value'}
           fill={color}

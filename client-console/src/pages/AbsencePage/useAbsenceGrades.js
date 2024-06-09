@@ -3,7 +3,7 @@ import axios from "../utils/axios";
 
 export const fetchAbsenceGrades = async (filters) => {
     const params = {
-        month: filters.month,
+        // month: filters.month,
         yearRange: filters.yearRange,
     }
     const {data} = await axios.get("/client/grade/get-grades-absence", {params});

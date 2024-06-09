@@ -8,6 +8,7 @@ import {
     Class,
     EventAvailable,
     EventNote,
+    ExitToApp,
     Grade,
     MenuBook,
     Person,
@@ -26,6 +27,7 @@ import SystemUserDashBoard from "../main/pages/systemUserPage/SystemUserDashBoar
 import ClosePeriodDashBoard from "../main/pages/closePeriod/ClosePeriodDashBoard";
 import {TimeIcon} from "@material-ui/pickers/_shared/icons/TimeIcon";
 import SystemUserGroupDashBoard from "../main/pages/systemUserGroup/SystemUserGroupDashBoard";
+import AbsenceDashBoard from "../main/pages/absencePage/AbsenceDashBoard";
 
 
 const useNavigationData = () => {
@@ -49,15 +51,15 @@ const useNavigationData = () => {
       permissions: ["ADD_GRADES", "MANAGE_GRADES"],
       collapsible: false
     },
-    // ABSENCE: {
-    //   id: 'ABSENCE',
-    //   name: 'გაცდენების ჟურნალი',
-    //   component: <TotalAbsenceDashBoard/>,
-    //   icon: <ExitToApp/>,
-    //   show: false,
-    //   permissions: ["ADD_GRADES", "MANAGE_GRADES"],
-    //   collapsible: false
-    // },
+        ABSENCE: {
+            id: 'ABSENCE',
+            name: 'გაცდენების ჟურნალი',
+            component: <AbsenceDashBoard/>,
+            icon: <ExitToApp/>,
+            show: false,
+            permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+            collapsible: false
+        },
     CHANGE_REQUEST: {
       id: 'CHANGE_REQUEST',
       name: 'მოთხოვნილი ცვლილებები',
