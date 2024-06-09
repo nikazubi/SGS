@@ -5,7 +5,7 @@ import useMutationWithInvalidation from "../../../hooks/useMutationWithInvalidat
 
 export const updateGrade = async grade => {
     const gradeType = "FINAL_EXAM";
-    const key = Object.keys(grade).filter(key => key.toString().includes("-3"))
+    const key = Object.keys(grade).filter(key => key.toString().includes("-4"))
     const subjectName = key.toString().split('-')[0]
     const subjectList = grade.gradeList.filter(gradeL => gradeL.subject.name === subjectName)
     const request = {

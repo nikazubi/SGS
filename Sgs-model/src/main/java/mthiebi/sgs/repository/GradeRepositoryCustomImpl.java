@@ -2,6 +2,7 @@ package mthiebi.sgs.repository;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
@@ -86,7 +87,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow();
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
         Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year).or(qGrade.exactMonth.year().eq(year + 1)); //TODO this is problematic
-        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6);
+        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5);
         Predicate gradeTypePredicate = qGrade.gradeType.eq(academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList = qf.selectFrom(qGrade)
                 .where(dateYearPredicate)
@@ -113,10 +114,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                     calendar.setTime(grade.getExactMonth());
                     Integer month = calendar.get(Calendar.MONTH);
                     gradeByMonth.put(month + 1, grade.getValue());
-                    sum += grade.getValue().longValue();
-                    count++;
+                    if (grade.getValue() != null && grade.getValue().longValue() != 0L) {
+                        sum += grade.getValue().longValue();
+                        count++;
+                    }
                 }
-                Predicate p = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12, 1) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6, 7); //TODO this is problematic
+                Predicate p = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6); //TODO this is problematic
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
                         .where(p)
@@ -125,35 +128,72 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .where(qGrade.student.id.eq(student.getId()))
                         .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1)
                                 .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2))
+                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_3))
+                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_4))
                                 .or(qGrade.gradeType.eq(GradeType.SHEMOKMEDEBITOBA)))
                         .orderBy(qGrade.createTime.desc())
                         .fetch();
-                List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
-                List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
+
+                BigDecimal diagnosticAverageSum;
+                BigDecimal diagnosticAverage;
+                if (firstSemester) {
+                    List<Grade> first = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_1)).collect(Collectors.toList());
+                    List<Grade> second = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_2)).collect(Collectors.toList());
+                    gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
+                    gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                    diagnosticAverageSum = first.isEmpty() ? second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue() : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
+                    if (first.isEmpty() || second.isEmpty()) {
+                        diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(1), RoundingMode.HALF_UP);
+                    } else {
+                        diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                    }
+                } else {
+                    List<Grade> third = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_3)).collect(Collectors.toList());
+                    List<Grade> forth = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.DIAGNOSTICS_4)).collect(Collectors.toList());
+                    gradeByMonth.put(-5, third.isEmpty() ? BigDecimal.ZERO : third.get(0).getValue());
+                    gradeByMonth.put(-6, forth.isEmpty() ? BigDecimal.ZERO : forth.get(0).getValue());
+                    diagnosticAverageSum = third.isEmpty() ? forth.isEmpty() ? BigDecimal.ZERO : forth.get(0).getValue() : third.get(0).getValue().add(forth.isEmpty() ? BigDecimal.ZERO : forth.get(0).getValue());
+                    if (third.isEmpty() || forth.isEmpty()) {
+                        diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(1), RoundingMode.HALF_UP);
+                    } else {
+                        diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+                    }
+                }
                 List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
-                gradeByMonth.put(-3, first.isEmpty() ? BigDecimal.ZERO : first.get(0).getValue());
-                gradeByMonth.put(-4, second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
                 gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
                 if (!shemok.isEmpty()) {
                     sum += shemok.get(0).getValue().longValue();
                     count += 1;
                 }
                 BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
-                BigDecimal diagnosticAverageSum = first.isEmpty() ? second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue() : first.get(0).getValue().add(second.isEmpty() ? BigDecimal.ZERO : second.get(0).getValue());
-                BigDecimal diagnosticAverage;
-                if (first.isEmpty() || second.isEmpty()) {
-                    diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(1), RoundingMode.HALF_UP);
-                } else {
-                    diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
-                }
+
                 BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), 0, RoundingMode.HALF_UP);
                 gradeByMonth.put(-1, finalAverage);
                 bySubject.put(subject, gradeByMonth);
             }
+
+            Subject behaviourSubject = new Subject();
+            behaviourSubject.setName(firstSemester ? "behaviour1" : "behaviour2");
+            behaviourSubject.setId(9999L);
+            bySubject.put(behaviourSubject, Map.of(-7, calculateBehaviourAverage(dateYearPredicate, dateMonthPredicate, academyClassIdPredicate, student.getId())));
             result.put(student, bySubject);
         }
 
         return result;
+    }
+
+    private BigDecimal calculateBehaviourAverage(Predicate dateYearPredicate, Predicate dateMonthPredicate, Predicate academyClassIdPredicate, long id) {
+        NumberExpression<BigDecimal> gradeValueSum = qGrade.value.sum();
+
+        return Optional.ofNullable(qf.select(gradeValueSum)
+                .from(qGrade)
+                .where(dateYearPredicate)
+                .where(dateMonthPredicate)
+                .where(academyClassIdPredicate)
+                .where(qGrade.gradeType.eq(GradeType.BEHAVIOUR_MONTHLY))
+                .where(qGrade.student.id.eq(id))
+                .fetchOne())
+                .orElse(BigDecimal.ZERO);
     }
 
     @Override

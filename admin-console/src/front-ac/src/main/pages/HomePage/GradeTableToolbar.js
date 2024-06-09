@@ -23,7 +23,6 @@ const GradeTableToolbar = ({setFilters, filters}) => {
     const [defaultClass, setDefaultClass] = useState(); // TODO somehow defaultclass never fills
 
     const resoleSubjectData = useCallback((data, values) => {
-        console.log(defaultClass)
         if ((!values.academyClass || !values.academyClass.id)) {
             if (!defaultClass) {
                 return data;

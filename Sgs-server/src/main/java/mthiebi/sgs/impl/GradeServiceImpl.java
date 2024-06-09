@@ -78,6 +78,8 @@ public class GradeServiceImpl implements GradeService {
     private Date checkForDiagnostic(Calendar calendar, GradeType gradeType, String semester) {
         if (gradeType.equals(GradeType.DIAGNOSTICS_1) || gradeType.equals(GradeType.DIAGNOSTICS_2)) {
             calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+        } else if (gradeType.equals(GradeType.DIAGNOSTICS_3) || gradeType.equals(GradeType.DIAGNOSTICS_4)) {
+            calendar.set(Calendar.MONTH, Calendar.JUNE);
         } else if (gradeType.equals(GradeType.SHEMOKMEDEBITOBA)) {
             if (semester.equalsIgnoreCase("firstSemester")) {
                 calendar.set(Calendar.MONTH, Calendar.DECEMBER);
@@ -426,8 +428,22 @@ public class GradeServiceImpl implements GradeService {
     }
 
     private static BigDecimal calculateAverage(BigDecimal value1, BigDecimal value2, BigDecimal value3) {
-        BigDecimal sum = value1.add(value2).add(value3);
-        return BigDecimal.ZERO.equals(sum) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(3), RoundingMode.HALF_UP); // Assuming you want the average of two values
+        BigDecimal sum = BigDecimal.ZERO;
+        int count = 0;
+        if (!value1.equals(BigDecimal.ZERO)) {
+            sum = sum.add(value1);
+            count++;
+        }
+        if (!value2.equals(BigDecimal.ZERO)) {
+            sum = sum.add(value2);
+            count++;
+        }
+        BigDecimal finalAverage = sum.equals(BigDecimal.ZERO) ? BigDecimal.ZERO : sum.divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+
+        if (!value3.equals(BigDecimal.ZERO)) {
+            return finalAverage.add(value3).divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
+        }
+        return finalAverage;
     }
 
     private Map<Student, Map<Subject, Map<Integer, BigDecimal>>> getAnualGrades(Long classId, int startYear, int endYear) throws SGSException {
@@ -448,6 +464,15 @@ public class GradeServiceImpl implements GradeService {
                                     subject -> subject,
                                     subject -> {
                                         Map<Integer, BigDecimal> temporaryMap = new HashMap<>();
+                                        if (subject.getName().equals("behaviour1")) {
+                                            BigDecimal firstBehaviour = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-7, BigDecimal.ZERO);
+                                            temporaryMap.put(-7, firstBehaviour);
+                                            return temporaryMap;
+                                        } else if (subject.getName().equals("behaviour2")) {
+                                            BigDecimal secondBehaviour = second.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-7, BigDecimal.ZERO);
+                                            temporaryMap.put(-7, secondBehaviour);
+                                            return temporaryMap;
+                                        }
                                         BigDecimal finalExamGrade = getFinalExamValueByStudentIdAndSubjectId(classId, subject.getId(), student.getId(), endYear);
                                         BigDecimal firstValue = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
                                         temporaryMap.put(1, firstValue);
@@ -512,6 +537,13 @@ public class GradeServiceImpl implements GradeService {
                     newMap.put(subject, map1);
                 }
             }
+            if (existMap != null) {
+                Subject behaviourSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals("behaviour1")).findFirst().get();
+                Subject behaviourSubject2 = existMap.keySet().stream().filter(sub -> sub.getName().equals("behaviour2")).findFirst().get();
+                var finalMap = existMap.get(behaviourSubject);
+                finalMap.put(-8, existMap.get(behaviourSubject2).get(-7));
+                newMap.put(behaviourSubject, finalMap);
+            }
             if (studentId != null && student.getId() != studentId) {
                 map.remove(student);
                 continue;
@@ -525,7 +557,7 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
-        List<Integer> mapKeys = firstSemester ? List.of(-4, -3, -2, -1, 9, 11, 12) : List.of(-2, -1, 1, 3, 4, 5, 6);
+        List<Integer> mapKeys = firstSemester ? List.of(-7, -4, -3, -2, -1, 9, 11, 12) : List.of(-7, -6, -5, -2, -1, 1, 3, 4, 5, 6);
 
         for (Student student : studentList) {
             Map<Subject, Map<Integer, BigDecimal>> existMap = map.get(student);
@@ -541,6 +573,10 @@ public class GradeServiceImpl implements GradeService {
 //                    mapKeys.stream().map(key -> emptyMap.put(key, BigDecimal.ZERO));
                     newMap.put(subject, emptyMap);
                 }
+            }
+            if (existMap != null) {
+                Subject behaviourSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals(firstSemester ? "behaviour1" : "behaviour2")).findFirst().get();
+                newMap.put(behaviourSubject, existMap.get(behaviourSubject));
             }
             if (studentId != null && student.getId() != studentId) {
                 map.remove(student);

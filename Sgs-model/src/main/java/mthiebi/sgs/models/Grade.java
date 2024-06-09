@@ -21,7 +21,6 @@ public class Grade extends Audit{
     @Enumerated(EnumType.STRING)
     private GradeType gradeType;
 
-    @Column(precision = 16, scale = 2)
     private BigDecimal value;
 
     @OneToOne

@@ -45,8 +45,8 @@ const SemesterGradeDashBoard = () => {
             {month: 1, ind: 0},  // ianvari-tebervali
             {month: 3, ind: 1},  // marti
             {month: 4, ind: 2},  // aprili
-            {month: 5, ind: 3},  // maisu
-            {month: 6, ind: 4} // ivnisi
+            {month: 5, ind: 3}  // maisu
+            // {month: 6, ind: 4} // ivnisi
         ];
         const firstSemesterMonths = [
             {month: 9, ind: 5},  // September-October
@@ -135,6 +135,46 @@ const SemesterGradeDashBoard = () => {
                     headerAlign: 'center'
                 });
             }
+            if (filters.semesterN?.value === 'secondSemester') {
+                monthFields.push({
+                    headerName: 'დიაგნოსტიკური 1',
+                    description: '',
+                    renderCell: ({row}) => {
+                        const transformedArray = row.gradeList.map(item => ({
+                            subjectName: item.subject.name,
+                            value: item.value
+                        }));
+                        const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-5];
+
+                        return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+                    },
+                    field: subject.id + "--5",
+                    sortable: false,
+                    align: 'center',
+                    editable: true,
+                    headerAlign: 'center'
+                });
+                monthFields.push({
+                    headerName: 'დიაგნოსტიკური 2',
+                    description: '',
+                    renderCell: ({row}) => {
+                        const transformedArray = row.gradeList.map(item => ({
+                            subjectName: item.subject.name,
+                            value: item.value
+                        }));
+                        const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-6];
+
+                        return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+                    },
+                    field: subject.id + "--6",
+                    sortable: false,
+                    editable: true,
+                    align: 'center',
+                    headerAlign: 'center'
+                });
+            }
             monthFields.push({
                 headerName: 'შემოქმედებითობა (პროექტი)',
                 description: '',
@@ -174,7 +214,6 @@ const SemesterGradeDashBoard = () => {
             });
         }
 
-
         monthFields.sort((a, b) => {
             const [subjectA, monthA] = a.field.split('-');
 
@@ -184,6 +223,32 @@ const SemesterGradeDashBoard = () => {
             } else {
                 return parseInt(monthA) - parseInt(monthB);
             }
+        });
+
+        monthFields.push({
+            headerName: 'ეთიკური',
+            description: '',
+            renderCell: ({row}) => {
+                console.log(row);
+                const transformedArray = row.gradeList.map(item => ({
+                    subjectName: item.subject.name,
+                    value: item.value
+                }));
+                let monthValue;
+                if (filters.semesterN?.value === 'firstSemester') {
+                    monthValue = transformedArray.find(item => item.subjectName === 'behaviour1')?.value[-7];
+                } else if (filters.semesterN?.value === 'secondSemester') {
+                    monthValue = transformedArray.find(item => item.subjectName === 'behaviour2')?.value[-7];
+                }
+
+
+                return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : monthValue}</div>;
+                // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+            },
+            field: "behaviour",
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
         });
         return monthFields;
     }, [data, subjects, filters.semesterN?.value, checked]);
@@ -666,6 +731,8 @@ const SemesterGradeDashBoard = () => {
                         {field: getFieldName(o, "-2")},
                         {field: getFieldName(o, "-3")},
                         {field: getFieldName(o, "-4")},
+                        {field: getFieldName(o, "-5")},
+                        {field: getFieldName(o, "-6")},
                     ],
                     sortable: false,
                     align: 'center',
@@ -675,7 +742,16 @@ const SemesterGradeDashBoard = () => {
 
                 }]
             })
-
+            gradeClomuns2 = [...gradeClomuns2, {
+                    groupId: 'ეთიკური',
+                    headerName: 'ეთიკური',
+                    children: [{field: 'behaviour'}],
+                    sortable: false,
+                    align: 'center',
+                    headerAlign: 'center',
+                    width: 200,
+                    maxWidth: 200,
+            }]
             return gradeClomuns2
         }
         return gradeColumns
@@ -685,7 +761,11 @@ const SemesterGradeDashBoard = () => {
 
     const processRowUpdate = useCallback(
         async (newRow) => {
-            const gradeType = Object.keys(newRow).filter(field => field.endsWith("--4") || field.endsWith("--3") || field.endsWith("--2"))[0]
+            const gradeType = Object.keys(newRow).filter(field => field.endsWith("--6") ||
+                                                                  field.endsWith("--5") ||
+                                                                  field.endsWith("--4") ||
+                                                                  field.endsWith("--3") ||
+                                                                  field.endsWith("--2"))[0]
             const subjectIdAndType = gradeType.split("-", 1);
             newRow.subject = newRow.gradeList.filter(g => g.subject.id == subjectIdAndType[0])[0].subject;
             newRow.exactMonth = newRow.exactMonth ? newRow.exactMonth : Date.parse(new Date());

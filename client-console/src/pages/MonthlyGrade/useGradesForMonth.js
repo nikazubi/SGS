@@ -2,7 +2,6 @@ import {useQuery} from "react-query";
 import axios from "../utils/axios";
 
 export const fetchMonthly = async (filters) => {
-    console.log("Aaaaaaaaaaaaaaaaa", filters)
     if (!filters.year) {
         return [];
     }
@@ -11,7 +10,6 @@ export const fetchMonthly = async (filters) => {
         year: filters.year
     }
 
-    console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
     const {data} = await axios.get("/client/grade/get-grades-for-month", {params});
     data.map((row, index) => {
         let copyRow = row;

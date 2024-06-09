@@ -39,15 +39,17 @@ const AnualGradeDashBoard = () => {
         const names = [
             "I სემესტრი",
             "II სემესტრი",
+            "წლიური",
             "გამოცდა",
-            "წლიური"
+            "საბოლოო ქულა"
         ]
 
         const semesterNames = [
             {val: "I სემესტრი", ind: 1},
             {val: "II სემესტრი", ind: 2},
-            {val: "გამოცდა", ind: 3},
-            {val: "წლიური", ind: 4}
+            {val: "წლიური", ind: 3},
+            {val: "გამოცდა", ind: 4},
+            {val: "საბოლოო ქულა", ind: 5}
         ];
 
         semesterFields.push({
@@ -74,9 +76,27 @@ const AnualGradeDashBoard = () => {
                             subjectName: item.subject.name,
                             value: item.value
                         }));
-                        const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[semester.ind];
+                        let monthValue;
+                        if (semester.val === "წლიური") {
+                            const value1 = transformedArray.find(item => item.subjectName === subject.name)?.value[1];
+                            const value2 = transformedArray.find(item => item.subjectName === subject.name)?.value[2];
+                            let validValues = 0;
+                            let sum = 0;
+                            if (value1 !== undefined && !isNaN(value1) && value1 !== 0) {
+                                sum += value1;
+                                validValues++;
+                            }
+                            if (value2 !== undefined && !isNaN(value2) && value2 !== 0) {
+                                sum += value2;
+                                validValues++;
+                            }
+                            monthValue = validValues > 0 ? Math.round(sum / validValues) : '';
+                        } else {
+                            const index = semester.val === "გამოცდა" ? 3 : semester.val === "საბოლოო ქულა" ? 4 : semester.ind;
+                            monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[index];
+                        }
 
-                        return <div>{monthValue === 0 ? '' : monthValue === '' || monthValue === undefined || monthValue === null ? '' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+                        return <div>{monthValue === 0 ? '' : monthValue === '' || monthValue === undefined || monthValue === null ? '' :  monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
                         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
                     },
                     editable: semester.val === "გამოცდა",
@@ -98,6 +118,38 @@ const AnualGradeDashBoard = () => {
                 return parseInt(monthA) - parseInt(monthB);
             }
         });
+
+        semesterFields.push({
+            headerName: 'ეთიკური',
+            description: '',
+            renderCell: ({row}) => {
+                const transformedArray = row.gradeList.map(item => ({
+                    subjectName: item.subject.name,
+                    value: item.value
+                }));
+                const value1 = transformedArray.find(item => item.subjectName === 'behaviour1')?.value[-7];
+                const value2 = transformedArray.find(item => item.subjectName === 'behaviour1')?.value[-8];
+                let validValues = 0;
+                let sum = 0;
+                if (value1 !== undefined && !isNaN(value1) && value1 !== 0) {
+                    sum += value1;
+                    validValues++;
+                }
+                if (value2 !== undefined && !isNaN(value2) && value2 !== 0) {
+                    sum += value2;
+                    validValues++;
+                }
+                const monthValue = validValues > 0 ? Math.round(sum / validValues) : '';
+
+                return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : monthValue}</div>;
+                // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+            },
+            field: "behaviour",
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        });
+
         return semesterFields;
     }, [data, subjects, checked]);
 
@@ -498,7 +550,9 @@ const AnualGradeDashBoard = () => {
                     children: [
                         {field: o.subject.name + "-" + "1"},
                         {field: o.subject.name + "-" + "2"},
-                        {field: o.subject.name + "-" + "3"}
+                        {field: o.subject.name + "-" + "3"},
+                        {field: o.subject.name + "-" + "4"},
+                        {field: o.subject.name + "-" + "5"},
                     ],
                     sortable: false,
                     align: 'center',
@@ -507,6 +561,16 @@ const AnualGradeDashBoard = () => {
                     maxWidth: 200,
                 }]
             })
+            gradeClomuns2 = [...gradeClomuns2, {
+                groupId: 'ეთიკური',
+                headerName: 'ეთიკური',
+                children: [{field: 'behaviour'}],
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center',
+                width: 200,
+                maxWidth: 200,
+            }]
             return gradeClomuns2
         }
         return gradeColumns
@@ -524,7 +588,7 @@ const AnualGradeDashBoard = () => {
             //     setNewRowToSave({newValue: newRow[gradeType], gradeId: gradesOfType[0].id})
             //     setOpenRequestModal(true);
             // } else {
-            newRow.subject = filters.subject
+            newRow.subject = filters.subject;
             newRow.exactMonth = newRow.exactMonth ? newRow.exactMonth : Date.parse(filters.date);
             return await mutateRow(newRow);
             // }
