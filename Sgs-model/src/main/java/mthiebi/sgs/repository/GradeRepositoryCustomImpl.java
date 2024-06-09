@@ -184,8 +184,9 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
 
     private BigDecimal calculateBehaviourAverage(Predicate dateYearPredicate, Predicate dateMonthPredicate, Predicate academyClassIdPredicate, long id) {
         NumberExpression<BigDecimal> gradeValueSum = qGrade.value.sum();
+        NumberExpression<Long> gradeValueCount = qGrade.value.count();
 
-        return Optional.ofNullable(qf.select(gradeValueSum)
+        BigDecimal sum = Optional.ofNullable(qf.select(gradeValueSum)
                 .from(qGrade)
                 .where(dateYearPredicate)
                 .where(dateMonthPredicate)
@@ -194,6 +195,17 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                 .where(qGrade.student.id.eq(id))
                 .fetchOne())
                 .orElse(BigDecimal.ZERO);
+        Long count = Optional.ofNullable(qf.select(gradeValueCount)
+                        .from(qGrade)
+                        .where(dateYearPredicate)
+                        .where(dateMonthPredicate)
+                        .where(academyClassIdPredicate)
+                        .where(qGrade.gradeType.eq(GradeType.BEHAVIOUR_MONTHLY))
+                        .where(qGrade.student.id.eq(id))
+                        .fetchOne())
+                .orElse(1L);
+
+        return sum.divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
     }
 
     @Override
