@@ -205,7 +205,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .fetchOne())
                 .orElse(1L);
 
-        return sum.divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
+        return sum.divide(BigDecimal.valueOf(count == 0 ? 1 : count), RoundingMode.HALF_UP);
     }
 
     @Override
