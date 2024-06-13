@@ -87,7 +87,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow();
         Predicate academyClassIdPredicate = classId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(classId);
         Predicate dateYearPredicate = qGrade.exactMonth.year().eq(year).or(qGrade.exactMonth.year().eq(year + 1)); //TODO this is problematic
-        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5);
+        Predicate dateMonthPredicate = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12, 1) : qGrade.exactMonth.month().in(1, 3, 4, 5);
         Predicate gradeTypePredicate = qGrade.gradeType.eq(academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY);
         List<Grade> gradeList = qf.selectFrom(qGrade)
                 .where(dateYearPredicate)
@@ -119,7 +119,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         count++;
                     }
                 }
-                Predicate p = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6); //TODO this is problematic
+                Predicate p = firstSemester ? qGrade.exactMonth.month().in(9, 11, 12, 1) : qGrade.exactMonth.month().in(1, 3, 4, 5, 6); //TODO this is problematic
                 List<Grade> diagnostics = qf.selectFrom(qGrade)
                         .where(dateYearPredicate)
                         .where(p)
