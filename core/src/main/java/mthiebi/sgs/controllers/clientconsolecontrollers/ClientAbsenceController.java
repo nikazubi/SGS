@@ -1,7 +1,10 @@
 package mthiebi.sgs.controllers.clientconsolecontrollers;
 
+import mthiebi.sgs.dto.AbsenceGradeDto;
+import mthiebi.sgs.dto.AbsenceGradeMapper;
 import mthiebi.sgs.dto.TotalAbsenceDto;
 import mthiebi.sgs.dto.TotalAbsenceMapper;
+import mthiebi.sgs.service.AbsenceService;
 import mthiebi.sgs.service.TotalAbsenceService;
 import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +25,24 @@ public class ClientAbsenceController {
     private TotalAbsenceMapper totalAbsenceMapper;
 
     @Autowired
+    private AbsenceGradeMapper absenceGradeMapper;
+
+    @Autowired
     private UtilsJwt utilsJwt;
+
+    @Autowired
+    private AbsenceService absenceService;
+
+
+    @GetMapping
+    public List<AbsenceGradeDto> getAbsenceGrades(@RequestHeader("authorization") String authHeader,
+                                                  @RequestParam String yearRange) throws Exception {
+        String userName = utilsJwt.getUsernameFromHeader(authHeader);
+        return totalAbsenceService.findAbsenceGradeClosedPeriod(userName, yearRange)
+                .stream()
+                .map(absenceGrade -> absenceGradeMapper.absenceGradeDTO(absenceGrade))
+                .collect(Collectors.toList());
+    }
 
 
     @GetMapping("/filter")

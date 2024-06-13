@@ -16,7 +16,7 @@ export const updateGrade = async grade => {
 
     }
     date.setFullYear(Number(year));
-    date.setMonth(month);
+    date.setMonth(month - 1);
     const params = {
         student: grade.student,
         value: grade.value,

@@ -8,6 +8,7 @@ import mthiebi.sgs.repository.AbsenceRepository;
 import mthiebi.sgs.repository.AcademyClassRepository;
 import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.service.AbsenceService;
+import mthiebi.sgs.service.ClosedPeriodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,10 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Autowired
     private AcademyClassRepository academyClassRepository;
+
+    @Autowired
+    private ClosedPeriodService closedPeriodService;
+
 
     @Override
     public Map<Student, List<AbsenceGrade>> findAbsenceGrade(Long academyClassId, Long studentId, String yearRange) {

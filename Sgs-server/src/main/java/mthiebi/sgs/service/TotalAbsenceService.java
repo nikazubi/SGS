@@ -1,6 +1,7 @@
 package mthiebi.sgs.service;
 
 import mthiebi.sgs.SGSException;
+import mthiebi.sgs.models.AbsenceGrade;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.TotalAbsence;
 
@@ -8,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface TotalAbsenceService {
+
+    List<AbsenceGrade> findAbsenceGradeClosedPeriod(String username, String yearRange);
 
     List<TotalAbsence> filter(Long academyClass, Date activePeriod);
 

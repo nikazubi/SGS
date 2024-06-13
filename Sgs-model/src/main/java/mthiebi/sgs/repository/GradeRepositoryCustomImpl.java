@@ -28,6 +28,9 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     @Autowired
     private AcademyClassRepository academyClassRepository;
 
+    @Autowired
+    private AbsenceRepository absenceRepository;
+
     @Override
     public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
                                                                           Long subjectId,
@@ -419,12 +422,14 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         } else if (calendar.get(Calendar.MONTH) == Calendar.OCTOBER) {
             calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
         }
-        return qf.select(qGrade.value.sum())
-                .from(qGrade)
-                .where(qGrade.gradeType.eq(GradeType.GENERAL_ABSENCE_MONTHLY)
-                        .and(qGrade.student.id.eq(studentId))
-                        .and(qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1)))// todo: დაამატე წელი
-                .fetchOne();
+//        return qf.select(qGrade.value.sum())
+//                .from(qGrade)
+//                .where(qGrade.gradeType.eq(GradeType.GENERAL_ABSENCE_MONTHLY)
+//                        .and(qGrade.student.id.eq(studentId))
+//                        .and(qGrade.exactMonth.month().eq(calendar.get(Calendar.MONTH) + 1)))// todo: დაამატე წელი
+//                .fetchOne();
+        AbsenceGrade absenceGrade = absenceRepository.findAbsenceGrade(studentId, calendar.get(Calendar.MONTH) + 1);
+        return absenceGrade == null ? BigDecimal.ZERO : absenceGrade.getValue();
     }
 
     @Override

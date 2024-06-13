@@ -3,12 +3,15 @@ package mthiebi.sgs.impl;
 import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
+import mthiebi.sgs.models.AbsenceGrade;
 import mthiebi.sgs.models.AcademyClass;
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.TotalAbsence;
+import mthiebi.sgs.repository.AbsenceRepository;
 import mthiebi.sgs.repository.AcademyClassRepository;
 import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.repository.TotalAbsenceRepository;
+import mthiebi.sgs.service.ClosedPeriodService;
 import mthiebi.sgs.service.TotalAbsenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,28 @@ public class TotalAbsenceServiceImpl implements TotalAbsenceService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private ClosedPeriodService closedPeriodService;
+
+    @Autowired
+    private AbsenceRepository absenceRepository;
+
+
+    @Override
+    public List<AbsenceGrade> findAbsenceGradeClosedPeriod(String username, String yearRange) {
+        Student student = studentRepository.findByUsername(username).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+
+        int startYear = 2023, endYear = 2023;
+        if (yearRange != null) {
+            String[] arr = yearRange.split("-");
+            startYear = Integer.parseInt(arr[0]);
+            endYear = Integer.parseInt(arr[1]);
+        }
+        Date latest = closedPeriodService.getLatestClosedPeriodBy(academyClass.getId());
+
+        return absenceRepository.findAbsenceGrade(student.getId(), startYear, endYear, latest);
+    }
 
     @Override
     public List<TotalAbsence> filter(Long academyClass, Date activePeriod) {

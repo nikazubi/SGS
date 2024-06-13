@@ -7,6 +7,7 @@ import mthiebi.sgs.models.QAbsenceGrade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -43,5 +44,26 @@ public class AbsenceRepositoryImpl implements AbsenceRepositoryCustom {
                         .and(qAbsenceGrade.gradeType.eq(gradeType))
                 )
                 .fetchFirst();
+    }
+
+    @Override
+    public List<AbsenceGrade> findAbsenceGrade(Long studentId, int startYear, int endYear, Date latest) {
+        return qf.select(qAbsenceGrade)
+                .from(qAbsenceGrade)
+                .where(QueryUtils.longEq(qAbsenceGrade.student.id, studentId)
+                        .and(qAbsenceGrade.subject.id.isNull())
+                        .and(qAbsenceGrade.exactMonth.year().eq(startYear).or(qAbsenceGrade.exactMonth.year().eq(endYear)))
+                        .and(qAbsenceGrade.createTime.before(latest))
+                )
+                .fetch();
+    }
+
+    @Override
+    public AbsenceGrade findAbsenceGrade(Long studentId, int month) {
+        return qf.select(qAbsenceGrade)
+                .from(qAbsenceGrade)
+                .where(QueryUtils.longEq(qAbsenceGrade.student.id, studentId)
+                        .and(qAbsenceGrade.exactMonth.month().eq(month)))
+                .fetchOne();
     }
 }
