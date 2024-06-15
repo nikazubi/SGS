@@ -229,7 +229,6 @@ const SemesterGradeDashBoard = () => {
             headerName: 'ეთიკური',
             description: '',
             renderCell: ({row}) => {
-                console.log(row);
                 const transformedArray = row.gradeList.map(item => ({
                     subjectName: item.subject.name,
                     value: item.value

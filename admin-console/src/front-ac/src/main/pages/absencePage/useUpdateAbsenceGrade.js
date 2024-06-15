@@ -24,7 +24,6 @@ export const updateGrade = async grade => {
         gradeType: grade.gradeType,
         exactMonth: date
     }
-    console.log(params)
     const {data} = await axios.post("/absence/add-absence-grade", params);
     return data;
 };

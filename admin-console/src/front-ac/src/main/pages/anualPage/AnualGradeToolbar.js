@@ -3,15 +3,15 @@ import {Formik} from "formik";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
 import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import useFetchStudents from "../../../hooks/useStudents";
-import {FormikDatePickerField} from "../../components/formik/FormikDatePickerField";
 import {useState} from "react";
-import IconButton from "../../../components/buttons/IconButton";
 import {Search} from "@material-ui/icons";
 import {setFiltersOfPage} from "../../../utils/filters";
 import useFetchYear from "./useYear";
 import Switch from "@mui/material/Switch";
 import {Tooltip} from "@mui/material";
 import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
+import {FileDownload} from "@mui/icons-material";
+import {fetchGradesAnual} from "../semesterPage/useExportWord";
 
 const AnualGradeToolbar = ({setFilters, filters, setData, checked, setChecked}) => {
     const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral();
@@ -95,6 +95,15 @@ const AnualGradeToolbar = ({setFilters, filters, setData, checked, setChecked}) 
                                     setFilters(values)
                                 }}
                             />
+                            <div style={{marginLeft: 0, width: 40}}>
+                                <IconButtonWithTooltip
+                                    icon={<FileDownload/>}
+                                    tooltip={"ექსპორტი"}
+                                    onClick={async () => {
+                                        await fetchGradesAnual(filters, checked)
+                                    }}
+                                />
+                            </div>
                             <Tooltip title={checked? "10 ბალიანი სისტემა" : "7 ბალიანი სისტემა"}>
                                 <div style={{marginLeft: 0, width: 50}}>
                                     <Switch

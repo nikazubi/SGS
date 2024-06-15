@@ -219,7 +219,6 @@ const Discipline = ({match}) => {
         },
         [gradeData]
     )
-    console.log("transittransittransit", transit)
     const columnsTransit = useMemo(
         () => {
             if(!gradeData){

@@ -16,7 +16,6 @@ const AbsenceDashBoard = () => {
     const {mutateAsync: mutateRow} = useUpdateAbsenceGrade();
 
     useEffect(() => {
-        console.log(filters)
     }, [filters]);
 
     // useEffect(() =>{
@@ -511,8 +510,6 @@ const AbsenceDashBoard = () => {
                 academyClass: filters.academyClass,
                 year: filters.yearRange
             };
-            console.log("newRow", newRow)
-            console.log(params)
             return await mutateRow(params);
             // const {data} = await axios.get("/close-period/get-period-by-class", {params});
             //

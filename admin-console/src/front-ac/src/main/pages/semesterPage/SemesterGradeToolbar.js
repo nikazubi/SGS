@@ -118,7 +118,7 @@ const SemesterGradeToolbar = ({setFilters, filters, setData, checked, setChecked
                                     icon={<FileDownload/>}
                                     tooltip={"ექსპორტი"}
                                     onClick={async () => {
-                                        await fetchGradesSemester(filters)
+                                        await fetchGradesSemester(filters, checked)
                                     }}
                                 />
                        </div>
