@@ -34,6 +34,18 @@ public class AbsenceRepositoryImpl implements AbsenceRepositoryCustom {
     }
 
     @Override
+    public AbsenceGrade findAbsenceGradeByMonthAndYear(Long academyClassId, Long studentId, int year, int month) {
+        return qf.select(qAbsenceGrade)
+                .from(qAbsenceGrade)
+                .where(QueryUtils.longEq(qAbsenceGrade.academyClass.id, academyClassId)
+                        .and(QueryUtils.longEq(qAbsenceGrade.student.id, studentId))
+                        .and(qAbsenceGrade.subject.id.isNull())
+                        .and(qAbsenceGrade.exactMonth.year().eq(year).and(qAbsenceGrade.exactMonth.month().eq(month)))
+                )
+                .fetchOne();
+    }
+
+    @Override
     public AbsenceGrade findAbsenceGrade(Long academyClassId, Long studentId, int year, AbsenceGradeType gradeType) {
         return qf.select(qAbsenceGrade)
                 .from(qAbsenceGrade)
