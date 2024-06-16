@@ -519,6 +519,23 @@ public class GradeServiceImpl implements GradeService {
                                     subject -> subject,
                                     subject -> {
                                         Map<Integer, BigDecimal> temporaryMap = new HashMap<>();
+                                        if (subject.getName().equals("behaviour1")) {
+                                            BigDecimal firstBehaviour = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-7, BigDecimal.ZERO);
+                                            temporaryMap.put(-7, firstBehaviour);
+                                            return temporaryMap;
+                                        } else if (subject.getName().equals("behaviour2")) {
+                                            BigDecimal secondBehaviour = second.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-7, BigDecimal.ZERO);
+                                            temporaryMap.put(-7, secondBehaviour);
+                                            return temporaryMap;
+                                        } else if (subject.getName().equals("absence1")) {
+                                            BigDecimal firstBehaviour = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-9, BigDecimal.ZERO);
+                                            temporaryMap.put(-9, firstBehaviour);
+                                            return temporaryMap;
+                                        } else if (subject.getName().equals("absence2")) {
+                                            BigDecimal secondBehaviour = second.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-9, BigDecimal.ZERO);
+                                            temporaryMap.put(-9, secondBehaviour);
+                                            return temporaryMap;
+                                        }
                                         BigDecimal finalExamGrade = getFinalExamValueByStudentIdAndSubjectId(classId, subject.getId(), student.getId(), endYear);
                                         BigDecimal firstValue = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
                                         temporaryMap.put(1, firstValue);
