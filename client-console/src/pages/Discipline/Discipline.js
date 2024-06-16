@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import Chart from "./Chart";
 import {NavLink} from 'react-router-dom'
 import {MyContext} from "../../context/userDataContext";
@@ -16,13 +16,16 @@ import useGrades from "./useGrades";
 import useMonthlyGradesOfSubjectAndStudent from "./useMonthlyGradesOfSubjectAndStudent";
 import {useUserContext} from "../../context/user-context";
 import useTransit from "./useTransit";
-import useFetchYear from "../semestruli-shefaseba/useYear";
 
 
 const Discipline = ({match}) => {
     const id = match.params.id
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const monthToSelectInitially = new Date().getUTCMonth() === 5 ||
+    new Date().getUTCMonth() === 6 ||
+    new Date().getUTCMonth() === 7 ? 4 : new Date().getUTCMonth()
+
+    const [selectedData, setSelectedData] = useState(MONTHS[monthToSelectInitially]);
     const [chosenYear, setChosenYear] = useState(new Date().getUTCFullYear());
     const {user, isTransit} = useUserContext();
     const {data: subjectData, isLoading, isError, error, isSuccess} = useSubjects();
@@ -31,7 +34,7 @@ const Discipline = ({match}) => {
         [id, subjectData]
     );
     const chosenMonth = useMemo(
-        () => selectedData? MONTHS.filter((month) => month.value === selectedData.value)[0] : new Date().getUTCMonth(),
+        () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : monthToSelectInitially,
         [selectedData]
     );
 

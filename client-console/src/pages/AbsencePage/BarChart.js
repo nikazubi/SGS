@@ -9,7 +9,6 @@ import {Bar, BarChart, CartesianGrid, LabelList, Legend, ResponsiveContainer, To
 // };
 
 export default function CustomBar({color, attend, attendMax, layout, data}) {
-
     // const data = [
     //     {
     //       name: label,

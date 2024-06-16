@@ -27,13 +27,16 @@ const MonthlyGrade = () => {
 
     const {data: yearData, isLoading: isYearLoading} = useFetchYear();
 
-    const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const monthToSelectInitially = new Date().getUTCMonth() === 5 ||
+    new Date().getUTCMonth() === 6 ||
+    new Date().getUTCMonth() === 7 ? 4 : new Date().getUTCMonth()
+    const [selectedData, setSelectedData] = useState(MONTHS[monthToSelectInitially]);
     const [chosenYear, setChosenYear] = useState(new Date().getUTCFullYear());
     const {data: subjects, isLoading, isError, error, isSuccess} = useSubjects();
 
     const [currentData, setCurrentData] = useState([]);
     const chosenMonth = useMemo(
-        () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : new Date().getUTCMonth(),
+        () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : monthToSelectInitially,
         [selectedData]
     );
     const choosenYeeear = useMemo(
@@ -428,8 +431,8 @@ const MonthlyGrade = () => {
                         sortable: false,
                         align: 'center',
                         headerAlign: 'center',
-                        width: 200,
-                        maxWidth: 200,
+                        width: 150,
+                        maxWidth: 150,
                     }]
                 }
             })
@@ -446,8 +449,8 @@ const MonthlyGrade = () => {
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',
-                    width: 200,
-                    maxWidth: 200,
+                    width: 150,
+                    maxWidth: 150,
                 },
                 {
                     headerName: "ეთიკური ნორმა",
@@ -461,8 +464,8 @@ const MonthlyGrade = () => {
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',
-                    width: 200,
-                    maxWidth: 200,
+                    width: 150,
+                    maxWidth: 150,
                 },
                 {
                     headerName: "გაცდენილი საათი",
@@ -476,8 +479,8 @@ const MonthlyGrade = () => {
                     sortable: false,
                     align: 'center',
                     headerAlign: 'center',
-                    width: 200,
-                    maxWidth: 200
+                    width: 150,
+                    maxWidth: 150
                 },)
             return gradeClomuns2
         }

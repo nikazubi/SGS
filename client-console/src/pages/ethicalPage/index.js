@@ -6,10 +6,13 @@ import {getRomanByInt, MONTHS, MONTHS_SCHOOL, YEAR} from "../utils/date";
 import useFetchBehaviour from "./useBehaviour";
 
 const EthicPage = () => {
-    const [selectedData, setSelectedData] = useState(MONTHS[new Date().getUTCMonth()]);
+    const monthToSelectInitially = new Date().getUTCMonth() === 5 ||
+    new Date().getUTCMonth() === 6 ||
+    new Date().getUTCMonth() === 7 ? 4 : new Date().getUTCMonth()
+    const [selectedData, setSelectedData] = useState(MONTHS[monthToSelectInitially]);
     const [chosenYear, setChosenYear] = useState(new Date().getUTCFullYear());
     const chosenMonth = useMemo(
-        () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : new Date().getUTCMonth(),
+        () => selectedData ? MONTHS.filter((month) => month.value === selectedData.value)[0] : monthToSelectInitially,
         [selectedData]
     );
 

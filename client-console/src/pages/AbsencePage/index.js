@@ -23,10 +23,14 @@ const AbsencePage = () => {
     const {data: yearData, isLoading: isYearLoading} = useFetchYear();
     const [chosenYear, setChosenYear] = useState();
 
-    const [selectedMonth, setSelectedMonth] = useState(MONTHS[new Date().getUTCMonth()]);
+    const monthToSelectInitially = new Date().getUTCMonth() === 5 ||
+    new Date().getUTCMonth() === 6 ||
+    new Date().getUTCMonth() === 7 ? 4 : new Date().getUTCMonth()
+
+    const [selectedMonth, setSelectedMonth] = useState(MONTHS[monthToSelectInitially]);
 
     const chosenMonth = useMemo(
-        () => selectedMonth ? MONTHS.filter((month) => month.value === selectedMonth.value)[0] : new Date().getUTCMonth(),
+        () => selectedMonth ? MONTHS.filter((month) => month.value === selectedMonth.value)[0] : monthToSelectInitially,
         [selectedMonth]
     );
 
@@ -179,7 +183,7 @@ const AbsencePage = () => {
                 </div>
 
             </div>
-            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum && selectedMonthGrade && selectedMonthGrade.value &&
+            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum && selectedMonthGrade &&
 
                 <div style={{
                     width: '100%',
@@ -200,7 +204,7 @@ const AbsencePage = () => {
                     }} key={'თვის ქულა'}>
                         <div className="ethical__title">{getTranslation(selectedMonthGrade?.gradeType)}</div>
                         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                            <div className="modified__title">{'თვის ქულა'}</div>
+                            <div className="modified__title" style={{fontSize: '15px'}}>{'თვის გაცდენილი საათები'}</div>
                             <div className="grade__data__api ethical">{selectedMonthGrade?.value}</div>
                         </div>
 
@@ -210,7 +214,7 @@ const AbsencePage = () => {
             }
 
 
-            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum && selectedMonthGrade && selectedMonthGrade.value &&
+            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum && selectedMonthGrade &&
                 <div className="absenceMain">
                     <CustomBar color={'#01619b'} attend={sum} attendMax={totalAbsenceData[0]?.totalAcademyHour}
                                layout={'vertical'}
