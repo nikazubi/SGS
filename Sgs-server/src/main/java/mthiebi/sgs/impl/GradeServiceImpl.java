@@ -472,6 +472,14 @@ public class GradeServiceImpl implements GradeService {
                                             BigDecimal secondBehaviour = second.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-7, BigDecimal.ZERO);
                                             temporaryMap.put(-7, secondBehaviour);
                                             return temporaryMap;
+                                        } else if (subject.getName().equals("absence1")) {
+                                            BigDecimal firstBehaviour = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-9, BigDecimal.ZERO);
+                                            temporaryMap.put(-9, firstBehaviour);
+                                            return temporaryMap;
+                                        } else if (subject.getName().equals("absence2")) {
+                                            BigDecimal secondBehaviour = second.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-9, BigDecimal.ZERO);
+                                            temporaryMap.put(-9, secondBehaviour);
+                                            return temporaryMap;
                                         }
                                         BigDecimal finalExamGrade = getFinalExamValueByStudentIdAndSubjectId(classId, subject.getId(), student.getId(), endYear);
                                         BigDecimal firstValue = first.getOrDefault(student, new HashMap<>()).getOrDefault(subject, new HashMap<>()).getOrDefault(-1, BigDecimal.ZERO);
@@ -542,7 +550,14 @@ public class GradeServiceImpl implements GradeService {
                 Subject behaviourSubject2 = existMap.keySet().stream().filter(sub -> sub.getName().equals("behaviour2")).findFirst().get();
                 var finalMap = existMap.get(behaviourSubject);
                 finalMap.put(-8, existMap.get(behaviourSubject2).get(-7));
+
+                Subject absenceSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals("absence1")).findFirst().get();
+                Subject absenceSubject2 = existMap.keySet().stream().filter(sub -> sub.getName().equals("absence2")).findFirst().get();
+                var finalMapAbsence = existMap.get(absenceSubject);
+                finalMapAbsence.put(-10, existMap.get(absenceSubject2).get(-9));
+
                 newMap.put(behaviourSubject, finalMap);
+                newMap.put(absenceSubject, finalMapAbsence);
             }
             if (studentId != null && student.getId() != studentId) {
                 map.remove(student);
@@ -557,7 +572,7 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.findById(classId).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Student> studentList = academyClass.getStudentList();
-        List<Integer> mapKeys = firstSemester ? List.of(-7, -4, -3, -2, -1, 9, 11, 12) : List.of(-7, -6, -5, -2, -1, 1, 3, 4, 5, 6);
+        List<Integer> mapKeys = firstSemester ? List.of(-9, -7, -4, -3, -2, -1, 9, 11, 12) : List.of(-9, -7, -6, -5, -2, -1, 1, 3, 4, 5, 6);
 
         for (Student student : studentList) {
             Map<Subject, Map<Integer, BigDecimal>> existMap = map.get(student);
@@ -577,6 +592,8 @@ public class GradeServiceImpl implements GradeService {
             if (existMap != null) {
                 Subject behaviourSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals(firstSemester ? "behaviour1" : "behaviour2")).findFirst().get();
                 newMap.put(behaviourSubject, existMap.get(behaviourSubject));
+                Subject absenceSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals(firstSemester ? "absence1" : "absence2")).findFirst().get();
+                newMap.put(absenceSubject, existMap.get(absenceSubject));
             }
             if (studentId != null && student.getId() != studentId) {
                 map.remove(student);

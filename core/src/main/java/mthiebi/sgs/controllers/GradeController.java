@@ -52,7 +52,7 @@ public class GradeController {
                                                  @RequestParam(defaultValue = "GENERAL") String gradeTypePrefix){
         Date date1 = new Date();
         date1.setTime(Long.parseLong(date));
-        if (groupByClause == GradeGroupByClause.STUDENT ){
+        if (groupByClause == GradeGroupByClause.STUDENT){
             return gradeService.getStudentGradeByClassAndSubjectIdAndCreateTime(classId, subjectId, studentId, date1, gradeTypePrefix)
                     .stream()
                     .map(gradeMapper::gradeDTO)

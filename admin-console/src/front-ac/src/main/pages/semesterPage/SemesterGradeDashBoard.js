@@ -249,6 +249,30 @@ const SemesterGradeDashBoard = () => {
             align: 'center',
             headerAlign: 'center'
         });
+        monthFields.push({
+            headerName: 'გაცდენილი საათები',
+            description: '',
+            renderCell: ({row}) => {
+                const transformedArray = row.gradeList.map(item => ({
+                    subjectName: item.subject.name,
+                    value: item.value
+                }));
+                let monthValue;
+                if (filters.semesterN?.value === 'firstSemester') {
+                    monthValue = transformedArray.find(item => item.subjectName === 'absence1')?.value[-9];
+                } else if (filters.semesterN?.value === 'secondSemester') {
+                    monthValue = transformedArray.find(item => item.subjectName === 'absence2')?.value[-9];
+                }
+
+
+                return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : monthValue}</div>;
+                // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+            },
+            field: "absence",
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        });
         return monthFields;
     }, [data, subjects, filters.semesterN?.value, checked]);
 
@@ -750,6 +774,16 @@ const SemesterGradeDashBoard = () => {
                     headerAlign: 'center',
                     width: 200,
                     maxWidth: 200,
+            }]
+            gradeClomuns2 = [...gradeClomuns2, {
+                groupId: 'გაცდენილი საათები',
+                headerName: 'გაცდენილი საათები',
+                children: [{field: 'absence'}],
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center',
+                width: 200,
+                maxWidth: 200,
             }]
             return gradeClomuns2
         }

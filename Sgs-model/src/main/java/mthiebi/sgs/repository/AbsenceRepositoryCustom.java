@@ -3,6 +3,7 @@ package mthiebi.sgs.repository;
 import mthiebi.sgs.models.AbsenceGrade;
 import mthiebi.sgs.models.AbsenceGradeType;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface AbsenceRepositoryCustom {
     List<AbsenceGrade> findAbsenceGrade(Long studentId, int startYear, int endYear, Date latest);
 
     AbsenceGrade findAbsenceGrade(Long studentId, int month);
+
+    BigDecimal findAbsenceGradeBySemester(Long studentId, Long classId, boolean isFirstSemester);
 }

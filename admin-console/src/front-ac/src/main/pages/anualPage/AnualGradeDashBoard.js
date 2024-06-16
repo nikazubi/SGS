@@ -149,7 +149,36 @@ const AnualGradeDashBoard = () => {
             align: 'center',
             headerAlign: 'center'
         });
+        semesterFields.push({
+            headerName: 'გაცდენილი საათები',
+            description: '',
+            renderCell: ({row}) => {
+                const transformedArray = row.gradeList.map(item => ({
+                    subjectName: item.subject.name,
+                    value: item.value
+                }));
+                const value1 = transformedArray.find(item => item.subjectName === 'absence1')?.value[-9];
+                const value2 = transformedArray.find(item => item.subjectName === 'absence1')?.value[-10];
+                let validValues = 0;
+                let sum = 0;
+                if (value1 !== undefined && !isNaN(value1) && value1 !== 0) {
+                    sum += value1;
+                    validValues++;
+                }
+                if (value2 !== undefined && !isNaN(value2) && value2 !== 0) {
+                    sum += value2;
+                    validValues++;
+                }
+                const monthValue = validValues > 0 ? Math.round(sum / validValues) : '';
 
+                return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : monthValue}</div>;
+                // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+            },
+            field: "absence",
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center'
+        });
         return semesterFields;
     }, [data, subjects, checked]);
 
@@ -565,6 +594,16 @@ const AnualGradeDashBoard = () => {
                 groupId: 'ეთიკური',
                 headerName: 'ეთიკური',
                 children: [{field: 'behaviour'}],
+                sortable: false,
+                align: 'center',
+                headerAlign: 'center',
+                width: 200,
+                maxWidth: 200,
+            }]
+            gradeClomuns2 = [...gradeClomuns2, {
+                groupId: 'გაცდენილი საათები',
+                headerName: 'გაცდენილი საათები',
+                children: [{field: 'absence'}],
                 sortable: false,
                 align: 'center',
                 headerAlign: 'center',

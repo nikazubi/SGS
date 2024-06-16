@@ -12,6 +12,8 @@ import useCalculateGeneralGrade from "./calculateMonthlyGrade";
 import {setFiltersOfPage} from "../../../utils/filters";
 import {useNotification} from "../../../contexts/notification-context";
 import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithTooltip";
+import {FileDownload} from "@mui/icons-material";
+import {fetchGradesAnual, fetchGradesDashboard} from "../semesterPage/useExportWord";
 
 const GradeTableToolbar = ({setFilters, filters}) => {
     const {mutateAsync: onFetchSubjects} = useSubjects();
@@ -120,30 +122,39 @@ const GradeTableToolbar = ({setFilters, filters}) => {
                                     }}
                                 />
                             </div>
+                            <div style={{marginLeft: -40, width: 40}}>
+                                <IconButtonWithTooltip
+                                    icon={<FileDownload/>}
+                                    tooltip={"ექსპორტი"}
+                                    onClick={async () => {
+                                        await fetchGradesDashboard(filters)
+                                    }}
+                                />
+                            </div>
                             <div style={{marginLeft: 15, width: 250}}>
                                 <Button
                                     style={{backgroundColor: "#45c1a4", color: "#fff", marginBottom: -30, fontSize: 16}}
                                     disabled={!filters.academyClass || !filters.subject}
                                     onClick={async () => {
-                                        const params = {
-                                            academyClassId: filters.academyClass.id,
-                                            subjectId: filters.subject.id,
-                                            date: new Date(filters.date).getTime(),
-                                            setErrorMessage: setErrorMessage,
-                                            setNotification: setNotification
-                                        }
-                                        calculateGeneralGrade(params).then(() => {
-                                            // setNotification({
-                                            //     message: 'თვის ნიშანი წარმატებით დაითვალა',
-                                            //     severity: 'success'
-                                            // });
-                                        }).catch((error) => {
-                                            setErrorMessage(error);
-                                            setNotification({
-                                                message: 'ნიშნის კალკულაცია ვერ მოხერხდა გთხოვთ შეავსოთ ყველა ნიშანი და სცადოთ მოგვიანებით',
-                                                severity: 'error'
-                                            });
-                                        });
+                                        // const params = {
+                                        //     academyClassId: filters.academyClass.id,
+                                        //     subjectId: filters.subject.id,
+                                        //     date: new Date(filters.date).getTime(),
+                                        //     setErrorMessage: setErrorMessage,
+                                        //     setNotification: setNotification
+                                        // }
+                                        // calculateGeneralGrade(params).then(() => {
+                                        //     // setNotification({
+                                        //     //     message: 'თვის ნიშანი წარმატებით დაითვალა',
+                                        //     //     severity: 'success'
+                                        //     // });
+                                        // }).catch((error) => {
+                                        //     setErrorMessage(error);
+                                        //     setNotification({
+                                        //         message: 'ნიშნის კალკულაცია ვერ მოხერხდა გთხოვთ შეავსოთ ყველა ნიშანი და სცადოთ მოგვიანებით',
+                                        //         severity: 'error'
+                                        //     });
+                                        // });
                                     }}>
                                     {"თვის ქულის დათვლა"}
                                 </Button>

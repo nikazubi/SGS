@@ -179,6 +179,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
             behaviourSubject.setName(firstSemester ? "behaviour1" : "behaviour2");
             behaviourSubject.setId(9999L);
             bySubject.put(behaviourSubject, Map.of(-7, calculateBehaviourAverage(dateYearPredicate, dateMonthPredicate, academyClassIdPredicate, student.getId())));
+
+            Subject absenceSubject = new Subject();
+            absenceSubject.setName(firstSemester ? "absence1" : "absence2");
+            absenceSubject.setId(8888L);
+            bySubject.put(absenceSubject, Map.of(-9, absenceRepository.findAbsenceGradeBySemester(student.getId(), classId, firstSemester)));
+
             result.put(student, bySubject);
         }
 
@@ -356,6 +362,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(exactMonth);
         int month = calendar.get(Calendar.MONTH) == Calendar.FEBRUARY ? 0 : calendar.get(Calendar.MONTH) == Calendar.OCTOBER ? 8 : calendar.get(Calendar.MONTH);
+        if (gradeType.equals(GradeType.DIAGNOSTICS_1) || gradeType.equals(GradeType.DIAGNOSTICS_2)) month = 11;
+        if (gradeType.equals(GradeType.DIAGNOSTICS_3) || gradeType.equals(GradeType.DIAGNOSTICS_4)) month = 5;
         Predicate datePredicate = qGrade.exactMonth.month().eq(month + 1).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR))); //erased + 1
         return qf.select(qGrade)
                 .from(qGrade)

@@ -1,10 +1,9 @@
 package mthiebi.sgs.controllers;
 
 import mthiebi.sgs.SGSException;
-import mthiebi.sgs.dto.GradeComponentWrapper;
-import mthiebi.sgs.dto.SubjectComponentWrapper;
+import mthiebi.sgs.dto.*;
 import mthiebi.sgs.models.AcademyClass;
-import mthiebi.sgs.models.Subject;
+import mthiebi.sgs.models.GradeType;
 import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.utils.AuthConstants;
 import org.apache.poi.ss.usermodel.*;
@@ -25,9 +24,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static mthiebi.sgs.utils.ExcelUtils.sortGradeArrayForExcel;
-import static mthiebi.sgs.utils.ExcelUtils.subjectPattern;
 
 @RestController
 @RequestMapping("/test")
@@ -155,11 +154,15 @@ public class ExcelExportController {
         int subjectCount = 0;
         int cc = 0;
         for (int i = 0; i < subjectComponentWrappersList.size() ; i++) {
-            Cell dataCell = headerRow.createCell(cc + 1);
             String subjectName = subjectComponentWrappersList.get(i).getSubject().getName();
+            if (subjectName.equals("absence1") || subjectName.equals("absence2")) {
+                cc++;
+            }
+            Cell dataCell = headerRow.createCell(cc + 1);
             dataCell.setCellValue(adjustName(subjectName));
             subjectCount++;
-            if (!subjectName.equals("behaviour1") && !subjectName.equals("behaviour2")) {
+            if (!subjectName.equals("behaviour1") && !subjectName.equals("behaviour2") &&
+                    !subjectName.equals("absence1") && !subjectName.equals("absence2")) {
                 sheet.addMergedRegion(new CellRangeAddress(1, 1, (cc + 1) , cc + grades.length));
                 cc += grades.length;
             }
@@ -168,7 +171,7 @@ public class ExcelExportController {
         Row monthRows = sheet.createRow(2);
         Cell monthRowsFirstCell = monthRows.createCell(0);
 
-
+        subjectCount--;
         int dd = 1;
         for (int i = 1; i < subjectCount ; i++) {
             for (int j = 0; j < grades.length ; j++) {
@@ -188,6 +191,12 @@ public class ExcelExportController {
                     if (list.get(i).getGradeList().get(j-1).getSubject().getName().equals("behaviour1") ||
                             list.get(i).getGradeList().get(j-1).getSubject().getName().equals("behaviour2")    ) {
                         Cell dataCell = studentRow.createCell( ((j-1) * grades.length) + 1);
+                        dataCell.setCellValue(adjustSemesterGradeValue(list.get(i).getGradeList().get(j-1), isDecimalSystem, grades, 0));
+                        continue;
+                    }
+                    if (list.get(i).getGradeList().get(j-1).getSubject().getName().equals("absence1") ||
+                            list.get(i).getGradeList().get(j-1).getSubject().getName().equals("absence2")    ) {
+                        Cell dataCell = studentRow.createCell( ((j-1) * grades.length) - (grades.length - 2) );
                         dataCell.setCellValue(adjustSemesterGradeValue(list.get(i).getGradeList().get(j-1), isDecimalSystem, grades, 0));
                         continue;
                     }
@@ -261,11 +270,14 @@ public class ExcelExportController {
         int subjectCount = 0;
         int cc = 0;
         for (int i = 0; i < subjectComponentWrappersList.size() ; i++) {
-            Cell dataCell = headerRow.createCell(cc + 1);
             String subjectName = subjectComponentWrappersList.get(i).getSubject().getName();
+            if (subjectName.equals("absence1")) {
+                cc++;
+            }
+            Cell dataCell = headerRow.createCell(cc + 1);
             dataCell.setCellValue(adjustName(subjectName));
             subjectCount++;
-            if (!subjectName.equals("behaviour1")) {
+            if (!subjectName.equals("behaviour1") && !subjectName.equals("absence1") ) {
                 sheet.addMergedRegion(new CellRangeAddress(1, 1, (cc + 1) , cc + grades.length));
                 cc += grades.length;
             }
@@ -273,7 +285,7 @@ public class ExcelExportController {
 
         Row monthRows = sheet.createRow(2);
         Cell monthRowsFirstCell = monthRows.createCell(0);
-
+        subjectCount--;
 
         int dd = 1;
         for (int i = 1; i < subjectCount ; i++) {
@@ -293,6 +305,11 @@ public class ExcelExportController {
                 } else {
                     if (list.get(i).getGradeList().get(j-1).getSubject().getName().equals("behaviour1")) {
                         Cell dataCell = studentRow.createCell( ((j-1) * grades.length) + 1);
+                        dataCell.setCellValue(adjustAnualGradeValue(list.get(i).getGradeList().get(j-1), isDecimalSystem, grades, 0));
+                        continue;
+                    }
+                    if (list.get(i).getGradeList().get(j-1).getSubject().getName().equals("absence1")) {
+                        Cell dataCell = studentRow.createCell( ((j-1) * grades.length) - 3);
                         dataCell.setCellValue(adjustAnualGradeValue(list.get(i).getGradeList().get(j-1), isDecimalSystem, grades, 0));
                         continue;
                     }
@@ -334,6 +351,237 @@ public class ExcelExportController {
         workbook.close();
     }
 
+    @GetMapping("/exportToExcel/dashbord")
+    @Secured({AuthConstants.MANAGE_GRADES})
+    public void exportToExcelDashboard(@RequestParam Long classId,
+                              @RequestParam Long subjectId,
+                              @RequestParam String filterDate,
+                              @RequestParam String gradeTypePrefix,
+                              HttpServletResponse response) throws IOException, SGSException {
+        // Create a new workbook and sheet
+        List<GradeWrapperDto> list = gradeController.getGradeGrouped(classId, subjectId, null,  filterDate, GradeGroupByClause.STUDENT, gradeTypePrefix);
+//        sortGradeArrayForExcel(list);
+        AcademyClass academyClass = academyClassService.findAcademyClassById(classId);
+        Date date = new Date();
+        if (filterDate != null) {
+            date.setTime(Long.parseLong(filterDate));
+        }
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(academyClass.getClassName());
+
+        // Create a header row
+        Row mainRow = sheet.createRow(0);
+        Cell headerCell = mainRow.createCell(0);
+        headerCell.setCellValue("სკოლა პანსიონ იბ მთიები - კლასი " + academyClass.getClassName() + " - " + adjustMonth(date.getMonth() + 1));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
+
+        boolean isTransit = gradeTypePrefix.equals("TRANSIT");
+        if (isTransit) {
+
+            // First header row
+            Row headerRow1 = sheet.createRow(1);
+
+            // Creating and merging the first header cell
+            Cell firstCell1 = headerRow1.createCell(0);
+            firstCell1.setCellValue("მოსწავლის გვარი, სახელი");
+
+            // Creating and merging cells for "შემაჯამებელი დავალება I"
+            Cell summaryCell1 = headerRow1.createCell(1);
+            summaryCell1.setCellValue("შემაჯამებელი დავალება I");
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 5));
+
+            // Creating and merging cells for "სკოლის სამუშაო II"
+            Cell schoolWorkCell = headerRow1.createCell(6);
+            schoolWorkCell.setCellValue("სკოლის სამუშაო II");
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 6, 15));
+
+            // Creating the second header row
+            Row headerRow2 = sheet.createRow(2);
+
+            // Sub-headers for "მოსწავლის გვარი, სახელი"
+            Cell firstCell2 = headerRow2.createCell(0);
+            firstCell2.setCellValue("მოსწავლის გვარი, სახელი");
+
+            // Sub-headers for "შემაჯამებელი დავალება I"
+            headerRow2.createCell(1).setCellValue("1");
+            headerRow2.createCell(2).setCellValue("2");
+            headerRow2.createCell(3).setCellValue("აღდგენა");
+            headerRow2.createCell(4).setCellValue("თვის ნიშანი");
+            headerRow2.createCell(5).setCellValue("%");
+
+            // Sub-headers for "სკოლის სამუშაო II"
+            headerRow2.createCell(6).setCellValue("1");
+            headerRow2.createCell(7).setCellValue("2");
+            headerRow2.createCell(8).setCellValue("3");
+            headerRow2.createCell(9).setCellValue("4");
+            headerRow2.createCell(10).setCellValue("5");
+            headerRow2.createCell(11).setCellValue("6");
+            headerRow2.createCell(12).setCellValue("7");
+            headerRow2.createCell(13).setCellValue("8");
+            headerRow2.createCell(14).setCellValue("თვის ნიშანი");
+            headerRow2.createCell(15).setCellValue("%");
+            headerRow2.createCell(16).setCellValue("საერთო ქულა");
+        } else {
+            Row headerRow = sheet.createRow(1);
+            Cell firstCell = headerRow.createCell(0);
+            firstCell.setCellValue("მოსწავლის გვარი, სახელი");
+
+            Cell summaryCell = headerRow.createCell(1);
+            summaryCell.setCellValue("შემაჯამებელი დავალება I");
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 5));
+
+            Cell shemokmedobitoba = headerRow.createCell(6);
+            shemokmedobitoba.setCellValue("შემოქმედობითობა II");
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 6, 12));
+
+            Cell homework = headerRow.createCell(13);
+            homework.setCellValue("საშინაო დავალება III");
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 13, 18));
+
+            Row subHeaderRow = sheet.createRow(2);
+// Sub-headers for "შემაჯამებელი დავალება I"
+            subHeaderRow.createCell(1).setCellValue("1");
+            subHeaderRow.createCell(2).setCellValue("2");
+            subHeaderRow.createCell(3).setCellValue("აღდგენა");
+            subHeaderRow.createCell(4).setCellValue("თვის ნიშანი");
+            subHeaderRow.createCell(5).setCellValue("50%");
+
+// Sub-headers for "შემოქმედებითობა II"
+            subHeaderRow.createCell(6).setCellValue("1");
+            subHeaderRow.createCell(7).setCellValue("2");
+            subHeaderRow.createCell(8).setCellValue("3");
+            subHeaderRow.createCell(9).setCellValue("4");
+            subHeaderRow.createCell(10).setCellValue("5");
+            subHeaderRow.createCell(11).setCellValue("თვის ნიშანი");
+            subHeaderRow.createCell(12).setCellValue("25%");
+
+// Sub-headers for "საშინაო დავალება III"
+            subHeaderRow.createCell(13).setCellValue("1");
+            subHeaderRow.createCell(14).setCellValue("2");
+            subHeaderRow.createCell(15).setCellValue("3");
+            subHeaderRow.createCell(16).setCellValue("4");
+            subHeaderRow.createCell(17).setCellValue("თვის ნიშანი");
+            subHeaderRow.createCell(18).setCellValue("25%");
+
+            subHeaderRow.createCell(19).setCellValue("თვის ქულა");
+
+        }
+
+        GradeType[] gradeTypeArray = isTransit ?
+            new GradeType[]{
+                    GradeType.TRANSIT_SUMMARY_ASSIGMENT_1,
+                    GradeType.TRANSIT_SUMMARY_ASSIGMENT_2,
+                    GradeType.TRANSIT_SUMMARY_ASSIGMENT_RESTORATION,
+                    GradeType.TRANSIT_SUMMARY_ASSIGMENT_MONTH,
+                    GradeType.TRANSIT_SUMMARY_ASSIGMENT_PERCENT,
+                    GradeType.TRANSIT_SCHOOL_WORK_1,
+                    GradeType.TRANSIT_SCHOOL_WORK_2,
+                    GradeType.TRANSIT_SCHOOL_WORK_3,
+                    GradeType.TRANSIT_SCHOOL_WORK_4,
+                    GradeType.TRANSIT_SCHOOL_WORK_5,
+                    GradeType.TRANSIT_SCHOOL_WORK_6,
+                    GradeType.TRANSIT_SCHOOL_WORK_7,
+                    GradeType.TRANSIT_SCHOOL_WORK_8,
+                    GradeType.TRANSIT_SCHOOL_WORK_MONTH,
+                    GradeType.TRANSIT_SCHOOL_WORK_MONTH_PERCENT,
+                    GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY
+                }
+        :
+        new GradeType[]{
+                GradeType.GENERAL_SUMMARY_ASSIGMENT_1,
+                GradeType.GENERAL_SUMMARY_ASSIGMENT_2,
+                GradeType.GENERAL_SUMMARY_ASSIGMENT_RESTORATION,
+                GradeType.GENERAL_SUMMARY_ASSIGMENT_MONTH,
+                GradeType.GENERAL_SUMMARY_ASSIGMENT_PERCENT,
+                GradeType.GENERAL_SCHOOL_WORK_1,
+                GradeType.GENERAL_SCHOOL_WORK_2,
+                GradeType.GENERAL_SCHOOL_WORK_3,
+                GradeType.GENERAL_SCHOOL_WORK_4,
+                GradeType.GENERAL_SCHOOL_WORK_5,
+                GradeType.GENERAL_SCHOOL_WORK_MONTH,
+                GradeType.GENERAL_SCHOOL_WORK_PERCENT,
+                GradeType.GENERAL_HOMEWORK_WRITE_ASSIGMENT_1,
+                GradeType.GENERAL_HOMEWORK_WRITE_ASSIGMENT_2,
+                GradeType.GENERAL_HOMEWORK_WRITE_ASSIGMENT_3,
+                GradeType.GENERAL_HOMEWORK_WRITE_ASSIGMENT_4,
+                GradeType.GENERAL_HOMEWORK_MONTHLY,
+                GradeType.GENERAL_HOMEWORK_PERCENT,
+                GradeType.GENERAL_COMPLETE_MONTHLY
+        };
+
+        for (int i = 0; i < list.size(); i++) {
+            Row studentRow = sheet.createRow(i + 3);
+            var student = ((GradeWrapperByStudent) list.get(i)).getStudent();
+            var grades = list.get(i).getGrades().stream()
+                    .collect(Collectors.toMap(
+                            GradeDTO::getGradeType,
+                            obj -> obj.getValue() == null ? BigDecimal.ZERO : obj.getValue(),
+                            (existing, replacement) -> existing
+                    ));;
+            for (int j = 0; j < gradeTypeArray.length + 1; j++) {
+                if (j == 0) {
+                    Cell dataCell = studentRow.createCell(j);
+                    dataCell.setCellValue((i+1) + ". " +  student.getLastName() + " " + student.getFirstName());
+                } else {
+                    Cell dataCell = studentRow.createCell(j);
+                    dataCell.setCellValue(adjustGradeValueDashboard(grades.get(gradeTypeArray[j-1].toString())));
+                }
+            }
+        }
+
+//        int teacherIndex = list.size() + 2;
+//        Row teacherRow = sheet.createRow(teacherIndex);
+//        Cell teacgerCell = teacherRow.createCell(0);
+//        teacgerCell.setCellValue("პედაგოგი");
+//
+//        for (int i = 0; i < subjectComponentWrappersList.size() ; i++) {
+//            Cell dataCell = teacherRow.createCell(i + 1);
+//            dataCell.setCellValue(subjectComponentWrappersList.get(i).getSubject().getTeacher());
+//        }
+
+        for (int i = 0; i <= sheet.getRow(1).getLastCellNum(); i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        for (int i = 0; i <= sheet.getRow(2).getLastCellNum(); i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        CellStyle thickBorderStyle = workbook.createCellStyle();
+        thickBorderStyle.setBorderTop(BorderStyle.THIN);
+        thickBorderStyle.setBorderBottom(BorderStyle.THIN);
+        thickBorderStyle.setBorderLeft(BorderStyle.THIN);
+        thickBorderStyle.setBorderRight(BorderStyle.THIN);
+        thickBorderStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // Apply the thick border style to all cells in the sheet
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                cell.setCellStyle(thickBorderStyle);
+            }
+        }
+
+        // Set the response headers for Excel download
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=exported_data.xlsx");
+
+        // Write the workbook to the response stream
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+    private String adjustGradeValueDashboard(BigDecimal value) {
+        if (value == null || Objects.equals(value.toString(), "0")) {
+            return " ";
+        }
+        if (value.toString().startsWith("-50")) {
+            return "ჩთ";
+        }
+        BigDecimal val = new BigDecimal(value.toString());
+        return String.valueOf(val.longValue());
+    }
+
     private String adjustGradeValue(SubjectComponentWrapper obj, Boolean isDecimalSystem) {
         Object value = obj.getValue();
         if (value == null || Objects.equals(value.toString(), "0")) {
@@ -357,9 +605,16 @@ public class ExcelExportController {
         if (map == null) {
             return " ";
         }
+        BigDecimal value = null;
+        if (subjectName.equals("behaviour1") || subjectName.equals("behaviour2")) {
+            value = map.get(-7);
+        }
 
-        BigDecimal value = subjectName.equals("behaviour1") || subjectName.equals("behaviour2") ? map.get(-7) : map.get(grades[index]);
+        if (subjectName.equals("absence1") || subjectName.equals("absence2")) {
+            value = map.get(-9);
+        }
 
+        if (value == null) value = map.get(grades[index]);
 
         if (value == null || value.toString().equals("0")) {
             return " ";
@@ -382,6 +637,15 @@ public class ExcelExportController {
         if (subjectName.equals("behaviour1")) {
             BigDecimal first = map.get(-7);
             BigDecimal second = map.get(-8);
+            value = first != null && !first.equals(BigDecimal.ZERO) ?
+                    second != null && !second.equals(BigDecimal.ZERO) ? first.add(second).divide(new BigDecimal(2), RoundingMode.HALF_UP) : first
+                    :
+                    second != null && !second.equals(BigDecimal.ZERO) ? second : BigDecimal.ZERO;
+        }
+
+        if (subjectName.equals("absence1")) {
+            BigDecimal first = map.get(-9);
+            BigDecimal second = map.get(-10);
             value = first != null && !first.equals(BigDecimal.ZERO) ?
                     second != null && !second.equals(BigDecimal.ZERO) ? first.add(second).divide(new BigDecimal(2), RoundingMode.HALF_UP) : first
                     :
@@ -421,6 +685,8 @@ public class ExcelExportController {
             case "behaviour2":
                 return "ეთიკური ნორმა";
             case "absence":
+            case "absence1":
+            case "absence2":
                 return "გაცდენილი საათები";
             default:
                 return name;
