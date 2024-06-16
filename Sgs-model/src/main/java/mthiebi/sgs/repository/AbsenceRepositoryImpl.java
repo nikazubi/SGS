@@ -1,6 +1,7 @@
 package mthiebi.sgs.repository;
 
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import mthiebi.sgs.models.AbsenceGrade;
 import mthiebi.sgs.models.AbsenceGradeType;
@@ -12,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static mthiebi.sgs.repository.QueryUtils.True;
 
 @Repository
 public class AbsenceRepositoryImpl implements AbsenceRepositoryCustom {
@@ -37,6 +40,18 @@ public class AbsenceRepositoryImpl implements AbsenceRepositoryCustom {
     }
 
     @Override
+    public AbsenceGrade findAbsenceGradeByMonthAndYear(Long academyClassId, Long studentId, int year, int month) {
+        return qf.select(qAbsenceGrade)
+                .from(qAbsenceGrade)
+                .where(QueryUtils.longEq(qAbsenceGrade.academyClass.id, academyClassId)
+                        .and(QueryUtils.longEq(qAbsenceGrade.student.id, studentId))
+                        .and(qAbsenceGrade.subject.id.isNull())
+                        .and(qAbsenceGrade.exactMonth.year().eq(year).and(qAbsenceGrade.exactMonth.month().eq(month)))
+                )
+                .fetchOne();
+    }
+
+    @Override
     public AbsenceGrade findAbsenceGrade(Long academyClassId, Long studentId, int year, AbsenceGradeType gradeType) {
         return qf.select(qAbsenceGrade)
                 .from(qAbsenceGrade)
@@ -50,13 +65,14 @@ public class AbsenceRepositoryImpl implements AbsenceRepositoryCustom {
     }
 
     @Override
-    public List<AbsenceGrade> findAbsenceGrade(Long studentId, int startYear, int endYear, Date latest) {
+    public List<AbsenceGrade> findAbsenceGrade(Long studentId, int startYear, int endYear, Long month) {
+        BooleanExpression monthB = month == null ? True() : qAbsenceGrade.exactMonth.month().eq(month.intValue());
         return qf.select(qAbsenceGrade)
                 .from(qAbsenceGrade)
                 .where(QueryUtils.longEq(qAbsenceGrade.student.id, studentId)
                         .and(qAbsenceGrade.subject.id.isNull())
                         .and(qAbsenceGrade.exactMonth.year().eq(startYear).or(qAbsenceGrade.exactMonth.year().eq(endYear)))
-                        .and(qAbsenceGrade.createTime.before(latest))
+                        .and(monthB)
                 )
                 .fetch();
     }

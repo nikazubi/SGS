@@ -4,10 +4,8 @@ import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.models.*;
-import mthiebi.sgs.repository.AcademyClassRepository;
-import mthiebi.sgs.repository.GradeRepository;
-import mthiebi.sgs.repository.StudentRepository;
-import mthiebi.sgs.repository.SubjectRepository;
+import mthiebi.sgs.repository.*;
+import mthiebi.sgs.service.AbsenceService;
 import mthiebi.sgs.service.ClosedPeriodService;
 import mthiebi.sgs.service.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,12 @@ public class GradeServiceImpl implements GradeService {
     @Autowired
     private ClosedPeriodService closedPeriodService;
 
+    @Autowired
+    private AbsenceService absenceService;
+
+    @Autowired
+    private AbsenceRepository absenceRepository;
+
 
     @Override
     public Grade insertStudentGrade(Grade grade, String semester) {
@@ -54,6 +58,8 @@ public class GradeServiceImpl implements GradeService {
 
         Grade existing = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(academyClass.getId(),
                 subject == null ? null : subject.getId(), student.getId(), grade.getGradeType(), exactDate);
+
+//        addAbsenceGradeIfNecessary(grade, academyClass, student, calendar, existing);
 
         if (existing != null) {
             if (grade.getValue() == null) {
@@ -717,5 +723,25 @@ public class GradeServiceImpl implements GradeService {
             return BigDecimal.ZERO;
         }
         return sum.divide(new BigDecimal(count), 0, RoundingMode.HALF_UP);
+    }
+
+    private void addAbsenceGradeIfNecessary(Grade grade, AcademyClass academyClass, Student student, Calendar calendar, Grade existing) {
+        if (grade.getGradeType() == GradeType.GENERAL_ABSENCE_MONTHLY || grade.getGradeType() == GradeType.ABSENCE_DAILY) {
+            AbsenceGrade absenceGrade = absenceService.findAbsenceGrade(academyClass.getId(), student.getId(), calendar.getTime());
+            if (absenceGrade == null) {
+                AbsenceGradeType absenceGradeType = absenceService.getGradeType(calendar.getTime());
+                absenceService.addAbsenceGrade(student.getId(), academyClass.getId(), absenceGradeType, grade.getValue(), calendar.getTime());
+            } else {
+                BigDecimal total;
+                if (existing != null) {
+                    BigDecimal diff = existing.getValue().subtract(grade.getValue());
+                    total = absenceGrade.getValue().add(diff);
+                } else {
+                    total = absenceGrade.getValue().add(grade.getValue());
+                }
+                absenceGrade.setValue(total);
+                absenceRepository.save(absenceGrade);
+            }
+        }
     }
 }

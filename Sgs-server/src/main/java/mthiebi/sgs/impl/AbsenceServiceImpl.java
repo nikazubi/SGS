@@ -73,6 +73,16 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         AbsenceGrade absenceGrade = absenceRepository.findAbsenceGrade(academyClassId, studentId, calendar.get(Calendar.YEAR), gradeType);
         if (absenceGrade != null) {
+            if (value == null) {
+                AbsenceGrade toReturn = new AbsenceGrade();
+                toReturn.setGradeType(gradeType);
+                toReturn.setValue(value);
+                toReturn.setAcademyClass(academyClass);
+                toReturn.setStudent(student);
+                toReturn.setExactMonth(exactMonth);
+                absenceRepository.delete(absenceGrade);
+                return toReturn;
+            }
             absenceGrade.setValue(value);
             return absenceRepository.save(absenceGrade);
         }
@@ -84,5 +94,42 @@ public class AbsenceServiceImpl implements AbsenceService {
         toAdd.setStudent(student);
         toAdd.setExactMonth(exactMonth);
         return absenceRepository.save(toAdd);
+    }
+
+    @Override
+    public AbsenceGrade findAbsenceGrade(Long academyClassId, long studentId, Date time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(time);
+
+        return absenceRepository.findAbsenceGradeByMonthAndYear(academyClassId, studentId, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+    }
+
+    @Override
+    public AbsenceGradeType getGradeType(Date time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(time);
+        int month = calendar.get(Calendar.MONTH);
+        switch (month) {
+            case 0:
+                return AbsenceGradeType.JANUARY_FEBRUARY;
+            case 1:
+                return AbsenceGradeType.JANUARY_FEBRUARY;
+            case 2:
+                return AbsenceGradeType.MARCH;
+            case 3:
+                return AbsenceGradeType.APRIL;
+            case 4:
+                return AbsenceGradeType.MAY;
+            case 8:
+                return AbsenceGradeType.SEPTEMBER_OCTOBER;
+            case 9:
+                return AbsenceGradeType.SEPTEMBER_OCTOBER;
+            case 10:
+                return AbsenceGradeType.NOVEMBER;
+            case 11:
+                return AbsenceGradeType.DECEMBER;
+            default:
+                return AbsenceGradeType.JANUARY_FEBRUARY;
+        }
     }
 }

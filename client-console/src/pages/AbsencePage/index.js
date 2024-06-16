@@ -35,7 +35,41 @@ const AbsencePage = () => {
         () => chosenYear ? chosenMonth : yearData ? yearData[yearData.length - 1] : '2023-2024'
             [chosenYear, yearData]
     );
-    const {data: absenceGrades} = useAbsenceGrade({month: chosenMonth.key, yearRange: year});
+    const {data: absenceGrades} = useAbsenceGrade({yearRange: year});
+
+
+    const getGradeTypeByMonth = (month) => {
+        switch (month) {
+            case 0:
+                return "JANUARY_FEBRUARY";
+            case 1:
+                return "JANUARY_FEBRUARY";
+            case 2:
+                return "MARCH";
+            case 3:
+                return "APRIL";
+            case 4:
+                return "MAY";
+            case 8:
+                return "SEPTEMBER_OCTOBER";
+            case 9:
+                return "SEPTEMBER_OCTOBER";
+            case 10:
+                return "NOVEMBER";
+            case 11:
+                return "DECEMBER";
+            default:
+                return "";
+        }
+    }
+
+    const selectedMonthGrade = useMemo(
+        () => {
+            const type = getGradeTypeByMonth(chosenMonth.key)
+            return absenceGrades ? absenceGrades.filter(grade => grade.gradeType === type)[0] : null
+        }, [absenceGrades, chosenMonth, getGradeTypeByMonth]
+    )
+
     const sum = useMemo(
         () => absenceGrades ? absenceGrades.reduce((a, b) => {
             return a + Number(b.value)
@@ -43,12 +77,32 @@ const AbsencePage = () => {
         [absenceGrades]
     );
 
-    const subjectData = useMemo(
+    const getTranslation = (gradeType) => {
+        switch (gradeType) {
+            case "SEPTEMBER_OCTOBER":
+                return "სექტემბერი-ოქტომბერი";
+            case "NOVEMBER":
+                return "ნოემბერი";
+            case    "DECEMBER":
+                return "დეკემბერი";
+            case    "JANUARY_FEBRUARY":
+                return "იანვარი-თებერვალი";
+            case    "MARCH":
+                return "მარტი";
+            case    "APRIL":
+                return "აპრილი"
+            case    "MAY":
+                return "მაისი"
+        }
+        return ""
+    }
+
+    const monthData = useMemo(
         () => absenceGrades ?
             absenceGrades.map((val) => {
                 return {
                     value: val.value,
-                    name: val?.subject?.name
+                    name: getTranslation(val?.gradeType)
                 }
             })
             : []
@@ -125,15 +179,48 @@ const AbsencePage = () => {
                 </div>
 
             </div>
-            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum &&
+            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum && selectedMonthGrade && selectedMonthGrade.value &&
+
+                <div style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: '30px'
+                }}>
+                    <div style={{
+                        minWidth: "310px",
+                        maxWidth: "100px",
+                        height: 150,
+                        borderRadius: "0px 30px 30px 30px",
+                        backgroundColor: '#01619b',
+                        textAlign: 'center',
+                        fontSize: '20px',
+                        flexGrow: 1,
+                    }} key={'თვის ქულა'}>
+                        <div className="ethical__title">{getTranslation(selectedMonthGrade?.gradeType)}</div>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <div className="modified__title">{'თვის ქულა'}</div>
+                            <div className="grade__data__api ethical">{selectedMonthGrade?.value}</div>
+                        </div>
+
+                        {/*<FooterBox boxdetails={m.boxdetails}/>*/}
+                    </div>
+                </div>
+            }
+
+
+            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum && selectedMonthGrade && selectedMonthGrade.value &&
                 <div className="absenceMain">
                     <CustomBar color={'#01619b'} attend={sum} attendMax={totalAbsenceData[0]?.totalAcademyHour}
                                layout={'vertical'}
-                               data={[{name: 'გაცდენა', value: sum}]}/>
+                               data={[{name: 'გაცდენა', value: selectedMonthGrade.value}]}/>
                 </div>}
+
+
             {absenceGrades && <div className="absenceMain horizontal">
                 <CustomBar color={'#FF5722'} attendMax={sum} keyLabel={'value'} layout={'horizontal'}
-                           data={subjectData}/>
+                           data={monthData}/>
             </div>}
         </>
     );

@@ -11,9 +11,11 @@ public interface AbsenceRepositoryCustom {
 
     List<AbsenceGrade> findAbsenceGrade(Long academyClassId, Long studentId, int year, int endYear);
 
+    AbsenceGrade findAbsenceGradeByMonthAndYear(Long academyClassId, Long studentId, int year, int month);
+
     AbsenceGrade findAbsenceGrade(Long academyClassId, Long studentId, int year, AbsenceGradeType gradeType);
 
-    List<AbsenceGrade> findAbsenceGrade(Long studentId, int startYear, int endYear, Date latest);
+    List<AbsenceGrade> findAbsenceGrade(Long studentId, int startYear, int endYear, Long month);
 
     AbsenceGrade findAbsenceGrade(Long studentId, int month);
 

@@ -14,4 +14,8 @@ public interface AbsenceService {
     Map<Student, List<AbsenceGrade>> findAbsenceGrade(Long academyClassId, Long studentId, String yearRange);
 
     AbsenceGrade addAbsenceGrade(Long studentId, Long academyClassId, AbsenceGradeType gradeType, BigDecimal value, Date exactMonth);
+
+    AbsenceGrade findAbsenceGrade(Long academyClassId, long studentId, Date time);
+
+    AbsenceGradeType getGradeType(Date time);
 }
