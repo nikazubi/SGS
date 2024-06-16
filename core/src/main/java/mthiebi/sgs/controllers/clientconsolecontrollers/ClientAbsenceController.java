@@ -36,9 +36,10 @@ public class ClientAbsenceController {
 
     @GetMapping
     public List<AbsenceGradeDto> getAbsenceGrades(@RequestHeader("authorization") String authHeader,
-                                                  @RequestParam String yearRange) throws Exception {
+                                                  @RequestParam String yearRange,
+                                                  @RequestParam(required = false) Long month) throws Exception {
         String userName = utilsJwt.getUsernameFromHeader(authHeader);
-        return totalAbsenceService.findAbsenceGradeClosedPeriod(userName, yearRange)
+        return totalAbsenceService.findAbsenceGradeClosedPeriod(userName, yearRange, month)
                 .stream()
                 .map(absenceGrade -> absenceGradeMapper.absenceGradeDTO(absenceGrade))
                 .collect(Collectors.toList());

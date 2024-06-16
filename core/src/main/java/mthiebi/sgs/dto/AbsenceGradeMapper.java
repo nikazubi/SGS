@@ -15,6 +15,8 @@ public interface AbsenceGradeMapper {
     @Mapping(source = "gradeType", target = "gradeType", qualifiedByName = "stringGradeTypeToEnum")
     AbsenceGrade absenceGrade(AbsenceGradeDto gradeDTO);
 
+    @Mapping(target = "academyClass", ignore = true)
+
     AbsenceGradeDto absenceGradeDTO(AbsenceGrade grade);
 
     @Mapping(target = "academyClass", ignore = true)

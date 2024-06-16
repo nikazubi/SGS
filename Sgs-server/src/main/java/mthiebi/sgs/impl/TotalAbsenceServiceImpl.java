@@ -3,10 +3,7 @@ package mthiebi.sgs.impl;
 import mthiebi.sgs.ExceptionKeys;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.models.AbsenceGrade;
-import mthiebi.sgs.models.AcademyClass;
-import mthiebi.sgs.models.Student;
-import mthiebi.sgs.models.TotalAbsence;
+import mthiebi.sgs.models.*;
 import mthiebi.sgs.repository.AbsenceRepository;
 import mthiebi.sgs.repository.AcademyClassRepository;
 import mthiebi.sgs.repository.StudentRepository;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +40,7 @@ public class TotalAbsenceServiceImpl implements TotalAbsenceService {
 
 
     @Override
-    public List<AbsenceGrade> findAbsenceGradeClosedPeriod(String username, String yearRange) {
+    public List<AbsenceGrade> findAbsenceGradeClosedPeriod(String username, String yearRange, Long month) {
         Student student = studentRepository.findByUsername(username).orElseThrow();
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
 
@@ -52,9 +50,21 @@ public class TotalAbsenceServiceImpl implements TotalAbsenceService {
             startYear = Integer.parseInt(arr[0]);
             endYear = Integer.parseInt(arr[1]);
         }
-        Date latest = closedPeriodService.getLatestClosedPeriodBy(academyClass.getId());
-
-        return absenceRepository.findAbsenceGrade(student.getId(), startYear, endYear, latest);
+        List<AbsenceGrade> absenceGrades = absenceRepository.findAbsenceGrade(student.getId(), startYear, endYear, month);
+        if (month == null && absenceGrades.size() < 7) {
+            List<AbsenceGradeType> existing = absenceGrades.stream().map(AbsenceGrade::getGradeType).collect(Collectors.toList());
+            for (AbsenceGradeType absenceGradeType : AbsenceGradeType.values()) {
+                if (!existing.contains(absenceGradeType)) {
+                    AbsenceGrade absenceGrade = new AbsenceGrade();
+                    absenceGrade.setValue(BigDecimal.ZERO);
+                    absenceGrade.setStudent(student);
+                    absenceGrade.setAcademyClass(academyClass);
+                    absenceGrade.setGradeType(absenceGradeType);
+                    absenceGrades.add(absenceGrade);
+                }
+            }
+        }
+        return absenceGrades;
     }
 
     @Override

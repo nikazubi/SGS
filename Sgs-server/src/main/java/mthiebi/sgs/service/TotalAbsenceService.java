@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface TotalAbsenceService {
 
-    List<AbsenceGrade> findAbsenceGradeClosedPeriod(String username, String yearRange);
+    List<AbsenceGrade> findAbsenceGradeClosedPeriod(String username, String yearRange, Long month);
 
     List<TotalAbsence> filter(Long academyClass, Date activePeriod);
 
