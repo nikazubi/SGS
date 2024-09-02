@@ -1,9 +1,12 @@
 package mthiebi.sgs.models;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "SUBJECT")
+@NoArgsConstructor
 public class Subject extends Audit {
 
     @Id
@@ -13,8 +16,12 @@ public class Subject extends Audit {
     private String name;
 
     @Column(columnDefinition = "nvarchar(max)")
-
     private String teacher;
+
+    public Subject(String name) {
+        super();
+        this.name = name;
+    }
 
     public String getTeacher() {
         return teacher;

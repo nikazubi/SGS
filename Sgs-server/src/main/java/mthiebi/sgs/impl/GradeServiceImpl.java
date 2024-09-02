@@ -569,15 +569,40 @@ public class GradeServiceImpl implements GradeService {
                 }
             }
             if (existMap != null) {
-                Subject behaviourSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals("behaviour1")).findFirst().get();
-                Subject behaviourSubject2 = existMap.keySet().stream().filter(sub -> sub.getName().equals("behaviour2")).findFirst().get();
-                var finalMap = existMap.get(behaviourSubject);
-                finalMap.put(-8, existMap.get(behaviourSubject2).get(-7));
+                Subject behaviourSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals("behaviour1")).findFirst().orElse(new Subject("behaviour1"));
+                Subject behaviourSubject2 = existMap.keySet().stream().filter(sub -> sub.getName().equals("behaviour2")).findFirst().orElse(new Subject("behaviour2"));
 
-                Subject absenceSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals("absence1")).findFirst().get();
-                Subject absenceSubject2 = existMap.keySet().stream().filter(sub -> sub.getName().equals("absence2")).findFirst().get();
-                var finalMapAbsence = existMap.get(absenceSubject);
-                finalMapAbsence.put(-10, existMap.get(absenceSubject2).get(-9));
+                Map<Integer, BigDecimal> finalMap;
+                if (behaviourSubject.getId() != null) {
+                    finalMap = existMap.get(behaviourSubject);
+                } else {
+                    Map<Integer, BigDecimal> temp = new HashMap<>();
+                    temp.put(-7, BigDecimal.ZERO);
+                    finalMap = temp;
+                }
+
+                if (behaviourSubject2.getId() != null) {
+                    finalMap.put(-8, existMap.get(behaviourSubject2).get(-7));
+                }  else {
+                    finalMap.put(-8, BigDecimal.ZERO);
+                }
+
+                Subject absenceSubject = existMap.keySet().stream().filter(sub -> sub.getName().equals("absence1")).findFirst().orElse(new Subject("absence1"));
+                Subject absenceSubject2 = existMap.keySet().stream().filter(sub -> sub.getName().equals("absence2")).findFirst().orElse(new Subject("absence2"));
+                Map<Integer, BigDecimal> finalMapAbsence;
+                if (absenceSubject.getId() != null) {
+                    finalMapAbsence = existMap.get(absenceSubject);
+                } else {
+                    Map<Integer, BigDecimal> temp = new HashMap<>();
+                    temp.put(-9, BigDecimal.ZERO);
+                    finalMapAbsence = temp;
+                }
+
+                if (absenceSubject2.getId() != null) {
+                    finalMapAbsence.put(-10, existMap.get(absenceSubject2).get(-9));
+                }  else {
+                    finalMapAbsence.put(-10, BigDecimal.ZERO);
+                }
 
                 newMap.put(behaviourSubject, finalMap);
                 newMap.put(absenceSubject, finalMapAbsence);
