@@ -114,7 +114,7 @@ const TsliuriShefaseba = () => {
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{height: 150, textAlign: 'center', fontSize: 16}}>
+                <div>
                     {'საგანი'}
                 </div>
             ),
@@ -130,7 +130,7 @@ const TsliuriShefaseba = () => {
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{height: 150, textAlign: 'center', fontSize: 16}}>
+                <div>
                     {"სემესტრი I"}
                 </div>
             ),
@@ -147,7 +147,7 @@ const TsliuriShefaseba = () => {
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{height: 150, textAlign: 'center', fontSize: 16}}>
+                <div>
                     {"სემესტრი II"}
                 </div>
             ),
@@ -164,7 +164,7 @@ const TsliuriShefaseba = () => {
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{height: 150, textAlign: 'center', fontSize: 16}}>
+                <div>
                     {"წლიური ქულა"}
                 </div>
             ),
@@ -181,7 +181,7 @@ const TsliuriShefaseba = () => {
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{height: 150, textAlign: 'center', fontSize: 16}}>
+                <div>
                     {"გამოცდა"}
                 </div>
             ),
@@ -198,7 +198,7 @@ const TsliuriShefaseba = () => {
                 </div>);
             },
             renderHeader: (params) => (
-                <div style={{height: 150, textAlign: 'center', fontSize: 16}}>
+                <div>
                     {"საბოლოო ქულა"}
                 </div>
             ),

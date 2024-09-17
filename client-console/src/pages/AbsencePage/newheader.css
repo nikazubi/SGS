@@ -1,0 +1,30 @@
+.MuiDataGrid-columnHeaderTitle {
+    height: 100px; /* Adjust the height value as per your requirement */
+}
+
+.MuiDataGrid-columnHeaderTitleContainer {
+    height: 100px; /* Adjust the height value as per your requirement */
+}
+
+.MuiDataGrid-columnHeaders {
+    height: 100px; /* Adjust the height value as per your requirement */
+}
+
+.MuiDataGrid-columnHeader {
+    height: 100px; /* Adjust the height value as per your requirement */
+}
+
+div.MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor {
+    max-height: 100px !important;
+}
+
+.MuiDataGrid-columnHeader.MuiDataGrid-columnHeader--alignCenter.MuiDataGrid-withBorderColor.header-class {
+    height: 100px !important;
+    min-width: 85px !important;
+    max-width: 85px !important;
+}
+
+.cell-header.MuiDataGrid-cell--withRenderer.MuiDataGrid-cell.MuiDataGrid-cell--textCenter.MuiDataGrid-withBorderColor {
+    min-width: 85px !important;
+    max-width: 85px !important;
+}

@@ -6,6 +6,9 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import useTotalAbsence from "./useTotalAbsence";
 import useAbsenceGrade from "./useAbsenceGrades";
+import DataGridPaper from "../../components/datagrid/DataGridPaper";
+import DataGridSGS from "../../components/datagrid/DataGrid";
+import "./newheader.css"
 
 const AbsencePage = () => {
 
@@ -166,6 +169,14 @@ const AbsencePage = () => {
         },
         [yearData, chosenYear, handleChangeYear],
     );
+    const gradeColumns = monthData?.map((item, index) => ({
+        field: item.name,
+        headerName: item.name,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: ({row}) => row.monthData.filter((curr) => item.name === curr.name)[0].value
+
+    })) || [];
 
     return (
         <>
@@ -214,12 +225,26 @@ const AbsencePage = () => {
             }
 
 
-            {absenceGrades && absenceGrades.length > 0 && totalAbsenceData && sum && selectedMonthGrade &&
-                <div className="absenceMain">
-                    <CustomBar color={'#01619b'} attend={sum} attendMax={totalAbsenceData[0]?.totalAcademyHour}
-                               layout={'vertical'}
-                               data={[{name: 'გაცდენა', value: selectedMonthGrade.value}]}/>
-                </div>}
+            <div>
+                {/*<SemesterGradeToolbar filters={filters} setFilters={setFilters} checked={checked} setChecked={setChecked}/>*/}
+                <div style={{height: `30%`, width: '100%', marginTop: 30, paddingLeft: '10%', paddingRight: '10%'}}>
+                    <DataGridPaper>
+                        <DataGridSGS
+                            queryKey={"ABSENCE_GRADE"}
+                            // experimentalFeatures={{columnGrouping: true}}
+                            // columnGroupingModel={getGradeColumns()}
+                            columns={gradeColumns}
+                            rows={[{monthData: monthData}] || []}
+                            getRowId={(row) => {
+                                return 1;
+                            }}
+                            getRowHeight={() => 50}
+                            disableColumnMenu
+                            // filters={filters}
+                        />
+                    </DataGridPaper>
+                </div>
+            </div>
 
 
             {absenceGrades && <div className="absenceMain horizontal">

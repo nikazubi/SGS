@@ -10,7 +10,6 @@ import useFetchYear from "../semestruli-shefaseba/useYear";
 import useSubjects from "../Discipline/useSubjects";
 import DataGridPaper from "../../components/datagrid/DataGridPaper";
 import DataGridSGS from "../../components/datagrid/DataGrid";
-import "./header.css"
 
 const MonthlyGrade = () => {
 

@@ -1,6 +1,5 @@
 import React, {useCallback, useMemo, useState} from "react";
 
-import "./header.css"
 import useGradeSemester from "./useGradeSemester";
 import DataGridPaper from "../../components/datagrid/DataGridPaper";
 import DataGridSGS from "../../components/datagrid/DataGrid";
