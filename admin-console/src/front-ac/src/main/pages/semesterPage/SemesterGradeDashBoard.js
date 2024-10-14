@@ -175,25 +175,25 @@ const SemesterGradeDashBoard = () => {
                     headerAlign: 'center'
                 });
             }
-            monthFields.push({
-                headerName: 'შემოქმედებითობა (პროექტი)',
-                description: '',
-                renderCell: ({row}) => {
-                    const transformedArray = row.gradeList.map(item => ({
-                        subjectName: item.subject.name,
-                        value: item.value
-                    }));
-                    const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-2];
-
-                    return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
-                    // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
-                },
-                field: subject.id + "--2",
-                sortable: false,
-                editable: true,
-                align: 'center',
-                headerAlign: 'center'
-            });
+            // monthFields.push({
+            //     headerName: 'შემოქმედებითობა (პროექტი)',
+            //     description: '',
+            //     renderCell: ({row}) => {
+            //         const transformedArray = row.gradeList.map(item => ({
+            //             subjectName: item.subject.name,
+            //             value: item.value
+            //         }));
+            //         const monthValue = transformedArray.find(item => item.subjectName === subject.name)?.value[-2];
+            //
+            //         return <div>{monthValue === 0 || !monthValue ? '' : monthValue === -50 ? 'ჩთ' : checked ? Number(monthValue) + 3 : monthValue}</div>;
+            //         // return <div>{transformedArray.value[month.month] === 0 ? '' : transformedArray.value[month.month]}</div>;
+            //     },
+            //     field: subject.id + "--2",
+            //     sortable: false,
+            //     editable: true,
+            //     align: 'center',
+            //     headerAlign: 'center'
+            // });
             monthFields.push({
                 headerName: 'სემესტრული',
                 description: '',

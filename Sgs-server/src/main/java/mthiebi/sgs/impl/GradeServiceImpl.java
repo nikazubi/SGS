@@ -86,13 +86,14 @@ public class GradeServiceImpl implements GradeService {
             calendar.set(Calendar.MONTH, Calendar.DECEMBER);
         } else if (gradeType.equals(GradeType.DIAGNOSTICS_3) || gradeType.equals(GradeType.DIAGNOSTICS_4)) {
             calendar.set(Calendar.MONTH, Calendar.JUNE);
-        } else if (gradeType.equals(GradeType.SHEMOKMEDEBITOBA)) {
-            if (semester.equalsIgnoreCase("firstSemester")) {
-                calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-            } else if (semester.equalsIgnoreCase("secondSemester")) {
-                calendar.set(Calendar.MONTH, Calendar.JUNE);
-            }
         }
+//        } else if (gradeType.equals(GradeType.SHEMOKMEDEBITOBA)) {
+//            if (semester.equalsIgnoreCase("firstSemester")) {
+//                calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+//            } else if (semester.equalsIgnoreCase("secondSemester")) {
+//                calendar.set(Calendar.MONTH, Calendar.JUNE);
+//            }
+//        }
         return calendar.getTime();
     }
 

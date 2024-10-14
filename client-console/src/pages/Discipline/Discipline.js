@@ -88,7 +88,7 @@ const Discipline = ({match}) => {
             const completeMonthly = gradeData?.filter((grade) => grade.gradeType?.toString().includes("GENERAL_COMPLETE_MONTHLY"))
             return [
                 {
-                    name: 'შემაჯამებელი დავალება I - 50%',
+                    name: 'შემაჯამებელი დავალება I',
                     testNumber: null,
                     precent: null,
                     month: null,
@@ -114,15 +114,15 @@ const Discipline = ({match}) => {
                             label: 'თვე',
                             grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_SUMMARY_ASSIGMENT_MONTH")[0]?.value || "",
                         },
-                        {
-                            label: '%',
-                            grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_SUMMARY_ASSIGMENT_PERCENT")[0]?.value || "",
-                        },
+                        // {
+                        //     label: '%',
+                        //     grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_SUMMARY_ASSIGMENT_PERCENT")[0]?.value || "",
+                        // },
 
                     ]
                 },
                 {
-                    name: 'შემოქმედებითობა II - 30%',
+                    name: 'შემოქმედებითობა II',
                     testNumber: null,
                     precent: null,
                     month: null,
@@ -157,15 +157,15 @@ const Discipline = ({match}) => {
                             label: 'თვე',
                             grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_SCHOOL_WORK_MONTH")[0]?.value || "",
                         },
-                        {
-                            label: '%',
-                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_SCHOOL_WORK_PERCENT")[0]?.value || "",
-                        },
+                        // {
+                        //     label: '%',
+                        //     grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_SCHOOL_WORK_PERCENT")[0]?.value || "",
+                        // },
 
                     ]
                 },
                 {
-                    name: 'საშინაო დავალება III - 20%',
+                    name: 'მიმდინარე შეფასება III',
                     testNumber: null,
                     precent: null,
                     month: null,
@@ -195,10 +195,10 @@ const Discipline = ({match}) => {
                             label: 'თვე',
                             grade: generalHomeWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_HOMEWORK_MONTHLY")[0]?.value || "",
                         },
-                        {
-                            label: '%',
-                            grade: generalHomeWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_PERCENT")[0]?.value || "",
-                        },
+                        // {
+                        //     label: '%',
+                        //     grade: generalHomeWorkGrades?.filter((grade) => grade.gradeType.toString() === "GENERAL_HOMEWORK_WRITE_ASSIGMENT_PERCENT")[0]?.value || "",
+                        // },
 
                     ]
                 },
@@ -233,7 +233,7 @@ const Discipline = ({match}) => {
             const completeMonthly = gradeData?.filter((grade) => grade.gradeType?.toString().includes("TRANSIT_SCHOOL_COMPLETE_MONTHLY"))
             return [
                 {
-                    name: 'შემაჯამებელი დავალება I - 50%',
+                    name: 'შემაჯამებელი დავალება I',
                     testNumber: null,
                     precent: null,
                     month: null,
@@ -259,15 +259,15 @@ const Discipline = ({match}) => {
                             label: 'თვე',
                             grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_MONTH")[0]?.value || "",
                         },
-                        {
-                            label: '%',
-                            grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_PERCENT")[0]?.value || "",
-                        },
+                        // {
+                        //     label: '%',
+                        //     grade: generalSummaryAssignmentGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SUMMARY_ASSIGMENT_PERCENT")[0]?.value || "",
+                        // },
 
                     ]
                 },
                 {
-                    name: 'საკლასო სამუშაო II - 30%',
+                    name: 'საკლასო სამუშაო II',
                     testNumber: null,
                     precent: null,
                     month: null,
@@ -314,10 +314,10 @@ const Discipline = ({match}) => {
                             label: 'თვე',
                             grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_MONTH")[0]?.value || "",
                         },
-                        {
-                            label: '%',
-                            grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_MONTH_PERCENT")[0]?.value || "",
-                        },
+                        // {
+                        //     label: '%',
+                        //     grade: generalSchoolWorkGrades?.filter((grade) => grade.gradeType.toString() === "TRANSIT_SCHOOL_WORK_MONTH_PERCENT")[0]?.value || "",
+                        // },
 
                     ]
                 },
@@ -410,7 +410,7 @@ const Discipline = ({match}) => {
         return <></>
     }
 
-    return ( 
+    return (
       <Box sx={{ display: 'flex' }}>
         <Sidebar
           variant="permanent"
@@ -460,5 +460,5 @@ const Discipline = ({match}) => {
         </Box>
      );
 }
- 
+
 export default Discipline;

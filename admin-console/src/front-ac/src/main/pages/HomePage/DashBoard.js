@@ -111,24 +111,24 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
-        {
-            headerName: "50%",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_PERCENT");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value === 0 ? '' : summary2[0].value;
-            },
-            field: 'GENERAL_SUMMARY_ASSIGMENT_PERCENT',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 60,
-            maxWidth: 60,
-        },
+        // {
+        //     headerName: "50%",
+        //     renderCell: ({row}) => {
+        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SUMMARY_ASSIGMENT_PERCENT");
+        //         if (summary2.length === 0) {
+        //             return ""
+        //         }
+        //         return summary2[0].value === 0 ? '' : summary2[0].value;
+        //     },
+        //     field: 'GENERAL_SUMMARY_ASSIGMENT_PERCENT',
+        //     sortable: false,
+        //     align: 'center',
+        //     headerAlign: 'center',
+        //     editable: true,
+        //     type: "number",
+        //     width: 60,
+        //     maxWidth: 60,
+        // },
         {
             headerName: "1",
             renderCell: ({row}) => {
@@ -238,24 +238,24 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
-        {
-            headerName: "25%",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_PERCENT");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value === 0 ? '' : summary2[0].value;
-            },
-            field: 'GENERAL_SCHOOL_WORK_PERCENT',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 60,
-            maxWidth: 60,
-        },
+        // {
+        //     headerName: "25%",
+        //     renderCell: ({row}) => {
+        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_SCHOOL_WORK_PERCENT");
+        //         if (summary2.length === 0) {
+        //             return ""
+        //         }
+        //         return summary2[0].value === 0 ? '' : summary2[0].value;
+        //     },
+        //     field: 'GENERAL_SCHOOL_WORK_PERCENT',
+        //     sortable: false,
+        //     align: 'center',
+        //     headerAlign: 'center',
+        //     editable: true,
+        //     type: "number",
+        //     width: 60,
+        //     maxWidth: 60,
+        // },
         {
             headerName: "1",
             renderCell: ({row}) => {
@@ -346,24 +346,24 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
-        {
-            headerName: "25%",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_PERCENT");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value === 0 ? '' : summary2[0].value;
-            },
-            field: 'GENERAL_HOMEWORK_PERCENT',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 78,
-            maxWidth: 78,
-        },
+        // {
+        //     headerName: "25%",
+        //     renderCell: ({row}) => {
+        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "GENERAL_HOMEWORK_PERCENT");
+        //         if (summary2.length === 0) {
+        //             return ""
+        //         }
+        //         return summary2[0].value === 0 ? '' : summary2[0].value;
+        //     },
+        //     field: 'GENERAL_HOMEWORK_PERCENT',
+        //     sortable: false,
+        //     align: 'center',
+        //     headerAlign: 'center',
+        //     editable: true,
+        //     type: "number",
+        //     width: 78,
+        //     maxWidth: 78,
+        // },
         {
             headerName: "თვის ქულა",
             renderCell: ({row}) => {
@@ -488,24 +488,24 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
-        {
-            headerName: "%",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SUMMARY_ASSIGMENT_PERCENT");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'TRANSIT_SUMMARY_ASSIGMENT_PERCENT',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 60,
-            maxWidth: 60,
-        },
+        // {
+        //     headerName: "%",
+        //     renderCell: ({row}) => {
+        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SUMMARY_ASSIGMENT_PERCENT");
+        //         if (summary2.length === 0) {
+        //             return ""
+        //         }
+        //         return summary2[0].value;
+        //     },
+        //     field: 'TRANSIT_SUMMARY_ASSIGMENT_PERCENT',
+        //     sortable: false,
+        //     align: 'center',
+        //     headerAlign: 'center',
+        //     editable: true,
+        //     type: "number",
+        //     width: 60,
+        //     maxWidth: 60,
+        // },
         {
             headerName: "1",
             renderCell: ({row}) => {
@@ -668,24 +668,24 @@ const DashBoard = () => {
             width: 78,
             maxWidth: 78,
         },
-        {
-            headerName: "%",
-            renderCell: ({row}) => {
-                const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SCHOOL_WORK_MONTH_PERCENT");
-                if (summary2.length === 0) {
-                    return ""
-                }
-                return summary2[0].value;
-            },
-            field: 'TRANSIT_SCHOOL_WORK_MONTH_PERCENT',
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            editable: true,
-            type: "number",
-            width: 60,
-            maxWidth: 60,
-        },
+        // {
+        //     headerName: "%",
+        //     renderCell: ({row}) => {
+        //         const summary2 = row.grades?.filter(grade => grade.gradeType === "TRANSIT_SCHOOL_WORK_MONTH_PERCENT");
+        //         if (summary2.length === 0) {
+        //             return ""
+        //         }
+        //         return summary2[0].value;
+        //     },
+        //     field: 'TRANSIT_SCHOOL_WORK_MONTH_PERCENT',
+        //     sortable: false,
+        //     align: 'center',
+        //     headerAlign: 'center',
+        //     editable: true,
+        //     type: "number",
+        //     width: 60,
+        //     maxWidth: 60,
+        // },
         {
             headerName: "თვის ქულა",
             renderCell: ({row}) => {
@@ -815,7 +815,7 @@ const DashBoard = () => {
         },
         {
             groupId: 'classwork',
-            headerName: 'საშინაო დავალება III',
+            headerName: 'მიმდინარე შეფასება III',
             description: '',
             // renderHeaderGroup: (params) => (
             //     <HeaderWithIcon {...params} icon={<BuildIcon fontSize="small" />} />

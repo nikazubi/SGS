@@ -12,8 +12,8 @@ export const updateSemesterDiagnosticGrade = async grade => {
         gradeType = 'DIAGNOSTICS_1'
     } else if (gradeType.endsWith('--4')) {
         gradeType = 'DIAGNOSTICS_2'
-    } else if (gradeType.endsWith('--2')) {
-        gradeType = 'SHEMOKMEDEBITOBA'
+    // } else if (gradeType.endsWith('--2')) {
+    //     gradeType = 'SHEMOKMEDEBITOBA'
     } else if (gradeType.endsWith('--5')) {
         gradeType = 'DIAGNOSTICS_3'
     } else if (gradeType.endsWith('--6')) {

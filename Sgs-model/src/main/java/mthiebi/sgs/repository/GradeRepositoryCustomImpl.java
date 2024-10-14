@@ -132,8 +132,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1)
                                 .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2))
                                 .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_3))
-                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_4))
-                                .or(qGrade.gradeType.eq(GradeType.SHEMOKMEDEBITOBA)))
+                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_4)))
+//                                .or(qGrade.gradeType.eq(GradeType.SHEMOKMEDEBITOBA)))
                         .orderBy(qGrade.createTime.desc())
                         .fetch();
 
@@ -162,12 +162,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                     }
                 }
-                List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
-                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
-                if (!shemok.isEmpty()) {
-                    sum += shemok.get(0).getValue().longValue();
-                    count += 1;
-                }
+//                List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
+//                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
+//                if (!shemok.isEmpty()) {
+//                    sum += shemok.get(0).getValue().longValue();
+//                    count += 1;
+//                }
                 BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
 
                 BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), 0, RoundingMode.HALF_UP);
@@ -264,8 +264,8 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         .where(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_1)
                                 .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_2))
                                 .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_3))
-                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_4))
-                                .or(qGrade.gradeType.eq(GradeType.SHEMOKMEDEBITOBA)))
+                                .or(qGrade.gradeType.eq(GradeType.DIAGNOSTICS_4)))
+//                                .or(qGrade.gradeType.eq(GradeType.SHEMOKMEDEBITOBA)))
                         .orderBy(qGrade.createTime.desc())
                         .fetch();
                 BigDecimal diagnosticAverageSum;
@@ -293,12 +293,12 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
                         diagnosticAverage = diagnosticAverageSum.divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP);
                     }
                 }
-                List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
-                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
-                if (!shemok.isEmpty()) {
-                    sum += shemok.get(0).getValue().longValue();
-                    count += 1;
-                }
+//                List<Grade> shemok = diagnostics.stream().filter(v -> v.getGradeType().equals(GradeType.SHEMOKMEDEBITOBA)).collect(Collectors.toList());
+//                gradeByMonth.put(-2, shemok.isEmpty() ? BigDecimal.ZERO : shemok.get(0).getValue());
+//                if (!shemok.isEmpty()) {
+//                    sum += shemok.get(0).getValue().longValue();
+//                    count += 1;
+//                }
                 BigDecimal average = BigDecimal.ZERO.equals(BigDecimal.valueOf(sum)) ? BigDecimal.ZERO : BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(count), RoundingMode.HALF_UP);
 
                 BigDecimal finalAverage = diagnosticAverage.equals(BigDecimal.ZERO) ? average : diagnosticAverage.add(average).divide(BigDecimal.valueOf(2), 0, RoundingMode.HALF_UP);
