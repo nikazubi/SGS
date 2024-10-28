@@ -10,4 +10,6 @@ public interface SystemUserRepository extends JpaRepository<SystemUser, Long>,
         SystemUserRepositoryCustom, QuerydslPredicateExecutor<SystemUser> {
 
     SystemUser findSystemUserByUsername(String userName);
+
+    boolean existsSystemUserByUsername(String userName);
 }

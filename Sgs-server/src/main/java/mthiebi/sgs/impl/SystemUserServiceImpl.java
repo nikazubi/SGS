@@ -9,11 +9,11 @@ import mthiebi.sgs.service.SystemUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,12 +27,22 @@ public class SystemUserServiceImpl implements SystemUserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @Override
     public SystemUser createSystemUser(SystemUser systemUser) throws SGSException {
 //            encryptPassword(systemUser); todo
+        if (systemUser.getUsername().isEmpty() ||
+                systemUser.getName().isEmpty() ||
+                systemUser.getPassword().isEmpty()) {
+            logger.info("Need to fill all fields");
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_FIELDS_INVALID);
+        }
+        try {
             systemUserRepository.save(systemUser);
-            return systemUser;
+        } catch (DataIntegrityViolationException ex) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_USERNAME_TAKEN);
+        }
+        return systemUser;
     }
 
     private void encryptPassword(SystemUser systemUser) {
@@ -46,12 +56,11 @@ public class SystemUserServiceImpl implements SystemUserService {
         if (systemUserOptional.isPresent()) {
             SystemUser user = systemUserOptional.get();
             if (systemUser.getUsername().isEmpty() ||
-                    systemUser.getName().isEmpty() ||
-                    systemUser.getEmail().isEmpty() ) {
+                    systemUser.getName().isEmpty()) {
 
                 logger.info("Need to fill all fields");
                 throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_FIELDS_INVALID);
-            }  else if (systemUserRepository.findSystemUserByUsername(systemUser.getUsername()) != null && !systemUser.getUsername().equals(user.getUsername())) {
+            } else if (systemUserRepository.existsSystemUserByUsername(systemUser.getUsername())) {
                 logger.info("This username is already taken");
                 throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_USERNAME_NOT_UNIQUE);
             } else {

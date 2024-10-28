@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -224,6 +225,8 @@ public class GradeServiceImpl implements GradeService {
         Integer minYear = gradeRepository.getMinYear();
         Integer maxYear = gradeRepository.getMaxYear();
         List<String> result = new ArrayList<>();
+        if (minYear == null && maxYear == null)
+            return List.of(Year.now().toString().concat("-").concat(Year.now().plusYears(1).toString()));
         if (Objects.equals(minYear, maxYear)) return List.of(minYear + "-" + (minYear + 1));
         for (; minYear < maxYear; minYear++) {
             result.add(minYear + "-" + (minYear + 1));
@@ -288,7 +291,7 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
         Date latest = closedPeriodService.getLatestClosedPeriodBy(academyClass.getId());
         Calendar calendar = Calendar.getInstance();
-        if(year != null){
+        if (year != null) {
             calendar.set(Calendar.YEAR, year.intValue());
         }
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(academyClass.getId(),
@@ -584,7 +587,7 @@ public class GradeServiceImpl implements GradeService {
 
                 if (behaviourSubject2.getId() != null) {
                     finalMap.put(-8, existMap.get(behaviourSubject2).get(-7));
-                }  else {
+                } else {
                     finalMap.put(-8, BigDecimal.ZERO);
                 }
 
@@ -601,7 +604,7 @@ public class GradeServiceImpl implements GradeService {
 
                 if (absenceSubject2.getId() != null) {
                     finalMapAbsence.put(-10, existMap.get(absenceSubject2).get(-9));
-                }  else {
+                } else {
                     finalMapAbsence.put(-10, BigDecimal.ZERO);
                 }
 

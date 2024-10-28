@@ -47,6 +47,7 @@ const convertError = (error, includeStatus) => {
 
 const convertErrorToMessage = () => {
   return error => {
+    if (!error.message) return error;
     if (error.message.includes(" ")) return error.message
     const messageKey = `${error.message}`;
     // if (!!error.row) {
