@@ -131,7 +131,7 @@ export const FormikAutocomplete = ({
                 style: {height: "18px", fontSize: "13px"},
                 deleteIcon: <Cancel style={{transform: "scale(0.7)"}}/>
               } : {})}
-              {...getTagProps(index)}
+              {...getTagProps({index})}
               {...(focused ? {} : {onDelete: null})}
             />;
           })}

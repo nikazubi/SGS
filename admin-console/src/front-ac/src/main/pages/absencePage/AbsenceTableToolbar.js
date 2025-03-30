@@ -68,7 +68,7 @@ const AbsenceTableToolbar = ({setFilters, filters, setData, checked, setChecked}
                                                     label={"წელი"}
                                     // resolveData={resolveCardTypeAutocompleteData}
                                                     onFetch={onFetchYear}
-                                                    getOptionSelected={(option, value) => option.id === value.id}
+                                                    getOptionSelected={(option, value) => option === value}
                                                     getOptionLabel={(option) => option}
                                                     setInitialVulue={(options) => {
                                                         if (options.length === 1) {

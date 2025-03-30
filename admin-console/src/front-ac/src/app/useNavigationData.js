@@ -97,7 +97,7 @@ const useNavigationData = () => {
         collapsible: false
     },
     TOTAL_ABSENCE: {
-        id: 'TOTAL_ABSENCE',
+        id: 'TOTAL_ABSENCE_HOURS',
         name: 'ჯამური გაცდენები',
         component: <TotalAbsenceDashBoard/>,
         icon: <AssignmentLate/>,

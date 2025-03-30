@@ -60,9 +60,6 @@ public class SystemUserServiceImpl implements SystemUserService {
 
                 logger.info("Need to fill all fields");
                 throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_FIELDS_INVALID);
-            } else if (systemUserRepository.existsSystemUserByUsername(systemUser.getUsername())) {
-                logger.info("This username is already taken");
-                throw new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.SYSTEM_USER_USERNAME_NOT_UNIQUE);
             } else {
                 if (systemUser.getPassword() != null) {
 //                    encryptPassword(systemUser);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from './Modal';
+import {useNotification} from "../../contexts/notification-context";
 
 
 const ConfirmationModal = ({
@@ -15,6 +16,7 @@ const ConfirmationModal = ({
                              },
                            }) => {
   const [submitting, setSubmitting] = useState(false);
+    const { setNotification, setErrorMessage } = useNotification();
 
   const defaultFormSuccess = () => {
     return () => {
@@ -40,7 +42,7 @@ const ConfirmationModal = ({
         }
       },
       onError: (error) => {
-        // setErrorMessage(error);
+        setErrorMessage(error);
       },
       onSettled: () => {
         setSubmitting(false);
