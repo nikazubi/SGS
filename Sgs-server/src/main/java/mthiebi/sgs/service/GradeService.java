@@ -46,6 +46,8 @@ public interface GradeService {
                                String component,
                                Date closedPeriod) throws SGSException;
 
+    List<Grade> getTrimesterGradeOfSubject(Long classId, int trimesterNumber, Long subjectId, Long studentId) throws SGSException;
+
     List<String> getGradeYearGrouped();
 
     byte[] exportPdfMonthlyGrade(Long classId, Long studentId, Date month);

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { IconButton, Tab } from '@material-ui/core';
-import { Close as CloseIcon } from '@material-ui/icons';
+import React, {useState} from 'react';
+import {IconButton, Tab} from '@material-ui/core';
+import {Close as CloseIcon} from '@material-ui/icons';
 import TabContextMenu from './TabContextMenu';
-import { makeStyles } from '@material-ui/core/styles';
-import { theme } from "../../assets/theme";
+import {makeStyles} from '@material-ui/core/styles';
+import {theme} from "../../assets/theme";
 
 const useStyles = makeStyles({
   root: {
@@ -84,7 +84,7 @@ const initialState = {
 
 export const CustomTabComponent = ({ tab, value, onClose, onCloseAll, onCloseOthers, ...rest }) => {
   const [menuState, setMenuState] = useState(initialState);
-  const handleClose = tab.id === 'GRADES' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? null : onClose;
+    const handleClose = tab.id === 'TRIMESTER' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? null : onClose;
 
   const handleMenuOpen = (event) => {
     event.preventDefault();

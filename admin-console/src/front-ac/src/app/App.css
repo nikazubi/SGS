@@ -204,3 +204,7 @@ body {
 .HeaderTabNav .MuiBox-root-19{
     height: fit-content !important;
 }
+
+.makeStyles-simpleBar-1 {
+    width: 340px !important;
+}

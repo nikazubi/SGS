@@ -43,7 +43,7 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     public Grade insertStudentGrade(Grade grade, String semester) {
-        Date exactDate = grade.getExactMonth();
+        Date exactDate = grade.getExactMonth() != null ? grade.getExactMonth() : new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(exactDate);
         if (calendar.get(Calendar.MONTH) == Calendar.FEBRUARY) {
@@ -216,6 +216,19 @@ public class GradeServiceImpl implements GradeService {
                 break;
         }
         return gradeByStudent;
+    }
+
+    @Override
+    public List<Grade> getTrimesterGradeOfSubject(Long classId, int trimesterNumber, Long subjectId, Long studentId) throws SGSException {
+        List<Student> allStudentsInAcademyClass = studentRepository.findAllByAcademyClass(classId);
+        Subject currSubject = subjectId == null ? null : subjectRepository.findById(subjectId).orElse(null);
+        AcademyClass academyClass = academyClassRepository.findById(classId).orElse(null);
+        List<Grade> existingGrades = gradeRepository.findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(classId, subjectId, studentId, trimesterNumber);
+        if (studentId != null) {
+            Student student = studentRepository.findById(studentId).orElseThrow();
+            return fillWithEmptyGradeListOfGradeType(List.of(student), "TRIMESTER", academyClass, currSubject, existingGrades);
+        }
+        return fillWithEmptyGradeListOfGradeType(allStudentsInAcademyClass, "TRIMESTER", academyClass, currSubject, existingGrades);
     }
 
     @Override
