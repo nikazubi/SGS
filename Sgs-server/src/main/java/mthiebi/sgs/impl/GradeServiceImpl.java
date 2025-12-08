@@ -232,6 +232,16 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
+    public List<Grade> getTrimesterGradeOfSubject(String userName, int trimesterNumber, Long subjectId) throws SGSException {
+        Student student = studentRepository.findByUsername(userName).orElseThrow();
+        Subject currSubject = subjectId == null ? null : subjectRepository.findById(subjectId).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
+
+        List<Grade> existingGrades = gradeRepository.findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(academyClass.getId(), subjectId, student.getId(), trimesterNumber);
+        return fillWithEmptyGradeListOfGradeType(List.of(student), "TRIMESTER", academyClass, currSubject, existingGrades);
+    }
+
+    @Override
     public List<String> getGradeYearGrouped() {
         Integer minYear = gradeRepository.getMinYear();
         Integer maxYear = gradeRepository.getMaxYear();
@@ -300,7 +310,7 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
         Date latest = closedPeriodService.getLatestClosedPeriodBy(academyClass.getId());
         Calendar calendar = Calendar.getInstance();
-        if(year != null){
+        if (year != null) {
             calendar.set(Calendar.YEAR, year.intValue());
         }
         List<Grade> existingGrades = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndYear(academyClass.getId(),
@@ -596,7 +606,7 @@ public class GradeServiceImpl implements GradeService {
 
                 if (behaviourSubject2.getId() != null) {
                     finalMap.put(-8, existMap.get(behaviourSubject2).get(-7));
-                }  else {
+                } else {
                     finalMap.put(-8, BigDecimal.ZERO);
                 }
 
@@ -613,7 +623,7 @@ public class GradeServiceImpl implements GradeService {
 
                 if (absenceSubject2.getId() != null) {
                     finalMapAbsence.put(-10, existMap.get(absenceSubject2).get(-9));
-                }  else {
+                } else {
                     finalMapAbsence.put(-10, BigDecimal.ZERO);
                 }
 

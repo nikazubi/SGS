@@ -48,11 +48,10 @@ const FooterBox = ({testID, data, boxdetails}) => {
         }
 
     }
-
-    return ( 
+    return (
         // renderGrades()
         <div className="grades__footerCnt">
-        {boxdetails.map(m=><SmallBox boxdetails={m}/>)}
+            {boxdetails.map((m, index) => <SmallBox key={index} boxdetails={m}/>)}
         </div>
      );
 }

@@ -48,6 +48,8 @@ public interface GradeService {
 
     List<Grade> getTrimesterGradeOfSubject(Long classId, int trimesterNumber, Long subjectId, Long studentId) throws SGSException;
 
+    List<Grade> getTrimesterGradeOfSubject(String studentUsername, int trimesterNumber, Long subjectId) throws SGSException;
+
     List<String> getGradeYearGrouped();
 
     byte[] exportPdfMonthlyGrade(Long classId, Long studentId, Date month);
