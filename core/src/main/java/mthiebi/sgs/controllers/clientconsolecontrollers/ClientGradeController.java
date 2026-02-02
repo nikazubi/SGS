@@ -68,6 +68,18 @@ public class ClientGradeController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/get-trimester-for-student-by-subject")
+    public List<GradeDTO> getGradesBySubject(@RequestHeader("authorization") String authHeader,
+                                             @RequestParam Integer trimester,
+                                             @RequestParam(required = false) Long year) throws Exception {
+
+        String userName = utilsJwt.getUsernameFromHeader(authHeader);
+        return gradeService.getTrimesterGradeBySubject(userName, trimester)
+                .stream()
+                .map(grade -> gradeMapper.gradeDTOWithoutAcademyClass(grade))
+                .collect(Collectors.toList());
+    }
+
 
     @GetMapping("/get-grades-for-subject-monthly")
     public List<GradeDTO> getGradesForSubjectMonthly(@RequestHeader("authorization") String authHeader,

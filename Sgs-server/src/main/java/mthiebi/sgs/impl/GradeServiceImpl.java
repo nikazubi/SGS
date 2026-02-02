@@ -242,6 +242,28 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
+    public List<Grade> getTrimesterGradeBySubject(String userName, Integer trimester) throws SGSException {
+        Student student = studentRepository.findByUsername(userName).orElseThrow();
+        AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST, ExceptionKeys.ACADEMY_CLASS_NOT_FOUND));
+        List<Subject> subjectList = academyClass.getSubjectList();
+        List<Grade> existingGrades = gradeRepository.findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(academyClass.getId(), student.getId(), trimester);
+        Map<Long, Grade> gradesBySubjectId = existingGrades.stream()
+                .collect(Collectors.toMap(grade -> grade.getSubject().getId(), grade -> grade));
+
+        List<Grade> result = new ArrayList<>();
+        for (Subject subject : subjectList) {
+            if (gradesBySubjectId.containsKey(subject.getId())) {
+                result.add(gradesBySubjectId.get(subject.getId()));
+            } else {
+                Grade newGrade = new Grade();
+                newGrade.setSubject(subject);
+                result.add(newGrade);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<String> getGradeYearGrouped() {
         Integer minYear = gradeRepository.getMinYear();
         Integer maxYear = gradeRepository.getMaxYear();

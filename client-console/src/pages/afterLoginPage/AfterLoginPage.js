@@ -1,5 +1,6 @@
 import Box from "./Box";
 import useSubjects from "../Discipline/useSubjects";
+
 const AfterLoginPage = () => {
 
     const {data: subjectData, isLoading, isError, error, isSuccess} = useSubjects();
@@ -13,11 +14,12 @@ const AfterLoginPage = () => {
         <div className="boxCnt">
             <div className="boxWrap">
                 <div className="boxWrap__div">
-                    <Box text={'მოსწავლის შეფასება აკადემიური საგნობრივი დისციპლინის მიხედვით'} link={`/grades/${subjectData? subjectData[0].name: ''}`} />
+                    <Box text={'მოსწავლის ტრიმესტრული შეფასება აკადემიური დისციპლინების მიხედვით'}
+                         link={`/grades/${subjectData ? subjectData[0].name : ''}`}/>
                 </div>
 
                 <div className="boxWrap__div">
-                    <Box text={'მოსწავლის შეფასება თვის რეიტინგების მიხედვით'} link={'/tvis-reitingi'} />
+                    <Box text={'მოსწავლის შემაჯამებელი ტრიმესტრული შეფასება'} link={'/trimester'}/>
                 </div>
 
                 <div className="boxWrap__div">
@@ -25,11 +27,7 @@ const AfterLoginPage = () => {
                 </div>
 
                 <div className="boxWrap__div">
-                    <Box text={'მოსწავლის სემესტრული შეფასება'} link={'/semestruli-shefaseba'} />
-                </div>
-
-                <div className="boxWrap__div">
-                    <Box text={'მოსწავლის წლიური შეფასება'} link={'/tsliuri-shefaseba'} />
+                    <Box text={'მოსწავლის ტრიმესტრული და წლიური შეფასება'} link={'/annual'}/>
                 </div>
 
                 <div className="boxWrap__div">

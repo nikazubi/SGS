@@ -76,6 +76,23 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     }
 
     @Override
+    public List<Grade> findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(Long academyClassId,
+                                                                               Long studentId,
+                                                                               int identifier) {
+        Predicate academyClassIdPredicate = academyClassId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(academyClassId);
+        Predicate subjectIdPredicate = qGrade.subject.id.isNotNull();
+        Predicate studentIdPredicate = studentId != null ? qGrade.student.id.eq(studentId) : qGrade.student.id.isNotNull();
+        Predicate identifierPredicate = qGrade.identifier.eq(identifier);
+        return qf.selectFrom(qGrade)
+                .where(academyClassIdPredicate)
+                .where(subjectIdPredicate)
+                .where(studentIdPredicate)
+                .where(identifierPredicate)
+                .orderBy(qGrade.createTime.desc())
+                .fetch();
+    }
+
+    @Override
     public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
                                                                           Long subjectId,
                                                                           Long studentId,

@@ -279,7 +279,7 @@ const Discipline = ({match}) => {
 
                 <div className="ibCnt">
                     <div className="ib__center column">
-                        <div className="pageName">მოსწავლის შეფასება საგნობრივი დისციპლინების მიხედვით</div>
+                        <div className="pageName">მოსწავლის ტრიმესტრული შეფასება აკადემიური დისციპლინების მიხედვით</div>
                         <div className="pageName">{id}</div>
                     </div>
                     <div style={{display: "flex"}}>
