@@ -6,11 +6,12 @@ export const fetchMonthly = async (filters) => {
         return [];
     }
     const params = {
-        month: filters.month,
+        trimester: filters.trimester,
         year: filters.year
     }
+    console.log("AAAA")
 
-    const {data} = await axios.get("/client/grade/get-grades-for-month", {params});
+    const {data} = await axios.get("/client/grade/get-trimester-for-student-by-subject", {params});
     data.map((row, index) => {
         let copyRow = row;
         copyRow.index = index + 1;
@@ -19,7 +20,7 @@ export const fetchMonthly = async (filters) => {
     return data;
 }
 
-const useGradesForMonth = (filterData) => useQuery(["GRADES_MONTHLY", filterData],
+const useGradesForMonth = (filterData) => useQuery(["TRIMESTER_SUM", filterData],
     () => fetchMonthly(filterData));
 
 export default useGradesForMonth;

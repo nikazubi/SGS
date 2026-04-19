@@ -5,9 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import mthiebi.sgs.models.AcademyClass;
-import mthiebi.sgs.models.Student;
-import mthiebi.sgs.models.Subject;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -34,4 +31,6 @@ public class GradeDTO extends AuditDTO{
     private Date exactMonth;
 
     private String semester;
+
+    private Integer identifier;
 }

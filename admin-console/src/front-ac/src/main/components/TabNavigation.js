@@ -1,9 +1,9 @@
 import React from 'react';
-import { useTheme } from '@material-ui/core';
-import Tabs, { tabsClasses } from '@mui/material/Tabs';
-import { CustomTabComponent } from './CustomTab';
+import {useTheme} from '@material-ui/core';
+import Tabs, {tabsClasses} from '@mui/material/Tabs';
+import {CustomTabComponent} from './CustomTab';
 import AppBar from '@material-ui/core/AppBar';
-import { useNavigate } from '../../contexts/navigation-context';
+import {useNavigate} from '../../contexts/navigation-context';
 import UserBar from "./UserBar";
 
 const TabNavigation = () => {
@@ -15,7 +15,7 @@ const TabNavigation = () => {
   };
 
   const handleCloseAllTabs = () => {
-    setTabList(old => [...old.filter(page => page.id === 'GRADES' ||
+      setTabList(old => [...old.filter(page => page.id === 'TRIMESTER' ||
         page.id === 'BEHAVIOUR' || page.id === 'ABSENCE' || page.id === 'CHANGE_REQUEST')]);
     changeActiveTab('');
   };

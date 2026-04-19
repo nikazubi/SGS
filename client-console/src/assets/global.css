@@ -25,16 +25,25 @@ body{
 }
 
 .boxWrap{
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
     max-width: 1000px;
-    flex-wrap: wrap;
+    gap: 30px;
     margin: auto;
 }
 
 .boxWrap__div{
     overflow: hidden;
     border-radius: 29px;
+    grid-column: span 2;
+}
+
+.boxWrap__div:nth-child(4) {
+    grid-column: 2 / 4;
+}
+
+.boxWrap__div:nth-child(5) {
+    grid-column: 4 / 6;
 }
 
 .box{

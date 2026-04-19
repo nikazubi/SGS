@@ -58,6 +58,41 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
     }
 
     @Override
+    public List<Grade> findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(Long academyClassId,
+                                                                               Long subjectId,
+                                                                               Long studentId,
+                                                                               int identifier) {
+        Predicate academyClassIdPredicate = academyClassId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(academyClassId);
+        Predicate subjectIdPredicate = subjectId != null ? qGrade.subject.id.eq(subjectId) : qGrade.subject.id.isNull();
+        Predicate studentIdPredicate = studentId != null ? qGrade.student.id.eq(studentId) : qGrade.student.id.isNotNull();
+        Predicate identifierPredicate = qGrade.identifier.eq(identifier);
+        return qf.selectFrom(qGrade)
+                .where(academyClassIdPredicate)
+                .where(subjectIdPredicate)
+                .where(studentIdPredicate)
+                .where(identifierPredicate)
+                .orderBy(qGrade.createTime.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Grade> findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(Long academyClassId,
+                                                                               Long studentId,
+                                                                               int identifier) {
+        Predicate academyClassIdPredicate = academyClassId == null ? qGrade.academyClass.id.isNotNull() : qGrade.academyClass.id.eq(academyClassId);
+        Predicate subjectIdPredicate = qGrade.subject.id.isNotNull();
+        Predicate studentIdPredicate = studentId != null ? qGrade.student.id.eq(studentId) : qGrade.student.id.isNotNull();
+        Predicate identifierPredicate = qGrade.identifier.eq(identifier);
+        return qf.selectFrom(qGrade)
+                .where(academyClassIdPredicate)
+                .where(subjectIdPredicate)
+                .where(studentIdPredicate)
+                .where(identifierPredicate)
+                .orderBy(qGrade.createTime.desc())
+                .fetch();
+    }
+
+    @Override
     public List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
                                                                           Long subjectId,
                                                                           Long studentId,
@@ -196,13 +231,13 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         NumberExpression<Long> gradeValueCount = qGrade.value.count();
 
         BigDecimal sum = Optional.ofNullable(qf.select(gradeValueSum)
-                .from(qGrade)
-                .where(dateYearPredicate)
-                .where(dateMonthPredicate)
-                .where(academyClassIdPredicate)
-                .where(qGrade.gradeType.eq(GradeType.BEHAVIOUR_MONTHLY))
-                .where(qGrade.student.id.eq(id))
-                .fetchOne())
+                        .from(qGrade)
+                        .where(dateYearPredicate)
+                        .where(dateMonthPredicate)
+                        .where(academyClassIdPredicate)
+                        .where(qGrade.gradeType.eq(GradeType.BEHAVIOUR_MONTHLY))
+                        .where(qGrade.student.id.eq(id))
+                        .fetchOne())
                 .orElse(BigDecimal.ZERO);
         Long count = Optional.ofNullable(qf.select(gradeValueCount)
                         .from(qGrade)
@@ -333,7 +368,7 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         datePredicate = qGrade.exactMonth.month().eq(month + 1).and(qGrade.exactMonth.year().eq(calendar.get(Calendar.YEAR)));
 
         Predicate gradeTypePredicate = qGrade.gradeType.eq(academyClass.getIsTransit() ? GradeType.TRANSIT_SCHOOL_COMPLETE_MONTHLY : GradeType.GENERAL_COMPLETE_MONTHLY);
-        List<Grade> gradeList =  qf.selectFrom(qGrade)
+        List<Grade> gradeList = qf.selectFrom(qGrade)
                 .where(datePredicate)
                 .where(academyClassIdPredicate)
                 .where(gradeTypePredicate)
@@ -411,10 +446,10 @@ public class GradeRepositoryCustomImpl implements mthiebi.sgs.repository.GradeRe
         return qf.select(qGrade)
                 .from(qGrade)
                 .where(QueryUtils.longEq(qGrade.academyClass.id, academyClassId)
-                                .and(QueryUtils.longEq(qGrade.student.id, studentId))
-                                .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
-                                        .and(qGrade.exactMonth.month().eq(month + 1)))
-                                .and(qGrade.exactMonth.year().eq(year))
+                        .and(QueryUtils.longEq(qGrade.student.id, studentId))
+                        .and(QueryUtils.longEq(qGrade.subject.id, subjectId)
+                                .and(qGrade.exactMonth.month().eq(month + 1)))
+                        .and(qGrade.exactMonth.year().eq(year))
                         .and(qGrade.createTime.before(latest))
                 )
                 .orderBy(qGrade.exactMonth.desc())
