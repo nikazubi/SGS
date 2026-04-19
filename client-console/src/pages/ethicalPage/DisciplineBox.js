@@ -48,7 +48,7 @@ const DisciplineBox = ({data}) => {
                 (
                     <div style={{
                         minWidth: "310px",
-                        maxWidth: m.name === 'თვის ქულა' ? "100px" : "100%",
+                        maxWidth: m.name === 'თვის ქულა' || m.name === 'ფინალური ქულა' || m.name === 'პროგრეს ტესტი' || m.name === 'ტრიმესტრის შეფასება' || m.name === 'საწყისი ცოდნის განმსაზღვრელი ტესტი' ? "100px" : "100%",
                         height: m.month || m.absence ? 150 : 200,
                         // maxHeight: m.month === "თვის ქულა" || m.month === "გაცდენილი საათები"? 100: 200,
                         borderRadius: "0px 30px 30px 30px",

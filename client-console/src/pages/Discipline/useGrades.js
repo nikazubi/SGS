@@ -2,16 +2,16 @@ import {useQuery} from "react-query";
 import axios from "../utils/axios";
 
 export const fetchGrades = async (filters) => {
-    if (! filters.subject || !filters.year) {
+    if (!filters.subject || !filters.year) {
         return [];
     }
     const params = {
         subjectId: filters.subject.id,
-        month: filters.month,
+        trimester: filters.trimester.key,
         year: filters.year,
 
     }
-    const {data} = await axios.get("/client/grade/get-grades-for-student", {params});
+    const {data} = await axios.get("/client/grade/get-trimester-for-student", {params});
     return data;
 }
 

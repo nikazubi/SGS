@@ -121,9 +121,11 @@ const TsliuriShefaseba = () => {
             field: 'name',
             align: 'center',
             headerAlign: 'center',
+            width: 150,
+            maxWidth: 150,
         },
         {
-            headerName: "სემესტრი I",
+            headerName: "ტრიმესტრი I",
             renderCell: ({row}) => {
                 return (<div>
                     {row.value["1"] === 0 ? "" : row.value["1"]}
@@ -131,16 +133,18 @@ const TsliuriShefaseba = () => {
             },
             renderHeader: (params) => (
                 <div>
-                    {"სემესტრი I"}
+                    {"ტრიმესტრი I"}
                 </div>
             ),
             field: 'semester1',
             // sortable: false,
             align: 'center',
             headerAlign: 'center',
+            width: 150,
+            maxWidth: 150,
         },
         {
-            headerName: "სემესტრი II",
+            headerName: "ტრიმესტრი II",
             renderCell: ({row}) => {
                 return (<div>
                     {row.value["2"] === 0 ? "" : row.value["2"]}
@@ -148,16 +152,35 @@ const TsliuriShefaseba = () => {
             },
             renderHeader: (params) => (
                 <div>
-                    {"სემესტრი II"}
+                    {"ტრიმესტრი II"}
                 </div>
             ),
             field: 'semester2',
             // sortable: false,
             align: 'center',
             headerAlign: 'center',
+            width: 150,
+            maxWidth: 150,
         },
         {
-            headerName: "წლიური ქულა",
+            headerName: "ტრიმესტრი III",
+            renderCell: ({row}) => {
+                return (<div>
+                    {row.value["2"] === 0 ? "" : row.value["2"]}
+                </div>);
+            },
+            renderHeader: (params) => (
+                <div>
+                    {"ტრიმესტრი III"}
+                </div>
+            ),
+            field: 'semester3',
+            // sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            headerName: "წლიური აკადემიური შეფასება",
             renderCell: ({row}) => {
                 return (<div>
                     {customRound((Number(row.value["1"]) + Number(row.value["2"])) / 2)}
@@ -165,7 +188,7 @@ const TsliuriShefaseba = () => {
             },
             renderHeader: (params) => (
                 <div>
-                    {"წლიური ქულა"}
+                    {"წლიური აკადემიური შეფასება"}
                 </div>
             ),
             field: 'yearly',
@@ -174,7 +197,7 @@ const TsliuriShefaseba = () => {
             headerAlign: 'center',
         },
         {
-            headerName: "გამოცდა",
+            headerName: "ფინალური გამოცდა",
             renderCell: ({row}) => {
                 return (<div>
                     {row.value["3"] === 0 ? "" : row.value["3"]}
@@ -182,7 +205,7 @@ const TsliuriShefaseba = () => {
             },
             renderHeader: (params) => (
                 <div>
-                    {"გამოცდა"}
+                    {"ფინალური გამოცდა"}
                 </div>
             ),
             field: 'exam',
@@ -191,7 +214,7 @@ const TsliuriShefaseba = () => {
             headerAlign: 'center',
         },
         {
-            headerName: "საბოლოო ქულა",
+            headerName: "საბოლოო აკადემიური შეფასება",
             renderCell: ({row}) => {
                 return (<div>
                     {row.value["4"] === 0 ? "" : row.value["4"]}
@@ -199,10 +222,27 @@ const TsliuriShefaseba = () => {
             },
             renderHeader: (params) => (
                 <div>
-                    {"საბოლოო ქულა"}
+                    {"საბოლოო აკადემიური შეფასება"}
                 </div>
             ),
             field: 'final',
+            // sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            headerName: "აკადემიური პროექტის შეფასება",
+            renderCell: ({row}) => {
+                return (<div>
+                    {row.value["4"] === 0 ? "" : row.value["4"]}
+                </div>);
+            },
+            renderHeader: (params) => (
+                <div>
+                    {"აკადემიური პროექტის შეფასება"}
+                </div>
+            ),
+            field: 'final2',
             // sortable: false,
             align: 'center',
             headerAlign: 'center',
@@ -218,7 +258,7 @@ const TsliuriShefaseba = () => {
     return (
         <>
             <div className="ib__center column">
-                <div className="pageName">მოსწავლის წლიური შეფასება</div>
+                <div className="pageName">მოსწავლის ტრიმესტრული და წლიური შეფასება</div>
                 <div style={{display: 'flex', alignItems: 'center', marginTop: '25px'}}>
                     {getYearDropdown()}
                     <div style={{marginLeft: '10px'}}>

@@ -1,7 +1,7 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import useNavigationData from "../app/useNavigationData";
-import { useHistory, useLocation } from "react-router-dom";
-import { createAndDispatchEventOfType, FILTER_REMOVAL } from "../utils/events";
+import {useHistory, useLocation} from "react-router-dom";
+import {createAndDispatchEventOfType, FILTER_REMOVAL} from "../utils/events";
 
 const NavigationContext = createContext(null);
 
@@ -42,7 +42,7 @@ export const NavigationProvider = (props) => {
     return result;
   }, [pageArray]);
 
-  const [tabList, setTabList] = useState([...pages.filter(page => page.id === 'GRADES' ||
+    const [tabList, setTabList] = useState([...pages.filter(page => page.id === 'TRIMESTER' ||
       page.id === 'BEHAVIOUR' || page.id === 'ABSENCE' || page.id === 'CHANGE_REQUEST'  && page.show )]);
 
   const setDocumentTitle = useCallback((pageId) => {
@@ -58,7 +58,7 @@ export const NavigationProvider = (props) => {
         || pathname.includes(`${page.id}/`))
     );
     if (pathname === '/') {
-      page = pages.find(page => page.id === "GRADES")
+        page = pages.find(page => page.id === "TRIMESTER")
     }
     if (!!page) {
       setTabList(prevState => {

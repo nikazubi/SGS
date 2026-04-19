@@ -37,6 +37,7 @@ public class Grade extends Audit{
 
     private Date exactMonth;
 
+    private Integer identifier; // TODO will need to index this also could be used for anything with prefix _1, _2
 
     public void setId(Long id) {
         this.id = id;
@@ -92,5 +93,13 @@ public class Grade extends Audit{
 
     public void setExactMonth(Date exactMonth) {
         this.exactMonth = exactMonth;
+    }
+
+    public Integer getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(Integer identifier) {
+        this.identifier = identifier;
     }
 }

@@ -5,7 +5,6 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import Discipline from './pages/Discipline/Discipline';
 import EthicPage from './pages/ethicalPage';
 import AbsencePage from './pages/AbsencePage';
-import SemesterPage from './pages/semestruli-shefaseba';
 import TsliuriShefaseba from './pages/TsliuriShefaseba';
 import MonthlyGrade from './pages/MonthlyGrade';
 import LoginPage from "./pages/loginPage/LoginForm";
@@ -27,13 +26,13 @@ export const App = () => {
                         <Header/>
                         <Switch>
                             <Route exact path="/" component={AfterLoginPage}/>
-                            <Route path="/semestruli-shefaseba" component={SemesterPage}/>
+                            {/*<Route path="/semestruli-shefaseba" component={SemesterPage}/>*/}
                             <Route path="/ethicalPage" component={EthicPage}/>
                             <Route path="/absence-page" component={AbsencePage}/>
                             {/* <Route exact path="/shefaseba-akademiuri-sagnobrivi-disciplinis-mixedvit" component={Discipline}/> */}
                             <Route path="/grades/:id" component={Discipline}/>
-                            <Route path="/tsliuri-shefaseba" component={TsliuriShefaseba}/>
-                            <Route path="/tvis-reitingi" component={MonthlyGrade}/>
+                            <Route path="/annual" component={TsliuriShefaseba}/>
+                            <Route path="/trimester" component={MonthlyGrade}/>
                         </Switch>
                     </BrowserRouter>
                     :

@@ -8,7 +8,6 @@ import "simplebar/src/simplebar.css";
 import useNavigationData from "../../../app/useNavigationData";
 import {useSidebarContext} from "../../../contexts/sidebar-context";
 import {makeStyles} from "@material-ui/core/styles";
-import {AzRyLogo} from "../../../assets/images";
 import FlexBox from "../../../components/FlexBox";
 import {useInitialDataContext} from "../../../contexts/initial-data-context";
 
@@ -59,7 +58,7 @@ const Sidebar = () => {
     <S.Sidebar
       variant="permanent"
       open={isSidebarExpanded}
-      sidebarwidth={300}
+      sidebarwidth={340}
     >
       <div style={{width: "auto"}}>
         <SidebarTopbar

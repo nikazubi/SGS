@@ -140,6 +140,27 @@ public class GradeController {
         return list;
     }
 
+    @GetMapping("/get-grades-by-trimester")
+    @Secured({AuthConstants.MANAGE_GRADES}) //todo
+    public List<GradeWrapperDto> getGradesByTrimester(@RequestParam Long classId,
+                                                      @RequestParam int trimester,
+                                                      @RequestParam Long subjectId,
+                                                      @RequestParam(required = false) Long studentId) throws SGSException {
+
+        return gradeService.getTrimesterGradeOfSubject(classId, trimester, subjectId, studentId)
+                .stream()
+                .map(gradeMapper::gradeDTO)
+                .collect(Collectors.groupingBy(GradeDTO::getStudent))
+                .entrySet().stream()
+                .map(k -> GradeWrapperByStudent.builder()
+                        .student(k.getKey())
+                        .grades(k.getValue())
+                        .build())
+                .sorted(Comparator.comparing(gradeWrapper -> (gradeWrapper.getStudent().getLastName() + " "
+                        + gradeWrapper.getStudent().getLastName())))
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/get-grades-years-grouped")
     @Secured({AuthConstants.MANAGE_GRADES}) //todo
     public List<String> getGradeYear() throws SGSException {

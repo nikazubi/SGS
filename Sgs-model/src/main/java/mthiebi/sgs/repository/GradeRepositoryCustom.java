@@ -18,6 +18,15 @@ public interface GradeRepositoryCustom {
                                                                    Long studentId,
                                                                    Date createTim);
 
+    List<Grade> findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(Long academyClassId,
+                                                                        Long subjectId,
+                                                                        Long studentId,
+                                                                        int identifier);
+
+    List<Grade> findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(Long academyClassId,
+                                                                        Long studentId,
+                                                                        int identifier);
+
     List<Grade> findGradeByAcademyClassIdAndSubjectIdAndCreateTime(Long academyClassId,
                                                                    Long subjectId,
                                                                    Long studentId,
