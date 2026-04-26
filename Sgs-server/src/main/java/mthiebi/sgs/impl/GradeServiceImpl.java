@@ -56,9 +56,21 @@ public class GradeServiceImpl implements GradeService {
         AcademyClass academyClass = academyClassRepository.getAcademyClassByStudent(student.getId()).orElseThrow();
         Subject subject = grade.getSubject() == null ? null : subjectRepository.findById(grade.getSubject().getId()).orElseThrow();
 
-
-        Grade existing = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(academyClass.getId(),
-                subject == null ? null : subject.getId(), student.getId(), grade.getGradeType(), exactDate);
+        boolean isTrimester = grade.getGradeType() != null && grade.getGradeType().toString().startsWith("TRIMESTER");
+        Grade existing;
+        if (isTrimester && grade.getIdentifier() != null) {
+            existing = gradeRepository.findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(
+                            academyClass.getId(),
+                            subject == null ? null : subject.getId(),
+                            student.getId(),
+                            grade.getIdentifier()).stream()
+                    .filter(g -> g.getGradeType() == grade.getGradeType())
+                    .findFirst()
+                    .orElse(null);
+        } else {
+            existing = gradeRepository.findGradeByAcademyClassIdAndSubjectIdAndGradeTypeAndExactMonth(academyClass.getId(),
+                    subject == null ? null : subject.getId(), student.getId(), grade.getGradeType(), exactDate);
+        }
 
 //        addAbsenceGradeIfNecessary(grade, academyClass, student, calendar, existing);
 
@@ -68,6 +80,9 @@ public class GradeServiceImpl implements GradeService {
                 return new Grade();
             }
             existing.setValue(grade.getValue());
+            if (grade.getIdentifier() != null) {
+                existing.setIdentifier(grade.getIdentifier());
+            }
             gradeRepository.save(existing);
             return existing;
         }
@@ -250,7 +265,12 @@ public class GradeServiceImpl implements GradeService {
         List<Subject> subjectList = academyClass.getSubjectList();
         List<Grade> existingGrades = gradeRepository.findGradeByClassIdAndSubjectIdAndStudentIdAndIdentifier(academyClass.getId(), student.getId(), trimester);
         Map<Long, Grade> gradesBySubjectId = existingGrades.stream()
-                .collect(Collectors.toMap(grade -> grade.getSubject().getId(), grade -> grade));
+                .filter(grade -> grade.getGradeType() == GradeType.TRIMESTER_GRADE)
+                .filter(grade -> grade.getSubject() != null && grade.getSubject().getId() != null)
+                .collect(Collectors.toMap(
+                        grade -> grade.getSubject().getId(),
+                        grade -> grade,
+                        (a, b) -> a.getCreateTime() != null && b.getCreateTime() != null && a.getCreateTime().after(b.getCreateTime()) ? a : b));
 
         List<Grade> result = new ArrayList<>();
         for (Subject subject : subjectList) {

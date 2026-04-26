@@ -124,8 +124,16 @@ const MonthlyGrade = () => {
                     </div>
                 </div>
             </div>
-            <div style={{display: 'flex'}}>
-                <div style={{height: `65vh`, width: '30%', marginTop: 30, paddingLeft: 40, paddingRight: 40}}>
+            <div style={{display: 'flex', width: '100%'}}>
+                <div style={{
+                    height: `65vh`,
+                    width: '30%',
+                    flexShrink: 0,
+                    marginTop: 30,
+                    paddingLeft: 40,
+                    paddingRight: 40,
+                    boxSizing: 'border-box'
+                }}>
 
                 <DataGridPaper>
                     <DataGridSGS
@@ -154,9 +162,9 @@ const MonthlyGrade = () => {
                 </DataGridPaper>
             </div>
                 {parsedMonthlyData && parsedMonthlyData.length > 0 &&
-                    <div style={{marginTop: 10}}>
+                    <div style={{marginTop: 10, flex: 1, minWidth: 0, paddingRight: 20}}>
                         <CustomShefasebaBar color={'#45c1a4'} data={parsedMonthlyData} height={window.innerHeight - 250}
-                                            width={window.innerWidth - 460} left={5}/>
+                                            left={5}/>
             </div>}
             </div>
         </>
