@@ -1,10 +1,10 @@
 package mthiebi.sgs.controllers.clientconsolecontrollers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.dto.SubjectDTO;
 import mthiebi.sgs.dto.SubjectMapper;
 import mthiebi.sgs.service.SubjectService;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,16 +15,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/client/subjects")
+@RequiredArgsConstructor
 public class ClientSubjectController {
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
-    @Autowired
-    private SubjectMapper subjectMapper;
+    private final SubjectMapper subjectMapper;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
     @GetMapping("/get-subjects-for-student")
     public List<SubjectDTO> getSubjects(@RequestHeader("authorization") String authHeader) throws Exception {

@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.AcademyClassDTO;
@@ -10,7 +11,6 @@ import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.service.ClosedPeriodService;
 import mthiebi.sgs.utils.AuthConstants;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,19 +21,16 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/close-period")
+@RequiredArgsConstructor
 public class ClosedPeriodController {
 
-    @Autowired
-    private ClosedPeriodService closedPeriodService;
+    private final ClosedPeriodService closedPeriodService;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
-    @Autowired
-    private AcademyClassService academyClassService;
+    private final AcademyClassService academyClassService;
 
-    @Autowired
-    private AcademyClassMapper academyClassMapper;
+    private final AcademyClassMapper academyClassMapper;
 
     //todo: create DTO
     @GetMapping("/get-period-by-class")

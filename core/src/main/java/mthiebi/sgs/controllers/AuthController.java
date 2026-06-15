@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import mthiebi.sgs.models.Student;
 import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.utils.UtilsJwt;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,20 +26,16 @@ import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    UserDetailsService userDetailsService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private StudentRepository studentRepository;
+    private final UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    private StudentMapper studentMapper;
+    private final StudentMapper studentMapper;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
     @PostMapping("/authenticate")
     public JwtResponse authenticate(@RequestBody JwtRequest jwtRequest) throws SGSException {

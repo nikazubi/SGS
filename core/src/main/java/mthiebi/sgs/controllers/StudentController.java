@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.StudentDTO;
@@ -7,7 +8,6 @@ import mthiebi.sgs.models.Student;
 import mthiebi.sgs.service.StudentService;
 import mthiebi.sgs.utils.AuthConstants;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +16,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/students")
+@RequiredArgsConstructor
 public class StudentController {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
 
-    @Autowired
-    private StudentMapper studentMapper;
+    private final StudentMapper studentMapper;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
     @PostMapping("/create-student")
     @Secured({AuthConstants.MANAGE_STUDENT})

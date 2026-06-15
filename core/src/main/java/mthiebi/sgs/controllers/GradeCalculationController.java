@@ -1,8 +1,8 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.service.GradeCalculationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,10 +12,10 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/calculate-grade")
+@RequiredArgsConstructor
 public class GradeCalculationController {
 
-    @Autowired
-    private GradeCalculationService gradeCalculationService;
+    private final GradeCalculationService gradeCalculationService;
 
     @GetMapping("/grades-monthly")
     public void calculateGradeMonthly(@RequestParam long academyClassId,

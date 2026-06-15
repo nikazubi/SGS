@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers.clientconsolecontrollers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.dto.AbsenceGradeDto;
 import mthiebi.sgs.dto.AbsenceGradeMapper;
@@ -7,7 +8,6 @@ import mthiebi.sgs.dto.TotalAbsenceMapper;
 import mthiebi.sgs.service.AbsenceService;
 import mthiebi.sgs.service.TotalAbsenceService;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
@@ -16,22 +16,18 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/client/absence")
+@RequiredArgsConstructor
 public class ClientAbsenceController {
 
-    @Autowired
-    private TotalAbsenceService totalAbsenceService;
+    private final TotalAbsenceService totalAbsenceService;
 
-    @Autowired
-    private TotalAbsenceMapper totalAbsenceMapper;
+    private final TotalAbsenceMapper totalAbsenceMapper;
 
-    @Autowired
-    private AbsenceGradeMapper absenceGradeMapper;
+    private final AbsenceGradeMapper absenceGradeMapper;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
-    @Autowired
-    private AbsenceService absenceService;
+    private final AbsenceService absenceService;
 
 
     @GetMapping

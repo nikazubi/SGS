@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import mthiebi.sgs.ExceptionKeys;
@@ -14,7 +15,6 @@ import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.service.SystemGroupService;
 import mthiebi.sgs.service.SystemUserService;
 import mthiebi.sgs.utils.AuthConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -26,19 +26,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/system-user")
 @Slf4j
+@RequiredArgsConstructor
 public class SystemUserController {
 
-    @Autowired
-    private SystemUserService systemUserService;
+    private final SystemUserService systemUserService;
 
-    @Autowired
-    private SystemUserMapper systemUserMapper;
+    private final SystemUserMapper systemUserMapper;
 
-    @Autowired
-    private SystemGroupService systemGroupService;
+    private final SystemGroupService systemGroupService;
 
-    @Autowired
-    private AcademyClassService academyClassService;
+    private final AcademyClassService academyClassService;
 
     @PostMapping("/add-User")
     @Secured({AuthConstants.MANAGE_SYSTEM_USER})

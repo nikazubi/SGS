@@ -1,4 +1,5 @@
 package mthiebi.sgs.configuration.security;
+import lombok.RequiredArgsConstructor;
 
 
 import mthiebi.sgs.components.UserDetailImplStudent;
@@ -7,7 +8,6 @@ import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.repository.SystemUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,13 +16,12 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Autowired
-	private SystemUserRepository systemUserRepository;
+	private final SystemUserRepository systemUserRepository;
 
-	@Autowired
-	private StudentRepository studentRepository;
+	private final StudentRepository studentRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

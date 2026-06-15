@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.SubjectDTO;
@@ -7,7 +8,6 @@ import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.SubjectService;
 import mthiebi.sgs.utils.AuthConstants;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +16,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/subjects")
+@RequiredArgsConstructor
 public class SubjectController {
     
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
     
-    @Autowired
-    private SubjectMapper subjectMapper;
+    private final SubjectMapper subjectMapper;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
     @PostMapping("/create-subject")
     @Secured({AuthConstants.MANAGE_SUBJECT})

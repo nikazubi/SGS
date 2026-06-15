@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.*;
@@ -6,7 +7,6 @@ import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.GradeService;
 import mthiebi.sgs.utils.AuthConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +16,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/grade")
+@RequiredArgsConstructor
 public class GradeController {
 
-    @Autowired
-    private GradeService gradeService;
+    private final GradeService gradeService;
 
-    @Autowired
-    private GradeMapper gradeMapper;
+    private final GradeMapper gradeMapper;
 
     @PostMapping("/insert-student-grade")
     @Secured({AuthConstants.ADD_GRADES})

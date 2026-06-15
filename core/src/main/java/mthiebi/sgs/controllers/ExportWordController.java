@@ -1,10 +1,10 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.models.Student;
 import mthiebi.sgs.models.Subject;
 import mthiebi.sgs.service.ExportWordService;
 import mthiebi.sgs.service.GradeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +15,12 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/export")
+@RequiredArgsConstructor
 public class ExportWordController {
 
-    @Autowired
-    private GradeService gradeService;
+    private final GradeService gradeService;
 
-    @Autowired
-    private ExportWordService exportWordService;
+    private final ExportWordService exportWordService;
 
     @GetMapping("/semester-word")
     @ResponseBody

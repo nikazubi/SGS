@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.ChangeRequestDTO;
@@ -9,7 +10,6 @@ import mthiebi.sgs.models.ChangeRequestStatus;
 import mthiebi.sgs.service.ChangeRequestService;
 import mthiebi.sgs.utils.AuthConstants;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,16 +19,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/change-request")
+@RequiredArgsConstructor
 public class ChangeRequestController {
 
-    @Autowired
-    private ChangeRequestService changeRequestService;
+    private final ChangeRequestService changeRequestService;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
-    @Autowired
-    private GradeMapper gradeMapper;
+    private final GradeMapper gradeMapper;
 
     @GetMapping("/get-change-requests")
     @Secured({AuthConstants.VIEW_CHANGE_REQUESTS})

@@ -1,11 +1,11 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.models.SystemUserGroup;
 import mthiebi.sgs.service.SystemGroupService;
 import mthiebi.sgs.utils.AuthConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/system-user-group")
 @Slf4j
+@RequiredArgsConstructor
 public class SystemGroupController {
 
-    @Autowired
-    private SystemGroupService systemGroupService;
+    private final SystemGroupService systemGroupService;
 
     @GetMapping("/get-all")
     @Secured({AuthConstants.VIEW_SYSTEM_USER_GROUP})

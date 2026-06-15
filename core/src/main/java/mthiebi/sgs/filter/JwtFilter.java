@@ -1,10 +1,10 @@
 package mthiebi.sgs.filter;
+import lombok.RequiredArgsConstructor;
 
 
 import lombok.extern.slf4j.Slf4j;
 import mthiebi.sgs.configuration.security.UserDetailsServiceImpl;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,13 +20,12 @@ import java.io.IOException;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-	@Autowired
-	private UserDetailsServiceImpl userService;
+	private final UserDetailsServiceImpl userService;
 
-	@Autowired
-	private UtilsJwt utilsJwt;
+	private final UtilsJwt utilsJwt;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {

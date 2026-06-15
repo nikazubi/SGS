@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.*;
@@ -8,7 +9,6 @@ import mthiebi.sgs.models.Student;
 import mthiebi.sgs.service.AbsenceService;
 import mthiebi.sgs.service.TotalAbsenceService;
 import mthiebi.sgs.utils.AuthConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -22,19 +22,16 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/absence")
+@RequiredArgsConstructor
 public class AbsenceController {
 
-    @Autowired
-    private TotalAbsenceService totalAbsenceService;
+    private final TotalAbsenceService totalAbsenceService;
 
-    @Autowired
-    private TotalAbsenceMapper totalAbsenceMapper;
+    private final TotalAbsenceMapper totalAbsenceMapper;
 
-    @Autowired
-    private AbsenceService absenceService;
+    private final AbsenceService absenceService;
 
-    @Autowired
-    private AbsenceGradeMapper absenceGradeMapper;
+    private final AbsenceGradeMapper absenceGradeMapper;
 
     @PostMapping("/add-absence-grade")
     @Secured({AuthConstants.ADD_GRADES})

@@ -1,4 +1,5 @@
 package mthiebi.sgs.controllers.clientconsolecontrollers;
+import lombok.RequiredArgsConstructor;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.dto.GradeComponentWrapper;
@@ -12,7 +13,6 @@ import mthiebi.sgs.repository.StudentRepository;
 import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.service.GradeService;
 import mthiebi.sgs.utils.UtilsJwt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -24,22 +24,18 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/client/grade")
+@RequiredArgsConstructor
 public class ClientGradeController {
 
-    @Autowired
-    private GradeService gradeService;
+    private final GradeService gradeService;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    private AcademyClassService academyClassService;
+    private final AcademyClassService academyClassService;
 
-    @Autowired
-    private UtilsJwt utilsJwt;
+    private final UtilsJwt utilsJwt;
 
-    @Autowired
-    private GradeMapper gradeMapper;
+    private final GradeMapper gradeMapper;
 
     @GetMapping("/get-grades-for-student")
     public List<GradeDTO> getGrades(@RequestHeader("authorization") String authHeader,
