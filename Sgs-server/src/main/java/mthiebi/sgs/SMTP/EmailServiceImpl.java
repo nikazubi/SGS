@@ -16,20 +16,24 @@ public class EmailServiceImpl implements EmailService {
     private String sender;
 
     public String sendSimpleMail(EmailDetails details) {
-
         try {
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-            mailMessage.setFrom(sender);
-            mailMessage.setTo(details.getRecipient());
-            mailMessage.setText(details.getMsgBody());
-            mailMessage.setSubject(details.getSubject());
-
-            javaMailSender.send(mailMessage);
+            sendOrThrow(details);
             return "Mail Sent Successfully...";
         } catch (Exception e) {
             return "Error while Sending Mail";
         }
+    }
+
+    @Override
+    public void sendOrThrow(EmailDetails details) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+
+        mailMessage.setFrom(sender);
+        mailMessage.setTo(details.getRecipient());
+        mailMessage.setText(details.getMsgBody());
+        mailMessage.setSubject(details.getSubject());
+
+        javaMailSender.send(mailMessage);
     }
 
 }

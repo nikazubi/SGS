@@ -11,8 +11,14 @@ export const PERMISSIONS = {
     "MANAGE_CHANGE_REQUESTS": "ნიშნის ცვლილების მოთხოვნის მართვა",
     "VIEW_CHANGE_REQUESTS": "ნიშნის ცვლილების მოთხოვნის დათვალიერება",
     "MANAGE_CLOSED_PERIOD": "პერიოდის დახურვის მართვა",
+    "MANAGE_TEMPLATES": "ჟურნალების და გამოთვლების მართვა",
     "VIEW_SYSTEM_USER_GROUP": "უფლებათა ჯგუფების დათვალიერება",
-    "MANAGE_TOTAL_ABSENCE": "ჯამური გაცდენების მართვა"
+    "MANAGE_TOTAL_ABSENCE": "ჯამური გაცდენების მართვა",
+    "MANAGE_HOMEWORK": "საშინაო დავალებების მართვა",
+    "MANAGE_SCHEDULE": "დღის რეჟიმის მართვა",
+    "MANAGE_MENU": "კვების მენიუს მართვა",
+    "MANAGE_CHARACTERIZATION": "მოსწავლის დახასიათების მართვა",
+    "MANAGE_NEWS": "სიახლეების მართვა"
 }
 
 export const PERMISSION_OPTIONS = [
@@ -29,5 +35,11 @@ export const PERMISSION_OPTIONS = [
     {label: "ნიშნის ცვლილების მოთხოვნის მართვა", value: "MANAGE_CHANGE_REQUESTS"},
     {label: "ნიშნის ცვლილების მოთხოვნის დათვალიერება", value: "VIEW_CHANGE_REQUESTS"},
     {label: "პერიოდის დახურვის მართვა", value: "MANAGE_CLOSED_PERIOD"},
+    {label: "ჟურნალების და გამოთვლების მართვა", value: "MANAGE_TEMPLATES"},
     {label: "ჯამური გაცდენების მართვა", value: "MANAGE_TOTAL_ABSENCE"},
+    {label: "საშინაო დავალებების მართვა", value: "MANAGE_HOMEWORK"},
+    {label: "დღის რეჟიმის მართვა", value: "MANAGE_SCHEDULE"},
+    {label: "კვების მენიუს მართვა", value: "MANAGE_MENU"},
+    {label: "მოსწავლის დახასიათების მართვა", value: "MANAGE_CHARACTERIZATION"},
+    {label: "სიახლეების მართვა", value: "MANAGE_NEWS"},
 ]

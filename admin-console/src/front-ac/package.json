@@ -39,6 +39,7 @@
     "react-json-view": "^1.21.3",
     "react-phone-input-2": "^2.14.0",
     "react-query": "^3.34.12",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "react-table": "^7.2.1",

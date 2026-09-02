@@ -41,8 +41,17 @@ const LoginPage = () => {
     };
 
     const handleSubmit = async (e) => {
-        // e.preventDefault();
-        // Handle login logic here
+        // Without this the browser submits the form itself the moment this
+        // handler returns - which is at the first await, before the request has
+        // been answered. The page navigates to "/?", the in-flight POST is
+        // aborted, and the login screen reloads with the fields cleared. It
+        // looks like the page is refreshing on its own.
+        //
+        // It was a race rather than a certainty, which is why it worked
+        // sometimes: setAuth only had to run before the browser finished
+        // tearing the page down. On a warm local backend it often won; against
+        // anything slower it never does.
+        e.preventDefault();
 
         await axios.post("authenticate", {
             username: email,

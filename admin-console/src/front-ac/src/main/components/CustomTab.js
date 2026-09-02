@@ -84,7 +84,10 @@ const initialState = {
 
 export const CustomTabComponent = ({ tab, value, onClose, onCloseAll, onCloseOthers, ...rest }) => {
   const [menuState, setMenuState] = useState(initialState);
-    const handleClose = tab.id === 'TRIMESTER' || tab.id === 'BEHAVIOUR' || tab.id === 'CHANGE_REQUEST' || tab.id === 'ABSENCE' ? null : onClose;
+    // Every tab closes. This used to withhold the close button from four tabs by
+    // id - the legacy grade screens, which were pinned because they were always
+    // open. Those pages are gone, and nothing replaced the idea of a pinned tab.
+    const handleClose = onClose;
 
   const handleMenuOpen = (event) => {
     event.preventDefault();

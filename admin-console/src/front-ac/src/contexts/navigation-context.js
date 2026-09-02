@@ -42,11 +42,25 @@ export const NavigationProvider = (props) => {
     return result;
   }, [pageArray]);
 
-    const [tabList, setTabList] = useState([...pages.filter(page => page.id === 'TRIMESTER' ||
-      page.id === 'BEHAVIOUR' || page.id === 'ABSENCE' || page.id === 'CHANGE_REQUEST'  && page.show )]);
+    // Nothing open to begin with; the effect below opens the landing page.
+    //
+    // This used to hard-code four tabs by id - TRIMESTER, BEHAVIOUR, ABSENCE and
+    // CHANGE_REQUEST - which were the legacy grade screens. When those pages were
+    // deleted the filter matched nothing, and the console opened to a blank panel
+    // with no error anywhere. Page ids are not a stable thing to name from here:
+    // the journal tabs do not even have fixed ones, since they are keyed by uuid.
+    const [tabList, setTabList] = useState([]);
 
   const setDocumentTitle = useCallback((pageId) => {
     const newPage = pages.find((currPage) => currPage.id === pageId);
+      // "Close all tabs" calls changeActiveTab('') and no page has that id, so
+      // this threw on a null page every time somebody used it. Named rather than
+      // found means the bare school name, which is the right title for a console
+      // showing nothing.
+      if (!newPage) {
+          document.title = "აიბი მთიები";
+          return;
+      }
     document.title = "აიბი მთიები " +
             (newPage.label.length ? ` - ${newPage.label}` : '');
   }, [pages]);
@@ -57,8 +71,15 @@ export const NavigationProvider = (props) => {
       && (pathname.endsWith(page.id)
         || pathname.includes(`${page.id}/`))
     );
-    if (pathname === '/') {
-        page = pages.find(page => page.id === "TRIMESTER")
+      // The landing page is simply the first one this user may see. `pages` is
+      // already filtered by permission, so this cannot land on a tab they are not
+      // allowed to open, and it cannot go stale when a page is added or removed.
+      //
+      // Guarded on activeTab so it happens once: the journal tabs arrive
+      // asynchronously and reorder `pages` when they do, which would otherwise
+      // open a second tab underneath the user.
+      if (pathname === '/' && !activeTab) {
+          page = pages[0];
     }
     if (!!page) {
       setTabList(prevState => {
@@ -70,7 +91,7 @@ export const NavigationProvider = (props) => {
       setDocumentTitle(page.id);
       setActiveTab(page.id);
     }
-  }, [location, pages, setDocumentTitle]);
+  }, [location, pages, activeTab, setDocumentTitle]);
 
   const changeActiveTab = useCallback(pageId => {
     if (pageId === activeTab) {

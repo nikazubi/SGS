@@ -12,6 +12,15 @@
   <url>http://maven.apache.org</url>
 
   <dependencies>
+      <!-- Strips what a rich-text editor produces down to a fixed allowlist.
+           Applied on write, so nothing dangerous is ever stored: sanitising only
+           on read leaves the payload in the database for the next person who
+           renders it somewhere else. -->
+      <dependency>
+          <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+          <artifactId>owasp-java-html-sanitizer</artifactId>
+          <version>20220608.1</version>
+      </dependency>
     <dependency>
       <groupId>mthiebi</groupId>
       <artifactId>Sgs-model</artifactId>

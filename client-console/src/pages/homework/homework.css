@@ -1,0 +1,231 @@
+/*
+ * The homework calendar.
+ *
+ * Uses the console's own palette - #01619b for the school's blue, #fcb683 for
+ * the accent already used elsewhere - rather than introducing a second one. The
+ * primary-school theme comes later and will restyle these; nothing here should
+ * need rewriting for it, only recolouring.
+ */
+
+.hw__calendar {
+    background: #fff;
+    border-radius: 0 30px 30px 30px;
+    box-shadow: #2285b2 2px 2px 9px;
+    padding: 16px 20px 20px;
+    width: 360px;
+    max-width: 92vw;
+}
+
+.hw__monthBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.hw__monthName {
+    font-weight: bold;
+    color: #00558a;
+}
+
+.hw__nav {
+    border: none;
+    background: transparent;
+    color: #01619b;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.hw__nav:hover {
+    color: #0071cc;
+}
+
+.hw__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.hw__weekday {
+    text-align: center;
+    font-size: 11px;
+    color: #7a94a5;
+    padding-bottom: 4px;
+}
+
+.hw__day {
+    position: relative;
+    aspect-ratio: 1;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: #f0f9fd;
+    color: #37505e;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.hw__day--empty {
+    background: transparent;
+    cursor: default;
+}
+
+/* Holds work. Deliberately quiet - most days will have some. */
+.hw__day--has {
+    background: #dceefb;
+    color: #01619b;
+    font-weight: bold;
+}
+
+/* Something here has not been read. The one state worth shouting about. */
+.hw__day--unseen {
+    background: #fff;
+    border-color: #fcb683;
+}
+
+/* Currently expanded below. Independent of the other two. */
+.hw__day--selected {
+    border-color: #01619b;
+    box-shadow: 0 0 0 2px rgba(1, 97, 155, 0.18);
+}
+
+.hw__dayNumber {
+    line-height: 1;
+}
+
+.hw__badge {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 8px;
+    background: #f5813c;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 15px;
+    text-align: center;
+}
+
+/* Read, but there is something there. */
+.hw__dot {
+    position: absolute;
+    bottom: 5px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #01619b;
+}
+
+.hw__loading {
+    text-align: center;
+    color: #7a94a5;
+    padding: 10px;
+}
+
+/* ---- the day, below the calendar ------------------------------------- */
+
+.hw__panel {
+    margin-top: 18px;
+    width: 560px;
+    max-width: 92vw;
+    background: #fff;
+    border-radius: 0 30px 30px 30px;
+    box-shadow: #2285b2 2px 2px 9px;
+    padding: 16px 20px;
+}
+
+.hw__panelDate {
+    font-weight: bold;
+    color: #00558a;
+    margin-bottom: 10px;
+}
+
+.hw__empty {
+    color: #7a94a5;
+    text-align: center;
+}
+
+.hw__subject + .hw__subject {
+    border-top: 1px solid #e3eef5;
+}
+
+.hw__subjectHead {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    padding: 12px 4px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #01619b;
+    text-align: left;
+}
+
+.hw__subjectName {
+    flex: 1;
+    font-weight: bold;
+}
+
+.hw__subjectHead .hw__badge {
+    position: static;
+}
+
+.hw__chevron {
+    color: #7a94a5;
+}
+
+.hw__items {
+    padding: 0 4px 12px;
+}
+
+.hw__item + .hw__item {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed #e3eef5;
+}
+
+.hw__itemTitle {
+    margin: 0 0 6px;
+    font-size: 15px;
+    color: #37505e;
+}
+
+/* The school's own rich text. Constrained so a pasted image or a wide table
+   cannot break the panel out of the page. */
+.hw__itemBody {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #37505e;
+    overflow-wrap: anywhere;
+}
+
+.hw__itemBody img {
+    max-width: 100%;
+    height: auto;
+}
+
+.hw__itemBody table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.hw__links {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    font-size: 13px;
+}
+
+.hw__links a {
+    color: #0071cc;
+}

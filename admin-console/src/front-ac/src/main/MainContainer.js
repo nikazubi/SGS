@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import Content from './pages/HomePage/Content';
+import Content from './Content';
 import Sidebar from "./components/Sidebar";
 import { SidebarContextProvider } from "../contexts/sidebar-context";
 

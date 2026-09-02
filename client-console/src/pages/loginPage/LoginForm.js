@@ -19,6 +19,10 @@ const LoginPage = () => {
     };
 
     const handleSubmit = async (e) => {
+        // Without this the browser submits the form itself and navigates away,
+        // which aborts the request login() has just started. The page reloads
+        // back to the empty form, so signing in looks like it silently failed.
+        e.preventDefault();
         login({username: email, password: password});
         // const isLoggedIn = true;
         //

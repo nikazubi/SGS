@@ -33,3 +33,33 @@ client-console/yarn.lock
 ### VS Code ###
 .vscode/
 node_modules
+
+### Node / frontend ###
+node_modules/
+.pnp
+.pnp.js
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+### Secrets / local config ###
+.env
+.env.local
+.env.*.local
+*.pem
+*.pfx
+*.p8
+
+### Logs & scratch ###
+*.log
+*.tmp
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+# yarn is the package manager here. A package-lock.json alongside yarn.lock
+# drifts within weeks and makes every install a coin toss about which one wins.
+package-lock.json

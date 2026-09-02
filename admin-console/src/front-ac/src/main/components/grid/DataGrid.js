@@ -31,6 +31,7 @@ const DataGridSGS = ({
                     colorGroups,
                     getRowClassName,
                     fullyHideFooter = false,
+                         sx,
                     ...props
                   }) => {
   const maxPageSize = 5000;
@@ -82,6 +83,10 @@ const DataGridSGS = ({
     }
   };
 
+    // rowBuffer / columnBuffer used to be pinned at 5000 and columns.length,
+    // which rendered every row and every column and switched virtualization off
+    // entirely. Harmless on a 25 x 12 entry grid, but it is why the annual matrix
+    // (~1,400 cells) crawls. The defaults virtualize.
   return (
     <div style={{display: 'flex', position: "relative", height: '100%', width: '100%'}}>
       <DataGrid
@@ -96,8 +101,6 @@ const DataGridSGS = ({
           onPageSizeChange={(size) => setPageParams((prev) => ({...prev, size}))}
         // loading={isLoading || isFetching || loading}
           disableColumnFilter
-          rowBuffer={5000}
-          columnBuffer={columns.length}
           getRowId={(row) => row[rowIdField]}
           getRowClassName={getRowClassName}
           onCellEditCommit={handleCellCommit}
@@ -117,7 +120,7 @@ const DataGridSGS = ({
           footer: {selectedRowCount: selectedRowCount},
           ...componentsProps
         }}
-          sx={DataGridStyles(colorGroups)}
+          sx={sx ? [DataGridStyles(colorGroups), sx] : DataGridStyles(colorGroups)}
           {...props}
       />
     </div>

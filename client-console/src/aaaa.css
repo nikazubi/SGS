@@ -4,3 +4,105 @@
     min-height: 100vh;
     max-height: 300vh;
 }
+
+/* ---- parent journal view ------------------------------------------------
+   The generic renderer: cards when there is one row, a table when there are
+   several. Reuses the DisciplineBox look so a journal the school invents next
+   year sits alongside the ones they already know.                          */
+
+.cardsWrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.cardsWrap__title {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 12px 0 20px;
+}
+
+.cardsGroup {
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.cardsGroup__title {
+    text-align: center;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.cardsGroup__row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.DisciplineBox__value {
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    padding: 6px 0;
+}
+
+/* An unfilled column is shown rather than hidden, so a parent can see what is
+   still to come - but it should not read as loudly as a mark that exists. */
+.DisciplineBox.empty {
+    background-color: #e9edef !important;
+    color: #9aa7ad;
+}
+
+.journalTable {
+    width: 96%;
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+.journalTable table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.journalTable th,
+.journalTable td {
+    border: 1px solid #cce1ea;
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.journalTable th {
+    background: #f4f8fa;
+    font-weight: 600;
+}
+
+.journalTable td.rowLabel {
+    text-align: left;
+    font-weight: 500;
+}
+
+.journalTable tr.clickable {
+    cursor: pointer;
+}
+
+.journalTable tr.clickable:hover td {
+    background: #f4f8fa;
+}
+
+.backLink {
+    background: none;
+    border: none;
+    color: #f25d23;
+    cursor: pointer;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.emptyState {
+    color: #888;
+    padding: 40px;
+    text-align: center;
+}

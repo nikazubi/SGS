@@ -1,0 +1,255 @@
+/*
+ * School news.
+ *
+ * Same palette as the rest of the parent console - #01619b, #fcb683 - so this
+ * reads as part of it rather than as a page from somewhere else.
+ */
+
+.news__filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    max-width: 720px;
+}
+
+.news__chip {
+    border: 1px solid #cfe3ef;
+    background: #fff;
+    color: #01619b;
+    border-radius: 14px;
+    padding: 4px 14px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.news__chip--on {
+    background: #01619b;
+    border-color: #01619b;
+    color: #fff;
+}
+
+.news__list {
+    width: 720px;
+    max-width: 94vw;
+}
+
+.news__card {
+    display: flex;
+    gap: 16px;
+    background: #fff;
+    border-radius: 0 24px 24px 24px;
+    box-shadow: #2285b2 2px 2px 9px;
+    padding: 14px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+.news__card:hover {
+    transform: translateY(-2px);
+}
+
+.news__thumb {
+    width: 132px;
+    height: 100px;
+    flex: 0 0 132px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: #f0f9fd;
+}
+
+/* No picture: the space is held so every card's text starts in the same place. */
+.news__thumb--none {
+    background: #eaf4fa;
+}
+
+.news__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.news__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.news__title {
+    flex: 1;
+    margin: 0;
+    font-size: 16px;
+    color: #00558a;
+    overflow-wrap: anywhere;
+}
+
+.news__date {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #7a94a5;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.news__tag {
+    align-self: flex-start;
+    margin-top: 6px;
+    background: #fdece0;
+    color: #b4571c;
+    border-radius: 10px;
+    padding: 1px 9px;
+    font-size: 11px;
+}
+
+.news__excerpt {
+    margin: 8px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #37505e;
+    overflow-wrap: anywhere;
+}
+
+.news__more {
+    align-self: flex-start;
+    margin-top: 8px;
+    border: none;
+    background: transparent;
+    color: #0071cc;
+    font-size: 13px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.news__empty {
+    text-align: center;
+    color: #7a94a5;
+    padding: 30px;
+}
+
+.news__pager {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #37505e;
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+
+.news__pager button {
+    border: 1px solid #cfe3ef;
+    background: #fff;
+    color: #01619b;
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.news__pager button:disabled {
+    color: #c4d4dd;
+    cursor: default;
+}
+
+/* ---- the dialog ------------------------------------------------------- */
+
+.news__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 32, 51, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+}
+
+.news__dialog {
+    position: relative;
+    background: #fff;
+    border-radius: 20px;
+    width: 720px;
+    max-width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+}
+
+.news__close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 22px;
+    line-height: 1;
+    color: #37505e;
+    cursor: pointer;
+}
+
+.news__hero {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.news__dialogBody {
+    padding: 18px 24px 26px;
+}
+
+.news__dialogTitle {
+    flex: 1;
+    margin: 0;
+    font-size: 20px;
+    color: #00558a;
+    overflow-wrap: anywhere;
+}
+
+/* The school's own rich text. Bounded so a wide table or a pasted image
+   cannot push the dialog past the viewport. */
+.news__full {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #37505e;
+    overflow-wrap: anywhere;
+}
+
+.news__full img {
+    max-width: 100%;
+    height: auto;
+}
+
+.news__full table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.news__links {
+    margin: 16px 0 0;
+    padding-left: 18px;
+    font-size: 14px;
+}
+
+.news__links a {
+    color: #0071cc;
+}
+
+@media (max-width: 560px) {
+    .news__card {
+        flex-direction: column;
+    }
+
+    .news__thumb {
+        width: 100%;
+        flex: none;
+        height: 150px;
+    }
+}

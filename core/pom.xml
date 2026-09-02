@@ -37,6 +37,24 @@
     </dependencies>
     <build>
         <plugins>
+            <!--
+                Integration tests are named *IT and are not picked up by
+                surefire, so without this they would silently never run. They
+                need the SQL Server instance to be reachable; `mvnw test` stays
+                database-free, `mvnw verify` runs them.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

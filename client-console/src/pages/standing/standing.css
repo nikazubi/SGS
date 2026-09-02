@@ -1,0 +1,143 @@
+/*
+ * Schedule and menu, and the child's description.
+ *
+ * Working layout only. The visual pass lands with the primary theme and these
+ * rules are expected to be replaced then - they exist so the data is legible,
+ * not so it is finished.
+ */
+
+.std__week {
+    width: 640px;
+    max-width: 94vw;
+    margin-bottom: 24px;
+}
+
+.std__day {
+    background: #fff;
+    border-radius: 0 20px 20px 20px;
+    box-shadow: #2285b2 2px 2px 9px;
+    padding: 12px 18px;
+    margin-bottom: 12px;
+}
+
+.std__dayName {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #00558a;
+}
+
+.std__lines {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.std__line {
+    display: flex;
+    gap: 12px;
+    padding: 5px 0;
+    font-size: 14px;
+    color: #37505e;
+    border-top: 1px solid #eef5f9;
+}
+
+.std__line:first-child {
+    border-top: none;
+}
+
+.std__time {
+    flex: 0 0 96px;
+    color: #7a94a5;
+    white-space: nowrap;
+}
+
+.std__text {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.std__none,
+.std__empty {
+    color: #7a94a5;
+    font-size: 14px;
+}
+
+.std__empty {
+    padding: 30px;
+    text-align: center;
+}
+
+/* ---- the child's description ------------------------------------------ */
+
+.chr__list {
+    width: 640px;
+    max-width: 94vw;
+    margin-bottom: 24px;
+}
+
+.chr__item {
+    background: #fff;
+    border-radius: 0 20px 20px 20px;
+    box-shadow: #2285b2 2px 2px 9px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+}
+
+.chr__head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.chr__title {
+    flex: 1;
+    margin: 0;
+    font-size: 15px;
+    color: #00558a;
+    overflow-wrap: anywhere;
+}
+
+.chr__subject {
+    background: #eaf4fa;
+    color: #01619b;
+    border-radius: 10px;
+    padding: 1px 9px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.chr__date {
+    color: #7a94a5;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* The school's own rich text, bounded so a wide table cannot break the card. */
+.chr__body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #37505e;
+    overflow-wrap: anywhere;
+}
+
+.chr__body img {
+    max-width: 100%;
+    height: auto;
+}
+
+.chr__body table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.chr__links {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    font-size: 13px;
+}
+
+.chr__links a {
+    color: #0071cc;
+}

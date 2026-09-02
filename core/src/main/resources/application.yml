@@ -1,13 +1,47 @@
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=SGS;
-    username: frtadmin
-    password: admin
+    # The seeded test database, built by db/demo/reset.sh. To work against the
+    # school's own migrated data instead, change SGS_DEMO back to SGS - that is
+    # the only difference between the two.
+    url: jdbc:sqlserver://localhost:1433;databaseName=SGS_DEMO;
+    username: sa
+    password: mfcAtl!7
     driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  servlet:
+    multipart:
+      # Deliberately above ImageService's own 2 MB cap. Left at Spring's default
+      # of 1 MB, a 1.5 MB photo is refused by the framework with a stack trace
+      # before the application's check ever runs - so the person uploading it
+      # sees an error about request size rather than "the picture is too large".
+      max-file-size: 4MB
+      max-request-size: 5MB
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.SQLServerDialect
+        # SQLServer2012Dialect, not SQLServerDialect. The older one targets SQL
+        # Server 2000-2008 and reports supportsSequences() = false, so Hibernate
+        # silently substitutes a TABLE generator for every @SequenceGenerator in
+        # the new model - it tries to `create table sgs.grade_entry_seq
+        # (next_val numeric(19,0))`, collides with the real sequence object of
+        # that name, and then every insert fails with "Invalid object name
+        # sgs.grade_entry_seq". The application starts either way, because
+        # ddl-auto: update logs schema failures as warnings; it simply cannot
+        # write anything.
+        #
+        # Not visible in the test suite, which overrides the dialect, and not
+        # visible at startup. Only a write shows it.
+        #
+        # ON A DATABASE CREATED BEFORE THIS CHANGE the legacy entities need one
+        # migration first: GenerationType.AUTO used a hibernate_sequence TABLE
+        # under the old dialect and wants a SEQUENCE of that name under this
+        # one. A fresh database has neither, so Hibernate creates the right
+        # thing. See FOLLOW-UPS.md.
+        dialect: org.hibernate.dialect.SQLServer2012Dialect
+        # The database collation is SQL_Latin1_General_CP1_CI_AS, which has no
+        # code page for Georgian: a varchar column silently turns მათემატიკა
+        # into ??????????. Every string this system stores is Georgian, so
+        # String maps to nvarchar rather than varchar.
+        use_nationalized_character_data: true
     hibernate:
       ddl-auto: update
     show-sql: false

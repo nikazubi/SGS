@@ -18,6 +18,8 @@ const queryClient = new QueryClient({
 export const ReactQueryProvider = ({ children }) => (
   <QueryClientProvider client={queryClient}>
     {children}
-    <ReactQueryDevtools initialIsOpen={true} />
+      {/* Closed by default: the open panel sits over the bottom-left of every
+        page, which in a 1600-wide window covers the login button. */}
+      <ReactQueryDevtools initialIsOpen={false}/>
   </QueryClientProvider>
 )

@@ -14,9 +14,11 @@ const TabNavigation = () => {
     changeActiveTab(newValue);
   };
 
+    // Closes all of them. It used to keep four by id - the legacy grade screens,
+    // which were pinned - and those pages no longer exist, so the filter kept
+    // nothing anyway.
   const handleCloseAllTabs = () => {
-      setTabList(old => [...old.filter(page => page.id === 'TRIMESTER' ||
-        page.id === 'BEHAVIOUR' || page.id === 'ABSENCE' || page.id === 'CHANGE_REQUEST')]);
+      setTabList([]);
     changeActiveTab('');
   };
 

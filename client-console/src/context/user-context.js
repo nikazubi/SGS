@@ -30,13 +30,14 @@ export const UserContextProvider = props => {
     }, [])
 
     const login = async ({username, password}) => {
-        const params = {username: username, password: password};
-        const {data} = await axios.post(LOGIN_ENDPOINT, params);
-        await secureLocalStorage.setItem("jwtToken", data?.jwtToken);
-        await secureLocalStorage.setItem("student", data?.student);
-        setLoggedIn(true)
-        setUser(data?.student)
-        // localStorage.setItem("loginTime", new Date().toString())
+        const {data} = await axios.post(LOGIN_ENDPOINT, {username, password});
+        // The child's name comes back with the token so the portal can greet
+        // them without a second call; everything else is fetched per journal.
+        const student = {firstName: data?.firstName, lastName: data?.lastName};
+        await secureLocalStorage.setItem("jwtToken", data?.token);
+        await secureLocalStorage.setItem("student", student);
+        setLoggedIn(true);
+        setUser(student);
     };
 
     const logout = () => {

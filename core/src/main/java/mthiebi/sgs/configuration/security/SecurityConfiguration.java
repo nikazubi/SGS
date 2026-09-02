@@ -97,6 +97,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.permitAll()
 			.antMatchers("/authenticate-student")
 			.permitAll()
+                // Parent login. Only the login itself - every other /api/parent/**
+                // path stays authenticated, unlike the legacy /client/**, which is
+                // open in its entirety.
+                .antMatchers("/api/parent/authenticate")
+                .permitAll()
 			.antMatchers(AUTH_WHITELIST_SWAGGER_UI)
 			.permitAll()
 			.anyRequest()
