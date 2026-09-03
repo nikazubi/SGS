@@ -8,65 +8,36 @@ const customAxios = axios.create({
     }
 });
 
-let isRefreshing = false;
-let needRefresh = [];
+// Single-JWT backend, no refresh token: clear the session and return to login on 401.
+const isAuthRequest = (url = '') => url.includes('authenticate');
 
-const processQueue = (error, token = null) => {
-    needRefresh.forEach(prom => {
-        if (error) {
-            prom.reject(error);
-        } else {
-            prom.resolve(token);
-        }
-    });
-    needRefresh = [];
-    isRefreshing = false;
+const forceLogout = () => {
+    secureLocalStorage.clear();
+    window.location.href = window.location.origin;
 };
 
-const createPromise = (originalRequest) => {
-    return new Promise(function (resolve, reject) {
-        needRefresh.push({resolve, reject});
-    })
-        .then(token => {
-            originalRequest.headers.authorization = `Bearer ${token}`;
-            return customAxios(originalRequest);
-        })
-        .catch(err => {
-            return Promise.reject(err);
-        });
-};
-
-const logout = (error) => {
-    // secureLocalStorage.clear();
-    // processQueue(error, null);
-}
-
-const onError = async (error) => {
-    if (error.response.status === 401) {
-        await logout(error);
-        return Promise.reject(error);
-    }
-    return Promise.reject(error);
-};
-
-//TODO does not refresh within useMutation
 const useAxios = () => {
     customAxios.interceptors.response.use(
         response => response,
-        error => onError(error)
+        error => {
+            if (error.response?.status === 401 && !isAuthRequest(error.config?.url)) {
+                forceLogout();
+            }
+            return Promise.reject(error);
+        }
     );
 
     customAxios.interceptors.request.use(async config => {
         const token = secureLocalStorage.getItem("jwtToken");
-
         if (token && !config.headers.Authorization) {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
-    }, (error) => Promise.reject(error));
+    }, error => Promise.reject(error));
 
     return {
         axios: customAxios,
     };
 };
+
 export default useAxios;

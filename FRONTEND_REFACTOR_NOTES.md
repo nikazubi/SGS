@@ -44,12 +44,25 @@ Per-semester fill key-sets differ:
 ➡️ **Frontend TODO:** any month pickers / labels must account for Feb→Jan and Oct→Sep merging so the
 UI matches what the backend stores/returns.
 
-## 4. Auth / axios issues to fix on the frontend (already noted in REFACTOR_PLAN)
-- `client-console` and `admin-console` `axios.js` have the entire **token-refresh flow commented out**;
-  admin `logout()` is a **no-op** → a 401 never logs the user out.
-- `baseURL` is hardcoded instead of using `REACT_APP_BACKEND_BASE_URL` (the env var is commented out).
-- Backend currently leaves `/client/**` public — when we secure it (Phase 0), the client-console must
-  send the JWT on those calls.
+## 4. Auth / axios issues — ✅ FIXED 2026-06-16
+All four axios files cleaned (`client-console` utils/axios + hooks/useAxios, `admin-console` utils/axios +
+hooks/useAxios):
+- Removed the dead/incompatible token-refresh machinery. The backend issues a **single JWT with no refresh
+  token** (`/authenticate` → `JwtResponse{jwtToken}`); the commented refresh code expected `{accessToken,
+  refreshToken}` which the backend never returns, and the admin "refresh endpoint" constant was the
+  placeholder `'ramerume'`. So refresh was *removed*, not finished.
+- **Real logout on 401**: clear stored session + redirect to login. Fixed the client `onError` that returned
+  `undefined` (swallowing every error) and the admin no-op logout.
+- Auth endpoints (`/authenticate*`) are excluded from the 401-redirect so login errors still surface.
+- **env-based baseURL**: `process.env.REACT_APP_BACKEND_BASE_URL`, with `.env` (prod default) and
+  `.env.development` (localhost) populated for both apps. Both apps build clean.
+
+Remaining optional dead-code cleanup (not needed for correctness): `hooks/useLoggedInUser.js` (only referenced
+in a commented line), `constants/endpoints.js` `ENDPOINT_AUTHENTICATION_REFRESH = 'ramerume'`, and
+`utils/auth.js` `getRefreshToken` are now unused.
+
+Still open: backend leaves `/client/**` public — when secured (Phase 0), client-console must send the JWT on
+those calls (it already attaches the token, so likely fine).
 
 ## 5. Confirmed frontend usage locations (verified 2026-06-16)
 Sentinel ids are matched here — keep values identical when refactoring:

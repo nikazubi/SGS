@@ -12,10 +12,6 @@ export const getAccessToken = () => {
     return getAuth();
 };
 
-export const getRefreshToken = () => {
-    return getAuth()?.refreshToken;
-};
-
 export const setAuth = (auth) => {
     localStorage.setItem(authKey, JSON.stringify(auth));
 };

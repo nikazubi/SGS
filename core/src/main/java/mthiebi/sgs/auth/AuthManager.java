@@ -1,5 +1,4 @@
 //package mthiebi.sgs.auth;
-import lombok.RequiredArgsConstructor;
 //
 //import com.auth0.jwt.JWT;
 //import mthiebi.sgs.models.SystemUser;
@@ -30,11 +29,14 @@ import lombok.RequiredArgsConstructor;
 //    private static final Integer portalLifetime = 120;
 //    private static final Integer portalRefreshLifetime = 120;
 //
-//private final //	private RSAPublicKey publicKey;
+//	@Autowired
+//	private RSAPublicKey publicKey;
 //
-//private final //	private RSAPrivateKey privateKey;
+//	@Autowired
+//	private RSAPrivateKey privateKey;
 
-//private final //	private JwtProperties jwtProperties;
+//	@Autowired
+//	private JwtProperties jwtProperties;
 
 //	public String createAccessToken(SystemUser systemUser) {
 //		Stream<String> permissionsStream = systemUser.getGroups().stream()
