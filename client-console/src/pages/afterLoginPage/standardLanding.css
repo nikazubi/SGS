@@ -1,0 +1,117 @@
+/* The landing page for basic and secondary.
+ *
+ * One colour for every tile. The boxes are navigation, not categories, and the
+ * school did not ask for them to be told apart — so the only thing that varies
+ * is size, which already says which row a tile belongs to. */
+
+.standardLanding {
+    padding: 40px 20px 60px;
+}
+
+.standardLanding__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.standardLanding__tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 22px 24px;
+    /* One square corner, three rounded — the shape the card shell, the primary
+       tiles and the icon wells already use. The landing boxes were the one
+       pill-shaped thing in the console. */
+    border-radius: 0 16px 16px 16px;
+    background-color: #01619b;
+    color: #fff;
+    text-decoration: none;
+    /* Soft and neutral, not the hard blue offset the old boxes carried. */
+    box-shadow: 0 2px 10px rgba(28, 74, 95, 0.10);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.standardLanding__tile:hover {
+    background-color: #01517f;
+    box-shadow: 0 6px 16px rgba(28, 74, 95, 0.18);
+    transform: translateY(-2px);
+}
+
+.standardLanding__label {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+    /* Georgian has no uppercase to fall back on and the labels run long, so the
+       tile wraps rather than clipping. */
+    overflow-wrap: anywhere;
+}
+
+/* ---- row 1: the two content modules -------------------------------------- */
+
+.standardLanding__tile--news {
+    grid-column: span 4;
+    /* The thumb is translucent white, which needs the navy behind it. */
+    padding: 24px;
+}
+
+.standardLanding__tile--homework {
+    grid-column: span 2;
+    justify-content: center;
+    text-align: center;
+    min-height: 220px;
+}
+
+.standardLanding__badge {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 7px;
+    border-radius: 13px;
+    background: #E8730E;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---- rows 2 and 3: the journal views ------------------------------------- */
+
+.standardLanding__tile--view {
+    grid-column: span var(--span, 3);
+    min-height: 104px;
+}
+
+/* ---- phone: one tile per row, in the same order --------------------------- */
+
+@media (max-width: 700px) {
+    .standardLanding {
+        padding: 20px 16px 40px;
+    }
+
+    .standardLanding__grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .standardLanding__tile--news,
+    .standardLanding__tile--homework,
+    .standardLanding__tile--view {
+        /* The span variable is ignored rather than unset, so nothing here has to
+           know how many tiles there were. */
+        grid-column: span 1;
+        min-height: 0;
+    }
+
+    .standardLanding__tile--homework {
+        justify-content: flex-start;
+        text-align: left;
+        padding: 20px 22px;
+    }
+}

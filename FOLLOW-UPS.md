@@ -91,6 +91,15 @@ one for a term, this is the thing to close first.
   `adjustMonthNamesForAnual` names key 5, but `getAnualGrades` only ever writes keys
   1–4, so that column has been blank in every annual export the school has run. Not
   a rewrite decision — something they should be told about their current system.
+* **Two legacy lists still read an empty class grant as "nothing".**
+  `StudentRepositoryCustomImpl.findByNameAndSurname` and the subject equivalent
+  narrow with `in (grant)` and return nothing when the grant is empty — the same
+  shape that made the class picker unusable for every administrator, fixed in
+  `AcademyClassRepositoryCustomImpl`. Neither is reachable today: they are served
+  by `students/get-students-by-name` and `subjects/get-subjects`, whose hooks
+  (`useStudents`, `useStudentsWithQuerykey`, `useSubjects`) no longer have a
+  single caller in the console. Left alone rather than changed blind, but worth
+  fixing or deleting before anything wires them up again.
 * **`TeachingAssignment` is empty.** It needs a `system_user_id`, and only 3 of
   98 teacher names match an account. The names live on
   `class_subject.teacher_name` and are displayed; the structured form waits until
@@ -104,6 +113,26 @@ one for a term, this is the thing to close first.
   own container rather than reflow. Written up screen by screen in
   `PARENT-COMPONENTS.md`. It applies to the shared components, so it is not part
   of the primary theme and should not wait for it.
+* **A primary child is offered the ethics journal.** `ParentViewService.journals`
+  narrows a primary child to registers, and decides what a register is by grid
+  shape - `gridMode == PERIODS`. Ethics is `MONTH` + `PERIODS` + parent-visible,
+  so it passes: the endpoint returns it, and `/journal/<ethics-uuid>` renders for
+  a primary parent. Nothing draws it - the primary landing grid picks out the one
+  journal whose `chartKey` is `ABSENCE_BARS`, and the standard grid draws only
+  the seeded `parent_view` rows - so it is a leak rather than a visible fault,
+  which is why it is here and not in the build.
+
+  The method's own comment predicted it: the shape test *"holds while transposed
+  and not academic mean the same thing"*, and ethics is precisely the exception -
+  marks out of 10, drawn transposed. The brief puts ethics in section 6, basic
+  and secondary, and never in section 3.
+
+  Two ways out, and they are not the same size. Narrow: give a journal an
+  explicit "is a register" flag rather than inferring it from the grid - one
+  column and one checkbox in the journal editor. Broad: make a journal's class
+  assignment *restrict* who may see it rather than only pin a version, the
+  question `TEST-RESULTS.md` section 3.A leaves open, which would settle this and
+  the staff-side class pickers together. Worth deciding once rather than twice.
 * **`node_modules/.yarn-integrity` is still tracked.** `git rm --cached` it.
 
 ---
@@ -168,6 +197,17 @@ up.
 
 ## 7. Operational notes worth not rediscovering
 
+* **The integration tests run against `SGS_DEMO` itself.** Every `*IT` is
+  `@AutoConfigureTestDatabase(replace = NONE)`, so there is no throwaway
+  database: they use whatever `application.yml` points at. Each test rolls back
+  its own writes, but anything inserted by hand outside a test does not go away,
+  and a test that counts rows globally will see them. `newsIsPublishedAndOrdered`
+  used to publish two news items and assert the total was two, so a single demo
+  row seeded with SQL turned the suite red for a reason that looked nothing like
+  its cause. It now measures against a baseline and tags its own titles, and the
+  whole suite passes with the demo content in place - but the lesson generalises:
+  news and standing documents belong to the school rather than to a class, so a
+  test about them cannot assume it is alone in the database.
 * A **filtered index** requires `QUOTED_IDENTIFIER ON` for *every* DML statement
   on the table it covers, not only when it is created. `sqlcmd` leaves it off and
   fails with `Msg 1934`; the JDBC driver sets it, so the application never sees

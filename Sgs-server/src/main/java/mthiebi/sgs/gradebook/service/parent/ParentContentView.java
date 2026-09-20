@@ -31,6 +31,15 @@ public final class ParentContentView {
          * ISO, first of the month being shown.
          */
         private final String month;
+        /**
+         * The academic year this child is enrolled in, as ISO dates.
+         * <p>
+         * The console clamps the month arrows to it. Without them a parent can
+         * step backwards indefinitely through months that cannot hold homework,
+         * which is a dead end that looks like navigation.
+         */
+        private final String yearStartsOn;
+        private final String yearEndsOn;
         private final List<HomeworkDay> days = new ArrayList<>();
     }
 

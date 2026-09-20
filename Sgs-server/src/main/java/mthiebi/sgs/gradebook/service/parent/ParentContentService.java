@@ -18,12 +18,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -80,7 +75,17 @@ public class ParentContentService {
         }
 
         ParentContentView.HomeworkMonth view =
-                new ParentContentView.HomeworkMonth(ym.atDay(1).toString());
+                new ParentContentView.HomeworkMonth(
+                        ym.atDay(1).toString(),
+                        // Null rather than a guess where the year has no dates:
+                        // the console then simply does not clamp, which is what
+                        // it did before these were sent at all.
+                        enrollment.getAcademicYear() == null
+                                || enrollment.getAcademicYear().getStartsOn() == null
+                                ? null : enrollment.getAcademicYear().getStartsOn().toString(),
+                        enrollment.getAcademicYear() == null
+                                || enrollment.getAcademicYear().getEndsOn() == null
+                                ? null : enrollment.getAcademicYear().getEndsOn().toString());
         byDay.forEach((date, counts) -> view.getDays().add(
                 new ParentContentView.HomeworkDay(date.toString(), counts[0], counts[1])));
         return view;
@@ -103,6 +108,15 @@ public class ParentContentService {
         List<Post> posts = postRepository.findHomeworkForChild(
                 enrollment.getClassGroup().getId(), enrollment.getId(), day, day);
         Set<Long> seen = seenIdsOf(enrollment, posts);
+
+        return groupBySubject(day, posts, seen);
+    }
+
+    /**
+     * One day's posts under the subject each was written for.
+     */
+    private ParentContentView.HomeworkDayDetail groupBySubject(
+            LocalDate day, List<Post> posts, Set<Long> seen) {
 
         ParentContentView.HomeworkDayDetail detail =
                 new ParentContentView.HomeworkDayDetail(day.toString());
@@ -156,14 +170,26 @@ public class ParentContentService {
         List<Post> visible = em.createQuery(
                         "select p from Post p "
                                 + "where p.uuid in :uuids "
-                                + "  and p.kind = mthiebi.sgs.gradebook.model.PostKind.HOMEWORK "
+                                // Homework or a description: both are opened and
+                                // both are tracked, and homework_seen has never
+                                // cared which - it is keyed on the post.
+                                + "  and p.kind in :kinds "
                                 + "  and p.archived = false "
                                 + "  and p.status = mthiebi.sgs.gradebook.model.PostStatus.PUBLISHED "
-                                + "  and p.classGroup.id = :classGroupId "
-                                + "  and (p.targets is empty or :enrollmentId in "
-                                + "        (select t.enrollment.id from PostTarget t where t.post.id = p.id))",
+                                // Homework belongs to a class and may name
+                                // students; a description names one and belongs
+                                // to no class. One clause covers both without
+                                // widening what either can reach.
+                                + "  and (   (p.classGroup.id = :classGroupId "
+                                + "           and (p.targets is empty or :enrollmentId in "
+                                + "             (select t.enrollment.id from PostTarget t where t.post.id = p.id))) "
+                                + "       or :enrollmentId in "
+                                + "             (select t.enrollment.id from PostTarget t where t.post.id = p.id))",
                         Post.class)
                 .setParameter("uuids", postUuids)
+                .setParameter("kinds", java.util.Arrays.asList(
+                        mthiebi.sgs.gradebook.model.PostKind.HOMEWORK,
+                        mthiebi.sgs.gradebook.model.PostKind.CHARACTERIZATION))
                 .setParameter("classGroupId", enrollment.getClassGroup().getId())
                 .setParameter("enrollmentId", enrollment.getId())
                 .getResultList();
@@ -182,6 +208,73 @@ public class ParentContentService {
             created++;
         }
         return created;
+    }
+
+    // ---- the child's description, as a calendar ------------------------------
+
+    /**
+     * A month of descriptions: which days hold one, and how many are unopened.
+     * <p>
+     * Returns the homework shapes on purpose. A month of day counts is not a
+     * fact about homework, and reusing them is what lets the console draw this
+     * screen with the calendar it already has rather than a second one that
+     * would drift from it.
+     * <p>
+     * Descriptions are occasional where homework is near-daily, so most of this
+     * calendar is empty. That is honest: the school writes these a few times a
+     * term, and a month with none is a month with none.
+     */
+    @Transactional(readOnly = true)
+    public ParentContentView.HomeworkMonth descriptionMonth(Long studentId, String month)
+            throws SGSException {
+
+        Enrollment enrollment = enrollmentOf(studentId);
+        requireModule(enrollment, "CHARACTERIZATION");
+        YearMonth ym = parseMonth(month);
+
+        List<Post> posts = postRepository.findCharacterizationsForChildBetween(
+                enrollment.getId(), ym.atDay(1), ym.atEndOfMonth());
+
+        Set<Long> seen = seenIdsOf(enrollment, posts);
+
+        Map<LocalDate, int[]> byDay = new LinkedHashMap<>();
+        for (Post post : posts) {
+            int[] counts = byDay.computeIfAbsent(post.getEventDate(), d -> new int[2]);
+            counts[0]++;
+            if (!seen.contains(post.getId())) {
+                counts[1]++;
+            }
+        }
+
+        ParentContentView.HomeworkMonth view = new ParentContentView.HomeworkMonth(
+                ym.atDay(1).toString(),
+                enrollment.getAcademicYear() == null
+                        || enrollment.getAcademicYear().getStartsOn() == null
+                        ? null : enrollment.getAcademicYear().getStartsOn().toString(),
+                enrollment.getAcademicYear() == null
+                        || enrollment.getAcademicYear().getEndsOn() == null
+                        ? null : enrollment.getAcademicYear().getEndsOn().toString());
+        byDay.forEach((date, counts) -> view.getDays().add(
+                new ParentContentView.HomeworkDay(date.toString(), counts[0], counts[1])));
+        return view;
+    }
+
+    /**
+     * One day's descriptions, grouped by the subject they were written for.
+     */
+    @Transactional(readOnly = true)
+    public ParentContentView.HomeworkDayDetail descriptionDay(Long studentId, String date)
+            throws SGSException {
+
+        Enrollment enrollment = enrollmentOf(studentId);
+        requireModule(enrollment, "CHARACTERIZATION");
+        LocalDate day = parseDate(date);
+
+        List<Post> posts = postRepository.findCharacterizationsForChildBetween(
+                enrollment.getId(), day, day);
+        Set<Long> seen = seenIdsOf(enrollment, posts);
+
+        return groupBySubject(day, posts, seen);
     }
 
     // ---- news ---------------------------------------------------------------
@@ -203,23 +296,49 @@ public class ParentContentService {
                 postRepository.countPublishedNews(categoryId));
 
         for (Post post : posts) {
-            com.fasterxml.jackson.databind.JsonNode snapshot = published(post);
-            String date = text(snapshot, "eventDate");
-            ParentContentView.NewsItem item = new ParentContentView.NewsItem(
-                    post.getUuid(),
-                    text(snapshot, "title"),
-                    text(snapshot, "bodyHtml"),
-                    date.isEmpty() ? null : date,
-                    // Category and image are not in the snapshot - they are
-                    // references rather than content, and renaming a category
-                    // should retitle the label everywhere rather than leave old
-                    // items filed under a name that no longer exists.
-                    post.getCategory() == null ? null : post.getCategory().getName(),
-                    post.getImage() == null ? null : post.getImage().getUuid());
-            appendLinks(item.getLinks(), snapshot);
-            view.getItems().add(item);
+            view.getItems().add(toNewsItem(post));
         }
         return view;
+    }
+
+    /**
+     * One item, by uuid.
+     * <p>
+     * The list carries every field an article needs, so this is only for a link
+     * opened cold - pasted, bookmarked or refreshed - where there is no list to
+     * read from. An article with its own address needs it; an article that is
+     * only ever a dialog does not, which is why it did not exist before.
+     * <p>
+     * The same three checks the list applies: published, not archived, and news
+     * rather than homework. A uuid is easy to guess at, and a draft is not a
+     * parent's to read.
+     */
+    @Transactional(readOnly = true)
+    public ParentContentView.NewsItem newsItem(String uuid) {
+        return postRepository.findByUuid(uuid)
+                .filter(p -> p.getKind() == mthiebi.sgs.gradebook.model.PostKind.NEWS)
+                .filter(p -> !p.isArchived())
+                .filter(p -> p.getStatus() == mthiebi.sgs.gradebook.model.PostStatus.PUBLISHED)
+                .map(this::toNewsItem)
+                .orElse(null);
+    }
+
+    private ParentContentView.NewsItem toNewsItem(Post post) {
+        com.fasterxml.jackson.databind.JsonNode snapshot = published(post);
+        String date = text(snapshot, "eventDate");
+        ParentContentView.NewsItem item = new ParentContentView.NewsItem(
+                post.getUuid(),
+                text(snapshot, "title"),
+                text(snapshot, "bodyHtml"),
+                date.isEmpty() ? null : date,
+                // Category and image are not in the snapshot - they are
+                // references rather than content, and renaming a category
+                // should retitle the label everywhere rather than leave old
+                // items filed under a name that no longer exists.
+                post.getCategory() == null ? null : post.getCategory().getName(),
+                post.getImage() == null ? null : post.getImage().getUuid());
+        appendLinks(item.getLinks(), snapshot);
+        return item;
     }
 
     // ---- schedule and menu --------------------------------------------------

@@ -1,28 +1,26 @@
-import Box from "./Box";
+import PrimaryLandingGrid from "./PrimaryLandingGrid";
+import StandardLandingGrid from "./StandardLandingGrid";
 import {useQuery} from "react-query";
-import {fetchParentJournals, fetchParentModules} from "../journal/parentApi";
+import {fetchParentJournals, fetchParentMenu, fetchParentModules} from "../journal/parentApi";
 
 /**
  * The landing page.
  *
- * Two kinds of box, and they are different on purpose.
+ * Two grids, one decision. Which modules a school shows is a rule about the
+ * school and the school is in the data, so the console maps a name to a route
+ * and does not decide; primary gets the meals, the daily schedule and the
+ * child's description, and basic and secondary do not.
  *
- * The **modules** are a list of names from the server. Which ones a school shows
- * is a rule about the school, and the school is in the data - so the console
- * maps a name to a route and does not decide. Primary gets the meals, the daily
- * schedule and the child's description; basic and secondary do not.
+ * The buttons below them are `parent_view` rows rather than journals, because
+ * three of the school's five parent screens are one journal at different
+ * settings - per subject, summed across subjects, and the year. A journal
+ * nobody has configured stands in for itself, so an unseeded database still
+ * gets a button per journal.
  *
- * The **journals** are data. One box per journal the school has released to
- * parents; creating one and ticking "visible to parents" is all it takes to
- * appear, and nothing has to be deployed. The list is now scoped to the child's
- * school, so a primary parent gets none of them - their school does not grade
- * on the trimester journal, and until this was scoped it was offered to them
- * anyway.
- *
- * The five boxes this replaces were hardcoded, and the first of them linked to
- * /grades/<subject NAME>, so the page it opened had to refetch every subject
- * and match on a string. Journals are addressed by uuid, which does not change
- * when the school renames one.
+ * The five boxes all of this replaces were hardcoded, and the first linked to
+ * /grades/<subject NAME> - so the page it opened had to refetch every subject
+ * and match on a string, and a rename broke it. Nothing here knows the name of
+ * a journal, a period or a subject.
  */
 const AfterLoginPage = () => {
 
@@ -32,41 +30,22 @@ const AfterLoginPage = () => {
     const {data: modules, isLoading: modulesLoading} = useQuery(
         ["PARENT_MODULES"], fetchParentModules, {refetchOnWindowFocus: false});
 
-    if (isLoading || modulesLoading) {
+    const {data: views, isLoading: viewsLoading} = useQuery(
+        ["PARENT_MENU"], fetchParentMenu, {refetchOnWindowFocus: false});
+
+    if (isLoading || modulesLoading || viewsLoading) {
         return <></>;
     }
 
-    // Name to box. A module the server names but the console does not know is
-    // skipped rather than rendered blank - which is what makes it safe to add
-    // one server-side before the page exists.
-    const BOXES = {
-        HOMEWORK: {text: "საშინაო დავალებები", link: "/homework"},
-        NEWS: {text: "სიახლეები", link: "/news"},
-        SCHEDULE: {text: "დღის რეჟიმი", link: "/schedule"},
-        MENU: {text: "კვება", link: "/menu"},
-        CHARACTERIZATION: {text: "მოსწავლის დახასიათება", link: "/description"}
-    };
+    // Primary has its own visual, sent by the school. There is no explicit
+    // "school" field on this response - SCHEDULE only ever appears for a
+    // primary child (ParentContentService.modulesFor), so its presence is the
+    // same signal the backend already keys the rule on, not a guess of our own.
+    if ((modules || []).includes("SCHEDULE")) {
+        return <PrimaryLandingGrid modules={modules} journals={journals}/>;
+    }
 
-    return (
-        <>
-            <div className="boxCnt">
-                <div className="boxWrap">
-                    {(modules || []).map(name => BOXES[name] ? (
-                        <div className="boxWrap__div" key={name}>
-                            <Box text={BOXES[name].text} link={BOXES[name].link}/>
-                        </div>
-                    ) : null)}
-
-                    {(journals || []).map(journal => (
-                        <div className="boxWrap__div" key={journal.uuid}>
-                            <Box text={journal.name} link={`/journal/${journal.uuid}`}/>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div className="body__wallpaper"></div>
-        </>
-    );
+    return <StandardLandingGrid modules={modules} views={views}/>;
 };
 
 export default AfterLoginPage;

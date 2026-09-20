@@ -15,6 +15,16 @@ import java.util.List;
 @Data
 public class ParentView {
     private String journalName;
+    /**
+     * What the button that opened this said, where one did.
+     * <p>
+     * Three menu items open the same journal at different settings, so the
+     * journal's name heads all three and tells a parent nothing about which of
+     * them they are reading. Null when no menu item matches, and the console
+     * falls back to the journal's name - which is what a journal nobody has
+     * configured a button for gets anyway.
+     */
+    private String title;
     private String chartKey;
     private boolean subjectScoped;
     /**

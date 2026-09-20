@@ -3,8 +3,10 @@ import React, {useState} from "react";
 /**
  * The chosen day, one accordion section per subject.
  *
- * Opens on the first subject, because a day usually holds one or two and making
- * the parent click twice to read a single assignment is the wrong default.
+ * Everything closed, except when there is only one subject — then opening it is
+ * the whole content of the page and making the parent click twice to read a
+ * single assignment is the wrong default. With several, closed is right: the
+ * list of which subjects set work is itself the answer to most visits.
  *
  * The body is the school's own HTML, sanitised on write against a fixed
  * allowlist (decision 84) rather than here — sanitising on read would leave the
@@ -12,7 +14,8 @@ import React, {useState} from "react";
  */
 const DaySubjects = ({date, day}) => {
 
-    const [open, setOpen] = useState(0);
+    const only = day && day.subjects.length === 1;
+    const [open, setOpen] = useState(null);
 
     if (!day) {
         return <div className="hw__panel hw__loading">…</div>;
@@ -30,7 +33,10 @@ const DaySubjects = ({date, day}) => {
             <div className="hw__panelDate">{formatDate(date)}</div>
 
             {day.subjects.map((subject, index) => {
-                const expanded = open === index;
+                // `open` is null until the parent touches one, so a lone
+                // subject can start open without that decision sticking to
+                // index 0 on a day that has several.
+                const expanded = open === null ? only : open === index;
                 const unseen = subject.items.filter(i => !i.seen).length;
 
                 return (

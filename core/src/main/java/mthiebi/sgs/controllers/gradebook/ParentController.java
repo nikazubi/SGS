@@ -1,20 +1,10 @@
 package mthiebi.sgs.controllers.gradebook;
 
-import mthiebi.sgs.SGSException;
-import mthiebi.sgs.gradebook.service.parent.ParentContentView;
-import mthiebi.sgs.gradebook.service.parent.ParentJournal;
-import mthiebi.sgs.gradebook.service.parent.ParentView;
-import mthiebi.sgs.gradebook.service.parent.ParentViewService;
+import mthiebi.sgs.gradebook.model.PeriodKind;
+import mthiebi.sgs.gradebook.service.parent.*;
 import mthiebi.sgs.utils.UtilsJwt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -55,6 +45,22 @@ public class ParentController {
     public List<ParentJournal> journals(@RequestHeader("authorization") String authHeader)
             throws Exception {
         return parentViewService.journals(studentOf(authHeader));
+    }
+
+    /**
+     * The buttons the landing page draws.
+     *
+     * <p>Not the same as the journals above, and that is the point: three of the
+     * school's five parent screens are the trimester journal at different
+     * settings, so a button is a configured entry point rather than a journal.
+     * A journal nobody has configured stands in for itself, so this is a
+     * superset of {@code /journals} and the older endpoint stays for the primary
+     * grid, which asks a different question - which journal is the register.
+     */
+    @GetMapping("/views")
+    public List<ParentLandingView> views(@RequestHeader("authorization") String authHeader)
+            throws Exception {
+        return parentViewService.views(studentOf(authHeader));
     }
 
     // ---- homework -----------------------------------------------------------
@@ -125,6 +131,26 @@ public class ParentController {
      * primary/basic/secondary rule lives in one place - next to the school code
      * it is derived from.
      */
+    /**
+     * A month of the child's descriptions, in the homework calendar's shape.
+     */
+    @GetMapping("/characterizations/month")
+    public ParentContentView.HomeworkMonth descriptionMonth(
+            @RequestHeader("authorization") String authHeader,
+            @RequestParam String month) throws Exception {
+        return parentContentService.descriptionMonth(studentOf(authHeader), month);
+    }
+
+    /**
+     * One day's descriptions, grouped by subject.
+     */
+    @GetMapping("/characterizations/day/{date}")
+    public ParentContentView.HomeworkDayDetail descriptionDay(
+            @RequestHeader("authorization") String authHeader,
+            @PathVariable String date) throws Exception {
+        return parentContentService.descriptionDay(studentOf(authHeader), date);
+    }
+
     @GetMapping("/modules")
     public List<String> modules(@RequestHeader("authorization") String authHeader)
             throws Exception {
@@ -157,6 +183,20 @@ public class ParentController {
      * nothing about it a parent should not see, and the alternative is a filter
      * whose options the console has to hardcode.
      */
+    /**
+     * One news item, for an article opened by its own address.
+     * <p>
+     * Declared after the literal routes above it, which Spring prefers anyway -
+     * /news/categories is a path, not a uuid.
+     */
+    @GetMapping("/news/{uuid}")
+    public ParentContentView.NewsItem newsItem(
+            @RequestHeader("authorization") String authHeader,
+            @PathVariable String uuid) throws Exception {
+        studentOf(authHeader);
+        return parentContentService.newsItem(uuid);
+    }
+
     @GetMapping("/news/categories")
     public List<NewsCategory> newsCategories(
             @RequestHeader("authorization") String authHeader) throws Exception {
@@ -239,8 +279,18 @@ public class ParentController {
     public ParentView view(@RequestHeader("authorization") String authHeader,
                            @PathVariable String uuid,
                            @RequestParam(required = false) Long periodId,
-                           @RequestParam(required = false) Long subjectId) throws Exception {
-        return parentViewService.view(studentOf(authHeader), uuid, periodId, subjectId);
+                           @RequestParam(required = false) Long subjectId,
+                           // Which tier the landing page's button opens on.
+                           // Only consulted when periodId is absent - once the
+                           // parent uses the picker, their choice is the answer.
+                           @RequestParam(required = false) PeriodKind periodKind,
+                           // Every subject, so one mark each rather than every
+                           // column: five subjects by twelve columns is a grid
+                           // nobody asked for.
+                           @RequestParam(defaultValue = "false") boolean summary)
+            throws Exception {
+        return parentViewService.view(studentOf(authHeader), uuid, periodId, subjectId,
+                periodKind, summary);
     }
 
     /**

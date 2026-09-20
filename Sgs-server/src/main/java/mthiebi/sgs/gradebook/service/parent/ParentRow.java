@@ -22,6 +22,15 @@ public class ParentRow {
      * Column code to displayed value. Absent columns are still listed, empty.
      */
     private final Map<String, String> values = new LinkedHashMap<>();
+    /**
+     * REPORTING, ROLLUP or YEAR, for a row that is a period. Null when the row
+     * is a subject.
+     * <p>
+     * The console needs it: the year belongs at the end of a register's row as
+     * its total and out of the chart entirely, and neither follows from the
+     * label.
+     */
+    private String periodKind;
 
     /**
      * The ceiling this row is judged against, where the journal has one.

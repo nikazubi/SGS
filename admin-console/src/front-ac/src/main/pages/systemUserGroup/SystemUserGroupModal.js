@@ -11,7 +11,11 @@ const AcademyClassModal = ({open, groupId, groupName, groupStatus, subject, onCl
     const initialValues = {
         id: groupId? groupId : 0,
         name: groupName? groupName : "",
-        active: !!groupStatus,
+        // A new group is active. `!!undefined` made it false, so a group created
+        // here granted nothing until somebody noticed the unticked box - and an
+        // inactive group contributes no permissions at all, so the symptom was a
+        // user who had been given a group and could still see nothing.
+        active: modalOpenMode === ModalOpenMode.add ? true : !!groupStatus,
         permission: subject? subject : ""
     };
 

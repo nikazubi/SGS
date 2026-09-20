@@ -1,29 +1,85 @@
 /*
- * Schedule and menu, and the child's description.
+ * Schedule and menu.
  *
- * Working layout only. The visual pass lands with the primary theme and these
- * rules are expected to be replaced then - they exist so the data is legible,
- * not so it is finished.
+ * Five cards for five weekdays: three across, two below sitting over the gaps
+ * in the row above, so the pair reads as centred rather than left over. All five
+ * are the height of the fullest one - a week where Monday is twice the height of
+ * Tuesday looks like a fault rather than a busy day.
+ *
+ * Primary only. ParentContentService.modulesFor gives SCHEDULE and MENU to that
+ * school alone, so these colours reach nobody else.
  */
 
+.std {
+    padding: 32px 20px 56px;
+    /* Down to the fold at least, or the app's own striped background shows
+       below a short week and the page reads as two backgrounds. 81px is the
+       header; the primary landing does the same. */
+    min-height: calc(100vh - 81px);
+}
+
+.std__title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #12506E;
+    text-align: center;
+    margin: 0 0 24px;
+}
+
+.std__state {
+    color: #5B7A8A;
+    text-align: center;
+    padding: 48px 16px;
+}
+
+.std__state--error {
+    color: #C0392B;
+    font-weight: 600;
+}
+
+/*
+ * Six columns, not three, so the bottom pair can straddle the gaps.
+ *
+ * The top three take columns 1-2, 3-4 and 5-6. The bottom two start one column
+ * later - 2-3 and 4-5 - which puts each of them centred over a gap in the row
+ * above and the pair centred in the block. Three columns cannot express that:
+ * two items in a three-column row sit left, or centre without aligning to
+ * anything.
+ */
 .std__week {
-    width: 640px;
-    max-width: 94vw;
-    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /* Every row the height of the tallest, and every card stretched to its row,
+       which is what makes all five one size whatever the data does. */
+    grid-auto-rows: 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 1060px;
+    margin: 0 auto;
 }
 
 .std__day {
-    background: #fff;
-    border-radius: 0 20px 20px 20px;
-    box-shadow: #2285b2 2px 2px 9px;
-    padding: 12px 18px;
-    margin-bottom: 12px;
+    grid-column: span 2;
+    /* The radius the landing tiles use, since this is the screen behind one. */
+    border-radius: 24px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 10px rgba(28, 74, 95, 0.10);
+    display: flex;
+    flex-direction: column;
+}
+
+.std__day:nth-child(4) {
+    grid-column: 2 / span 2;
+}
+
+.std__day:nth-child(5) {
+    grid-column: 4 / span 2;
 }
 
 .std__dayName {
-    margin: 0 0 8px;
-    font-size: 15px;
-    color: #00558a;
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .std__lines {
@@ -35,10 +91,10 @@
 .std__line {
     display: flex;
     gap: 12px;
-    padding: 5px 0;
+    padding: 7px 0;
     font-size: 14px;
-    color: #37505e;
-    border-top: 1px solid #eef5f9;
+    line-height: 1.4;
+    border-top: 1px solid;
 }
 
 .std__line:first-child {
@@ -46,9 +102,10 @@
 }
 
 .std__time {
-    flex: 0 0 96px;
-    color: #7a94a5;
+    flex: 0 0 84px;
+    opacity: 0.75;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 .std__text {
@@ -56,15 +113,32 @@
     overflow-wrap: anywhere;
 }
 
-.std__none,
-.std__empty {
-    color: #7a94a5;
-    font-size: 14px;
+.std__none {
+    margin: 0;
+    opacity: 0.55;
+    font-size: 18px;
 }
 
-.std__empty {
-    padding: 30px;
-    text-align: center;
+/* ---- phone: one card per row ---------------------------------------------- */
+
+@media (max-width: 760px) {
+    .std {
+        padding: 20px 14px 40px;
+    }
+
+    .std__week {
+        grid-template-columns: 1fr;
+        /* Content height again: five equal cards down a phone wastes most of
+           the screen on the quiet days. */
+        grid-auto-rows: auto;
+        gap: 14px;
+    }
+
+    .std__day,
+    .std__day:nth-child(4),
+    .std__day:nth-child(5) {
+        grid-column: 1;
+    }
 }
 
 /* ---- the child's description ------------------------------------------ */

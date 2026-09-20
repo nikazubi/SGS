@@ -26,10 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Homework and news, as a parent sees them.
@@ -269,18 +266,30 @@ class ParentContentServiceIT {
     @Test
     @DisplayName("only published news reaches a parent, newest first")
     void newsIsPublishedAndOrdered() throws Exception {
-        publishNews("ძველი", LocalDate.of(2026, 1, 5));
-        publishNews("ახალი", LocalDate.of(2026, 3, 1));
-        postService.save(PostKind.NEWS, news("დაუმთავრებელი", LocalDate.of(2026, 4, 1)), 1L);
+        // Measured against a baseline, and the titles tagged, because news
+        // belongs to the school rather than to a class: everything else the
+        // database holds is in this same listing. Asserting a total of two only
+        // held while nobody had seeded any, which made a demo fixture look like
+        // a broken build.
+        long before = parentContentService.news(null, 0, 1).getTotal();
+        String tag = UUID.randomUUID().toString().substring(0, 6);
+
+        publishNews("ძველი-" + tag, LocalDate.of(2026, 1, 5));
+        publishNews("ახალი-" + tag, LocalDate.of(2026, 3, 1));
+        postService.save(PostKind.NEWS,
+                news("დაუმთავრებელი-" + tag, LocalDate.of(2026, 4, 1)), 1L);
         em.flush();
         em.clear();
 
-        ParentContentView.NewsPage page = parentContentService.news(null, 0, 10);
+        ParentContentView.NewsPage page = parentContentService.news(null, 0, 500);
 
-        assertEquals(2, page.getTotal(), "the draft is not counted");
-        assertEquals(Arrays.asList("ახალი", "ძველი"),
-                Arrays.asList(page.getItems().get(0).getTitle(),
-                        page.getItems().get(1).getTitle()));
+        assertEquals(before + 2, page.getTotal(), "the draft is not counted");
+        assertEquals(Arrays.asList("ახალი-" + tag, "ძველი-" + tag),
+                page.getItems().stream()
+                        .map(ParentContentView.NewsItem::getTitle)
+                        .filter(t -> t.endsWith(tag))
+                        .collect(java.util.stream.Collectors.toList()),
+                "published only, and the newer of the two first");
     }
 
     // ---- schedule, menu, description ----------------------------------------
@@ -416,7 +425,193 @@ class ParentContentServiceIT {
                 "primary adds the three modules the brief gives it");
     }
 
+    // ---- the child's description, as a calendar ------------------------------
+
+    @Test
+    @DisplayName("descriptions are grouped by the day they were written for")
+    void descriptionMonthGroupsByDay() throws Exception {
+        asPrimary();
+        publishDescription("კითხვის ტემპი", DAY, 0);
+        publishDescription("ყურადღება გაკვეთილზე", DAY, 0);
+        publishDescription("აქტიურად მონაწილეობს", DAY.plusDays(4), 0);
+
+        List<ParentContentView.HomeworkDay> days =
+                parentContentService.descriptionMonth(studentOf(0), MONTH).getDays();
+
+        assertEquals(2, days.size(), "two days hold something, not three items");
+        assertEquals(DAY.toString(), days.get(0).getDate());
+        assertEquals(2, days.get(0).getTotal());
+        assertEquals(2, days.get(0).getUnseen());
+        assertEquals(1, days.get(1).getTotal());
+    }
+
+    @Test
+    @DisplayName("a day's descriptions are grouped under the subject each is about")
+    void descriptionDayGroupsBySubject() throws Exception {
+        asPrimary();
+        publishDescription("მათემატიკაში", DAY, 0);
+        publishDescription("ქართულში", DAY, 0, otherSubject());
+
+        ParentContentView.HomeworkDayDetail detail =
+                parentContentService.descriptionDay(studentOf(0), DAY.toString());
+
+        assertEquals(2, detail.getSubjects().size());
+        assertEquals(1, detail.getSubjects().get(0).getItems().size());
+        assertEquals(1, detail.getSubjects().get(1).getItems().size());
+    }
+
+    @Test
+    @DisplayName("the calendar shows a child only what was written about them")
+    void descriptionCalendarIsTargeted() throws Exception {
+        // The same rule the list already had. It is repeated here because the
+        // calendar reaches the rows through a different query - one bounded by
+        // date - and a targeting clause is easy to drop when a query is copied.
+        asPrimary();
+        publishDescription("ერთის შესახებ", DAY, 0);
+
+        assertEquals(1, parentContentService.descriptionMonth(
+                studentOf(0), MONTH).getDays().size());
+        assertTrue(parentContentService.descriptionMonth(
+                studentOf(1), MONTH).getDays().isEmpty());
+        assertTrue(parentContentService.descriptionDay(
+                studentOf(1), DAY.toString()).getSubjects().isEmpty());
+    }
+
+    @Test
+    @DisplayName("an unpublished description is not on the calendar")
+    void draftDescriptionIsNotOnTheCalendar() throws Exception {
+        asPrimary();
+        PostDraft about = descriptionDraft("ჯერ არ გაგზავნილა", DAY, 0, data.subject.getId());
+        postService.save(PostKind.CHARACTERIZATION, about, 1L);
+        em.flush();
+        em.clear();
+
+        assertTrue(parentContentService.descriptionMonth(
+                studentOf(0), MONTH).getDays().isEmpty());
+    }
+
+    @Test
+    @DisplayName("a description written in another month is not in this one")
+    void descriptionMonthIsBounded() throws Exception {
+        asPrimary();
+        publishDescription("თებერვალში", DAY.minusMonths(1), 0);
+        publishDescription("მარტში", DAY, 0);
+
+        List<ParentContentView.HomeworkDay> days =
+                parentContentService.descriptionMonth(studentOf(0), MONTH).getDays();
+        assertEquals(1, days.size());
+        assertEquals(DAY.toString(), days.get(0).getDate());
+    }
+
+    @Test
+    @DisplayName("the description month carries the year bounds the arrows clamp to")
+    void descriptionMonthCarriesTheYearBounds() throws Exception {
+        asPrimary();
+        ParentContentView.HomeworkMonth view =
+                parentContentService.descriptionMonth(studentOf(0), MONTH);
+
+        // Without these the console strands a parent whose today falls outside
+        // the academic year: both arrows disable and nothing can be reached.
+        assertEquals("2025-09-01", view.getYearStartsOn());
+        assertEquals("2026-06-30", view.getYearEndsOn());
+    }
+
+    @Test
+    @DisplayName("opening a description clears its unread count")
+    void openingADescriptionClearsItsCount() throws Exception {
+        // markSeen was written for homework and homework only. A description
+        // belongs to no class, so the class clause it used to carry excluded
+        // every one of them - the page would have counted them unread forever.
+        asPrimary();
+        PostView sent = publishDescription("კითხვის ტემპი", DAY, 0);
+
+        assertEquals(1, parentContentService.markSeen(
+                studentOf(0), Collections.singletonList(sent.getUuid())));
+        em.flush();
+        em.clear();
+
+        ParentContentView.HomeworkDay day =
+                parentContentService.descriptionMonth(studentOf(0), MONTH).getDays().get(0);
+        assertEquals(1, day.getTotal());
+        assertEquals(0, day.getUnseen());
+    }
+
+    @Test
+    @DisplayName("one child cannot mark another child's description read")
+    void aDescriptionIsOnlyMarkedByTheChildItNames() throws Exception {
+        // The widened clause reaches posts that belong to no class. It must not
+        // also reach posts that belong to another child.
+        asPrimary();
+        PostView sent = publishDescription("ერთის შესახებ", DAY, 0);
+
+        assertEquals(0, parentContentService.markSeen(
+                studentOf(1), Collections.singletonList(sent.getUuid())));
+        em.flush();
+        em.clear();
+
+        assertEquals(1, parentContentService.descriptionMonth(studentOf(0), MONTH)
+                .getDays().get(0).getUnseen(), "still unread by the child it is about");
+    }
+
+    @Test
+    @DisplayName("homework is still marked read by class, not only by name")
+    void homeworkSeenStillWorksForTheWholeClass() throws Exception {
+        // The same clause now serves both. Class-wide homework has no targets at
+        // all, so widening it for descriptions must not have narrowed it here.
+        PostView sent = publish(draft("ყველასთვის"));
+
+        assertEquals(1, parentContentService.markSeen(
+                studentOf(0), Collections.singletonList(sent.getUuid())));
+        assertEquals(1, parentContentService.markSeen(
+                studentOf(1), Collections.singletonList(sent.getUuid())));
+    }
+
+    @Test
+    @DisplayName("a school without the module is refused the calendar too")
+    void descriptionCalendarIsPrimaryOnly() throws Exception {
+        org.junit.jupiter.api.Assertions.assertThrows(SGSException.class,
+                () -> parentContentService.descriptionMonth(studentOf(0), MONTH));
+        org.junit.jupiter.api.Assertions.assertThrows(SGSException.class,
+                () -> parentContentService.descriptionDay(studentOf(0), DAY.toString()));
+    }
+
     // ---- helpers ------------------------------------------------------------
+
+    private PostView publishDescription(String title, LocalDate on, int child) throws Exception {
+        return publishDescription(title, on, child, data.subject.getId());
+    }
+
+    private PostView publishDescription(String title, LocalDate on, int child, Long subjectId)
+            throws Exception {
+        PostView saved = postService.save(PostKind.CHARACTERIZATION,
+                descriptionDraft(title, on, child, subjectId), 1L);
+        PostView sent = postService.publish(saved.getUuid(), 1L);
+        em.flush();
+        em.clear();
+        return sent;
+    }
+
+    private PostDraft descriptionDraft(String title, LocalDate on, int child, Long subjectId) {
+        PostDraft d = standing(title);
+        d.setSubjectId(subjectId);
+        d.setEventDate(on);
+        d.setTargetEnrollmentIds(
+                Collections.singletonList(data.enrollments.get(child).getId()));
+        return d;
+    }
+
+    /**
+     * A second subject, so a day can hold more than one group.
+     */
+    private Long otherSubject() {
+        mthiebi.sgs.gradebook.model.Subject second =
+                new mthiebi.sgs.gradebook.model.Subject();
+        second.setName("ქართული " + UUID.randomUUID().toString().substring(0, 6));
+        second.setShortName("ქარ");
+        em.persist(second);
+        em.flush();
+        return second.getId();
+    }
 
     private ParentContentView.HomeworkMonth month() throws Exception {
         return parentContentService.homeworkMonth(studentOf(0), MONTH);

@@ -1,0 +1,164 @@
+/*
+ * The primary-school landing page.
+ *
+ * Six boxes as sent by the school: news and homework large and side by side,
+ * three small tiles below, absence full-width at the bottom. On a phone every
+ * tile becomes one column, stacked in the same order - nothing reflows inside
+ * a tile, the grid just stops being three columns wide.
+ */
+
+.primaryLanding {
+    min-height: calc(100vh - 81px);
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.primaryLanding__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.primaryLanding__tile {
+    position: relative;
+    border-radius: 24px;
+    box-shadow: 0 2px 10px rgba(28, 74, 95, 0.10);
+    text-decoration: none;
+    display: flex;
+    padding: 26px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.primaryLanding__tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(28, 74, 95, 0.16);
+}
+
+/* ---- news: row 1, two columns wide -------------------------------------- */
+
+.primaryLanding__tile--news {
+    grid-column: span 2;
+}
+
+/* ---- homework: row 1, one column ----------------------------------------- */
+
+.primaryLanding__tile--homework {
+    grid-column: span 1;
+    min-height: 220px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.primaryLanding__tile--homework .primaryLanding__icon {
+    align-self: flex-start;
+    margin-bottom: auto;
+}
+
+.primaryLanding__badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    min-width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 0 6px;
+}
+
+/* ---- schedule / menu / description: row 2 -------------------------------- */
+
+.primaryLanding__tile--small {
+    grid-column: span 1;
+    min-height: 194px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.primaryLanding__tile--small .primaryLanding__icon {
+    align-self: flex-start;
+    margin-bottom: auto;
+}
+
+.primaryLanding__icon {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.primaryLanding__label {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+/* ---- absence: row 3, full width ------------------------------------------ */
+
+.primaryLanding__tile--absence {
+    grid-column: span 3;
+    min-height: 136px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.primaryLanding__tile--absence .primaryLanding__label {
+    font-size: 19px;
+}
+
+.primaryLanding__tile--absence .primaryLanding__icon {
+    width: 80px;
+    height: 80px;
+}
+
+/* ---- phone: one tile per row, in the same order --------------------------- */
+
+@media only screen and (max-width: 660px) {
+    .primaryLanding {
+        padding: 28px 14px 40px;
+    }
+
+    .primaryLanding__grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .primaryLanding__tile--news,
+    .primaryLanding__tile--homework,
+    .primaryLanding__tile--small,
+    .primaryLanding__tile--absence {
+        grid-column: span 1;
+        min-height: 0;
+    }
+
+    .primaryLanding__tile--homework,
+    .primaryLanding__tile--small {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 16px;
+        min-height: 0;
+        padding: 18px 20px;
+    }
+
+    .primaryLanding__tile--homework .primaryLanding__icon,
+    .primaryLanding__tile--small .primaryLanding__icon {
+        align-self: center;
+        margin-bottom: 0;
+        width: 56px;
+        height: 56px;
+    }
+
+    .primaryLanding__tile--absence {
+        padding: 18px 20px;
+    }
+}

@@ -3,9 +3,16 @@ import Header from './components/Header'
 import JournalPage from './pages/journal/JournalPage';
 import HomeworkPage from './pages/homework/HomeworkPage';
 import NewsPage from './pages/news/NewsPage';
+import NewsArticlePage from './pages/news/NewsArticlePage';
+import {
+    fetchDescriptionDay,
+    fetchDescriptionMonth,
+    fetchHomeworkDay,
+    fetchHomeworkMonth,
+    fetchMenu,
+    fetchSchedule
+} from './pages/journal/parentApi';
 import StandingDocPage from './pages/standing/StandingDocPage';
-import CharacterizationPage from './pages/standing/CharacterizationPage';
-import {fetchMenu, fetchSchedule} from './pages/journal/parentApi';
 import AfterLoginPage from './pages/afterLoginPage/AfterLoginPage'
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import LoginPage from "./pages/loginPage/LoginForm";
@@ -34,7 +41,17 @@ export const App = () => {
                             {/* Shared by every school. The modules that are
                                 primary-only - meals, the daily schedule, the
                                 child's description - land next. */}
-                            <Route path="/homework" component={HomeworkPage}/>
+                            <Route path="/homework" render={() => (
+                                <HomeworkPage
+                                    title="საშინაო დავალებები"
+                                    path="/homework"
+                                    queryKey="PARENT_HOMEWORK"
+                                    fetchMonth={fetchHomeworkMonth}
+                                    fetchDay={fetchHomeworkDay}/>
+                            )}/>
+                            {/* Before the list, so /news/<uuid> is an article rather than the
+                                list with a stray segment. */}
+                            <Route path="/news/:uuid" component={NewsArticlePage}/>
                             <Route path="/news" component={NewsPage}/>
 
                             {/* Primary-school modules. The route exists for
@@ -55,7 +72,16 @@ export const App = () => {
                                     fetcher={fetchMenu}
                                 />
                             )}/>
-                            <Route path="/description" component={CharacterizationPage}/>
+                            {/* The same calendar as homework, over the
+                                descriptions written about this child. */}
+                            <Route path="/description" render={() => (
+                                <HomeworkPage
+                                    title="მოსწავლის დახასიათება"
+                                    path="/description"
+                                    queryKey="PARENT_DESCRIPTION"
+                                    fetchMonth={fetchDescriptionMonth}
+                                    fetchDay={fetchDescriptionDay}/>
+                            )}/>
                             {/* The five hardcoded pages that used to live here -
                                 ethics, discipline, annual, trimester, absence -
                                 are gone. The journal boxes replaced them and

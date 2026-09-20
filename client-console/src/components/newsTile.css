@@ -1,0 +1,113 @@
+/* The news tile's structure. Colour belongs to whichever landing page uses it. */
+
+.newsTile {
+    display: flex;
+    align-items: stretch;
+    gap: 22px;
+    min-height: 220px;
+    overflow-wrap: anywhere;
+}
+
+.newsTile__thumb {
+    flex: 0 0 210px;
+    width: 210px;
+    align-self: stretch;
+    border-radius: 16px;
+    /* Translucent rather than a fixed colour: the tile underneath is a light
+       tint on primary and navy elsewhere, and this has to sit on both. */
+    background: rgba(255, 255, 255, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.newsTile__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.newsTile__placeholder {
+    width: 74px;
+    height: 74px;
+    opacity: 0.8;
+}
+
+.newsTile__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.newsTile__eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.75;
+}
+
+.newsTile__title {
+    margin: 6px 0 0;
+    font-size: 20px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.newsTile__excerpt {
+    margin: 8px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    opacity: 0.85;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* The three states that are not an item. Failed is deliberately the loudest:
+   telling a parent "no news" when the request broke is the defect this guards. */
+.newsTile__state {
+    margin-top: 10px;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.newsTile__state--error {
+    color: #C0392B;
+    opacity: 1;
+    font-weight: 600;
+}
+
+.newsTile__foot {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.newsTile__seeAll {
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* ---- phone ---------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+    .newsTile {
+        /* Image above the text rather than beside it: 210px of thumbnail plus a
+           title does not fit across a phone. PARENT-COMPONENTS.md names this as
+           the news card's required narrow form. */
+        flex-direction: column;
+        min-height: 0;
+        gap: 14px;
+    }
+
+    .newsTile__thumb {
+        flex: 0 0 140px;
+        width: 100%;
+        height: 140px;
+    }
+}

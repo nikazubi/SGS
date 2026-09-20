@@ -174,4 +174,22 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             + "        (select t.enrollment.id from PostTarget t where t.post.id = p.id) "
             + "order by p.eventDate desc, p.id desc")
     List<Post> findCharacterizationsForChild(@Param("enrollmentId") Long enrollmentId);
+
+    /**
+     * The same, bounded by date, for the calendar.
+     * <p>
+     * Ascending here rather than newest first: the caller groups by day and the
+     * order within a day is the order the school wrote them.
+     */
+    @Query("select p from Post p "
+            + "where p.kind = mthiebi.sgs.gradebook.model.PostKind.CHARACTERIZATION "
+            + "  and p.archived = false "
+            + "  and p.status = mthiebi.sgs.gradebook.model.PostStatus.PUBLISHED "
+            + "  and p.eventDate between :from and :to "
+            + "  and :enrollmentId in "
+            + "        (select t.enrollment.id from PostTarget t where t.post.id = p.id) "
+            + "order by p.eventDate, p.id")
+    List<Post> findCharacterizationsForChildBetween(@Param("enrollmentId") Long enrollmentId,
+                                                    @Param("from") java.time.LocalDate from,
+                                                    @Param("to") java.time.LocalDate to);
 }

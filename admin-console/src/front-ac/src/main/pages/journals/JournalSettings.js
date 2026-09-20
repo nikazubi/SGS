@@ -1,7 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {
-    Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle,
-    FormControlLabel, MenuItem, TextField, Typography
+    Button,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControlLabel,
+    MenuItem,
+    TextField,
+    Typography
 } from "@mui/material";
 import {updateJournal} from "./journalApi";
 
@@ -17,7 +25,8 @@ import {updateJournal} from "./journalApi";
 const CHARTS = [
     {value: "", label: "დიაგრამის გარეშე"},
     {value: "GRADE_TREND", label: "შეფასებების დინამიკა (ხაზოვანი)"},
-    {value: "ABSENCE_BARS", label: "პერიოდების მიხედვით (სვეტოვანი)"}
+    {value: "ABSENCE_BARS", label: "პერიოდების მიხედვით (სვეტოვანი)"},
+    {value: "SUBJECT_BARS", label: "საგნების მიხედვით (სვეტოვანი)"}
 ];
 
 const JournalSettings = ({journal, onClose, onSaved, onError}) => {

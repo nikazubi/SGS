@@ -269,3 +269,78 @@
     border-radius: 20px;
     cursor: pointer;
 }
+
+/* ---- phone --------------------------------------------------------------
+ *
+ * The login is a desktop composition: a 500px wrap holding six 400px circles,
+ * offset past its edges, with the form absolutely centred inside the blue one.
+ * On a 390px screen the document came out 715px wide and scrolled sideways -
+ * on the first screen every parent meets, and the only one no logged-in check
+ * can reach.
+ *
+ * Clipping the overflow alone was worse than the bug: the blue circle sits at
+ * left 0 with a -50% translate, so hiding what runs past the edge cut the form
+ * in half and left the fields unreachable.
+ *
+ * So on a phone the decoration goes and the form becomes the page. The circles
+ * are ornament; the two fields are the only thing on this screen that has a
+ * job.
+ */
+
+@media (max-width: 760px) {
+    .loginCnt {
+        padding: 24px 16px 40px;
+        overflow-x: hidden;
+    }
+
+    .loginCnt__img img {
+        max-width: 150px;
+    }
+
+    .loginCnt__circleWrap {
+        /* In the flow, sized by its content, rather than pinned at a fixed
+           offset from the middle of a 500px box. */
+        position: relative;
+        transform: none;
+        left: auto;
+        top: auto;
+        height: auto;
+        max-width: 380px;
+        margin: 28px auto 0;
+    }
+
+    .loginCnt__circle {
+        display: none;
+    }
+
+    /* The one that carries the form stops being a circle and becomes a card. */
+    .loginCnt__circle.blue {
+        display: block;
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: none;
+        height: auto;
+        border-radius: 0 24px 24px 24px;
+        padding: 26px 22px 32px;
+    }
+
+    .formCnt {
+        position: static;
+        transform: none;
+        width: 100%;
+    }
+
+    .formCnt__title {
+        margin-top: 0;
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .loginCnt__footer {
+        position: static;
+        width: 100%;
+        font-size: 19px;
+        margin-top: 22px;
+    }
+}

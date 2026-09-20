@@ -15,6 +15,7 @@ create sequence sgs.grade_change_request_seq start with 1 increment by 50;
 create sequence sgs.grade_entry_seq start with 1 increment by 50;
 create sequence sgs.grading_template_seq start with 1 increment by 50;
 create sequence sgs.homework_seen_seq start with 1 increment by 50;
+create sequence sgs.parent_menu_item_seq start with 1 increment by 50;
 create sequence sgs.period_scheme_seq start with 1 increment by 50;
 create sequence sgs.period_seq start with 1 increment by 50;
 create sequence sgs.post_category_seq start with 1 increment by 50;
@@ -262,6 +263,23 @@ create table sgs.homework_seen
     seen_at       datetime2 not null,
     enrollment_id bigint    not null,
     post_id       bigint    not null,
+    primary key (id)
+);
+
+create table sgs.parent_menu_item
+(
+    id           bigint      not null,
+    created_at   datetime2   not null,
+    created_by   bigint,
+    updated_at   datetime2   not null,
+    updated_by   bigint,
+    chart_column nvarchar(64),
+    chart_key    nvarchar(40),
+    label        nvarchar(200) not null,
+    ordinal      int         not null,
+    period_kind  varchar(20),
+    subject_mode varchar(10) not null,
+    template_id  bigint      not null,
     primary key (id)
 );
 
@@ -702,6 +720,11 @@ alter table sgs.homework_seen
     add constraint fk_homework_seen_post
         foreign key (post_id)
             references sgs.post;
+
+alter table sgs.parent_menu_item
+    add constraint fk_parent_menu_template
+        foreign key (template_id)
+            references sgs.grading_template;
 
 alter table sgs.period
     add constraint fk_period_parent

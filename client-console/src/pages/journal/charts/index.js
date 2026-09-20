@@ -1,5 +1,6 @@
 import GradeTrendChart from "./GradeTrendChart";
 import AbsenceBarsChart from "./AbsenceBarsChart";
+import SubjectBarsChart from "./SubjectBarsChart";
 
 /**
  * Which chart a journal draws.
@@ -20,7 +21,8 @@ import AbsenceBarsChart from "./AbsenceBarsChart";
  */
 const CHARTS = {
     GRADE_TREND: GradeTrendChart,
-    ABSENCE_BARS: AbsenceBarsChart
+    ABSENCE_BARS: AbsenceBarsChart,
+    SUBJECT_BARS: SubjectBarsChart
 };
 
 export const chartFor = (chartKey) => (chartKey ? CHARTS[chartKey] : null) || null;

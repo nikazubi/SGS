@@ -4,10 +4,10 @@
 consoles with Playwright (Chromium). Every check below was run against the real
 UI rather than the API, except where it says otherwise.
 
-**78 checks executed: 71 pass, 7 fail. 41 not executed.**
+**83 checks executed: 76 pass, 7 fail. 36 not executed.**
 
-Nine defects were found. **Seven are fixed** — the changes are in §4. Two are
-decisions for the school rather than bugs, and are in §3.
+Eleven defects were found. **Nine are fixed** — the changes are in §4 and §7.
+Two are decisions for the school rather than bugs, and are in §3.
 
 ---
 
@@ -21,7 +21,7 @@ decisions for the school rather than bugs, and are in §3.
 | 6 Content        | 65–86   | 8    | 0    | 14      |
 | 7 Parent         | 87–100  | 3    | 3    | 8       |
 | 8 Flows          | 101–114 | 14   | 0    | 0       |
-| 9 Permissions    | 115–119 | 0    | 0    | 5       |
+| 9 Permissions    | 115–119 | 5    | 0    | 0       |
 
 The fixture was reset between runs and restored afterwards: 4 students, 6
 subjects, 3 journals, 2 classes, no marks, no posts.
@@ -101,7 +101,7 @@ They do not, by design. Worth confirming with the school before cutover.
 
 ---
 
-## 4. The nine defects, and the seven fixes
+## 4. The first nine defects, and the seven fixes
 
 ### Fixed
 
@@ -177,10 +177,12 @@ button. Closed by default now.
   სხვა მოსწავლეს უკვე აქვს`. The message is right; the `409, ` prefix comes from
   `convertError(error, includeStatus = true)` and is not for teachers or
   parents.
-* **უფლებათა ჯგუფები has no create control at all**, which is why §9 could not
-  start — every one of its checks begins by making a permission group.
-  სისტემური მომხმარებელი does have a visible one. §10 of the plan says
-  "creating records there works" — true of one page, not the other.
+* **Correction to an earlier finding.** This document previously said
+  უფლებათა ჯგუფები has no create control. It does — ძიება, დამატება,
+  რედაქტირება and წაშლა are all there and all work. The probe that reported it
+  missing looked for `data-testid` on the icons, and MUI v4 icons do not carry
+  one; it found nothing and I read that as nothing being there. §9 was then run
+  properly and is recorded in §7 below.
 * **A student who leaves disappears from periods they were present for.** After
   ტესტაძე left on 01.03.2026, the trimester-I grid (September–November, when
   they were enrolled and had a mark of 7) no longer lists them. The mark is
@@ -224,7 +226,61 @@ The parts carrying the most new code all behave:
 
 ---
 
-## 7. Re-running this
+## 7. Permissions
+
+Checks 115–119, run after the correction in §5. All five pass, and two defects
+were found on the way. Both are fixed.
+
+**115 — a group can be made with a chosen set of permissions.** ტესტ-ჯგუფი was
+created through ძიება → დამატება with one permission on it, and all twenty are
+offered by name in Georgian.
+
+**116 — a user can be put in that group.** testuser was created and assigned to
+it, and the assignment survives a reload.
+
+**117 — a user sees only what the group grants.** testuser's token carried the
+one permission the group holds, and the menu offered exactly one item. The same
+run as admin offers eighteen.
+
+**118 — a user can be restricted to classes.** With 3ა granted, the class picker
+offers 3ა alone where admin is offered both. The grant is stored in
+`dbo.system_user_table_academy_class_list` and read back on the next request.
+
+**119 — a grant that no longer resolves shows nothing.** Renaming the granted
+class out from under the grant left testuser with no classes rather than the
+whole school, which is the failure `ClassScopeGuard` was built to avoid. Admin
+was unaffected.
+
+Forcing the URL of a page a user has no permission for renders the page shell,
+but every request behind it is refused with 403 — `/api/gradebook/news`,
+`/api/gradebook/journals` and `/system-user/filter` all return 403 for testuser
+and 200 for admin. It is a gap in the menu, not in the data. What the parent
+sees is `სიახლე არ არის`, which is the same loading-versus-empty-versus-refused
+confusion as defect 9.
+
+### The two defects
+
+**10. A new permission group was created switched off, and an inactive group
+grants nothing.** The symptom was a user who had been given a group and could
+still see nothing at all. `SystemUserGroupModal` seeded the form from
+`!!groupStatus`, and on a group that does not exist yet that is `!!undefined` —
+false. The tick box was there, unticked, on a screen where nothing suggests a
+group you are in the middle of creating needs switching on. **Fixed:** a group
+being created now starts active, and only an existing group is read from its own
+status.
+
+**11. The class picker was empty for everybody, so no user could be restricted
+to a class.** `academy-class/get-academy-classes` narrows to the caller's own
+classes, and an empty grant meant nothing matched rather than no narrowing. The
+grant only ever filled as a side effect of creating a class through this console,
+so a school whose classes arrived by migration had nobody holding any — including
+the administrator who needed to grant them. The result was a field that silently
+accepted nothing. **Fixed:** an empty grant now means unrestricted, which is how
+`ClassScopeGuard` has always read it.
+
+---
+
+## 8. Re-running this
 
 ```powershell
 .\db\demo\reset.ps1

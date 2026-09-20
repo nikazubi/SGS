@@ -1,15 +1,21 @@
-import AvatarWithLabel from './avatar/AvatarWithLabel'
-import Avatar from "@material-ui/core/Avatar";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { Link, useLocation  } from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import React from 'react';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import UserBar from './UserBar';
+import {useQuery} from "react-query";
+import {fetchParentModules} from "../pages/journal/parentApi";
 
 
 const Header = () => {
     const location = useLocation();
     const isNotLoginPage = location.pathname !== '/login'
+
+    // Header mounts only once logged in, so this token-bearing call is always
+    // safe here. Shares its cache with AfterLoginPage's identical query key -
+    // this never triggers a second request on its own.
+    const {data: modules} = useQuery(
+        ["PARENT_MODULES"], fetchParentModules, {refetchOnWindowFocus: false});
+    const isPrimary = (modules || []).includes("SCHEDULE");
     const useStyles = makeStyles((theme) => ({
         avatar: {
           width: theme.spacing(4),
@@ -41,7 +47,7 @@ const Header = () => {
 
 
     return !isNotLoginPage ? "" : (
-        <header>
+        <header className={isPrimary ? 'header--primary' : undefined}>
             <div className={`headerCnt ${!isNotLoginPage ? '' : 'home'}`}>
                 <div style={{display: 'flex'}}>
                     <Link className="headerCnt__aTag" to="/">

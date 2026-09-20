@@ -1,67 +1,106 @@
 /*
- * School news.
+ * News: a list of cards, and each card's own page.
  *
- * Same palette as the rest of the parent console - #01619b, #fcb683 - so this
- * reads as part of it rather than as a page from somewhere else.
+ * The cards are the weekly ones grown up — same radius, same shadow, same
+ * pastel family — because a parent moving between the two screens should feel
+ * one console rather than two. Colour comes from the item's category on the
+ * primary side and is a single navy everywhere else, set inline from
+ * newsTheme.js rather than here; this file only shapes them.
  */
+
+.news {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 28px 16px 56px;
+    min-height: calc(100vh - 81px);
+}
+
+.news__pageTitle {
+    font-size: 22px;
+    font-weight: 700;
+    color: #12506e;
+    text-align: center;
+    margin: 0 0 20px;
+}
+
+/* ---- category filter ------------------------------------------------------ */
 
 .news__filter {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 14px;
-    max-width: 720px;
+    justify-content: center;
+    margin-bottom: 22px;
 }
 
 .news__chip {
-    border: 1px solid #cfe3ef;
-    background: #fff;
-    color: #01619b;
-    border-radius: 14px;
-    padding: 4px 14px;
+    font: inherit;
     font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 0 12px 12px 12px;
+    border: 1px solid #cddde5;
+    background: #fff;
+    color: #3b5a6b;
     cursor: pointer;
 }
 
+/* A filter chip is pressable and a category tag is not, so they must not look
+   alike: this one fills in when it is the one in force. */
 .news__chip--on {
     background: #01619b;
     border-color: #01619b;
     color: #fff;
+    font-weight: 600;
 }
 
+.news__state {
+    text-align: center;
+    color: #5b7a8a;
+    padding: 48px 16px;
+}
+
+.news__state--error {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+/* ---- the list ------------------------------------------------------------- */
+
 .news__list {
-    width: 720px;
-    max-width: 94vw;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .news__card {
     display: flex;
-    gap: 16px;
-    background: #fff;
-    border-radius: 0 24px 24px 24px;
-    box-shadow: #2285b2 2px 2px 9px;
-    padding: 14px;
-    margin-bottom: 16px;
-    cursor: pointer;
-    transition: transform 0.12s ease;
+    gap: 22px;
+    padding: 20px;
+    border-radius: 24px;
+    box-shadow: 0 2px 10px rgba(28, 74, 95, 0.10);
 }
 
-.news__card:hover {
-    transform: translateY(-2px);
+/*
+ * The picture's box is reserved whether or not there is a picture.
+ *
+ * Images arrive a moment after the text - they are fetched with the token and
+ * drawn from a blob - so a column that sized itself to them would jump as each
+ * one landed.
+ */
+.news__thumbBox {
+    flex: 0 0 220px;
+    width: 220px;
+    height: 150px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.5);
+    overflow: hidden;
 }
 
 .news__thumb {
-    width: 132px;
-    height: 100px;
-    flex: 0 0 132px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 12px;
-    background: #f0f9fd;
-}
-
-/* No picture: the space is held so every card's text starts in the same place. */
-.news__thumb--none {
-    background: #eaf4fa;
+    display: block;
 }
 
 .news__body {
@@ -73,151 +112,150 @@
 
 .news__head {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    align-items: baseline;
+    gap: 14px;
 }
 
 .news__title {
     flex: 1;
     margin: 0;
-    font-size: 16px;
-    color: #00558a;
+    font-size: 19px;
+    line-height: 1.3;
     overflow-wrap: anywhere;
 }
 
 .news__date {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    color: #7a94a5;
+    gap: 5px;
     font-size: 12px;
+    opacity: 0.8;
     white-space: nowrap;
 }
 
+/* Outlined rather than filled: it labels, it does not invite a press, and the
+   filter chips above are the ones that do. */
 .news__tag {
     align-self: flex-start;
-    margin-top: 6px;
-    background: #fdece0;
-    color: #b4571c;
-    border-radius: 10px;
-    padding: 1px 9px;
+    margin-top: 8px;
     font-size: 11px;
+    padding: 2px 9px;
+    border: 1px solid;
+    border-radius: 0 9px 9px 9px;
+    opacity: 0.9;
 }
 
 .news__excerpt {
-    margin: 8px 0 0;
+    margin: 10px 0 0;
     font-size: 14px;
     line-height: 1.5;
-    color: #37505e;
+    opacity: 0.9;
     overflow-wrap: anywhere;
 }
 
+/* Bottom right, after the text rather than beside it: `margin-top: auto` keeps
+   it on the floor of the card however short the excerpt is. */
 .news__more {
-    align-self: flex-start;
-    margin-top: 8px;
-    border: none;
-    background: transparent;
-    color: #0071cc;
-    font-size: 13px;
-    padding: 0;
-    cursor: pointer;
+    margin-top: auto;
+    padding-top: 12px;
+    align-self: flex-end;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
 }
 
-.news__empty {
-    text-align: center;
-    color: #7a94a5;
-    padding: 30px;
+.news__more:hover {
+    text-decoration: underline;
 }
+
+/* ---- pager ---------------------------------------------------------------- */
 
 .news__pager {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 14px;
-    color: #37505e;
-    font-size: 13px;
-    margin-bottom: 24px;
+    margin-top: 26px;
+    color: #3b5a6b;
 }
 
 .news__pager button {
-    border: 1px solid #cfe3ef;
+    font: inherit;
+    font-size: 20px;
+    line-height: 1;
+    width: 38px;
+    height: 38px;
+    border-radius: 0 12px 12px 12px;
+    border: 1px solid #cddde5;
     background: #fff;
-    color: #01619b;
-    border-radius: 8px;
-    width: 30px;
-    height: 30px;
-    font-size: 17px;
+    color: #12506e;
     cursor: pointer;
 }
 
 .news__pager button:disabled {
-    color: #c4d4dd;
+    opacity: 0.4;
     cursor: default;
 }
 
-/* ---- the dialog ------------------------------------------------------- */
+/* ---- one article ---------------------------------------------------------- */
 
-.news__backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 32, 51, 0.55);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 50;
+.news__back {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a6689;
+    text-decoration: none;
 }
 
-.news__dialog {
-    position: relative;
-    background: #fff;
-    border-radius: 20px;
-    width: 720px;
-    max-width: 100%;
-    max-height: 88vh;
-    overflow-y: auto;
+.news__back:hover {
+    text-decoration: underline;
 }
 
-.news__close {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    border: none;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 22px;
-    line-height: 1;
-    color: #37505e;
-    cursor: pointer;
+.news__article {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(28, 74, 95, 0.10);
 }
 
+/* Full width and generous, which is the point of the article page: the card's
+   thumbnail is 220px and this is the same picture worth looking at. */
 .news__hero {
     width: 100%;
-    max-height: 300px;
+    max-height: 420px;
     object-fit: cover;
     display: block;
 }
 
-.news__dialogBody {
-    padding: 18px 24px 26px;
+.news__articleBody {
+    padding: 24px;
 }
 
-.news__dialogTitle {
-    flex: 1;
+.news__articleTitle {
     margin: 0;
-    font-size: 20px;
-    color: #00558a;
+    font-size: 24px;
+    line-height: 1.25;
     overflow-wrap: anywhere;
 }
 
-/* The school's own rich text. Bounded so a wide table or a pasted image
-   cannot push the dialog past the viewport. */
+.news__articleMeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.news__articleMeta .news__tag {
+    margin-top: 0;
+}
+
+/* The school's own rich text, bounded so one pasted screenshot or wide table
+   cannot break the page. */
 .news__full {
-    margin-top: 12px;
+    margin-top: 18px;
     font-size: 15px;
     line-height: 1.6;
-    color: #37505e;
     overflow-wrap: anywhere;
 }
 
@@ -233,23 +271,52 @@
 }
 
 .news__links {
-    margin: 16px 0 0;
+    margin: 18px 0 0;
     padding-left: 18px;
     font-size: 14px;
 }
 
 .news__links a {
-    color: #0071cc;
+    color: inherit;
 }
 
-@media (max-width: 560px) {
-    .news__card {
-        flex-direction: column;
+/* ---- phone ---------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+    .news {
+        padding: 18px 12px 40px;
     }
 
-    .news__thumb {
+    /* Picture above the text: 220px of thumbnail plus a title does not fit
+       across a phone, which PARENT-COMPONENTS.md names as this card's required
+       narrow form. */
+    .news__card {
+        flex-direction: column;
+        gap: 14px;
+        padding: 16px;
+    }
+
+    .news__thumbBox {
+        flex: 0 0 auto;
         width: 100%;
-        flex: none;
-        height: 150px;
+        height: 170px;
+    }
+
+    .news__head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .news__articleBody {
+        padding: 18px 16px;
+    }
+
+    .news__articleTitle {
+        font-size: 20px;
+    }
+
+    .news__hero {
+        max-height: 240px;
     }
 }

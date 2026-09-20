@@ -6,7 +6,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import AvatarWithLabel from "./avatar/AvatarWithLabel";
 import {useHistory} from "react-router-dom";
@@ -69,7 +68,11 @@ const UserBar = () => {
     setAnchorEl(null);
   };
 
-
+    // No avatar image is passed: the Avatar falls back to the first letter
+    // of the name, which is what has always been on screen. It used to be
+    // handed the Avatar *component* as its src, which React stringified to
+    // "[object Object]" and the browser then fetched as a relative URL - a
+    // 400 on every page load, and a React warning alongside it.
   return (
     <FlexBox>
         <IconButton color="secondary"
@@ -78,7 +81,7 @@ const UserBar = () => {
                     aria-controls="user-bar-menu"
                     aria-haspopup="true"
                     onClick={handleToggle}
-                    icon={<AvatarWithLabel avatar={Avatar} label={user?.firstName + " " + user?.lastName}
+                    icon={<AvatarWithLabel label={user?.firstName + " " + user?.lastName}
                                            classes={classes}/>}/>
         <Menu
             id="user-bar-menu"

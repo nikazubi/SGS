@@ -11,6 +11,13 @@ header{
     background-color: #01619b;
 }
 
+/* Primary school only (Header.js) - the solid navy reads harsh against the
+   playful landing page, so it gets a lighter, translucent version of the
+   same blue instead. Basic/secondary keeps the bar above untouched. */
+header.header--primary {
+    background-color: rgba(34, 133, 178, 0.82);
+}
+
 body{
     background-color: #f0f9fd;
 }
