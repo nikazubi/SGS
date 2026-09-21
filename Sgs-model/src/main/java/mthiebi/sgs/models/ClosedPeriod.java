@@ -3,6 +3,7 @@ package mthiebi.sgs.models;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,9 @@ public class ClosedPeriod extends Audit {
 
     private Long academyClassId;
 
+    // dbo.closed_period.grade_prefix is plain varchar; see SystemUser for why
+    // that needs to opt out of use_nationalized_character_data.
+    @Type(type = "string")
     private String gradePrefix;
 
     public void setId(Long id) {

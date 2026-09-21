@@ -1,6 +1,7 @@
 package mthiebi.sgs.models;
 
 import lombok.ToString;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,12 +15,22 @@ public class SystemUser extends Audit {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	// dbo.system_user_table.username/password/email are plain varchar, not
+	// nvarchar - unlike the rest of this legacy table (name) and everything
+	// in the sgs schema. application.yml's use_nationalized_character_data
+	// makes every String column read via getNString() by default, which
+	// SQL Server's JDBC driver refuses against a varchar column ("The
+	// conversion from varchar to NCHAR is unsupported"). These three fields
+	// opt back out.
+	@Type(type = "string")
 	private String username;
 
+	@Type(type = "string")
 	private String password;
 
 	private String name;
 
+	@Type(type = "string")
 	private String email;
 
 	private Boolean active;

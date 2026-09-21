@@ -3,6 +3,7 @@ package mthiebi.sgs.models;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,12 +27,19 @@ public class Student extends Audit{
 
     private Long age;
 
+    // dbo.students.personal_number/username/password/owner_mail are plain
+    // varchar; see SystemUser for why these need to opt out of
+    // use_nationalized_character_data.
+    @Type(type = "string")
     private String personalNumber;
 
+    @Type(type = "string")
     private String username;
 
+    @Type(type = "string")
     private String password;
 
+    @Type(type = "string")
     private String ownerMail;
 
     public void setId(long id) {
