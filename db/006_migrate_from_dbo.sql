@@ -125,11 +125,21 @@ CREATE TABLE #class_map
     new_id    bigint
 );
 
+-- class_level is the legacy school-tier column, but it is not reliably
+-- populated - this deployment's dbo.academy_class has it NULL on every row,
+-- confirming CLIENT-BRIEF-2026.md's own note that "today we only have
+-- class". Where it is missing, the tier is derived from the grade instead:
+-- I-VI primary, VII-IX basic, X-XII secondary, the standard structure that
+-- also matches sgs.school's seeded names.
 INSERT INTO sgs.class_group (id, school_id, academic_year_id, period_scheme_id, level, name)
-SELECT NEXT VALUE FOR sgs.class_group_seq, sc.id, @year, @scheme, CAST (LEFT (ac.class_name, PATINDEX('%[^0-9]%', ac.class_name + 'x') - 1) AS smallint), ac.class_name
+SELECT NEXT VALUE FOR sgs.class_group_seq, sc.id, @year, @scheme, g.grade, ac.class_name
 FROM dbo.academy_class ac
+    CROSS APPLY (SELECT CAST (LEFT (ac.class_name, PATINDEX('%[^0-9]%', ac.class_name + 'x') - 1) AS smallint) AS grade) g
     JOIN sgs.school sc
-ON sc.ordinal = ac.class_level
+ON sc.ordinal = COALESCE(ac.class_level,
+                          CASE WHEN g.grade BETWEEN 1 AND 6 THEN 1
+                               WHEN g.grade BETWEEN 7 AND 9 THEN 2
+                               WHEN g.grade BETWEEN 10 AND 12 THEN 3 END)
 WHERE NOT EXISTS (
     SELECT 1 FROM sgs.class_group cg
     WHERE cg.academic_year_id = @year
@@ -140,7 +150,11 @@ WHERE NOT EXISTS (
 INSERT INTO #class_map (legacy_id, new_id)
 SELECT ac.id, cg.id
 FROM dbo.academy_class ac
-         JOIN sgs.school sc ON sc.ordinal = ac.class_level
+    CROSS APPLY (SELECT CAST (LEFT (ac.class_name, PATINDEX('%[^0-9]%', ac.class_name + 'x') - 1) AS smallint) AS grade) g
+    JOIN sgs.school sc ON sc.ordinal = COALESCE(ac.class_level,
+                          CASE WHEN g.grade BETWEEN 1 AND 6 THEN 1
+                               WHEN g.grade BETWEEN 7 AND 9 THEN 2
+                               WHEN g.grade BETWEEN 10 AND 12 THEN 3 END)
          JOIN sgs.class_group cg ON cg.academic_year_id = @year
     AND cg.school_id = sc.id
     AND cg.name = ac.class_name;

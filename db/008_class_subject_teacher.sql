@@ -38,7 +38,13 @@ JOIN (
     FROM dbo.class_subject lcs
     JOIN dbo.academy_class ac ON ac.id = lcs.academy_class_id
     JOIN dbo.subject ls ON ls.id = lcs.subject_id
-    JOIN sgs.school sc ON sc.ordinal = ac.class_level
+    -- class_level is not reliably populated; see 006_migrate_from_dbo.sql for
+    -- the same grade-derived fallback.
+    CROSS APPLY (SELECT CAST (LEFT (ac.class_name, PATINDEX('%[^0-9]%', ac.class_name + 'x') - 1) AS smallint) AS grade) g
+    JOIN sgs.school sc ON sc.ordinal = COALESCE(ac.class_level,
+                          CASE WHEN g.grade BETWEEN 1 AND 6 THEN 1
+                               WHEN g.grade BETWEEN 7 AND 9 THEN 2
+                               WHEN g.grade BETWEEN 10 AND 12 THEN 3 END)
     JOIN sgs.class_group cg ON cg.school_id = sc.id AND cg.name = ac.class_name
     JOIN sgs.subject s ON s.name = LTRIM(RTRIM(ls.name))
     GROUP BY cg.id, s.id
