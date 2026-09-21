@@ -1,11 +1,14 @@
 spring:
   datasource:
-    # The seeded test database, built by db/demo/reset.sh. To work against the
-    # school's own migrated data instead, change SGS_DEMO back to SGS - that is
-    # the only difference between the two.
-    url: jdbc:sqlserver://localhost:1433;databaseName=SGS_DEMO;
-    username: sa
-    password: mfcAtl!7
+    # Defaults are the seeded test database, built by db/demo/reset.sh. To work
+    # against the school's own migrated data instead, change SGS_DEMO back to
+    # SGS - that is the only difference between the two.
+    #
+    # Production overrides all three with DB_URL / DB_USERNAME / DB_PASSWORD,
+    # so its credentials never have to live in this file.
+    url: ${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=SGS_DEMO;}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:mfcAtl!7}
     driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
   servlet:
     multipart:
