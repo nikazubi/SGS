@@ -2,8 +2,9 @@ import axios from 'axios';
 import { deleteAuth, getAccessToken, getRefreshToken, setAuth } from "./auth";
 
 const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
-  // baseURL: 'http://195.69.143.211:8080/sgs-core',
+  // Production build falls through to the deployed API; `npm start` can point
+  // at a local backend with REACT_APP_BACKEND_BASE_URL=http://localhost:8080.
+  baseURL: process.env.REACT_APP_BACKEND_BASE_URL || 'https://api.ibmthiebistudents.edu.ge/sgs-core',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
   }

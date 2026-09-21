@@ -1,0 +1,12 @@
+# The app routes in the browser (BrowserRouter), so /news/<uuid>, /homework
+# etc. are not files on disk. Without this, refreshing or opening a shared link
+# on any page but / is a 404 from the server. Serve real files as they are and
+# hand every other path to index.html.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>

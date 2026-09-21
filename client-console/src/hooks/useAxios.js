@@ -2,7 +2,7 @@ import axios from 'axios';
 import secureLocalStorage from "react-secure-storage";
 
 const customAxios = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
+    baseURL: process.env.REACT_APP_BACKEND_BASE_URL || 'https://api.ibmthiebistudents.edu.ge/sgs-core',
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
     }
