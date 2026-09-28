@@ -7,6 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import AvatarWithLabel from "./avatar/AvatarWithLabel";
 import {useHistory} from "react-router-dom";
 import {useUserContext} from "../context/user-context";
@@ -23,6 +24,15 @@ const UserBar = () => {
     avatar: {
       width: theme.spacing(4),
       height: theme.spacing(4),
+      // Initials are coloured in global.css (.headerCnt__aTag div wins on
+      // specificity over anything set from here).
+      // Two Georgian letters need a little more room than the single one the
+      // desktop bar shows next to the name.
+      '@media (max-width: 660px)': {
+        width: theme.spacing(4.5),
+        height: theme.spacing(4.5),
+        fontSize: 14,
+      },
     },
     bigAvatar: {
       width: theme.spacing(15),
@@ -35,6 +45,11 @@ const UserBar = () => {
       marginBottom: 'auto',
       marginLeft: 5,
       marginRight: 5,
+      // Same breakpoint the header uses in global.css. The full name still
+      // shows in the menu this avatar opens, so nothing is lost.
+      '@media (max-width: 660px)': {
+        display: 'none',
+      },
     },
     menuitem: {
       '&:focus': {
@@ -49,6 +64,17 @@ const UserBar = () => {
   }));
 
   const classes = useStyles();
+  const isNarrow = useMediaQuery('(max-width: 660px)');
+
+  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ");
+  // Narrow screens show the avatar alone, so one letter is too little to tell
+  // two students apart: "ნიკა ზუბიაშვილი" becomes "ნზ".
+  const initials = fullName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0))
+      .join("");
   // const {mutateAsync: onUpdate} = useUpdateUser();
   // const {user, logout, userUpdated} = useUserContext();
   // const avatar = user.avatarUrl;
@@ -81,7 +107,9 @@ const UserBar = () => {
                     aria-controls="user-bar-menu"
                     aria-haspopup="true"
                     onClick={handleToggle}
-                    icon={<AvatarWithLabel label={user?.firstName + " " + user?.lastName}
+                    icon={<AvatarWithLabel label={fullName}
+                                           alt={isNarrow ? initials : undefined}
+                                           className="headerAvatar"
                                            classes={classes}/>}/>
         <Menu
             id="user-bar-menu"
@@ -93,7 +121,7 @@ const UserBar = () => {
                 <ListItemIcon>
                     <Person/>
                 </ListItemIcon>
-                <ListItemText primary={user?.firstName + " " + user?.lastName}/>
+                <ListItemText primary={fullName}/>
             </MenuItem>
             <MenuItem classes={{root: classes.menuitem}} onClick={logout}>
                 <ListItemIcon>

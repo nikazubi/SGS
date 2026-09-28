@@ -213,12 +213,23 @@ body{
     cursor: pointer;
 }
 
+/* Equal 1fr gutters put the middle column dead centre of the bar whatever the
+   label and the user's name happen to measure. Symmetric padding rather than
+   the old margin-right, or the centre would sit half that margin off. */
 .headerCnt{
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     height: 100%;
-    margin-right: 10px;
-    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.headerCnt__logoLink{
+    justify-self: center;
+}
+
+.headerCnt__user{
+    justify-self: end;
 }
 
 .headerCnt__aTag{
@@ -228,6 +239,19 @@ body{
 
 .headerCnt__aTag div{
     color: #fff;
+}
+
+/* The user avatar is a div inside that link, so the white above applied to
+   its initials too and they all but vanished against the grey circle. Has to
+   be overridden here: the rule above outranks anything UserBar's makeStyles
+   sets, since a class+element selector beats a lone class.
+
+   The header's own #01619b manages only 3.5:1 on the grey and read as mud, so
+   the initials take a darker shade of the same hue: ~7:1 against the circle,
+   and dark enough that it never reads as the bar's blue bleeding through. */
+.headerCnt__aTag div.headerAvatar{
+    color: #00325a;
+    font-weight: 600;
 }
 
 .headerCnt__arrow{
@@ -509,9 +533,15 @@ body{
 .headerLogoImg{
     background-image: url('./images/logoMtiebi.png');
     background-repeat: no-repeat;
+    /* The artwork is not pixel-sized to this box, so scale it to fit rather
+       than letting the box crop it - a future logo swap needs no retuning. */
+    background-size: contain;
+    /* Centred inside its own box too: the artwork is narrower than the box, so
+       aligning it left would leave the logo off-centre on the bar even with
+       the box itself centred. Mobile flips this back to the left edge. */
+    background-position: center;
     width: 120px;
     height: 44px;
-    margin-left: 20px;
     display: block;
 }
 
@@ -600,6 +630,26 @@ body{
 @media only screen and (max-width: 660px){
     .boxWrap{
         max-width: 300px;
+    }
+
+    /* Mobile header: "მთავარი", the logo and the user's full name all fought
+       for the same row. The logo is already a link to "/", so it takes the
+       label's place and the label itself goes away. UserBar drops its name
+       text at the same width, leaving just the initials avatar. */
+    .headerCnt__home{
+        display: none;
+    }
+
+    /* Back to flex here. The label is gone, so the grid's empty first column
+       would hold the logo off the left edge instead of against it. */
+    .headerCnt{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .headerLogoImg{
+        background-position: left center;
+        margin-left: 5px;
     }
 }
 

@@ -49,14 +49,17 @@ const Header = () => {
     return !isNotLoginPage ? "" : (
         <header className={isPrimary ? 'header--primary' : undefined}>
             <div className={`headerCnt ${!isNotLoginPage ? '' : 'home'}`}>
-                <div style={{display: 'flex'}}>
-                    <Link className="headerCnt__aTag" to="/">
-                        {/* <ArrowBackIcon className='headerCnt__arrow'/> */}
-                        <div className='mtavari' style={{marginLeft:'15px'}}>მთავარი</div>
-                    </Link>
-                    <Link to="/"><div className='headerLogoImg'></div></Link>
-                </div>
-                <div>
+                {/* Three separate slots rather than one group: the logo is its
+                    own grid column, so it centres on the bar instead of just
+                    trailing whatever width the label happens to take. */}
+                {/* Dropped on narrow screens - the logo beside it is the same
+                    link to "/", so the label only crowded the bar. */}
+                <Link className="headerCnt__aTag headerCnt__home" to="/">
+                    {/* <ArrowBackIcon className='headerCnt__arrow'/> */}
+                    <div className='mtavari' style={{marginLeft:'15px'}}>მთავარი</div>
+                </Link>
+                <Link className="headerCnt__logoLink" to="/"><div className='headerLogoImg'></div></Link>
+                <div className="headerCnt__user">
                     <Link className="headerCnt__aTag" to="" >
                         <UserBar />
                     </Link>
