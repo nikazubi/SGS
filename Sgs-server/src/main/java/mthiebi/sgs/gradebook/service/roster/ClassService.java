@@ -110,6 +110,8 @@ public class ClassService {
         }
         em.createQuery("delete from ClassSubject cs where cs.classGroup.id = :id")
                 .setParameter("id", id).executeUpdate();
+        em.createQuery("delete from StaffClassGrant g where g.classGroup.id = :id")
+                .setParameter("id", id).executeUpdate();
         em.remove(classGroup);
     }
 

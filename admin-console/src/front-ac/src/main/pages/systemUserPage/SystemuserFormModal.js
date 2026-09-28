@@ -12,7 +12,7 @@ const SystemUserModal = ({data, open, news, onClose, modalOpenMode, submitButton
     const initialValues = {
         id: data?.id ? data.id : 0,
         username: data?.username ? data.username : '',
-        academyClasses: data?.academyClassList ? data.academyClassList : [],
+        classGroups: data?.classGroups ? data.classGroups : [],
         systemGroup: data?.groups ? data.groups : [],
         name: data?.name ? data.name : '',
         password: data?.password ? data.password : '',

@@ -44,8 +44,8 @@ import java.util.List;
  * counts hours - so this splits along a seam the domain already had.
  * <p>
  * Named AbsenceRegisterController, not AbsenceController: the legacy
- * mthiebi.sgs.controllers.AbsenceController still exists until dbo is dropped at
- * cutover, and two @RestController classes with the same simple name take the
+ * mthiebi.sgs.controllers.AbsenceController lived alongside it until the dbo
+ * class model was removed, and two @RestController classes with the same simple name take the
  * same bean name - which does not clash quietly, it stops the whole application
  * context from starting. Caught by ApplicationWiringIT.
  */

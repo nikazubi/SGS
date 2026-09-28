@@ -7,10 +7,9 @@ import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.dto.SystemUserCreateDTO;
 import mthiebi.sgs.dto.SystemUserDTO;
 import mthiebi.sgs.dto.SystemUserMapper;
-import mthiebi.sgs.models.AcademyClass;
+import mthiebi.sgs.gradebook.service.roster.StaffClassGrantService;
 import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.models.SystemUserGroup;
-import mthiebi.sgs.service.AcademyClassService;
 import mthiebi.sgs.service.SystemGroupService;
 import mthiebi.sgs.service.SystemUserService;
 import mthiebi.sgs.utils.AuthConstants;
@@ -38,19 +37,19 @@ public class SystemUserController {
     private SystemGroupService systemGroupService;
 
     @Autowired
-    private AcademyClassService academyClassService;
+    private StaffClassGrantService classGrants;
 
     @PostMapping("/add-User")
     @Secured({AuthConstants.MANAGE_SYSTEM_USER})
     public ResponseEntity create(@RequestBody SystemUserCreateDTO systemUserCreateDTO) throws SGSException {
         SystemUser systemUser = systemUserMapper.systemUser(systemUserCreateDTO.getSystemUserDTO());
         systemUser.setGroups(adjustSystemGroup(systemUserCreateDTO.getGroupIdList()));
-        systemUser.setAcademyClassList(adjustAcademyClassList(systemUserCreateDTO.getClassIdList()));
         log.info("Add new user:" + systemUser);
         try {
             systemUser = systemUserService.createSystemUser(systemUser);
+            classGrants.replace(systemUser.getId(), systemUserCreateDTO.getClassIdList());
             log.info("New User successfully created");
-            return ResponseEntity.ok(systemUserMapper.systemUserDTO(systemUser));
+            return ResponseEntity.ok(withClassGroups(systemUserMapper.systemUserDTO(systemUser)));
         } catch (Exception e) {
             log.info("Error in create controller");
             log.info(e.getMessage());
@@ -78,14 +77,14 @@ public class SystemUserController {
     public ResponseEntity updateUser(@RequestBody SystemUserCreateDTO systemUserCreateDTO) {
         SystemUser systemUser = systemUserMapper.systemUser(systemUserCreateDTO.getSystemUserDTO());
         systemUser.setGroups(adjustSystemGroup(systemUserCreateDTO.getGroupIdList()));
-        systemUser.setAcademyClassList(adjustAcademyClassList(systemUserCreateDTO.getClassIdList()));
 
         log.info("Starting user update");
         try {
             log.info("Required Changes=" + systemUser + " \nTo user: " + systemUser.getUsername());
             SystemUser sysUser = systemUserService.updateUser(systemUser);
+            classGrants.replace(sysUser.getId(), systemUserCreateDTO.getClassIdList());
             log.info("User successfully changed");
-            return ResponseEntity.ok(systemUserMapper.systemUserDTO(sysUser));
+            return ResponseEntity.ok(withClassGroups(systemUserMapper.systemUserDTO(sysUser)));
         } catch (Exception e) {
             log.error("Error in updateUser controller");
             log.error(e.getMessage());
@@ -99,7 +98,17 @@ public class SystemUserController {
                                         @RequestParam(required = false) String name,
                                         @RequestParam(required = false) Boolean active){
         return systemUserService.filterUsers(username, name, active).stream()
-                .map(sys -> systemUserMapper.systemUserDtoWithAcademyClasses(sys)).collect(Collectors.toList());
+                .map(sys -> withClassGroups(systemUserMapper.systemUserDTO(sys)))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * What the user form's class picker offers: this year's class groups.
+     */
+    @GetMapping("/class-options")
+    @Secured({AuthConstants.MANAGE_SYSTEM_USER})
+    public List<StaffClassGrantService.GrantedClass> classOptions() {
+        return classGrants.offerable();
     }
 
     @DeleteMapping("/delete/{userId}")
@@ -123,9 +132,8 @@ public class SystemUserController {
                 .collect(Collectors.toList());
     }
 
-    private List<AcademyClass> adjustAcademyClassList(List<Long> classIdList) {
-        return classIdList.stream()
-                .map(id -> academyClassService.findAcademyClassById(id))
-                .collect(Collectors.toList());
+    private SystemUserDTO withClassGroups(SystemUserDTO dto) {
+        dto.setClassGroups(classGrants.grantsOf(dto.getId()));
+        return dto;
     }
 }

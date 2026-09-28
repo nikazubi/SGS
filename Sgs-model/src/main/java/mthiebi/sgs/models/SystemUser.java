@@ -41,11 +41,8 @@ public class SystemUser extends Audit {
 	)
 	private List<SystemUserGroup> groups;
 
-	@ManyToMany(
-			fetch = FetchType.LAZY,
-			cascade = {CascadeType.ALL}
-	)
-	private List<AcademyClass> academyClassList;
+	// A user's classes live in sgs.staff_class_grant (StaffClassGrantService).
+	// The old dbo.system_user_table_academy_class_list is kept as data only.
 
 	public Long getId() {
 		return id;
@@ -86,14 +83,6 @@ public class SystemUser extends Audit {
 
 	public void setGroups(List<SystemUserGroup> groups) {
 		this.groups = groups;
-	}
-
-	public List<AcademyClass> getAcademyClassList() {
-		return academyClassList;
-	}
-
-	public void setAcademyClassList(List<AcademyClass> academyClassList) {
-		this.academyClassList = academyClassList;
 	}
 
 	@Override

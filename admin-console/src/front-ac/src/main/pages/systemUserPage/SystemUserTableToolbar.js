@@ -1,7 +1,6 @@
 import FlexBox from "../../../components/FlexBox";
 import {Formik} from "formik";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
-import useAcademyClassGeneral from "../../../hooks/useAcademyClassGeneral";
 import {useState} from "react";
 import IconButton from "../../../components/buttons/IconButton";
 import {Add, Search} from "@material-ui/icons";
@@ -12,7 +11,6 @@ import IconButtonWithTooltip from "../../../components/buttons/IconButtonWithToo
 import {ModalOpenMode} from "../../../utils/constants";
 
 const TotalAbsenceTableToolbar = ({setFilters, filters}) => {
-    const {mutateAsync: onFetchAcademyClass} = useAcademyClassGeneral({});
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
 

@@ -228,3 +228,28 @@ after the dialog opens is what works.
   Only 3 of 98 teachers have a login, so it waits until more of them do.
 * **Who may manage the roster**, and **what happens to a student who leaves** —
   proceeding on the obvious defaults; correct them when the school says otherwise.
+
+---
+
+## 7. One class table (2026-09)
+
+Prod showed the cost of two class models: a class made on the Classes screen
+exists only in `sgs.class_group`, but staff class grants still pointed at
+`dbo.academy_class`, so the class could not be assigned to anybody.
+
+Decided: **`sgs.class_group` is the only class table.**
+
+- Staff grants moved to `sgs.staff_class_grant` (user id, class group id) -
+  `db/036`, `StaffClassGrantService`. `ClassScopeGuard` reads it by id; no name
+  matching.
+- Everything that read `dbo.academy_class` was deleted: the legacy grade,
+  absence, change-request, closed-period, class, subject and `/client` parent
+  controllers with their services, repositories, entities and DTOs, and the
+  Close Period page (publication locks and the Publication Log replace it).
+- The `dbo` tables stay in the database, untouched, as an archive. No code reads them.
+- `db/037` deletes every class and all enrollment-scoped data so the school
+  can recreate its classes cleanly. Students and subjects are kept.
+
+Still on `dbo`, deliberately out of this change: staff accounts and groups
+(correct - they live there), and the legacy `dbo.students` login
+(`/authenticate-student`, and the `/client/**` permitAll) - see `FOLLOW-UPS.md` §3.

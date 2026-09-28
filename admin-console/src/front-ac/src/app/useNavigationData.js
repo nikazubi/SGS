@@ -16,7 +16,6 @@ import SubjectsPage from "../main/pages/roster/SubjectsPage";
 import StudentsPage from "../main/pages/roster/StudentsPage";
 import ClassesPage from "../main/pages/roster/ClassesPage";
 import SystemUserDashBoard from "../main/pages/systemUserPage/SystemUserDashBoard";
-import ClosePeriodDashBoard from "../main/pages/closePeriod/ClosePeriodDashBoard";
 import {TimeIcon} from "@material-ui/pickers/_shared/icons/TimeIcon";
 import SystemUserGroupDashBoard from "../main/pages/systemUserGroup/SystemUserGroupDashBoard";
 import GradebookDashBoard from "../main/pages/gradebook/GradebookDashBoard";
@@ -223,15 +222,6 @@ const useNavigationData = () => {
             icon: <Class/>,
             show: false,
             permissions: ["VIEW_ACADEMY_CLASS", "MANAGE_ACADEMY_CLASS"],
-            collapsible: false
-        },
-        CLOSE_PERIOD: {
-            id: 'CLOSE_PERIOD',
-            name: 'ნიშნების ჩაკეტვა',
-            component: <ClosePeriodDashBoard/>,
-            icon: <TimeIcon/>,
-            show: false,
-            permissions: ["MANAGE_CLOSED_PERIOD"],
             collapsible: false
         },
         SYSTEM_USER_GROUP: {

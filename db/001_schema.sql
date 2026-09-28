@@ -26,6 +26,7 @@ create sequence sgs.post_seq start with 1 increment by 50;
 create sequence sgs.post_target_seq start with 1 increment by 50;
 create sequence sgs.publication_seq start with 1 increment by 50;
 create sequence sgs.school_seq start with 1 increment by 50;
+create sequence sgs.staff_class_grant_seq start with 1 increment by 50;
 create sequence sgs.student_seq start with 1 increment by 50;
 create sequence sgs.subject_seq start with 1 increment by 50;
 create sequence sgs.teaching_assignment_seq start with 1 increment by 50;
@@ -410,6 +411,14 @@ create table sgs.school
     primary key (id)
 );
 
+create table sgs.staff_class_grant
+(
+    id             bigint not null,
+    system_user_id bigint not null,
+    class_group_id bigint not null,
+    primary key (id)
+);
+
 create table sgs.student
 (
     id              bigint    not null,
@@ -554,6 +563,10 @@ create index ix_publication_at on sgs.publication (published_at);
 
 alter table sgs.school
     add constraint uq_school_code unique (code);
+create index ix_staff_class_grant_class on sgs.staff_class_grant (class_group_id);
+
+alter table sgs.staff_class_grant
+    add constraint uq_staff_class_grant unique (system_user_id, class_group_id);
 create index ix_student_last_name on sgs.student (last_name);
 
 alter table sgs.subject
@@ -795,6 +808,11 @@ alter table sgs.publication
     add constraint fk_publication_subject
         foreign key (subject_id)
             references sgs.subject;
+
+alter table sgs.staff_class_grant
+    add constraint fk_staff_grant_class
+        foreign key (class_group_id)
+            references sgs.class_group;
 
 alter table sgs.teaching_assignment
     add constraint fk_ta_class_subject

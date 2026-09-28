@@ -19,17 +19,16 @@ import java.util.List;
  *
  * <h3>Why this is not StudentController</h3>
  * <p>
- * Because {@code mthiebi.sgs.controllers.StudentController} already exists -
- * the legacy one, writing dbo - and two @RestController classes with the same
+ * Because {@code mthiebi.sgs.controllers.StudentController} existed - the
+ * legacy one, writing dbo, since removed - and two @RestController classes with the same
  * simple name are one bean name, which is a ConflictingBeanDefinitionException
  * and an application that does not start at all. That has happened here once
  * already, from a stale class in an un-cleaned war. One controller for the
  * whole roster avoids three chances to repeat it, and the endpoints read better
  * grouped anyway.
  * <p>
- * The legacy pages stay live until these screens replace them. They write dbo
- * and this writes sgs; nothing here syncs the two, deliberately - see
- * REWRITE-ROSTER.md.
+ * The legacy pages and their dbo controllers are gone; this is the only
+ * writer of the roster - see REWRITE-ROSTER.md.
  */
 @RestController
 @RequestMapping("/api/gradebook/roster")

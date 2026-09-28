@@ -2,7 +2,7 @@ package mthiebi.sgs.controllers.gradebook;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.models.AcademyClass;
+import mthiebi.sgs.gradebook.service.roster.StaffClassGrantService;
 import mthiebi.sgs.models.SystemUser;
 import mthiebi.sgs.repository.SystemUserRepository;
 import mthiebi.sgs.utils.UtilsJwt;
@@ -14,13 +14,13 @@ import javax.persistence.PersistenceContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Which classes this user may touch.
  * <p>
  * A permission says what someone may *do*; it has never said *where*. The
- * legacy system scoped staff by their `academyClassList`, and dropping that on
+ * legacy system scoped staff by their `academyClassList` - now
+ * {@code sgs.staff_class_grant} - and dropping that on
  * the way to the new endpoints turned every class-level permission into a
  * school-wide one - any teacher who may enter grades could enter them for any
  * class, and anyone who may publish could publish the whole school.
@@ -37,50 +37,39 @@ public class ClassScopeGuard {
     @Autowired
     private UtilsJwt utilsJwt;
 
+    @Autowired
+    private StaffClassGrantService grants;
+
     @PersistenceContext
     private EntityManager em;
 
     /**
-     * The legacy class ids this user is limited to, or empty when unrestricted.
+     * The class groups this user is limited to, or empty when unrestricted.
      * <p>
-     * Matched by name, because the new {@code sgs.class_group} rows were
-     * migrated from {@code dbo.academy_class} and carry the same names within a
-     * school; the legacy user tables still hold the grants.
+     * Read from {@code sgs.staff_class_grant}, which names class groups by id.
+     * This used to translate the legacy {@code dbo} grant by class name, which
+     * could never include a class created through the roster screen - those
+     * exist only in {@code sgs}.
      */
     public Set<Long> allowedClassGroupIds(String authHeader) throws SGSException {
         SystemUser user = userOf(authHeader);
         if (user == null) {
             return Collections.emptySet();
         }
-        List<AcademyClass> granted = user.getAcademyClassList();
-        if (granted == null || granted.isEmpty()) {
-            return Collections.emptySet();
-        }
-        List<String> names = granted.stream()
-                .map(AcademyClass::getClassName)
-                .collect(Collectors.toList());
-
-        return em.createQuery(
-                        "select c.id from ClassGroup c where c.name in :names "
-                                + "and c.academicYear.current = true", Long.class)
-                .setParameter("names", names)
-                .getResultList()
-                .stream().collect(Collectors.toSet());
+        return grants.classGroupIdsOf(user.getId());
     }
 
     /**
      * The classes a listing may show this caller. Empty means unrestricted.
      * <p>
      * Use this, not {@link #allowedClassGroupIds}, wherever the answer filters a
-     * list rather than checking one id. The difference is the whole point:
-     * allowedClassGroupIds returns an empty set for *two* states - a director
-     * with no narrowing, and a restricted user whose granted classes resolve to
-     * nothing because one was renamed or the year rolled over. A filter that
-     * reads empty as "unrestricted" therefore hands the second user the entire
-     * school, which is the failure mode {@link #check} was deliberately built to
-     * avoid.
+     * list rather than checking one id. Grants are by id now, so the two only
+     * disagree if isRestricted and allowedClassGroupIds ever stop reading the
+     * same rows - and if they do, the sentinel keeps a restricted user from
+     * reading an empty set as the entire school.
      * <p>
-     * The sentinel matches nothing, so a stale grant yields an empty listing.
+     * The sentinel matches nothing. A grant left over from last year is handled
+     * by the listings themselves, which only offer current-year classes.
      */
     public Set<Long> visibleClassGroupIds(String authHeader) throws SGSException {
         if (!isRestricted(authHeader)) {
@@ -148,15 +137,13 @@ public class ClassScopeGuard {
     /**
      * Whether a narrowing applies at all.
      * <p>
-     * Read from the grant itself rather than from the resolved ids, so a grant
-     * that resolves to nothing still counts as restricted - otherwise a stale
-     * grant would silently widen to the whole school.
+     * Any grant row counts, whatever year its class is in, so a grant left
+     * over from last year still narrows - to nothing current - rather than
+     * silently widening to the whole school.
      */
     public boolean isRestricted(String authHeader) throws SGSException {
         SystemUser user = userOf(authHeader);
-        return user != null
-                && user.getAcademyClassList() != null
-                && !user.getAcademyClassList().isEmpty();
+        return user != null && !grants.classGroupIdsOf(user.getId()).isEmpty();
     }
 
     private SystemUser userOf(String authHeader) {

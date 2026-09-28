@@ -119,6 +119,7 @@ run_sql db/032_reporting_periods.sql  # ten months become the brief's seven
 
 echo "==> login and settings"
 run_sql db/demo/110_admin_user.sql
+run_sql db/036_staff_class_grant.sql     # after 110: its user FK needs dbo.system_user_table
 run_sql db/demo/120_absence_settings.sql
 run_sql db/demo/130_ethics_journal.sql
 

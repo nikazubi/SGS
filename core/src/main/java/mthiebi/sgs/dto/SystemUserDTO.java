@@ -3,6 +3,7 @@ package mthiebi.sgs.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mthiebi.sgs.gradebook.service.roster.StaffClassGrantService;
 
 import java.util.List;
 
@@ -23,7 +24,11 @@ public class SystemUserDTO {
 
     private Boolean active;
 
-    private List<AcademyClassDTO> academyClassList;
+    /**
+     * The classes this user is limited to - sgs.staff_class_grant. Filled by
+     * the controller, not the mapper: the grant is not on the legacy entity.
+     */
+    private List<StaffClassGrantService.GrantedClass> classGroups;
 
     private List<SystemUserGroupDTO> groups;
 }

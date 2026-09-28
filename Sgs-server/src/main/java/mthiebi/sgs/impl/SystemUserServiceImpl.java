@@ -69,7 +69,8 @@ public class SystemUserServiceImpl implements SystemUserService {
                 user.setUsername(systemUser.getUsername());
                 user.setEmail(systemUser.getEmail());
                 user.setGroups(systemUser.getGroups());
-                user.setAcademyClassList(systemUser.getAcademyClassList());
+                // Classes are not written here: StaffClassGrantService owns them,
+                // the legacy list included.
                 return systemUserRepository.findById(systemUserOptional.get().getId()).orElseThrow();
             }
         } else {
