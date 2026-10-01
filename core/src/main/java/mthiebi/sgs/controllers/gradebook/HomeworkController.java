@@ -45,6 +45,12 @@ public class HomeworkController {
     @Autowired
     private ActorResolver actorResolver;
 
+    @Autowired
+    private mthiebi.sgs.gradebook.service.export.HomeworkPdfService homeworkPdfService;
+
+    @Autowired
+    private mthiebi.sgs.gradebook.repository.ClassGroupRepository classGroupRepository;
+
     /**
      * The list behind one subject's accordion.
      * <p>
@@ -87,6 +93,89 @@ public class HomeworkController {
     public PostView get(@PathVariable String uuid,
                         @RequestHeader("authorization") String authHeader) throws SGSException {
         return require(uuid, authHeader);
+    }
+
+    /**
+     * The list as a PDF, at whichever level the console asked for.
+     * <p>
+     * One endpoint for all three buttons: {@code uuid} gives one assignment,
+     * {@code subjectId} one subject, and neither gives the whole class - the
+     * same narrowing the list endpoint already takes, so the document matches
+     * whatever is on screen rather than a second idea of what it should hold.
+     * <p>
+     * Unlike the parent's copy this includes drafts, because the list it prints
+     * does. Each one is labelled in the document; see
+     * {@code HomeworkPdfService.staffNote}.
+     */
+    @GetMapping("/pdf")
+    @Secured({AuthConstants.MANAGE_HOMEWORK})
+    public org.springframework.http.ResponseEntity<byte[]> pdf(
+            @RequestParam Long classGroupId,
+            @RequestParam(required = false) Long subjectId,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false) String uuid,
+            @RequestHeader("authorization") String authHeader) throws SGSException {
+
+        classScope.check(authHeader, classGroupId);
+
+        List<PostView> posts;
+        if (uuid == null || uuid.isEmpty()) {
+            posts = postService.list(PostKind.HOMEWORK, classGroupId, subjectId, from, to, null);
+        } else {
+            // require() re-checks the scope from the row rather than trusting
+            // the classGroupId in the query, exactly as the single-post read does.
+            posts = java.util.Collections.singletonList(require(uuid, authHeader));
+        }
+
+        byte[] pdf = homeworkPdfService.renderStaffList(
+                posts, contextLine(classGroupId, posts, subjectId), rangeLine(from, to));
+
+        return org.springframework.http.ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"davaleba.pdf\"; filename*=UTF-8''davaleba.pdf")
+                .body(pdf);
+    }
+
+    /**
+     * "9 7" or "9 7 — მათემატიკა". The subject name comes off a post rather
+     * than from a second lookup: every post in a subject-filtered list carries
+     * it, and a filter that matched nothing has no subject worth naming.
+     */
+    private String contextLine(Long classGroupId, List<PostView> posts, Long subjectId) {
+        String className = classGroupRepository.findById(classGroupId)
+                .map(mthiebi.sgs.gradebook.model.ClassGroup::getName)
+                .orElse("");
+        if (subjectId == null || posts.isEmpty()) {
+            return className;
+        }
+        String subject = posts.get(0).getSubjectName();
+        return subject == null || subject.isEmpty()
+                ? className : className + " — " + subject;
+    }
+
+    /**
+     * The filter the document was taken from, so a printed page says which
+     * days it covers. Both ends are optional on the list endpoint, and an
+     * unbounded range is stated as such rather than left blank.
+     */
+    private String rangeLine(LocalDate from, LocalDate to) {
+        if (from == null && to == null) {
+            return "ყველა თარიღი";
+        }
+        if (from != null && to != null) {
+            return day(from) + " — " + day(to);
+        }
+        return from != null ? day(from) + "-დან" : day(to) + "-მდე";
+    }
+
+    /** dd.MM.yyyy, the way the school writes a date. */
+    private static String day(LocalDate date) {
+        return String.format("%02d.%02d.%d",
+                date.getDayOfMonth(), date.getMonthValue(), date.getYear());
     }
 
     /**

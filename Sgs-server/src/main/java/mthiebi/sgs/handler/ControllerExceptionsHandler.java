@@ -23,7 +23,6 @@ import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static mthiebi.sgs.handler.ExceptionUtils.getCustomValidationField;
 import static mthiebi.sgs.handler.ExceptionUtils.isCustomValidationError;
@@ -36,7 +35,6 @@ public class ControllerExceptionsHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public List<ErrorInfo> handleConstraintViolationException(ConstraintViolationException ex) {
-        Stream.of().max
         return ex.getConstraintViolations().stream()
                 .map(v -> {
                     ErrorInfo error = ErrorInfo.builder()

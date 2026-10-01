@@ -220,10 +220,60 @@
     padding: 16px 20px;
 }
 
+.hw__panelHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
 .hw__panelDate {
     font-weight: bold;
     color: #00558a;
-    margin-bottom: 10px;
+}
+
+.hw__itemHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+/* Quiet by default: the assignment is what the parent came for, and a row of
+   loud buttons down the page competes with it. It firms up on hover. */
+.hw__pdf {
+    flex: none;
+    border: 1px solid #c8dced;
+    background: #fff;
+    color: #00558a;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    line-height: 1.6;
+    transition: background-color .15s, border-color .15s;
+}
+
+.hw__pdf:hover:not(:disabled) {
+    background: #eaf4fb;
+    border-color: #7fb4d8;
+}
+
+.hw__pdf:disabled {
+    opacity: .5;
+    cursor: default;
+}
+
+.hw__pdf--day {
+    padding: 4px 14px;
+}
+
+.hw__itemHead .hw__itemTitle {
+    margin-bottom: 0;
 }
 
 .hw__empty {

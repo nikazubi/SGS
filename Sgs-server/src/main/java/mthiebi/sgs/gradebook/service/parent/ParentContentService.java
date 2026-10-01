@@ -113,6 +113,46 @@ public class ParentContentService {
     }
 
     /**
+     * "ნიკა ზუბიაშვილი — 5ა", for the heading of anything this child's content
+     * is exported into.
+     * <p>
+     * Assembled here because the enrollment is what knows the class, and a
+     * download that printed the name without it would be ambiguous in a house
+     * with two children at the school. Returns what it can rather than
+     * throwing: a missing name is a cosmetic line, not a reason to fail the
+     * download it heads.
+     */
+    @Transactional(readOnly = true)
+    public String studentLabel(Long studentId) throws SGSException {
+        Enrollment enrollment = enrollmentOf(studentId);
+
+        StringBuilder label = new StringBuilder();
+        if (enrollment.getStudent() != null) {
+            append(label, enrollment.getStudent().getFirstName());
+            append(label, enrollment.getStudent().getLastName());
+        }
+        if (enrollment.getClassGroup() != null
+                && enrollment.getClassGroup().getName() != null
+                && !enrollment.getClassGroup().getName().isEmpty()) {
+            if (label.length() > 0) {
+                label.append(" — ");
+            }
+            label.append(enrollment.getClassGroup().getName());
+        }
+        return label.toString();
+    }
+
+    private static void append(StringBuilder to, String part) {
+        if (part == null || part.trim().isEmpty()) {
+            return;
+        }
+        if (to.length() > 0) {
+            to.append(' ');
+        }
+        to.append(part.trim());
+    }
+
+    /**
      * One day's posts under the subject each was written for.
      */
     private ParentContentView.HomeworkDayDetail groupBySubject(

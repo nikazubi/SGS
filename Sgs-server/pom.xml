@@ -21,6 +21,15 @@
           <artifactId>owasp-java-html-sanitizer</artifactId>
           <version>20220608.1</version>
       </dependency>
+      <!-- Reads that stored HTML back into a tree when a post has to be
+           rendered as something other than a web page - the homework PDF walks
+           it. Parsing the allowlisted subset by hand looks easy until a nested
+           list or an unclosed <br> arrives. -->
+      <dependency>
+          <groupId>org.jsoup</groupId>
+          <artifactId>jsoup</artifactId>
+          <version>1.13.1</version>
+      </dependency>
     <dependency>
       <groupId>mthiebi</groupId>
       <artifactId>Sgs-model</artifactId>

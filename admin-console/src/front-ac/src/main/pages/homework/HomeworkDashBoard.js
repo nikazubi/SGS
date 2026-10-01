@@ -5,14 +5,14 @@ import {
     DialogContent, DialogTitle, IconButton, TextField, Tooltip,
     Typography
 } from "@mui/material";
-import {Add, Delete, Edit, ExpandMore} from "@mui/icons-material";
+import {Add, Delete, Edit, ExpandMore, PictureAsPdf} from "@mui/icons-material";
 import {Formik} from "formik";
 import FlexBox from "../../../components/FlexBox";
 import FormikAutocomplete from "../../components/formik/FormikAutocomplete";
 import {getFiltersOfPage, setFiltersOfPage} from "../../../utils/filters";
 import {useNotification} from "../../../contexts/notification-context";
 import {fetchClasses, fetchSubjects} from "../gradebook/gradebookApi";
-import {archiveHomework, fetchHomework} from "./homeworkApi";
+import {archiveHomework, downloadHomeworkPdf, fetchHomework} from "./homeworkApi";
 import HomeworkEditor from "./HomeworkEditor";
 
 /**
@@ -92,6 +92,17 @@ const HomeworkDashBoard = () => {
                         </div>
                     )}
                 </Formik>
+
+                {/* The whole filtered view. Only once a class is chosen -
+                    without one the page below is a prompt, not a list. */}
+                {classGroupId ? (
+                    <PdfButton
+                        label="ჩამოტვირთვა"
+                        params={{classGroupId, from: filters?.from, to: filters?.to}}
+                        name={pdfName(filters?.from, filters?.to)}
+                        onError={setErrorMessage}
+                    />
+                ) : null}
             </FlexBox>
 
             {!classGroupId ? (
@@ -157,10 +168,18 @@ const SubjectAccordion = ({
             <Typography>{subject.name}</Typography>
         </AccordionSummary>
         <AccordionDetails>
-            <Button size="small" startIcon={<Add/>} onClick={onAdd}
-                    style={{textTransform: "none", marginBottom: 8}}>
-                დამატება
-            </Button>
+            <div style={{display: "flex", alignItems: "center", gap: 4, marginBottom: 8}}>
+                <Button size="small" startIcon={<Add/>} onClick={onAdd}
+                        style={{textTransform: "none"}}>
+                    დამატება
+                </Button>
+                <PdfButton
+                    label="ჩამოტვირთვა"
+                    params={{classGroupId, subjectId: subject.id, from, to}}
+                    name={pdfName(from, to)}
+                    onError={onError}
+                />
+            </div>
 
             <HomeworkList
                 classGroupId={classGroupId}
@@ -237,6 +256,11 @@ const HomeworkList = ({classGroupId, subjectId, from, to, limit, onEdit, onError
                         <Chip size="small" variant="outlined" label="მთელი კლასი"/>
                     )}
 
+                    <PdfButton
+                        params={{classGroupId, subjectId, uuid: item.uuid}}
+                        name={`davaleba-${item.eventDate || "post"}.pdf`}
+                        onError={onError}
+                    />
                     <IconButton size="small" onClick={() => onEdit(item)}>
                         <Edit fontSize="small"/>
                     </IconButton>
@@ -247,6 +271,69 @@ const HomeworkList = ({classGroupId, subjectId, from, to, limit, onEdit, onError
             ))}
         </div>
     );
+};
+
+/**
+ * Download, at whichever level it was placed.
+ *
+ * One component for all three buttons, holding its own busy flag: the page, an
+ * accordion and a row each download a different slice, and a flag shared
+ * between them would grey out every button on screen while one of them worked.
+ */
+const PdfButton = ({params, name, label, onError}) => {
+
+    const [busy, setBusy] = useState(false);
+
+    const go = async () => {
+        if (busy) {
+            return;
+        }
+        setBusy(true);
+        try {
+            await downloadHomeworkPdf({...params, name});
+        } catch (e) {
+            // Passed as a ready message rather than an error to convert: the
+            // response body is a Blob, because the request asked for one, so
+            // the usual extraction finds nothing to read in it. The API's own
+            // wording is recovered by the caller and is the better message
+            // whenever it exists - "no homework in this range" says what to do
+            // about it, where a download failure does not.
+            onError(e?.serverMessage || "ფაილის ჩამოტვირთვა ვერ მოხერხდა.", false, false);
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    if (!label) {
+        return (
+            <Tooltip title="PDF-ად ჩამოტვირთვა">
+                {/* A disabled button swallows the pointer events a Tooltip
+                    listens for, so the span keeps the hint working. */}
+                <span>
+                    <IconButton size="small" onClick={go} disabled={busy}>
+                        <PictureAsPdf fontSize="small"/>
+                    </IconButton>
+                </span>
+            </Tooltip>
+        );
+    }
+    return (
+        <Button size="small" startIcon={<PictureAsPdf/>} onClick={go} disabled={busy}
+                style={{textTransform: "none"}}>
+            {label}
+        </Button>
+    );
+};
+
+/**
+ * A filename that says what the file holds, in ASCII.
+ *
+ * Georgian in a download name survives most browsers and is mangled by the
+ * rest, and the dates are the part worth reading anyway.
+ */
+const pdfName = (from, to) => {
+    const part = [from, to].filter(Boolean).join("_");
+    return part ? `davaleba-${part}.pdf` : "davaleba.pdf";
 };
 
 const StateChip = ({item}) => {

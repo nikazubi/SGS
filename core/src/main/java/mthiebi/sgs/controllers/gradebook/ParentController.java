@@ -37,6 +37,9 @@ public class ParentController {
     @Autowired
     private mthiebi.sgs.gradebook.service.content.ImageService imageService;
 
+    @Autowired
+    private mthiebi.sgs.gradebook.service.export.HomeworkPdfService homeworkPdfService;
+
     /**
      * The boxes on the landing page - the journals the school has released, and
      * that this child's school shows at all. Primary gets none.
@@ -83,6 +86,45 @@ public class ParentController {
             @RequestHeader("authorization") String authHeader,
             @PathVariable String date) throws Exception {
         return parentContentService.homeworkDay(studentOf(authHeader), date);
+    }
+
+    /**
+     * The same day as a PDF, for a parent who wants it on paper or in a folder.
+     * <p>
+     * {@code uuid} narrows it to one assignment; without it the whole day comes
+     * down. The student is still the token's, so this adds no way to read
+     * another child's work - it is the existing day view in another format.
+     * <p>
+     * Built on the server because the text is Georgian: a PDF carries no font
+     * fallback, so the glyphs have to be embedded by something that has the
+     * font, and the console does not.
+     */
+    @GetMapping("/homework/{date}/pdf")
+    public org.springframework.http.ResponseEntity<byte[]> homeworkDayPdf(
+            @RequestHeader("authorization") String authHeader,
+            @PathVariable String date,
+            @RequestParam(required = false) String uuid) throws Exception {
+
+        Long studentId = studentOf(authHeader);
+        byte[] pdf = homeworkPdfService.renderParentDay(
+                parentContentService.homeworkDay(studentId, date),
+                parentContentService.studentLabel(studentId),
+                uuid);
+
+        return org.springframework.http.ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                        attachment("davaleba-" + date + ".pdf"))
+                .body(pdf);
+    }
+
+    /**
+     * An ASCII filename for every client, plus the RFC 5987 form for those that
+     * understand it. A bare Georgian filename in this header is mangled by some
+     * browsers and rejected outright by others.
+     */
+    private static String attachment(String asciiName) {
+        return "attachment; filename=\"" + asciiName + "\"; filename*=UTF-8''" + asciiName;
     }
 
     /**

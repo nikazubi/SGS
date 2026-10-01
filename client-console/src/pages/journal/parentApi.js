@@ -72,6 +72,58 @@ export const fetchHomeworkDay = async (date) => {
 };
 
 /**
+ * The same day as a PDF, saved to the device.
+ *
+ * A plain link would not do: the API wants the bearer token, and a token in a
+ * query string ends up in logs and history. So the file is fetched like any
+ * other call and handed to the browser as a blob.
+ *
+ * @param uuid one assignment instead of the whole day; omit for all of it
+ */
+export const downloadHomeworkPdf = async (date, uuid) => {
+    let data;
+    let headers;
+    try {
+        ({data, headers} = await axios.get(`/api/parent/homework/${date}/pdf`, {
+            params: uuid ? {uuid} : undefined,
+            responseType: "blob",
+        }));
+    } catch (e) {
+        // Asking for a blob means the error body arrives as one too, so the
+        // server's own message has to be read back out of it — otherwise every
+        // failure, including "no homework on this day", looks the same.
+        const body = e?.response?.data;
+        if (body && typeof body.text === "function") {
+            try {
+                const parsed = JSON.parse(await body.text());
+                const message = Array.isArray(parsed) ? parsed[0]?.message : parsed?.message;
+                if (message) {
+                    e.serverMessage = message;
+                }
+            } catch (ignored) {
+                // Not the API's JSON — a proxy error page, say. Leave the
+                // caller its own wording rather than replacing a real problem.
+            }
+        }
+        throw e;
+    }
+
+    const blob = new Blob([data], {
+        type: headers?.["content-type"] || "application/pdf",
+    });
+    const href = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = `davaleba-${date}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // Released on the next tick: revoking synchronously can beat the download
+    // in some browsers and produce an empty file.
+    setTimeout(() => window.URL.revokeObjectURL(href), 0);
+};
+
+/**
  * Records that these assignments have been opened.
  *
  * Batched and debounced by the caller rather than sent on every tap. Idempotent
