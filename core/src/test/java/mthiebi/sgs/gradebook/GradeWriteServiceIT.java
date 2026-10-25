@@ -3,17 +3,7 @@ package mthiebi.sgs.gradebook;
 import mthiebi.sgs.db.QueryFactoryProvider;
 import mthiebi.sgs.gradebook.model.GradeEntry;
 import mthiebi.sgs.gradebook.repository.GradeEntryRepository;
-import mthiebi.sgs.gradebook.service.CellResult;
-import mthiebi.sgs.gradebook.service.GradeEntryUpdate;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeExplanation;
-import mthiebi.sgs.gradebook.service.GradeWriteRequest;
-import mthiebi.sgs.gradebook.service.GradeWriteResult;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.PeriodTreeLoader;
-import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
-import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
-import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
+import mthiebi.sgs.gradebook.service.*;
 import mthiebi.sgs.gradebook.service.grid.GradeGridService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,11 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({GradeWriteService.class, GradeExplainService.class, GradeGridService.class,
+@Import({GradeWriteService.class, GradeExplainService.class, GradeGridService.class, mthiebi.sgs.gradebook.service.grid.SummaryBreakdown.class,
         TemplateGraphLoader.class, PeriodTreeLoader.class, TemplateVersionResolver.class,
         SpecialValueRegistry.class, QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.conversion.GradeConversionService.class})

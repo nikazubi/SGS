@@ -120,8 +120,11 @@ run_sql db/032_reporting_periods.sql  # ten months become the brief's seven
 echo "==> login and settings"
 run_sql db/demo/110_admin_user.sql
 run_sql db/036_staff_class_grant.sql     # after 110: its user FK needs dbo.system_user_table
+run_sql db/038_parent_module_grant.sql   # which classes see which parent pages
 run_sql db/demo/120_absence_settings.sql
 run_sql db/demo/130_ethics_journal.sql
+run_sql db/039_journal_parent_module.sql # after every journal: which module shows each
+run_sql db/demo/140_parent_content.sql  # schedule, menu, news and a test login
 
 echo
 echo "==> what is in it"

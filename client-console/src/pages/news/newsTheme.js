@@ -40,13 +40,6 @@ const STANDARD = {
 };
 
 /**
- * SCHEDULE reaches a primary child alone (ParentContentService.modulesFor), so
- * its presence is the same signal the server keys the rule on rather than a
- * guess of the console's own.
- */
-export const isPrimary = (modules) => (modules || []).includes("SCHEDULE");
-
-/**
  * @param primary    whether this is the primary school's parent
  * @param category   the item's category name, or null
  * @param order      category names in a stable order - the list the filter is

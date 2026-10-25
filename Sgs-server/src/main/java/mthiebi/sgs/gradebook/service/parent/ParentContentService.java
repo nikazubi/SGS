@@ -4,6 +4,7 @@ import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.gradebook.model.Enrollment;
 import mthiebi.sgs.gradebook.model.HomeworkSeen;
+import mthiebi.sgs.gradebook.model.ParentModule;
 import mthiebi.sgs.gradebook.model.Post;
 import mthiebi.sgs.gradebook.repository.HomeworkSeenRepository;
 import mthiebi.sgs.gradebook.repository.PostRepository;
@@ -37,6 +38,9 @@ public class ParentContentService {
     @Autowired
     private HomeworkSeenRepository homeworkSeenRepository;
 
+    @Autowired
+    private ParentModuleService parentModuleService;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -55,6 +59,7 @@ public class ParentContentService {
             throws SGSException {
 
         Enrollment enrollment = enrollmentOf(studentId);
+        requireModule(enrollment, ParentModule.HOMEWORK);
         YearMonth ym = parseMonth(month);
 
         List<Post> posts = postRepository.findHomeworkForChild(
@@ -103,6 +108,7 @@ public class ParentContentService {
             throws SGSException {
 
         Enrollment enrollment = enrollmentOf(studentId);
+        requireModule(enrollment, ParentModule.HOMEWORK);
         LocalDate day = parseDate(date);
 
         List<Post> posts = postRepository.findHomeworkForChild(
@@ -204,6 +210,7 @@ public class ParentContentService {
             return 0;
         }
         Enrollment enrollment = enrollmentOf(studentId);
+        requireModule(enrollment, ParentModule.HOMEWORK);
 
         // Re-resolved through the same visibility query the calendar uses, so a
         // uuid cannot be used to mark - or to probe for - another child's work.
@@ -269,7 +276,7 @@ public class ParentContentService {
             throws SGSException {
 
         Enrollment enrollment = enrollmentOf(studentId);
-        requireModule(enrollment, "CHARACTERIZATION");
+        requireModule(enrollment, ParentModule.CHARACTERIZATION);
         YearMonth ym = parseMonth(month);
 
         List<Post> posts = postRepository.findCharacterizationsForChildBetween(
@@ -307,7 +314,7 @@ public class ParentContentService {
             throws SGSException {
 
         Enrollment enrollment = enrollmentOf(studentId);
-        requireModule(enrollment, "CHARACTERIZATION");
+        requireModule(enrollment, ParentModule.CHARACTERIZATION);
         LocalDate day = parseDate(date);
 
         List<Post> posts = postRepository.findCharacterizationsForChildBetween(
@@ -401,7 +408,8 @@ public class ParentContentService {
             throws SGSException {
 
         Enrollment enrollment = enrollmentOf(studentId);
-        requireModule(enrollment, kind.name());
+        // SCHEDULE and MENU are the same names in both enums.
+        requireModule(enrollment, ParentModule.valueOf(kind.name()));
 
         List<Post> found = postRepository.findPublishedStanding(
                 kind, enrollment.getClassGroup().getId());
@@ -460,7 +468,7 @@ public class ParentContentService {
             throws SGSException {
 
         Enrollment enrollment = enrollmentOf(studentId);
-        requireModule(enrollment, "CHARACTERIZATION");
+        requireModule(enrollment, ParentModule.CHARACTERIZATION);
 
         List<ParentContentView.Characterization> out = new ArrayList<>();
 
@@ -479,62 +487,57 @@ public class ParentContentService {
         return out;
     }
 
-    // ---- which modules this child's school shows ----------------------------
+    // ---- which modules this child's class shows -----------------------------
 
     /**
-     * The boxes on the landing page, for this child's school.
+     * The boxes on the landing page, for this child's class.
      * <p>
-     * Decided here rather than in the console, because the rule is about the
-     * school and the school is in the data. Primary gets the whole content set;
-     * basic and secondary get the two modules that are not primary-specific.
+     * Decided on the server rather than in the console, and from rows rather
+     * than from code - {@link ParentModuleService} has the rule.
      * <p>
      * Absence is deliberately absent from this list. It is a journal, so it
      * arrives as one of the journal boxes for every school - see
-     * ParentViewService.journals, which gives primary the register and withholds
-     * the gradebook. Naming it here as well would draw the box twice.
+     * ParentViewService.journals, where the absence register names no module
+     * and reaches everybody, and the gradebook and ethics need GRADES. Naming it
+     * here as well would draw the box twice.
      * <p>
      * Returned as names rather than as a boolean per module, so adding one is a
-     * value in this list and a route in the console - not another flag threaded
-     * through both.
+     * value in {@link ParentModule} and a route in the console - not another
+     * flag threaded through both.
      */
     @Transactional(readOnly = true)
     public List<String> modules(Long studentId) throws SGSException {
-        return modulesFor(enrollmentOf(studentId));
+        return parentModuleService.modulesFor(enrollmentOf(studentId)).stream()
+                .map(Enum::name)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ParentContentView.School school(Long studentId) throws SGSException {
+        mthiebi.sgs.gradebook.model.School school =
+                enrollmentOf(studentId).getClassGroup().getSchool();
+        return new ParentContentView.School(school.getCode(), school.getName());
     }
 
     /**
-     * The rule itself, in one place.
+     * Refuses a module this child's class does not have.
      * <p>
-     * Both the landing page and every endpoint guard read this, so a module
-     * cannot be offered and refused - or refused and offered - by two lists
-     * that drifted. Adding a name here opens its endpoint; removing it closes
-     * it, and neither needs a second edit somewhere else.
+     * For the endpoints that do not otherwise look at the child - news is
+     * school-wide - so the controller asks before serving.
      */
-    private List<String> modulesFor(Enrollment enrollment) {
-        String school = enrollment.getClassGroup().getSchool() == null
-                ? null : enrollment.getClassGroup().getSchool().getCode();
-
-        List<String> modules = new ArrayList<>();
-        modules.add("HOMEWORK");
-        modules.add("NEWS");
-        if ("PRIMARY".equals(school)) {
-            modules.add("SCHEDULE");
-            modules.add("MENU");
-            modules.add("CHARACTERIZATION");
-        }
-        return modules;
+    @Transactional(readOnly = true)
+    public void requireModule(Long studentId, ParentModule module) throws SGSException {
+        requireModule(enrollmentOf(studentId), module);
     }
 
     /**
-     * Refuses a module this child's school does not have.
-     * <p>
      * The console never offers the box, so reaching here means a guessed URL or
-     * a stale tab. Refused rather than served: the school's answer is that these
-     * are primary-school pages, and a route that quietly works for everyone is
-     * one nobody remembers is supposed to be closed.
+     * a stale tab. Refused rather than served: a route that quietly works for
+     * everyone is one nobody remembers is supposed to be closed - and with the
+     * rule in rows, deleting one has to close the page as well as hide the box.
      */
-    private void requireModule(Enrollment enrollment, String module) throws SGSException {
-        if (!modulesFor(enrollment).contains(module)) {
+    private void requireModule(Enrollment enrollment, ParentModule module) throws SGSException {
+        if (!parentModuleService.has(enrollment, module)) {
             throw new SGSException(SGSExceptionCode.BAD_REQUEST, "გვერდი ხელმისაწვდომი არ არის");
         }
     }

@@ -2,8 +2,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import {Link, useLocation} from "react-router-dom";
 import React from 'react';
 import UserBar from './UserBar';
-import {useQuery} from "react-query";
-import {fetchParentModules} from "../pages/journal/parentApi";
+import usePrimarySchool from "../hooks/usePrimarySchool";
 
 
 const Header = () => {
@@ -11,11 +10,8 @@ const Header = () => {
     const isNotLoginPage = location.pathname !== '/login'
 
     // Header mounts only once logged in, so this token-bearing call is always
-    // safe here. Shares its cache with AfterLoginPage's identical query key -
-    // this never triggers a second request on its own.
-    const {data: modules} = useQuery(
-        ["PARENT_MODULES"], fetchParentModules, {refetchOnWindowFocus: false});
-    const isPrimary = (modules || []).includes("SCHEDULE");
+    // safe here. Shares its cache with every other page asking the same thing.
+    const {primary: isPrimary} = usePrimarySchool();
     const useStyles = makeStyles((theme) => ({
         avatar: {
           width: theme.spacing(4),

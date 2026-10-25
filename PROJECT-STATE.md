@@ -478,7 +478,9 @@ belong in it: every column of the seeded journal is parent-visible, and
 ONGOING_AVG and TRIMESTER_GRADE are both derived and both ungrouped. A report
 card is an editorial selection, so `component.summary_column` states it (db/034).
 
-**Not attempted:** putting those columns into the main gradebook grid. `GridCell`
+**Since 2026-10, shown read-only** (decision 112) - the trimester assessments sit on the year
+screen for reading; entering them stays on each trimester's screen. **Still not attempted:**
+making those columns editable in the main gradebook grid. `GridCell`
 is keyed by enrollment and component with the period implicit, so a column per
 (component, period) changes the identity of every cell — and that ripples into
 the write path, change requests and publication. The transposed grid already had
@@ -547,6 +549,16 @@ version rather than restricting who may open it, which is deliberate and
 documented in `TemplateVersionResolver`, and the parent modules differ by school
 rather than nesting. Both are in `TEST-RESULTS.md` §3 as questions for the
 school.
+
+### Parent access as data (2026-10)
+
+| #   | Decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|-----|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 108 | **What the parent portal shows a class is rows, not code.** `sgs.parent_module_grant` (`db/038`): school (or every school), a level range (or every level), a module. A child gets every module their class matches; rows only add. Prompted by the school wanting grades 5 and 6 of primary to keep the primary pages *and* see grades - one row, `(PRIMARY, 5, 6, GRADES)`. No admin screen yet, deliberately.                                                                                                                                                                                                                                   |
+| 109 | **Keyed on school and level, not on the class.** Classes are per academic year and rollover makes new ones each September, so a row naming a class would stop applying the next year. Consequence worth knowing: a class saved with საფეხური blank has level 0 and matches no ranged row.                                                                                                                                                                                                                                                                                                                                                          |
+| 110 | **Each journal names the module that shows it** - `grading_template.parent_module` (`db/039`). The absence register names none and reaches everybody ("no grades" must never mean "no absence"); the gradebook and ethics name GRADES; a new journal defaults to GRADES, in the entity and as a database default. It replaced a guess from the grid's shape - periods-across meant "a register, for everyone" - which sent ethics to every primary child. Enforced on `/journals/{uuid}` as well as in the list, which it was not: a withheld gradebook used to open by its address.                                                               |
+| 111 | **Every module's endpoint follows its row**, homework and news included. They were always on, so they had no guard; once a row can take one away, deleting it has to close the page and not just hide the tile. `ParentModuleService` is the one owner of the answer.                                                                                                                                                                                                                                                                                                                                                                              |
+| 112 | **The year screen shows the trimester assessments, read-only** - in the staff grid and in the year's detail export, before the year's own columns, as the brief's table has them. `SummaryBreakdown` works out which (every `summary_column` from a tier below the period on screen, once per period of that tier) for both, so the sheet always matches the grid. Read-only on purpose: a column per (component, period) is a shape nothing that writes knows about, and displaying it changes none of it. The console offers no right-click actions on them - explain, revert and dispute all send the screen's period, which is not the mark's. |
 
 ### Corrections made along the way
 
@@ -1063,7 +1075,20 @@ out gives a system that starts and then fails somewhere specific.
 018_annual_columns.sql    final exam, overall academic assessment and academic
                           project - the brief's section 4 columns the seed
                           lacked, plus the overall = average(annual, exam) rule
+038_parent_module_grant.sql  which classes see which parent pages, as rows
+                          (decision 108). After 006, which seeds the schools.
+                          Without it every parent is refused every page.
+039_journal_parent_module.sql  which module shows each journal (decision 110).
+                          After every script that seeds a journal; check its
+                          output - the absence register must read "(every child)"
 ```
+
+**An existing (production) database** brought up to the October 2026 parent-portal work
+takes `db/migration.sql` instead of the individual scripts: 035, 038 and 039 assembled
+verbatim, the class-level fill, a preflight that stops on the wrong database, and a report.
+Run it **before** deploying the backend - `ddl-auto: update` would otherwise create the rule
+table empty and refuse every parent every page. Safe to run twice. The header says what to
+check in its output.
 
 **Upgrade-only.** Each of these exists solely for a database created before the
 change it makes; 001 already carries all of them.

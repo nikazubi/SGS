@@ -3,32 +3,9 @@ package mthiebi.sgs.gradebook;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.db.QueryFactoryProvider;
 import mthiebi.sgs.gradebook.engine.ValidationIssue;
-import mthiebi.sgs.gradebook.model.ComponentKind;
-import mthiebi.sgs.gradebook.model.GradeEntry;
-import mthiebi.sgs.gradebook.model.JournalFrequency;
-import mthiebi.sgs.gradebook.model.PeriodKind;
-import mthiebi.sgs.gradebook.model.RuleType;
-import mthiebi.sgs.gradebook.model.SourceKind;
-import mthiebi.sgs.gradebook.model.TemplateVersionStatus;
-import mthiebi.sgs.gradebook.service.GradeEntryUpdate;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeWriteRequest;
-import mthiebi.sgs.gradebook.service.GradeWriteResult;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.PeriodTreeLoader;
-import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
-import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
-import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
-import mthiebi.sgs.gradebook.service.journal.ColumnRef;
-import mthiebi.sgs.gradebook.service.journal.ComponentDraft;
-import mthiebi.sgs.gradebook.service.journal.JournalDraft;
-import mthiebi.sgs.gradebook.service.journal.JournalService;
-import mthiebi.sgs.gradebook.service.journal.JournalView;
-import mthiebi.sgs.gradebook.service.journal.RuleDraft;
-import mthiebi.sgs.gradebook.service.journal.SaveResult;
-import mthiebi.sgs.gradebook.service.journal.SourceDraft;
-import mthiebi.sgs.gradebook.service.journal.TermDraft;
-import mthiebi.sgs.gradebook.service.journal.VersionStructure;
+import mthiebi.sgs.gradebook.model.*;
+import mthiebi.sgs.gradebook.service.*;
+import mthiebi.sgs.gradebook.service.journal.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,18 +18,10 @@ import org.springframework.test.context.TestPropertySource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Journals as data: created from the UI, named by the user, with columns and
@@ -66,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({JournalService.class, GradeWriteService.class, GradeExplainService.class,
         mthiebi.sgs.gradebook.service.grid.GradeGridService.class,
+        mthiebi.sgs.gradebook.service.grid.SummaryBreakdown.class,
         TemplateGraphLoader.class, PeriodTreeLoader.class, TemplateVersionResolver.class,
         SpecialValueRegistry.class, QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.conversion.GradeConversionService.class})

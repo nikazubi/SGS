@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <!-- Placeholder in the style of the school's icons: the trimesters and the year. -->
+    <path d="M166 134H108C108 214 140 252 196 262" fill="none" stroke="#D8B840"
+          stroke-width="26" stroke-linecap="round"/>
+    <path d="M346 134H404C404 214 372 252 316 262" fill="none" stroke="#D8B840"
+          stroke-width="26" stroke-linecap="round"/>
+    <path d="M152 96H360V196C360 258 316 304 256 304C196 304 152 258 152 196Z" fill="#E9C94E"/>
+    <rect x="234" y="296" width="44" height="64" fill="#B8961F"/>
+    <rect x="168" y="352" width="176" height="64" rx="18" fill="#8A6D10"/>
+    <rect x="212" y="372" width="88" height="22" rx="11" fill="#E9C94E"/>
+    <circle cx="256" cy="184" r="34" fill="#E8730E"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <!-- Placeholder in the style of the school's icons: one subject's marks. -->
+    <path d="M256 150C200 112 130 104 64 118V396C130 382 200 390 256 428Z" fill="#BFE3CC"/>
+    <path d="M256 150C312 112 382 104 448 118V396C382 382 312 390 256 428Z" fill="#5DAE80"/>
+    <rect x="104" y="180" width="112" height="18" rx="9" fill="#8FCBA6"/>
+    <rect x="104" y="232" width="112" height="18" rx="9" fill="#8FCBA6"/>
+    <rect x="104" y="284" width="84" height="18" rx="9" fill="#8FCBA6"/>
+    <rect x="246" y="146" width="20" height="284" rx="10" fill="#24613F"/>
+    <path d="M352 112H396V236L374 214L352 236Z" fill="#E8730E"/>
+</svg>

@@ -2,7 +2,9 @@
  * The primary-school landing page.
  *
  * Six boxes as sent by the school: news and homework large and side by side,
- * three small tiles below, absence full-width at the bottom. On a phone every
+ * three small tiles below, absence full-width at the bottom. A class that
+ * grades (5 and 6) gets its grade tiles as more small tiles between those and
+ * absence, which then shares the last row with ethics. On a phone every
  * tile becomes one column, stacked in the same order - nothing reflows inside
  * a tile, the grid just stops being three columns wide.
  */
@@ -118,6 +120,17 @@
 .primaryLanding__tile--absence .primaryLanding__icon {
     width: 80px;
     height: 80px;
+}
+
+/* Absence beside the last grade tiles - ethics, for a class that grades - takes
+   what that row left. Before the phone block, which puts every tile back to one
+   column. */
+.primaryLanding__tile--span2 {
+    grid-column: span 2;
+}
+
+.primaryLanding__tile--span1 {
+    grid-column: span 1;
 }
 
 /* ---- phone: one tile per row, in the same order --------------------------- */

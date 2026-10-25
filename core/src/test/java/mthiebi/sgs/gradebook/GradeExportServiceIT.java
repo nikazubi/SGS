@@ -2,14 +2,9 @@ package mthiebi.sgs.gradebook;
 
 import mthiebi.sgs.db.QueryFactoryProvider;
 import mthiebi.sgs.gradebook.model.ClassSubject;
-import mthiebi.sgs.gradebook.service.GradeEntryUpdate;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeWriteRequest;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.PeriodTreeLoader;
-import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
-import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
-import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
+import mthiebi.sgs.gradebook.model.ConversionFormula;
+import mthiebi.sgs.gradebook.model.GradeEntry;
+import mthiebi.sgs.gradebook.service.*;
 import mthiebi.sgs.gradebook.service.export.GradeExportService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -25,19 +20,14 @@ import org.springframework.test.context.TestPropertySource;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import mthiebi.sgs.gradebook.model.ConversionFormula;
-import mthiebi.sgs.gradebook.model.GradeEntry;
-
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The exports, checked by reading the workbook back rather than by trusting it.
@@ -48,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({GradeExportService.class, GradeWriteService.class, GradeExplainService.class,
+@Import({GradeExportService.class, mthiebi.sgs.gradebook.service.grid.SummaryBreakdown.class,
+        GradeWriteService.class, GradeExplainService.class,
         TemplateGraphLoader.class, PeriodTreeLoader.class, TemplateVersionResolver.class,
         SpecialValueRegistry.class, QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.conversion.GradeConversionService.class})
@@ -330,6 +321,45 @@ class GradeExportServiceIT {
         // value, not a blank - "no formula" and "converted to nothing" are
         // different, and only one of them should ever reach a spreadsheet.
         assertEquals("9.00", printed("FINAL_TEST", "ფინალური ტესტი", true));
+    }
+
+    @Test
+    @DisplayName("the year's sheet carries each trimester's assessment, as the year grid does")
+    void yearDetailCarriesTheTrimesters() throws Exception {
+        // The brief's year table: the trimesters first, then the year's own
+        // columns. setUp entered trimester I, so its assessment is calculated.
+        data.components.get("TRIMESTER_GRADE").setSummaryColumn(true);
+        em.flush();
+
+        try (Workbook workbook = exportService.detail(data.classGroup.getId(),
+                data.subject.getId(), data.year.getId(), data.template.getUuid(), false)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            assertEquals("ტრიმესტრის შეფასება", cell(sheet, 1, 1),
+                    "one heading over the borrowed columns");
+
+            Row labels = sheet.getRow(2);
+            assertEquals("I ტრიმესტრი", labels.getCell(1).getStringCellValue());
+            assertEquals("II ტრიმესტრი", labels.getCell(2).getStringCellValue());
+            assertEquals("წლიური შეფასება", labels.getCell(3).getStringCellValue());
+
+            int studentRow = rowContaining(sheet, 0,
+                    "1. " + data.enrollments.get(0).getStudent().getLastName()
+                            + " " + data.enrollments.get(0).getStudent().getFirstName());
+            GradeEntry trimester = entryOf("TRIMESTER_GRADE");
+            assertEquals(trimester.getValue().setScale(1, RoundingMode.HALF_UP).toPlainString(),
+                    cell(sheet, studentRow, 1), "trimester I, as stored");
+            assertEquals("", cell(sheet, studentRow, 2), "trimester II has no marks yet");
+        }
+
+        // A trimester's own sheet borrows nothing: there is no tier below it here.
+        try (Workbook workbook = exportService.detail(data.classGroup.getId(),
+                data.subject.getId(), data.trimester1.getId(), data.template.getUuid(), false)) {
+            Row labels = workbook.getSheetAt(0).getRow(2);
+            for (int i = 1; i < labels.getLastCellNum(); i++) {
+                assertFalse(labels.getCell(i).getStringCellValue().endsWith("ტრიმესტრი"));
+            }
+        }
     }
 
     // ---- helpers ----------------------------------------------------------

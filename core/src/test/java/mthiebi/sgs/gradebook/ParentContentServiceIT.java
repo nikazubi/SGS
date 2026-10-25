@@ -2,6 +2,8 @@ package mthiebi.sgs.gradebook;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.db.QueryFactoryProvider;
+import mthiebi.sgs.gradebook.model.ParentModule;
+import mthiebi.sgs.gradebook.model.ParentModuleGrant;
 import mthiebi.sgs.gradebook.model.PostKind;
 import mthiebi.sgs.gradebook.service.content.HtmlSanitizer;
 import mthiebi.sgs.gradebook.service.content.PostDraft;
@@ -9,6 +11,7 @@ import mthiebi.sgs.gradebook.service.content.PostService;
 import mthiebi.sgs.gradebook.service.content.PostView;
 import mthiebi.sgs.gradebook.service.parent.ParentContentService;
 import mthiebi.sgs.gradebook.service.parent.ParentContentView;
+import mthiebi.sgs.gradebook.service.parent.ParentModuleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({ParentContentService.class, PostService.class, HtmlSanitizer.class,
+@Import({ParentContentService.class, ParentModuleService.class, PostService.class,
+        HtmlSanitizer.class,
         QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.content.CategoryService.class})
 @TestPropertySource(properties = {
@@ -411,18 +415,52 @@ class ParentContentServiceIT {
     }
 
     @Test
-    @DisplayName("the module list follows the child's school")
+    @DisplayName("the module list follows the seeded rules")
     void modulesFollowTheSchool() throws Exception {
-        // GradebookTestData builds a school of its own; whatever its code is, it
-        // is not PRIMARY, so this is the basic/secondary answer.
+        // GradebookTestData builds a school of its own, which no seeded rule
+        // names, so it gets only what db/038 gives every school.
         List<String> modules = parentContentService.modules(studentOf(0));
         assertEquals(Arrays.asList("HOMEWORK", "NEWS"), modules);
 
         asPrimary();
 
+        // The fixture's class is level 9.
         assertEquals(Arrays.asList("HOMEWORK", "NEWS", "SCHEDULE", "MENU", "CHARACTERIZATION"),
                 parentContentService.modules(studentOf(0)),
                 "primary adds the three modules the brief gives it");
+
+        em.find(mthiebi.sgs.gradebook.model.ClassGroup.class, data.classGroup.getId())
+                .setLevel((short) 5);
+        em.flush();
+        em.clear();
+
+        assertEquals(Arrays.asList("HOMEWORK", "NEWS", "SCHEDULE", "MENU", "CHARACTERIZATION",
+                        "GRADES"),
+                parentContentService.modules(studentOf(0)),
+                "and grades 5 and 6 of primary keep all of it and grade as well");
+    }
+
+    @Test
+    @DisplayName("a row opens its page, not just its box")
+    void aGrantOpensTheEndpoint() throws Exception {
+        // The fixture school is refused the schedule (above). One row later it
+        // is served one - null, because nobody has written it yet.
+        assertThrows(SGSException.class,
+                () -> parentContentService.standingDoc(studentOf(0), PostKind.SCHEDULE));
+
+        ParentModuleGrant grant = new ParentModuleGrant();
+        grant.setSchool(data.classGroup.getSchool());
+        grant.setModule(ParentModule.SCHEDULE);
+        em.persist(grant);
+        em.flush();
+
+        assertNull(parentContentService.standingDoc(studentOf(0), PostKind.SCHEDULE));
+        assertTrue(parentContentService.modules(studentOf(0)).contains("SCHEDULE"));
+        // Which is why the console stopped reading SCHEDULE as "primary".
+        assertNotEquals("PRIMARY", parentContentService.school(studentOf(0)).getCode());
+
+        asPrimary();
+        assertEquals("PRIMARY", parentContentService.school(studentOf(0)).getCode());
     }
 
     // ---- the child's description, as a calendar ------------------------------

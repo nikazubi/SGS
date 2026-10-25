@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <!-- Placeholder in the style of the school's icons: conduct, the ethics journal. -->
+    <path d="M256 72L304 196L437 203L334 287L368 416L256 344L144 416L178 287L75 203L208 196Z"
+          fill="#A3B84A" stroke="#A3B84A" stroke-width="30" stroke-linejoin="round"/>
+    <path d="M256 72L304 196L437 203L334 287L368 416L256 344L144 416L178 287L75 203L208 196Z"
+          transform="translate(256 262) scale(0.42) translate(-256 -262)"
+          fill="#DCE6B0" stroke="#DCE6B0" stroke-width="30" stroke-linejoin="round"/>
+    <circle cx="404" cy="92" r="26" fill="#E8730E"/>
+</svg>

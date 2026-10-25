@@ -70,68 +70,47 @@ public class ParentViewService {
     @PersistenceContext
     private EntityManager em;
 
+    @Autowired
+    private ParentModuleService parentModuleService;
+    @Autowired
+    private ParentMenuItemRepository parentMenuItemRepository;
+
     /**
      * The boxes on the landing page: journals the school has released to
-     * parents, and that this child's school shows at all.
+     * parents, and that this child's class shows at all.
      * <p>
      * Scoped, which it was not. This returned every parent-visible journal to
      * every parent without ever looking at the student - so a primary-school
      * parent was offered the trimester gradebook, which their school does not
      * grade on.
      * <p>
-     * The rule is the brief's: primary school does not grade academically, so
-     * its parents get homework, news, meals, the daily schedule, the child's
-     * description and absence - and no gradebook.
+     * Who grades is configuration: a class sees the gradebook when
+     * {@code sgs.parent_module_grant} gives it GRADES. Seeded as basic,
+     * secondary, and grades 5 and 6 of primary - the brief said primary does not
+     * grade, and then the school wanted its two oldest primary years to keep the
+     * primary pages and see grades as well.
      * <p>
      * Absence is the subtlety. It is delivered as a journal like any other, so
-     * "primary has no grades" cannot be implemented as "primary has no
-     * journals" - that was the first version of this method and it silently
-     * took the absence register away from the school that most needs it.
+     * "no grades" cannot be implemented as "no journals" - that was the first
+     * version of this method and it silently took the absence register away
+     * from the school that most needs it. The absence register names no module
+     * and reaches everybody.
      * <p>
-     * Keyed on the school rather than on the class or the level, because that is
-     * the axis the brief uses and the one the data already carries. Levels move -
-     * the school is adding grades 1 to 4 - and nothing here has to change when
-     * they do.
+     * Each journal says which module shows it. This used to be inferred from
+     * the grid's shape - periods-across meant "a register, for everyone" - and
+     * ethics is drawn periods-across too, so every primary child was offered it.
      */
     @Transactional(readOnly = true)
     public List<ParentJournal> journals(Long studentId) throws SGSException {
-        boolean primary = PRIMARY.equals(schoolCodeOf(studentId));
+        Enrollment enrollment = enrollmentOf(studentId);
+        List<ParentModule> modules = parentModuleService.modulesFor(enrollment);
 
         return journalRepository.findActive().stream()
                 .filter(GradingTemplate::isParentVisible)
-                .filter(j -> !primary || isRegister(j))
+                .filter(j -> j.getParentModule() == null || modules.contains(j.getParentModule()))
                 .map(j -> new ParentJournal(j.getUuid(), j.getName(), j.getDescription(),
                         j.getFrequency(), j.isSubjectScoped(), j.getChartKey()))
                 .collect(Collectors.toList());
-    }
-    @Autowired
-    private ParentMenuItemRepository parentMenuItemRepository;
-
-    /**
-     * A register rather than a gradebook.
-     * <p>
-     * Read off the grid shape, which is the only thing today that separates the
-     * two: PERIODS is the transposed grid - students down, periods across - and
-     * it exists for registers. No gradebook uses it.
-     * <p>
-     * A proxy, and worth knowing it is one. It holds while "transposed" and
-     * "not academic" mean the same thing; a transposed *gradebook* would arrive
-     * on the primary landing page uninvited. That fails visibly - a box appears
-     * where none should - rather than silently, which is why this is preferred
-     * to a fourth boolean on the template that the journal editor cannot set
-     * and that somebody would have to remember to tick.
-     */
-    private boolean isRegister(GradingTemplate journal) {
-        return journal.getGridMode() == mthiebi.sgs.gradebook.model.GridMode.PERIODS;
-    }
-
-    /**
-     * db/006 seeds exactly three, and this is the one that differs.
-     */
-    private static final String PRIMARY = "PRIMARY";
-
-    private String schoolCodeOf(Long studentId) throws SGSException {
-        return enrollmentOf(studentId).getClassGroup().getSchool().getCode();
     }
 
     /**
@@ -238,6 +217,13 @@ public class ParentViewService {
         // Checked here rather than trusted from the request: a uuid is easy to
         // guess at and a journal the school has not released is staff-only.
         if (!journal.isParentVisible() || journal.isArchived()) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, "ჟურნალი ხელმისაწვდომი არ არის");
+        }
+        // The same rule as journals(). Without it the list hid the gradebook
+        // from a class that does not get grades while its address still served
+        // it - and a uuid is what a shared link carries.
+        if (journal.getParentModule() != null
+                && !parentModuleService.has(enrollment, journal.getParentModule())) {
             throw new SGSException(SGSExceptionCode.BAD_REQUEST, "ჟურნალი ხელმისაწვდომი არ არის");
         }
 

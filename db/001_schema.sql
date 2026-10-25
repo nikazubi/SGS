@@ -16,6 +16,7 @@ create sequence sgs.grade_entry_seq start with 1 increment by 50;
 create sequence sgs.grading_template_seq start with 1 increment by 50;
 create sequence sgs.homework_seen_seq start with 1 increment by 50;
 create sequence sgs.parent_menu_item_seq start with 1 increment by 50;
+create sequence sgs.parent_module_grant_seq start with 1 increment by 50;
 create sequence sgs.period_scheme_seq start with 1 increment by 50;
 create sequence sgs.period_seq start with 1 increment by 50;
 create sequence sgs.post_category_seq start with 1 increment by 50;
@@ -250,6 +251,7 @@ create table sgs.grading_template
     grid_mode         varchar(16) not null,
     locks_on_publish  bit         not null,
     name              nvarchar(128) not null,
+    parent_module varchar(32),
     is_parent_visible bit         not null,
     sort_index        int         not null,
     subject_scoped    bit         not null,
@@ -281,6 +283,20 @@ create table sgs.parent_menu_item
     period_kind  varchar(20),
     subject_mode varchar(10) not null,
     template_id  bigint      not null,
+    primary key (id)
+);
+
+create table sgs.parent_module_grant
+(
+    id         bigint      not null,
+    created_at datetime2   not null,
+    created_by bigint,
+    updated_at datetime2   not null,
+    updated_by bigint,
+    level_from smallint,
+    level_to   smallint,
+    module     varchar(32) not null,
+    school_id  bigint,
     primary key (id)
 );
 
@@ -738,6 +754,11 @@ alter table sgs.parent_menu_item
     add constraint fk_parent_menu_template
         foreign key (template_id)
             references sgs.grading_template;
+
+alter table sgs.parent_module_grant
+    add constraint fk_parent_module_grant_school
+        foreign key (school_id)
+            references sgs.school;
 
 alter table sgs.period
     add constraint fk_period_parent

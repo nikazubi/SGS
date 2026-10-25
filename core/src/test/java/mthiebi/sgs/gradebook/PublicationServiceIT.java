@@ -7,23 +7,9 @@ import mthiebi.sgs.gradebook.model.GradeEntry;
 import mthiebi.sgs.gradebook.repository.GradeChangeRequestRepository;
 import mthiebi.sgs.gradebook.repository.GradeEntryRepository;
 import mthiebi.sgs.gradebook.repository.PublicationRepository;
-import mthiebi.sgs.gradebook.service.CellRejectionReason;
-import mthiebi.sgs.gradebook.service.GradeEntryUpdate;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeWriteRequest;
-import mthiebi.sgs.gradebook.service.GradeWriteResult;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.PeriodTreeLoader;
-import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
-import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
-import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
+import mthiebi.sgs.gradebook.service.*;
 import mthiebi.sgs.gradebook.service.grid.GradeGridService;
-import mthiebi.sgs.gradebook.service.publish.ChangeRequestService;
-import mthiebi.sgs.gradebook.service.publish.ChangeRequestView;
-import mthiebi.sgs.gradebook.service.publish.GuardianNotifier;
-import mthiebi.sgs.gradebook.service.publish.PublicationResult;
-import mthiebi.sgs.gradebook.service.publish.PublicationService;
-import mthiebi.sgs.gradebook.service.publish.RaiseChangeRequest;
+import mthiebi.sgs.gradebook.service.publish.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,12 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Publishing, and changing a grade after it has been published.
@@ -61,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({PublicationService.class, ChangeRequestService.class, GradeWriteService.class,
-        GradeGridService.class, GradeExplainService.class, TemplateGraphLoader.class,
+        GradeGridService.class, mthiebi.sgs.gradebook.service.grid.SummaryBreakdown.class, GradeExplainService.class, TemplateGraphLoader.class,
         PeriodTreeLoader.class, TemplateVersionResolver.class, SpecialValueRegistry.class,
         QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.conversion.GradeConversionService.class,

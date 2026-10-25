@@ -2,23 +2,10 @@ package mthiebi.sgs.gradebook.service.grid;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.gradebook.engine.SpecialValueBehaviour;
 import mthiebi.sgs.gradebook.engine.ComponentDef;
 import mthiebi.sgs.gradebook.engine.TemplateGraph;
-import mthiebi.sgs.gradebook.model.ClassGroup;
-import mthiebi.sgs.gradebook.model.ComponentKind;
-import mthiebi.sgs.gradebook.model.Enrollment;
-import mthiebi.sgs.gradebook.model.GradeComponent;
-import mthiebi.sgs.gradebook.model.GradeEntry;
-import mthiebi.sgs.gradebook.model.Period;
-import mthiebi.sgs.gradebook.model.PeriodKind;
-import mthiebi.sgs.gradebook.model.Student;
-import mthiebi.sgs.gradebook.model.TemplateVersion;
-import mthiebi.sgs.gradebook.repository.EnrollmentRepository;
-import mthiebi.sgs.gradebook.repository.GradeComponentRepository;
-import mthiebi.sgs.gradebook.repository.GradeEntryRepository;
-import mthiebi.sgs.gradebook.repository.GradeChangeRequestRepository;
-import mthiebi.sgs.gradebook.repository.PeriodRepository;
+import mthiebi.sgs.gradebook.model.*;
+import mthiebi.sgs.gradebook.repository.*;
 import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
 import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
 import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
@@ -26,15 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -74,6 +53,9 @@ public class GradeGridService {
 
     @Autowired
     private SpecialValueRegistry specialValueRegistry;
+
+    @Autowired
+    private SummaryBreakdown summaryBreakdown;
 
     @Transactional(readOnly = true)
     public GradeGrid load(Long classGroupId, Long subjectId, Long periodId,
@@ -124,9 +106,16 @@ public class GradeGridService {
             throw new SGSException(SGSExceptionCode.BAD_REQUEST,
                     "ამ პერიოდისთვის შაბლონში სვეტები არ არის განსაზღვრული");
         }
+        // The marks beneath this period, for reading beside it - on the year, the
+        // three trimester assessments the annual grade averages. First, because
+        // that is the brief's order: the trimesters, then the year.
+        List<SummaryBreakdown.Column> borrowed =
+                summaryBreakdown.columnsFor(version, period, subjectId != null);
+        appendReferenceColumns(grid, borrowed);
         appendColumns(grid, visible, graph);
         appendStudents(grid, enrollments);
         appendCells(grid, enrollments, visible, periodId, subjectId);
+        appendReferenceCells(grid, borrowed, enrollments, subjectId, journal.getId());
 
         specialValueRegistry.behavioursFor(version.getId()).forEach((code, behaviour) ->
                 grid.getSpecialValues().add(new GridSpecialValue(
@@ -217,6 +206,65 @@ public class GradeGridService {
 
         groups.forEach((label, codes) ->
                 grid.getColumnGroups().add(new GridColumnGroup(label, codes)));
+    }
+
+    /**
+     * Read-only, under the borrowed column's own label - "ტრიმესტრის შეფასება"
+     * over I, II and III ტრიმესტრი.
+     */
+    private void appendReferenceColumns(GradeGrid grid, List<SummaryBreakdown.Column> borrowed) {
+        boolean formulaExists = gradeConversionService.current() != null;
+        Map<String, List<String>> groups = new LinkedHashMap<>();
+
+        for (SummaryBreakdown.Column b : borrowed) {
+            GradeComponent c = b.getComponent();
+            GridColumn column = new GridColumn();
+            column.setCode(b.getCode());
+            column.setLabel(b.getPeriod().getLabel());
+            column.setOrdinal(c.getOrdinal());
+            column.setKind(c.getKind());
+            column.setGroupLabel(c.getLabel());
+            column.setDecimals(c.getDecimals());
+            column.setScaleMin(c.getScaleMin());
+            column.setScaleMax(c.getScaleMax());
+            column.setAllowSpecialValues(c.isAllowSpecialValues());
+            column.setHasConversion(formulaExists);
+            column.setEditable(false);
+            column.setReference(true);
+            grid.getColumns().add(column);
+            groups.computeIfAbsent(c.getLabel(), k -> new ArrayList<>()).add(b.getCode());
+        }
+
+        groups.forEach((label, codes) ->
+                grid.getColumnGroups().add(new GridColumnGroup(label, codes)));
+    }
+
+    private void appendReferenceCells(GradeGrid grid, List<SummaryBreakdown.Column> borrowed,
+                                      List<Enrollment> enrollments, Long subjectId,
+                                      Long journalId) {
+        if (borrowed.isEmpty()) {
+            return;
+        }
+        mthiebi.sgs.gradebook.model.ConversionFormula formula = gradeConversionService.current();
+        List<Long> enrollmentIds = enrollments.stream()
+                .map(Enrollment::getId).collect(Collectors.toList());
+
+        summaryBreakdown.valuesFor(borrowed, enrollmentIds, subjectId, journalId)
+                .forEach((key, entry) -> {
+                    String code = key.substring(key.indexOf(':') + 1);
+                    java.math.BigDecimal converted = entry.getSpecialValue() != null ? null
+                            : gradeConversionService.convert(entry.getValue(), formula);
+                    // Never marked published, even where it is: the lock and the
+                    // dispute belong to the trimester's own screen, and nothing
+                    // here can act on either.
+                    grid.getCells().add(new GridCell(
+                            entry.getId(),
+                            entry.getEnrollment().getId(), code,
+                            entry.getValue(), entry.getSpecialValue(),
+                            entry.getSource(), entry.isOverride(), entry.getRowVersion(),
+                            false, null, null, false, false,
+                            converted));
+                });
     }
 
     /**

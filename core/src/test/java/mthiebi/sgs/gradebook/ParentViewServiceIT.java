@@ -4,18 +4,10 @@ import mthiebi.sgs.SGSException;
 import mthiebi.sgs.db.QueryFactoryProvider;
 import mthiebi.sgs.gradebook.model.GradeComponent;
 import mthiebi.sgs.gradebook.model.GradeEntry;
-import mthiebi.sgs.gradebook.service.GradeEntryUpdate;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeWriteRequest;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.PeriodTreeLoader;
-import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
-import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
-import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
-import mthiebi.sgs.gradebook.service.parent.ParentJournal;
-import mthiebi.sgs.gradebook.service.parent.ParentRow;
-import mthiebi.sgs.gradebook.service.parent.ParentView;
-import mthiebi.sgs.gradebook.service.parent.ParentViewService;
+import mthiebi.sgs.gradebook.model.ParentModule;
+import mthiebi.sgs.gradebook.model.ParentModuleGrant;
+import mthiebi.sgs.gradebook.service.*;
+import mthiebi.sgs.gradebook.service.parent.*;
 import mthiebi.sgs.gradebook.service.publish.GuardianNotifier;
 import mthiebi.sgs.gradebook.service.publish.PublicationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,15 +23,10 @@ import org.springframework.test.context.TestPropertySource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The parent portal.
@@ -51,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({ParentViewService.class, PublicationService.class, GradeWriteService.class,
+@Import({ParentViewService.class, ParentModuleService.class, PublicationService.class,
+        GradeWriteService.class,
         GradeExplainService.class, TemplateGraphLoader.class, PeriodTreeLoader.class,
         TemplateVersionResolver.class, SpecialValueRegistry.class, QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.conversion.GradeConversionService.class})
@@ -81,6 +69,7 @@ class ParentViewServiceIT {
 
     private GradebookTestData data;
     private Long studentId;
+    private ParentModuleGrant gradesGrant;
 
     @BeforeEach
     void setUp() {
@@ -88,6 +77,19 @@ class ParentViewServiceIT {
         data = new GradebookTestData(em).build(UUID.randomUUID().toString().substring(0, 6));
         data.template.setParentVisible(true);
         studentId = data.enrollments.get(0).getStudent().getId();
+
+        // The fixture builds a school of its own, which no seeded rule names.
+        // It stands in for basic, so it grades - every level of it.
+        gradesGrant = new ParentModuleGrant();
+        gradesGrant.setSchool(data.classGroup.getSchool());
+        gradesGrant.setModule(ParentModule.GRADES);
+        em.persist(gradesGrant);
+        em.flush();
+    }
+
+    private boolean offered(Long student) throws SGSException {
+        return parentViewService.journals(student).stream()
+                .anyMatch(j -> j.getUuid().equals(data.template.getUuid()));
     }
 
     private void enter(String code, String value) throws Exception {
@@ -252,41 +254,100 @@ class ParentViewServiceIT {
     }
 
     @Test
-    @DisplayName("primary keeps the register but loses the gradebook")
-    void primarySeesTheRegisterOnly() throws Exception {
-        // "Primary has no grades" is not "primary has no journals": absence is
-        // delivered as one, and the first version of this rule silently took it
-        // away from the school whose parents most need it.
-        data.template.setParentVisible(true);
-        data.template.setGridMode(mthiebi.sgs.gradebook.model.GridMode.COMPONENTS);
+    @DisplayName("a level range grants grades inside it and nowhere else")
+    void gradesFollowTheLevelRange() throws Exception {
+        // The school's case: grades for two years of a school, not all of it.
+        gradesGrant.setLevelFrom((short) 5);
+        gradesGrant.setLevelTo((short) 6);
+
+        for (short level = 4; level <= 7; level++) {
+            data.classGroup.setLevel(level);
+            em.flush();
+            assertEquals(level == 5 || level == 6, offered(studentId), "level " + level);
+        }
+    }
+
+    @Test
+    @DisplayName("a class saved without a level matches no ranged rule")
+    void unsetLevelMatchesNoRange() throws Exception {
+        // A class saved with საფეხური blank has level 0. Pinned so the gap is
+        // known rather than discovered: a grade 5 class entered without its
+        // level gets no grades from a 5-6 rule.
+        gradesGrant.setLevelFrom((short) 5);
+        gradesGrant.setLevelTo((short) 6);
+        data.classGroup.setLevel((short) 0);
         em.flush();
 
-        Long student = data.enrollments.get(0).getStudent().getId();
-        assertTrue(parentViewService.journals(student).stream()
-                        .anyMatch(j -> j.getUuid().equals(data.template.getUuid())),
-                "a gradebook is offered outside primary");
+        assertFalse(offered(studentId));
+    }
 
+    @Test
+    @DisplayName("the gradebook's address is refused where the list withholds it")
+    void withheldGradebookIsRefusedByUuid() throws Exception {
+        // Hiding the box is not enough: a uuid is what a shared link carries.
+        em.remove(gradesGrant);
+        em.flush();
+
+        assertFalse(offered(studentId));
+        assertThrows(SGSException.class, this::view);
+    }
+
+    /**
+     * Moves the fixture's class into the seeded primary school. Its level is 9,
+     * which db/038's primary GRADES row (5-6) does not cover.
+     */
+    private void asPrimary() {
         mthiebi.sgs.gradebook.model.School primary = em.createQuery(
                 "select s from School s where s.code = 'PRIMARY'",
                 mthiebi.sgs.gradebook.model.School.class).getSingleResult();
         data.classGroup.setSchool(primary);
         em.flush();
         em.clear();
+    }
 
-        assertFalse(parentViewService.journals(student).stream()
-                        .anyMatch(j -> j.getUuid().equals(data.template.getUuid())),
-                "and withheld inside it");
+    /**
+     * Re-loaded: asPrimary() clears the context, and setting a field on a
+     * detached entity flushes nothing.
+     */
+    private void gateJournalOn(ParentModule module) {
+        em.find(mthiebi.sgs.gradebook.model.GradingTemplate.class, data.template.getId())
+                .setParentModule(module);
+        em.flush();
+        em.clear();
+    }
 
-        // Re-loaded: em.clear() above detached it, and setting a field on a
-        // detached entity flushes nothing.
+    @Test
+    @DisplayName("primary keeps the absence register but loses the gradebook")
+    void primarySeesTheRegisterOnly() throws Exception {
+        // "Primary has no grades" is not "primary has no journals": absence is
+        // delivered as one, and the first version of this rule silently took it
+        // away from the school whose parents most need it.
+        assertEquals(ParentModule.GRADES, data.template.getParentModule(),
+                "a new journal is gated until somebody says otherwise");
+        assertTrue(offered(studentId), "a gradebook is offered outside primary");
+
+        asPrimary();
+        assertFalse(offered(studentId), "and withheld inside it");
+
+        // The absence register names no module.
+        gateJournalOn(null);
+        assertTrue(offered(studentId), "a journal naming no module reaches primary");
+    }
+
+    @Test
+    @DisplayName("a journal's layout does not decide who sees it")
+    void layoutDoesNotOpenAJournal() throws Exception {
+        // Ethics: drawn periods-across exactly like the absence register, and
+        // gated on GRADES all the same. Reading the layout as "a register, for
+        // everyone" is what used to offer it to every primary child.
         em.find(mthiebi.sgs.gradebook.model.GradingTemplate.class, data.template.getId())
                 .setGridMode(mthiebi.sgs.gradebook.model.GridMode.PERIODS);
         em.flush();
-        em.clear();
 
-        assertTrue(parentViewService.journals(student).stream()
-                        .anyMatch(j -> j.getUuid().equals(data.template.getUuid())),
-                "a register reaches primary");
+        asPrimary();
+
+        assertFalse(offered(studentId));
+        assertThrows(SGSException.class, this::view);
     }
 
     @Test

@@ -2,6 +2,9 @@ import React, {useEffect, useMemo, useState} from "react";
 import {useLocation, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import {fetchParentView} from "./parentApi";
+// context/, not hooks/: the two files are identical, but each creates its own
+// context, and only this one has a provider above the app.
+import {useConvertError} from "../../context/convertError";
 import {chartFor} from "./charts";
 import RowCards from "./RowCards";
 import RowTable from "./RowTable";
@@ -24,6 +27,10 @@ import "./journal.css";
  *
  * Which is why drilling into a single subject is not a different page. It is
  * this page with one row, and it turns into cards on its own.
+ *
+ * Loading, empty and failed are three different things on screen. A failure
+ * used to read as loading forever, so a journal the server refused - one this
+ * child's class is not shown - looked like a slow connection.
  */
 const JournalPage = () => {
 
@@ -50,14 +57,21 @@ const JournalPage = () => {
     // left out.
     const summary = !opened.oneSubject && subjectId === null;
 
-    const {data: view, isLoading} = useQuery(
+    const {data: view, isLoading, isError, error} = useQuery(
         ["PARENT_VIEW", uuid, periodId, subjectId, opened.periodKind, summary],
         () => fetchParentView({
             uuid, periodId, subjectId,
             periodKind: opened.periodKind, summary
         }),
-        {keepPreviousData: true, refetchOnWindowFocus: false}
+        {keepPreviousData: true, refetchOnWindowFocus: false, retry: retryUnlessRefused}
     );
+
+    // The server's own sentence where it sent one - "ჟურნალი ხელმისაწვდომი არ
+    // არის" says more than a generic failure - without the status code in front.
+    const {convert} = useConvertError();
+    const failure = isError
+        ? (convert(error, false)?.message || "ჟურნალი ვერ ჩაიტვირთა.")
+        : null;
 
     // "One subject at a time" means the first one, with the picker left free -
     // the parent changes it from here and the back link takes them to all of
@@ -76,6 +90,12 @@ const JournalPage = () => {
     // cannot be a property of the journal alone.
     const Chart = useMemo(
         () => chartFor(opened.chartKey || view?.chartKey), [opened.chartKey, view]);
+
+    if (failure && !view) {
+        return <div className="journalPage">
+            <div className="emptyState emptyState--error">{failure}</div>
+        </div>;
+    }
 
     if (isLoading || !view) {
         return <div className="journalPage">
@@ -121,7 +141,12 @@ const JournalPage = () => {
                 one row the cards are the content and the name is the title. */}
             {subject ? <h2 className="journalPage__subject">{subject}</h2> : null}
 
-            {view.rows.length === 0 ? (
+            {/* A failed period or subject switch keeps the pickers - drawn from
+                the last answer - so the parent can step back to one that works,
+                but never shows the last answer's marks as if they were this one's. */}
+            {failure ? (
+                <div className="emptyState emptyState--error">{failure}</div>
+            ) : view.rows.length === 0 ? (
                 <div className="emptyState">
                     ამ პერიოდისთვის შეფასებები ჯერ არ არის გამოქვეყნებული.
                 </div>
@@ -140,10 +165,20 @@ const JournalPage = () => {
                 />
             )}
 
-            {Chart ? <Chart view={view} row={single ? view.rows[0] : null}
-                            column={opened.chartColumn}/> : null}
+            {Chart && !failure ? <Chart view={view} row={single ? view.rows[0] : null}
+                                        column={opened.chartColumn}/> : null}
         </div>
     );
+};
+
+/**
+ * Retry what might work a second time - the network, a server error - but not
+ * a refusal. A 4xx is the server's answer, and asking three more times only
+ * delays telling the parent by several seconds.
+ */
+const retryUnlessRefused = (failureCount, error) => {
+    const status = error?.response?.status;
+    return (!status || status >= 500) && failureCount < 3;
 };
 
 export default JournalPage;

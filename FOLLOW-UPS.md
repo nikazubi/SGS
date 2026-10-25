@@ -113,7 +113,9 @@ one for a term, this is the thing to close first.
   own container rather than reflow. Written up screen by screen in
   `PARENT-COMPONENTS.md`. It applies to the shared components, so it is not part
   of the primary theme and should not wait for it.
-* **A primary child is offered the ethics journal.** `ParentViewService.journals`
+* ~~**A primary child is offered the ethics journal.**~~ **Closed by `db/039`:**
+  each journal now names the module that shows it, and ethics names GRADES. The
+  original note follows. `ParentViewService.journals`
   narrows a primary child to registers, and decides what a register is by grid
   shape - `gridMode == PERIODS`. Ethics is `MONTH` + `PERIODS` + parent-visible,
   so it passes: the endpoint returns it, and `/journal/<ethics-uuid>` renders for
