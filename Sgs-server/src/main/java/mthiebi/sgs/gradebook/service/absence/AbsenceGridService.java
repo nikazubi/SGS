@@ -165,8 +165,19 @@ public class AbsenceGridService {
 
         appendStudents(grid, enrollments);
         appendCells(grid, enrollments, columns, subjectId);
-        appendSettings(grid, classGroupId,
-                columns.stream().map(c -> c.period).distinct().collect(Collectors.toList()));
+
+        // Only the absence register has academic hours and a permitted figure.
+        // This used to run for every transposed grid, because transposed was
+        // taken to mean "the register" - so the ethics journal, drawn the same
+        // way for an unrelated reason, offered the same two rows. They mean
+        // nothing there, and ClassPeriodSetting is keyed per class and period
+        // with no journal column, so editing them from the ethics screen wrote
+        // the absence figures: the ones that turn a parent's chart red.
+        grid.setAbsenceRegister(journal.isAbsenceRegister());
+        if (journal.isAbsenceRegister()) {
+            appendSettings(grid, classGroupId,
+                    columns.stream().map(c -> c.period).distinct().collect(Collectors.toList()));
+        }
         return grid;
     }
 

@@ -118,6 +118,29 @@ public class GradingTemplate extends AuditableEntity {
     private GridMode gridMode = GridMode.COMPONENTS;
 
     /**
+     * This journal is the absence register, and nothing else is.
+     * <p>
+     * It decides one thing: who owns the academic-hours and permitted-absence
+     * settings. Those two rows used to be drawn on any transposed grid, because
+     * {@code gridMode == PERIODS} was taken to mean "the register" - and the
+     * ethics journal is transposed for an unrelated reason, the brief drawing
+     * its table that way. So they appeared on the ethics screen, where they
+     * mean nothing, and where saving one rewrote the absence figures behind a
+     * parent's chart: {@code ClassPeriodSetting} is keyed per class and period
+     * with no journal in it.
+     * <p>
+     * Not who may <em>see</em> the journal - {@link #parentModule} answers that,
+     * and answers it better, by naming the module a class must hold rather than
+     * splitting journals into registers and everything else. The same shape
+     * proxy was deciding both questions and was wrong about both.
+     * <p>
+     * A column rather than another guess at the shape: a flag can be wrong, but
+     * it cannot be wrong by accident when somebody adds a journal.
+     */
+    @Column(name = "is_absence_register", nullable = false)
+    private boolean absenceRegister;
+
+    /**
      * Whether a published cell of this journal becomes read-only.
      * <p>
      * True for grades, and the reason publication exists at all: once parents

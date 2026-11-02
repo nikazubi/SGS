@@ -57,6 +57,17 @@ public class AbsenceGrid {
     private boolean canEdit;
 
     /**
+     * Whether this grid is the absence register, and so whether the two
+     * settings rows belong on it at all.
+     * <p>
+     * The console cannot work this out for itself: every transposed journal
+     * arrives through this same shape and the same page, which is how the
+     * ethics journal came to offer academic hours and a permitted absence.
+     * Sent explicitly so the question is answered once, by the journal.
+     */
+    private boolean absenceRegister;
+
+    /**
      * One column: a period, and the component whose value sits on it.
      * <p>
      * The pair is the point. The brief's absence and ethics tables put reporting

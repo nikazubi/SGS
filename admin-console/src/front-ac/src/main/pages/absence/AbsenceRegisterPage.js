@@ -72,8 +72,14 @@ const AbsenceRegisterPage = ({journalUuid, journalName}) => {
     // The settings endpoint is secured on these two, not on ADD_GRADES. Gating
     // the fields on the wrong permission meant they rendered for someone whose
     // every blur then came back 403.
-    const canEditSettings = hasPermission("MANAGE_TOTAL_ABSENCE")
-        || hasPermission("MANAGE_GRADES");
+    // ...and only on the absence register. This page draws every transposed
+    // journal, so without the grid's own say-so the academic-hours and
+    // permitted-absence rows appeared on the ethics journal too - where they
+    // mean nothing, and where saving one rewrote the absence figure behind a
+    // parent's chart, because the setting is keyed per class and period with
+    // no journal in it.
+    const canEditSettings = Boolean(grid?.absenceRegister)
+        && (hasPermission("MANAGE_TOTAL_ABSENCE") || hasPermission("MANAGE_GRADES"));
 
     // MANAGE_CLOSED_PERIOD alone, which is all POST /publish requires. It was
     // also gated on grid.canEdit - the server's ADD_GRADES answer - so the one
