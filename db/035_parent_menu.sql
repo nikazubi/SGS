@@ -96,13 +96,10 @@ GO
 -- the header - and the longest label is three tiles to a row, where sixty-two
 -- characters wraps to five lines and drags the whole row down after it. The
 -- full wording still heads the page the button opens.
-
-IF EXISTS (SELECT 1 FROM sgs.parent_menu_item)
-BEGIN
-SELECT 'already seeded' AS result;
-RETURN;
-END
-GO
+--
+-- The guard is on the INSERT itself (below). It used to be a batch of its own,
+-- "IF EXISTS ... RETURN", which ends only that batch - the INSERT after the GO
+-- ran anyway, so a second run seeded all five buttons twice.
 
 DECLARE
 @trimester bigint = (
@@ -126,6 +123,8 @@ DECLARE
 -- back to one button per journal for anything not named here, so a partial
 -- seed is a smaller landing page rather than a broken one.
 
+IF
+NOT EXISTS (SELECT 1 FROM sgs.parent_menu_item)
 INSERT INTO sgs.parent_menu_item (id, template_id, ordinal, label, period_kind,
                                   subject_mode, chart_key, chart_column, created_at, updated_at)
 SELECT NEXT VALUE FOR sgs.parent_menu_item_seq, v.template_id, v.ordinal, v.label, v.period_kind, v.subject_mode, v.chart_key, v.chart_column, SYSUTCDATETIME(), SYSUTCDATETIME()

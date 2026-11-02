@@ -50,6 +50,14 @@ export const modules = {
     menu: {tile: '#F7E0D8', label: '#8E3A24', accent: '#D9705A'},
     description: {tile: '#F8E1EA', label: '#8A3357', accent: '#EFBFD2'},
     absence: {tile: '#E1EAEF', label: '#3D5C6D', accent: '#7C9CAE'},
+    // The grade tiles - only for a primary class the school grades (5 and 6
+    // today). Hues the six above do not use, so a grade tile is never mistaken
+    // for a content module beside it. Placeholders until the school's designer
+    // sends artwork, as are their icons.
+    gradesSubject: {tile: '#DDF0E4', label: '#24613F', accent: '#5DAE80'},
+    gradesSummary: {tile: '#D9EEEE', label: '#1D5E60', accent: '#4FA3A5'},
+    gradesAnnual: {tile: '#F7F0C6', label: '#6E5A12', accent: '#D8B840'},
+    ethics: {tile: '#ECF2D6', label: '#4E5E16', accent: '#A3B84A'},
 };
 
 /**

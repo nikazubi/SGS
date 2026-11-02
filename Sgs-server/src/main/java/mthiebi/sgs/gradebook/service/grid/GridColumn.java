@@ -56,4 +56,15 @@ public class GridColumn {
      * formula for the school, so every column carries the same answer.
      */
     private boolean hasConversion;
+
+    /**
+     * Shown for reading beside the period on screen, from a period beneath it -
+     * the trimester assessments on the year. See {@link SummaryBreakdown}.
+     * <p>
+     * Never editable, and the console offers nothing on it: explaining or
+     * reverting a cell sends its code with the period on screen, which for a
+     * borrowed column is the wrong period. That is done from the trimester's
+     * own screen.
+     */
+    private boolean reference;
 }

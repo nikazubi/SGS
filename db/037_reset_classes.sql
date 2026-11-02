@@ -19,11 +19,12 @@
 --   per-child records    grade_entry, grade_change_request, daily_absence,
 --                        absence_notice, homework_seen
 --   class content        every post aimed at a class (homework, schedule, menu,
---                        characterization) with its lines, links and targets.
---                        School-wide posts - news with no class - stay.
+--                        characterization) with its lines, links and targets,
+--                        and news aimed at particular classes (db/041).
+--                        News for every class stays.
 --
 -- KEPT: students, subjects, academic years, period schemes and periods,
--- journals and their columns, schools, staff accounts, school-wide news,
+-- journals and their columns, schools, staff accounts, news for every class,
 -- post images, and everything in dbo.
 --
 -- TAKE A BACKUP FIRST. Nothing here can be undone.
@@ -79,6 +80,31 @@ DELETE FROM sgs.enrollment_placement;
 DELETE FROM sgs.post_line WHERE post_id IN (SELECT id FROM sgs.post WHERE class_group_id IS NOT NULL);
 DELETE FROM sgs.post_link WHERE post_id IN (SELECT id FROM sgs.post WHERE class_group_id IS NOT NULL);
 DELETE FROM sgs.post WHERE class_group_id IS NOT NULL;
+
+-- News aimed at particular classes (db/041) - for nobody once they are gone.
+-- Not just the audience rows: an item with none is for every class, so
+-- emptying them would send each item to the whole school. Guarded, so this
+-- still runs on a database from before 041.
+IF
+OBJECT_ID('sgs.post_audience') IS NOT NULL
+BEGIN
+    DECLARE
+@aimed TABLE (id bigint PRIMARY KEY);
+INSERT INTO @aimed
+SELECT DISTINCT post_id
+FROM sgs.post_audience;
+DELETE
+FROM sgs.post_audience;
+DELETE
+FROM sgs.post_line
+WHERE post_id IN (SELECT id FROM @aimed);
+DELETE
+FROM sgs.post_link
+WHERE post_id IN (SELECT id FROM @aimed);
+DELETE
+FROM sgs.post
+WHERE id IN (SELECT id FROM @aimed);
+END
 
 DELETE FROM sgs.enrollment;
 

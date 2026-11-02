@@ -164,4 +164,20 @@ public final class ParentContentView {
         private final String imageUuid;
         private final List<Link> links = new ArrayList<>();
     }
+
+    /**
+     * The child's school, which the console chooses its look by.
+     * <p>
+     * Its own answer rather than read off the module list: what a class is
+     * shown is configuration (db/038), so which modules arrive says nothing
+     * reliable about which school sent them.
+     */
+    @Data
+    public static class School {
+        /**
+         * PRIMARY, BASIC or SECONDARY - the codes db/006 seeds.
+         */
+        private final String code;
+        private final String name;
+    }
 }

@@ -117,7 +117,10 @@ const GradebookDashBoard = ({journalUuid, journalName}) => {
 
         const field = cellEl.getAttribute("data-field");
         const column = (grid?.columns || []).find(c => c.code === field);
-        if (!column) return;
+        // A trimester read on the year has nothing to offer here: explaining,
+        // reverting and disputing all send this screen's period, which is not
+        // the period the mark belongs to. Its own screen does all three.
+        if (!column || column.reference) return;
 
         const enrollmentId = Number(rowEl.getAttribute("data-id"));
         const cell = getCell(enrollmentId, field);

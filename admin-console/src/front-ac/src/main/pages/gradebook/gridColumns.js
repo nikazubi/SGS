@@ -64,6 +64,9 @@ export const buildColumns = ({
             const key = cellKey(id, column.code);
             const cell = getCell(id, column.code);
             const classes = [];
+            // Borrowed from a period beneath this one (the trimesters, on the
+            // year): read here, entered and published on their own screen.
+            if (column.reference) return "sgs-cell--reference";
             if (getConflict(id, column.code)) classes.push("sgs-cell--conflict");
             else if (cell?.published) classes.push("sgs-cell--published");
             else if (isStale(key)) classes.push("sgs-cell--stale");

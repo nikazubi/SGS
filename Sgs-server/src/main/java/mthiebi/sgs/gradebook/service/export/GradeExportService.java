@@ -2,20 +2,10 @@ package mthiebi.sgs.gradebook.service.export;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.gradebook.model.ClassGroup;
-import mthiebi.sgs.gradebook.model.ClassSubject;
-import mthiebi.sgs.gradebook.model.Enrollment;
-import mthiebi.sgs.gradebook.model.GradeComponent;
-import mthiebi.sgs.gradebook.model.GradeEntry;
-import mthiebi.sgs.gradebook.model.Period;
-import mthiebi.sgs.gradebook.model.Student;
-import mthiebi.sgs.gradebook.model.TemplateVersion;
-import mthiebi.sgs.gradebook.repository.ClassGroupRepository;
-import mthiebi.sgs.gradebook.repository.EnrollmentRepository;
-import mthiebi.sgs.gradebook.repository.GradeComponentRepository;
-import mthiebi.sgs.gradebook.repository.GradeEntryRepository;
-import mthiebi.sgs.gradebook.repository.PeriodRepository;
+import mthiebi.sgs.gradebook.model.*;
+import mthiebi.sgs.gradebook.repository.*;
 import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
+import mthiebi.sgs.gradebook.service.grid.SummaryBreakdown;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,14 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -78,6 +62,9 @@ public class GradeExportService {
 
     @Autowired
     private mthiebi.sgs.gradebook.service.PeriodTreeLoader periodTreeLoader;
+
+    @Autowired
+    private SummaryBreakdown summaryBreakdown;
 
     @Autowired
     private mthiebi.sgs.gradebook.service.conversion.GradeConversionService gradeConversionService;
@@ -229,33 +216,59 @@ public class GradeExportService {
             values.put(entry.getEnrollment().getId() + ":" + entry.getComponent().getCode(), entry);
         }
 
-        Workbook workbook = new XSSFWorkbook();
-        SheetStyles styles = new SheetStyles(workbook);
-        Sheet sheet = workbook.createSheet(safeSheetName(ctx.classGroup.getName()));
-
-        titleRow(sheet, styles, components.size() + 1,
-                SCHOOL + " - კლასი " + ctx.classGroup.getName()
-                        + " - " + subjectName + " - " + ctx.period.getLabel());
+        // The marks from beneath this period that the grid shows beside it - on
+        // the year, the three trimester assessments - so the sheet is the
+        // brief's table and agrees with the screen it was exported from.
+        List<SummaryBreakdown.Column> borrowed =
+                summaryBreakdown.columnsFor(ctx.version, ctx.period, true);
+        Map<String, GradeEntry> borrowedValues = summaryBreakdown.valuesFor(
+                borrowed, ctx.enrollmentIds(), subjectId, ctx.version.getTemplate().getId());
 
         // The template's own grouping, e.g. the seven ongoing marks under one
         // heading, so the sheet reads like the screen it came from.
         Map<String, List<GradeComponent>> groups = new LinkedHashMap<>();
-        boolean grouped = components.stream()
-                .anyMatch(c -> c.getGroupLabel() != null && !c.getGroupLabel().isEmpty());
         for (GradeComponent c : components) {
             groups.computeIfAbsent(c.getGroupLabel() == null ? "" : c.getGroupLabel(),
                     k -> new ArrayList<>()).add(c);
         }
+
+        List<DetailColumn> columns = new ArrayList<>();
+        for (SummaryBreakdown.Column b : borrowed) {
+            columns.add(new DetailColumn(b.getComponent().getLabel(), b.getPeriod().getLabel(),
+                    e -> render(borrowedValues.get(e.getId() + ":" + b.getCode()),
+                            b.getComponent(), formula)));
+        }
+        groups.values().stream().flatMap(List::stream).forEach(component ->
+                columns.add(new DetailColumn(
+                        component.getGroupLabel() == null ? "" : component.getGroupLabel(),
+                        component.getLabel(),
+                        e -> render(values.get(e.getId() + ":" + component.getCode()),
+                                component, formula))));
+
+        Workbook workbook = new XSSFWorkbook();
+        SheetStyles styles = new SheetStyles(workbook);
+        Sheet sheet = workbook.createSheet(safeSheetName(ctx.classGroup.getName()));
+
+        titleRow(sheet, styles, columns.size() + 1,
+                SCHOOL + " - კლასი " + ctx.classGroup.getName()
+                        + " - " + subjectName + " - " + ctx.period.getLabel());
+
+        boolean grouped = columns.stream().anyMatch(dc -> !dc.group.isEmpty());
 
         int headerTop = 1;
         if (grouped) {
             Row groupRow = sheet.createRow(headerTop);
             cell(groupRow, 0, "მოსწავლის გვარი, სახელი", styles.header);
             sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
+            // A heading over each run of neighbouring columns that share one.
             int c = 1;
-            for (Map.Entry<String, List<GradeComponent>> group : groups.entrySet()) {
-                int span = group.getValue().size();
-                cell(groupRow, c, group.getKey(), styles.header);
+            while (c <= columns.size()) {
+                String group = columns.get(c - 1).group;
+                int span = 1;
+                while (c - 1 + span < columns.size() && columns.get(c - 1 + span).group.equals(group)) {
+                    span++;
+                }
+                cell(groupRow, c, group, styles.header);
                 if (span > 1) {
                     sheet.addMergedRegion(new CellRangeAddress(1, 1, c, c + span - 1));
                     for (int i = 1; i < span; i++) {
@@ -274,10 +287,8 @@ public class GradeExportService {
             cell(labelRow, 0, "", styles.header);
         }
         int c = 1;
-        List<GradeComponent> ordered = groups.values().stream()
-                .flatMap(List::stream).collect(Collectors.toList());
-        for (GradeComponent component : ordered) {
-            cell(labelRow, c++, component.getLabel(), styles.header);
+        for (DetailColumn column : columns) {
+            cell(labelRow, c++, column.label, styles.header);
         }
 
         int rowIndex = labelRowIndex + 1;
@@ -286,15 +297,31 @@ public class GradeExportService {
             Row row = sheet.createRow(rowIndex++);
             cell(row, 0, studentLabel(index++, enrollment.getStudent()), styles.studentName);
             int cc = 1;
-            for (GradeComponent component : ordered) {
-                GradeEntry entry = values.get(
-                        enrollment.getId() + ":" + component.getCode());
-                cell(row, cc++, render(entry, component, formula), styles.cell);
+            for (DetailColumn column : columns) {
+                cell(row, cc++, column.value.apply(enrollment), styles.cell);
             }
         }
 
-        sizeColumns(sheet, ordered.size() + 1);
+        sizeColumns(sheet, columns.size() + 1);
         return workbook;
+    }
+
+    /**
+     * One column of the detail sheet: the heading over it, its own label, and
+     * what it prints for a student. Either a column of the period itself or
+     * one borrowed from beneath it.
+     */
+    private static final class DetailColumn {
+        private final String group;
+        private final String label;
+        private final java.util.function.Function<Enrollment, String> value;
+
+        private DetailColumn(String group, String label,
+                             java.util.function.Function<Enrollment, String> value) {
+            this.group = group;
+            this.label = label;
+            this.value = value;
+        }
     }
 
     // ---- shared ---------------------------------------------------------

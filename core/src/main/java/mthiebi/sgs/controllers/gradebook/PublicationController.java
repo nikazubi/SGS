@@ -2,24 +2,11 @@ package mthiebi.sgs.controllers.gradebook;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.gradebook.model.ChangeRequestStatus;
-import mthiebi.sgs.gradebook.service.publish.ChangeRequestService;
-import mthiebi.sgs.gradebook.service.publish.ChangeRequestView;
-import mthiebi.sgs.gradebook.service.publish.DecideChangeRequest;
-import mthiebi.sgs.gradebook.service.publish.PublicationLogEntry;
-import mthiebi.sgs.gradebook.service.publish.PublicationResult;
-import mthiebi.sgs.gradebook.service.publish.PublicationService;
-import mthiebi.sgs.gradebook.service.publish.PublishRequest;
-import mthiebi.sgs.gradebook.service.publish.RaiseChangeRequest;
+import mthiebi.sgs.gradebook.service.publish.*;
 import mthiebi.sgs.utils.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,7 +33,48 @@ public class PublicationController {
     @Autowired
     private ClassScopeGuard classScope;
 
+    @Autowired
+    private BulkPublicationService bulkPublicationService;
+
     // ---- publish --------------------------------------------------------
+
+    /**
+     * What the release dialog on the history page offers: the classes this user
+     * may publish for, the journals, the year's periods.
+     * <p>
+     * Its own endpoint rather than the gradebook's class picker, which a
+     * director holding only MANAGE_CLOSED_PERIOD is not allowed to call.
+     */
+    @GetMapping("/publish/bulk/options")
+    @Secured({AuthConstants.MANAGE_CLOSED_PERIOD})
+    public BulkPublishOptions bulkOptions(@RequestHeader("authorization") String authHeader)
+            throws SGSException {
+        return bulkPublicationService.options(classScope.visibleClassGroupIds(authHeader));
+    }
+
+    /**
+     * What releasing these (class, journal) pairs would release, writing nothing.
+     */
+    @PostMapping("/publish/bulk/preview")
+    @Secured({AuthConstants.MANAGE_CLOSED_PERIOD})
+    public List<BulkPublishItem> bulkPreview(@RequestHeader("authorization") String authHeader,
+                                             @RequestBody BulkPublishRequest request)
+            throws SGSException {
+        return bulkPublicationService.preview(request, classScope.visibleClassGroupIds(authHeader));
+    }
+
+    /**
+     * Release every pair, each on its own: one that fails does not undo the
+     * rest, and the result says which is which.
+     */
+    @PostMapping("/publish/bulk")
+    @Secured({AuthConstants.MANAGE_CLOSED_PERIOD})
+    public List<BulkPublishItem> bulkPublish(@RequestHeader("authorization") String authHeader,
+                                             @RequestBody BulkPublishRequest request)
+            throws SGSException {
+        return bulkPublicationService.publish(request, actorResolver.idOf(authHeader),
+                classScope.visibleClassGroupIds(authHeader));
+    }
 
     /**
      * Release a (class, period), optionally narrowed to one subject.

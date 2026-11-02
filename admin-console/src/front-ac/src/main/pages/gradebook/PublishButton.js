@@ -1,7 +1,13 @@
 import React, {useState} from "react";
 import {
-    Button, Dialog, DialogActions, DialogContent, DialogTitle,
-    FormControlLabel, Switch, Typography
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControlLabel,
+    Switch,
+    Typography
 } from "@mui/material";
 import {Send} from "@mui/icons-material";
 import {publish} from "./gradebookApi";
@@ -63,8 +69,10 @@ const PublishButton = ({
             </Button>
 
             <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+                {/* "ჟურნალის", not "ნიშნების": this is one journal of one class.
+                    "ნიშნების გამოქვეყნება" is the history page's release of many. */}
                 <DialogTitle>
-                    {locksOnPublish ? "ნიშნების გამოქვეყნება" : "გამოქვეყნება მშობლებისთვის"}
+                    {locksOnPublish ? "ჟურნალის გამოქვეყნება" : "გამოქვეყნება მშობლებისთვის"}
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body2" style={{marginBottom: 16}}>

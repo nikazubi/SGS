@@ -35,7 +35,8 @@ public enum PostKind {
     CHARACTERIZATION,
 
     /**
-     * School-wide, with a picture and a category. Not scoped to a class.
+     * With a picture and a category. For every class, or for the classes in
+     * its audience.
      */
     NEWS
 }

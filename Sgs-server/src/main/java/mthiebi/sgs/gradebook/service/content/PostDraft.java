@@ -46,6 +46,11 @@ public class PostDraft {
     private String categoryUuid;
     private String imageUuid;
 
+    /**
+     * News only. The classes it is for; empty means every class.
+     */
+    private List<Long> audienceClassIds = new ArrayList<>();
+
     @Data
     public static class LinkDraft {
         private String url;

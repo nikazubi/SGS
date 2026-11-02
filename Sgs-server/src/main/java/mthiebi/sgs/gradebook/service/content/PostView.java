@@ -71,4 +71,12 @@ public class PostView {
      * News only. The grid shows a placeholder where this is null.
      */
     private String imageUuid;
+
+    /**
+     * News only. Empty means every class. Names alongside the ids, so the list
+     * can say who an item is for without resolving them.
+     */
+    private List<Long> audienceClassIds = new ArrayList<>();
+
+    private List<String> audienceClassNames = new ArrayList<>();
 }

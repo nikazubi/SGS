@@ -1,9 +1,10 @@
 import React from "react";
 import {Link, useHistory, useLocation} from "react-router-dom";
 import {useQuery} from "react-query";
-import {fetchNews, fetchNewsCategories, fetchParentModules} from "../journal/parentApi";
+import {fetchNews, fetchNewsCategories} from "../journal/parentApi";
+import usePrimarySchool from "../../hooks/usePrimarySchool";
 import NewsImage from "./NewsImage";
-import {isPrimary, newsColour} from "./newsTheme";
+import {newsColour} from "./newsTheme";
 import "./news.css";
 
 const PAGE_SIZE = 10;
@@ -31,8 +32,7 @@ const NewsPage = () => {
     const page = Math.max(0, Number(params.get("page") || 0));
     const categoryId = params.get("category") ? Number(params.get("category")) : null;
 
-    const {data: modules} = useQuery(
-        ["PARENT_MODULES"], fetchParentModules, {refetchOnWindowFocus: false});
+    const {primary} = usePrimarySchool();
 
     const {data: categories} = useQuery(
         ["PARENT_NEWS_CATEGORIES"], fetchNewsCategories, {refetchOnWindowFocus: false});
@@ -44,7 +44,6 @@ const NewsPage = () => {
 
     const items = data?.items || [];
     const lastPage = Math.max(0, Math.ceil((data?.total || 0) / PAGE_SIZE) - 1);
-    const primary = isPrimary(modules);
     // The filter's own list, which the server returns in a stable order, is what
     // gives each category its colour. Two screens reading the same order means
     // the chip and the card cannot disagree.

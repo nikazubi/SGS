@@ -38,6 +38,14 @@ export const gradebookGridSx = {
         fontWeight: 500
     },
 
+    // Borrowed from a period beneath this one - the trimesters, on the year.
+    // For reading only, so quieter than anything that can be typed into.
+    "& .sgs-cell--reference": {
+        backgroundColor: "#f1f3f5",
+        color: "#4f5f68",
+        fontStyle: "italic"
+    },
+
     // Overridden: a formula is a convenience, not a cage - but the fact that
     // someone overruled it should be obvious.
     "& .sgs-cell--override": {

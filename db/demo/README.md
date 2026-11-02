@@ -32,10 +32,17 @@ talks to.
 | Console                   | Username     | Password     |
 |---------------------------|--------------|--------------|
 | Staff (`admin-console`)   | `admin`      | `admin`      |
-| Parent (`client-console`) | `beridze`    | `nino2025`   |
+| Parent (`client-console`) | `testparent` | `test123`    |
+|                           | `beridze`    | `nino2025`   |
 |                           | `maisuradze` | `giorgi2025` |
 |                           | `beridze`    | `mariam2025` |
 |                           | `chkheidze`  | `luka2025`   |
+
+`testparent` is the throwaway one, seeded by `140_parent_content.sql` and put in
+the primary class on purpose: `sgs.parent_module_grant` (`db/038`) gives SCHEDULE,
+MENU and CHARACTERIZATION to the primary school only, so a login in the basic
+school sees two of the five boxes and is refused by the other three. Use it, or
+`beridze`/`nino2025`, to see the full portal.
 
 The two `beridze` logins are **not a mistake**. ნინო and მარიამ are sisters and
 share a username with different passwords, which is the school's actual rule:
@@ -108,8 +115,13 @@ Pick a month from the picker.
 
 ## What is *not* in it
 
-* **No grades, no homework, no news, no absences.** Entering them is the thing
-  being tested; a seed full of them would be in the way.
+* **No grades and no absences.** Entering them is the thing being tested; a seed
+  full of them would be in the way.
+* **Content is seeded** by `140_parent_content.sql` — a week's schedule and menu
+  for the primary class, and ten news items. That exception is deliberate: the
+  parent portal has five boxes and three of them draw empty without it, so a
+  demo starts with ten minutes of typing before anything can be shown. Grades
+  are the thing under test; a lesson timetable is scenery.
 * **The legacy `dbo` tables are empty apart from the login.** The staff account,
   its permission group and the two class names are seeded because the login path
   reads them; legacy students, subjects and grades are not, because every new

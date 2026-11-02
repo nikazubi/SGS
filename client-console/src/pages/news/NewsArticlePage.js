@@ -1,9 +1,10 @@
 import React from "react";
 import {Link, useLocation, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
-import {fetchNewsCategories, fetchNewsItem, fetchParentModules} from "../journal/parentApi";
+import {fetchNewsCategories, fetchNewsItem} from "../journal/parentApi";
+import usePrimarySchool from "../../hooks/usePrimarySchool";
 import NewsImage from "./NewsImage";
-import {isPrimary, newsColour} from "./newsTheme";
+import {newsColour} from "./newsTheme";
 import {ClockIcon, formatDate} from "./NewsPage";
 import "./news.css";
 
@@ -27,8 +28,7 @@ const NewsArticlePage = () => {
     const {uuid} = useParams();
     const {search} = useLocation();
 
-    const {data: modules} = useQuery(
-        ["PARENT_MODULES"], fetchParentModules, {refetchOnWindowFocus: false});
+    const {primary} = usePrimarySchool();
     const {data: categories} = useQuery(
         ["PARENT_NEWS_CATEGORIES"], fetchNewsCategories, {refetchOnWindowFocus: false});
 
@@ -36,7 +36,7 @@ const NewsArticlePage = () => {
         ["PARENT_NEWS_ITEM", uuid], () => fetchNewsItem(uuid),
         {refetchOnWindowFocus: false});
 
-    const colour = newsColour(isPrimary(modules), item?.categoryName,
+    const colour = newsColour(primary, item?.categoryName,
         (categories || []).map(c => c.name));
 
     return (

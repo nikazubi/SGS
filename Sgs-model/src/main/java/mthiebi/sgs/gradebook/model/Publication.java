@@ -3,18 +3,7 @@ package mthiebi.sgs.gradebook.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.Instant;
 
 /**
@@ -61,6 +50,18 @@ public class Publication {
     @JoinColumn(name = "subject_id",
             foreignKey = @ForeignKey(name = "fk_publication_subject"))
     private Subject subject;
+
+    /**
+     * The journal released. Null on rows written before db/040, and on a release
+     * that named no journal - which took every journal at that period.
+     * <p>
+     * Needed once one action could release several journals of a class at once:
+     * the log said which class and period, and not which of its journals.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "template_id",
+            foreignKey = @ForeignKey(name = "fk_publication_template"))
+    private GradingTemplate template;
 
     @Column(name = "published_at", nullable = false)
     private Instant publishedAt;

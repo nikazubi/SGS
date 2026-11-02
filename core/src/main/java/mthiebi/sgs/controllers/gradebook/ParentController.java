@@ -1,5 +1,6 @@
 package mthiebi.sgs.controllers.gradebook;
 
+import mthiebi.sgs.gradebook.model.ParentModule;
 import mthiebi.sgs.gradebook.model.PeriodKind;
 import mthiebi.sgs.gradebook.service.parent.*;
 import mthiebi.sgs.utils.UtilsJwt;
@@ -42,7 +43,8 @@ public class ParentController {
 
     /**
      * The boxes on the landing page - the journals the school has released, and
-     * that this child's school shows at all. Primary gets none.
+     * that this child's class shows at all. Each journal names the module that
+     * shows it (grading_template.parent_module); the absence register names none.
      */
     @GetMapping("/journals")
     public List<ParentJournal> journals(@RequestHeader("authorization") String authHeader)
@@ -199,14 +201,22 @@ public class ParentController {
         return parentContentService.modules(studentOf(authHeader));
     }
 
+    /**
+     * The child's school. The console's primary look keys on it, where it used
+     * to infer the school from the module list.
+     */
+    @GetMapping("/school")
+    public ParentContentView.School school(@RequestHeader("authorization") String authHeader)
+            throws Exception {
+        return parentContentService.school(studentOf(authHeader));
+    }
+
     // ---- news ---------------------------------------------------------------
 
     /**
-     * Published news, newest first.
-     * <p>
-     * No student scoping: news is institution-wide by the school's decision, and
-     * the category is a label to filter on rather than a visibility rule. The
-     * token is still required - this is behind the parent portal, not open.
+     * Published news for this child, newest first: items for every class and
+     * items aimed at the child's own. The category is a label to filter on
+     * rather than a visibility rule.
      */
     @GetMapping("/news")
     public ParentContentView.NewsPage news(
@@ -214,8 +224,9 @@ public class ParentController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) throws Exception {
-        studentOf(authHeader);
-        return parentContentService.news(categoryId, page, size);
+        Long studentId = studentOf(authHeader);
+        parentContentService.requireModule(studentId, ParentModule.NEWS);
+        return parentContentService.news(studentId, categoryId, page, size);
     }
 
     /**
@@ -235,14 +246,15 @@ public class ParentController {
     public ParentContentView.NewsItem newsItem(
             @RequestHeader("authorization") String authHeader,
             @PathVariable String uuid) throws Exception {
-        studentOf(authHeader);
-        return parentContentService.newsItem(uuid);
+        Long studentId = studentOf(authHeader);
+        parentContentService.requireModule(studentId, ParentModule.NEWS);
+        return parentContentService.newsItem(studentId, uuid);
     }
 
     @GetMapping("/news/categories")
     public List<NewsCategory> newsCategories(
             @RequestHeader("authorization") String authHeader) throws Exception {
-        studentOf(authHeader);
+        parentContentService.requireModule(studentOf(authHeader), ParentModule.NEWS);
         return categoryService.list().stream()
                 .map(c -> new NewsCategory(c.getId(), c.getName()))
                 .collect(java.util.stream.Collectors.toList());
@@ -264,7 +276,7 @@ public class ParentController {
     public org.springframework.http.ResponseEntity<byte[]> newsImage(
             @RequestHeader("authorization") String authHeader,
             @PathVariable String uuid) throws Exception {
-        studentOf(authHeader);
+        parentContentService.requireModule(studentOf(authHeader), ParentModule.NEWS);
         mthiebi.sgs.gradebook.model.PostImage image = imageService.get(uuid);
         return org.springframework.http.ResponseEntity.ok()
                 .contentType(org.springframework.http.MediaType

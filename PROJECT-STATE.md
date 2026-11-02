@@ -4,7 +4,7 @@ Written as a handoff. If you are picking this up cold (or after a conversation w
 read this first: it says what the other documents contain, every decision taken and why, what has
 actually been built, and how to build and run it.
 
-Last updated after phase 10 (the two absence registers) was completed and verified.
+Last updated 2026-11-02, after the bulk release of grades (decisions 113–118).
 
 ---
 
@@ -478,7 +478,9 @@ belong in it: every column of the seeded journal is parent-visible, and
 ONGOING_AVG and TRIMESTER_GRADE are both derived and both ungrouped. A report
 card is an editorial selection, so `component.summary_column` states it (db/034).
 
-**Not attempted:** putting those columns into the main gradebook grid. `GridCell`
+**Since 2026-10, shown read-only** (decision 112) - the trimester assessments sit on the year
+screen for reading; entering them stays on each trimester's screen. **Still not attempted:**
+making those columns editable in the main gradebook grid. `GridCell`
 is keyed by enrollment and component with the period implicit, so a column per
 (component, period) changes the identity of every cell — and that ripples into
 the write path, change requests and publication. The transposed grid already had
@@ -547,6 +549,43 @@ version rather than restricting who may open it, which is deliberate and
 documented in `TemplateVersionResolver`, and the parent modules differ by school
 rather than nesting. Both are in `TEST-RESULTS.md` §3 as questions for the
 school.
+
+### Parent access as data (2026-10)
+
+| #   | Decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|-----|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 108 | **What the parent portal shows a class is rows, not code.** `sgs.parent_module_grant` (`db/038`): school (or every school), a level range (or every level), a module. A child gets every module their class matches; rows only add. Prompted by the school wanting grades 5 and 6 of primary to keep the primary pages *and* see grades - one row, `(PRIMARY, 5, 6, GRADES)`. No admin screen yet, deliberately.                                                                                                                                                                                                                                   |
+| 109 | **Keyed on school and level, not on the class.** Classes are per academic year and rollover makes new ones each September, so a row naming a class would stop applying the next year. Consequence worth knowing: a class saved with საფეხური blank has level 0 and matches no ranged row.                                                                                                                                                                                                                                                                                                                                                          |
+| 110 | **Each journal names the module that shows it** - `grading_template.parent_module` (`db/039`). The absence register names none and reaches everybody ("no grades" must never mean "no absence"); the gradebook and ethics name GRADES; a new journal defaults to GRADES, in the entity and as a database default. It replaced a guess from the grid's shape - periods-across meant "a register, for everyone" - which sent ethics to every primary child. Enforced on `/journals/{uuid}` as well as in the list, which it was not: a withheld gradebook used to open by its address.                                                               |
+| 111 | **Every module's endpoint follows its row**, homework and news included. They were always on, so they had no guard; once a row can take one away, deleting it has to close the page and not just hide the tile. `ParentModuleService` is the one owner of the answer.                                                                                                                                                                                                                                                                                                                                                                              |
+| 112 | **The year screen shows the trimester assessments, read-only** - in the staff grid and in the year's detail export, before the year's own columns, as the brief's table has them. `SummaryBreakdown` works out which (every `summary_column` from a tier below the period on screen, once per period of that tier) for both, so the sheet always matches the grid. Read-only on purpose: a column per (component, period) is a shape nothing that writes knows about, and displaying it changes none of it. The console offers no right-click actions on them - explain, revert and dispute all send the screen's period, which is not the mark's. |
+
+### Releasing many at once (2026-11)
+
+The director releases grades. With one publish button per (class, journal), a trimester for 42 classes and three
+journals is about 126 confirm-and-wait rounds. The school asked for "publish all journals for these classes".
+
+| #   | Decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+|-----|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 113 | **A bulk release is many single releases, not a new mechanism.** `BulkPublicationService` loops over (class, journal) pairs and calls the same `PublicationService.publish` for each. It is deliberately not `@Transactional`, so each pair commits or fails on its own. A failure is reported against its pair and the console offers to retry only the failed pairs. Nothing that went through is undone.                                                                                            |
+| 114 | **Preview before release, always.** The console goes choose → preview → result and cannot skip the preview. The preview counts with the same scope code the release uses (`PublicationService.pending`), so the number shown is the number released. A pair with nothing new is reported as unchanged and writes no log row. A single publish still logs its zero (decision 40).                                                                                                                       |
+| 115 | **One email per family per run.** The pairs release with notification off. After the loop, one message goes to the distinct guardian addresses of every class where a *locking* journal released something. Releasing three journals for one class used to send each family three emails, and the absence register never sends one. The single-journal button still emails per class, as before.                                                                                                       |
+| 116 | **Scope comes from the caller's grants, not the request.** The class list and every target are checked against `ClassScopeGuard.visibleClassGroupIds`, as with bulk export. A request naming a class outside it fails that pair with "ამ კლასზე წვდომა არ გაქვთ". The permission is `MANAGE_CLOSED_PERIOD`, the same as the single release.                                                                                                                                                            |
+| 117 | **The chosen period is matched to each class's scheme by code.** In practice a year has one period scheme, but `periodFor` maps by code rather than by id, so a class on a different scheme gets its own trimester. A class whose scheme lacks the period fails that pair rather than releasing something else.                                                                                                                                                                                        |
+| 118 | **The release log names its journal**: `publication.template_id` (`db/040`), shown as a ჟურნალი column on the history page. Releases logged before it show "—". The bulk release lives on that page ("გამოქვეყნება" button, dialog "ნიშნების გამოქვეყნება") rather than on a page of its own, so the history refreshes with what was just released. The single-journal dialog was renamed "ჟურნალის გამოქვეყნება" so the two do not share a title. The school rejected "მასობრივი" as the word for it. |
+
+### News for particular classes (2026-11)
+
+News was school-wide by the school's own answer when the module was built. They then asked for news aimed at one class
+or a few.
+
+| #   | Decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|-----|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 119 | **An audience of classes, empty meaning everyone.** `sgs.post_audience` (`db/041`) lists the classes a news item is for. No rows means every class, so every item written before keeps reaching everyone and nothing existing was touched. The parent list, its count and the article address all apply the same "no classes, or my child's class among them" rule. The article address applies it so a link forwarded from another class does not open.                                                                                                                         |
+| 120 | **Classes, not children.** Homework aims at enrollments (`post_target`). News aims at classes, so a child who joins the class later sees its news. Classes are per academic year, so an item aimed at a class stops reaching those children when the year rolls over. The school accepted that: class news is not meant to follow the children.                                                                                                                                                                                                                                  |
+| 121 | **Aimed only at classes the author can see.** The picker is the usual scoped class list, and `NewsController` checks each class with `ClassScopeGuard`. Writing for every class stays open to anyone with `MANAGE_NEWS`, as before. A change of classes on a published item applies on save, as homework's targets do. It does not wait for a re-publish, and the school does not expect to edit audiences anyway.                                                                                                                                                               |
+| 122 | **Losing its last class archives an item; it never widens it.** Since empty means everyone, unlinking a deleted class would send news meant only for that class to the whole school. So `ClassService.delete` drops the class from each audience and archives any item left with none. `db/037`, which deletes every class, deletes class-aimed news with the other class content. The console will not save "chosen classes" with none ticked, for the same reason. In the editor the field is "კლასები" ("ყველა კლასი" / "არჩეული კლასები"): the school found "ვისთვის" wrong. |
+| 123 | **No built-in news category.** `db/020` seeded "საბავშვო ბაღი", the one name the school gave early on, and they asked for it to go. 020 seeds nothing now and `db/042` deletes it where it exists. News filed under it is kept with its category cleared, rather than the category merely archived: an archived category still labels the items filed under it.                                                                                                                                                                                                                  |
 
 ### Corrections made along the way
 
@@ -690,6 +729,35 @@ All under `mthiebi.sgs.gradebook.*`. Nothing committed to git.
 * `changeRequests/ChangeRequestQueue` — the director's queue with approve/reject and a drift
   warning when the cell moved after the request was raised.
 * `changeRequests/PublicationLog` — the release history.
+
+**Later: releasing many at once (2026-11, decisions 113–118)**
+
+* `BulkPublicationService` — options (visible classes, active journals, the year's periods),
+  preview, release. Each pair goes through `PublicationService.publish` in its own
+  transaction, and one email goes out after the loop.
+* `PublicationService` split into `scopeOf` + `publish(..., notifyGuardians)`, plus
+  `pending`, `periodFor`, `journalLocks` and `guardianEmailsOf` for the bulk path.
+  `Publication.template` (and `ChangeRequestService.applyApproved` filling it).
+* `GET /publish/bulk/options`, `POST /publish/bulk/preview`, `POST /publish/bulk`.
+* `changeRequests/BulkPublishDialog` — period (tree-ordered), journals, classes by school;
+  a classes × journals table for preview and result; retry of failed pairs only. Opened
+  from a "გამოქვეყნება" button on `PublicationLog`, which also gains the ჟურნალი column.
+* `db/040_publication_journal.sql`; in `db/migration.sql` and `db/demo/reset.sh`.
+
+**Later: news for particular classes (2026-11, decisions 119–122)** - recorded here
+beside the publication work only because it landed in the same round.
+
+* `Post.audience` (`sgs.post_audience`), `PostDraft`/`PostView.audienceClassIds`, and
+  `audienceClassNames` on the view. `PostRepository.findPublishedNews` /
+  `countPublishedNews` take the child's class; `ParentContentService.news` and
+  `newsItem` take the student.
+* `NewsController.save` checks each class against `ClassScopeGuard`; `/classes` admits
+  `MANAGE_NEWS`. `ClassService.delete` archives news left with no class.
+* `components/ClassPicker` - the school-grouped class checkboxes, now shared by the bulk
+  release and the news editor. `NewsPage` gains "კლასები" in the editor and a chip per
+  row saying who an item is for.
+* `db/041_news_audience.sql`; in `db/migration.sql` and `db/demo/reset.sh`; `db/037`
+  updated.
 
 ### Phase 4 — exports
 
@@ -859,10 +927,11 @@ with the same simple name get the same bean name, and that does not clash quietl
 the entire application context from starting. Caught by `ApplicationWiringIT` again, which
 is now three times that test has found something no unit test could.
 
-### Tests — 255, all passing
+### Tests — 283, all passing
 
-Counted from the build, not maintained by hand: 75 unit and 179 integration, plus the
-schema export. The per-file list below is indicative and goes stale; `mvn verify` is the
+Counted from the build, not maintained by hand: 75 unit and 207 integration, plus the
+schema export (last full `mvn verify`, 2026-11-02). The per-file list below is indicative and goes stale; `mvn verify`
+is the
 authority.
 
 * 13 `EvaluatorTest` — weighted sums, renormalisation, blanks, special values, cross-period,
@@ -921,6 +990,9 @@ authority.
   rejection changes nothing, **approval republishes the dependency closure**, an approval does
   not release cells that were never published, no deciding twice, the queue is flattened, the
   grid marks pending requests, one open request per cell
+* 5 `BulkPublicationServiceIT` — the preview's count is what the release releases, one
+  failing pair not stopping the others, a class outside the caller's grants refused, one
+  email per family across several journals, and no email when nothing was released
 
 ---
 
@@ -1063,7 +1135,28 @@ out gives a system that starts and then fails somewhere specific.
 018_annual_columns.sql    final exam, overall academic assessment and academic
                           project - the brief's section 4 columns the seed
                           lacked, plus the overall = average(annual, exam) rule
+038_parent_module_grant.sql  which classes see which parent pages, as rows
+                          (decision 108). After 006, which seeds the schools.
+                          Without it every parent is refused every page.
+039_journal_parent_module.sql  which module shows each journal (decision 110).
+                          After every script that seeds a journal; check its
+                          output - the absence register must read "(every child)"
+040_publication_journal.sql  publication.template_id - the release log names
+                          its journal (decision 118). Older rows stay NULL.
+041_news_audience.sql     post_audience - news aimed at particular classes
+                          (decision 119). Existing news stays for everyone.
+042_drop_kindergarten_category.sql  removes the "საბავშვო ბაღი" news category
+                          (decision 123); news filed under it loses the label only.
 ```
+
+**An existing (production) database** brought up to the October 2026 parent-portal work
+and the November bulk release and class news takes `db/migration.sql` instead of the
+individual scripts: 035, 038, 039, 040, 041 and 042 assembled verbatim, the class-level fill, a preflight that stops on
+the wrong database, and a report. A database that already ran the October version takes
+it again unchanged: everything before 040 is a no-op the second time.
+Run it **before** deploying the backend - `ddl-auto: update` would otherwise create the rule
+table empty and refuse every parent every page. Safe to run twice. The header says what to
+check in its output.
 
 **Upgrade-only.** Each of these exists solely for a database created before the
 change it makes; 001 already carries all of them.

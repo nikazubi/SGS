@@ -1,18 +1,8 @@
 package mthiebi.sgs.gradebook;
 
 import mthiebi.sgs.db.QueryFactoryProvider;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.PeriodTreeLoader;
-import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
-import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
-import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
-import mthiebi.sgs.gradebook.service.grid.ClassGroupOption;
-import mthiebi.sgs.gradebook.service.grid.GradeGrid;
-import mthiebi.sgs.gradebook.service.grid.GradeGridService;
-import mthiebi.sgs.gradebook.service.grid.GradebookLookupService;
-import mthiebi.sgs.gradebook.service.grid.PeriodOption;
-import mthiebi.sgs.gradebook.service.grid.SubjectOption;
+import mthiebi.sgs.gradebook.service.*;
+import mthiebi.sgs.gradebook.service.grid.*;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,10 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Draws a real grid from the migrated school data.
@@ -42,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({GradeGridService.class, GradebookLookupService.class, GradeWriteService.class,
+@Import({GradeGridService.class, mthiebi.sgs.gradebook.service.grid.SummaryBreakdown.class, GradebookLookupService.class, GradeWriteService.class,
         GradeExplainService.class, TemplateGraphLoader.class, PeriodTreeLoader.class,
         TemplateVersionResolver.class, SpecialValueRegistry.class, QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.conversion.GradeConversionService.class})

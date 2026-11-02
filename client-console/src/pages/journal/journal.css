@@ -67,6 +67,13 @@
     text-align: center;
 }
 
+/* Failed, as distinct from loading and from nothing published yet. The same red
+   the standing pages use for theirs. */
+.emptyState--error {
+    color: #c0392b;
+    font-weight: 600;
+}
+
 /* ---- cards: one row, grouped the way the journal groups its columns ------- */
 
 .cards {

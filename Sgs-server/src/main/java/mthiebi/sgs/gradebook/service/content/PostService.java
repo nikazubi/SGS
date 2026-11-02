@@ -3,13 +3,7 @@ package mthiebi.sgs.gradebook.service.content;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.gradebook.model.Enrollment;
-import mthiebi.sgs.gradebook.model.Post;
-import mthiebi.sgs.gradebook.model.PostKind;
-import mthiebi.sgs.gradebook.model.PostLine;
-import mthiebi.sgs.gradebook.model.PostLink;
-import mthiebi.sgs.gradebook.model.PostStatus;
-import mthiebi.sgs.gradebook.model.PostTarget;
+import mthiebi.sgs.gradebook.model.*;
 import mthiebi.sgs.gradebook.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,11 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -94,7 +84,7 @@ public class PostService {
     }
 
     /**
-     * News, which belongs to no class.
+     * Every news item, whichever classes it is for.
      */
     @Transactional(readOnly = true)
     public List<PostView> news(Long categoryId, LocalDate from, LocalDate to, Integer limit) {
@@ -185,9 +175,10 @@ public class PostService {
     // ---- internals --------------------------------------------------------
 
     private void apply(Post post, PostDraft draft) throws SGSException {
-        // Every kind belongs to a class except news, which is school-wide. The
-        // column was made nullable for exactly that in phase 8 and the service
-        // then required it anyway - the table was right and this contradicted it.
+        // Every kind belongs to a class except news, which is for every class or
+        // for its audience (applyNewsFields). The column was made nullable for
+        // exactly that in phase 8 and the service then required it anyway - the
+        // table was right and this contradicted it.
         if (post.getKind() != PostKind.NEWS && draft.getClassGroupId() == null) {
             throw new SGSException(SGSExceptionCode.BAD_REQUEST, "კლასი აუცილებელია");
         }
@@ -250,6 +241,22 @@ public class PostService {
                 : postImageRepository.findByUuid(draft.getImageUuid())
                 .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
                         "სურათი ვერ მოიძებნა")));
+
+        // Replaced, not merged, like the targets: the editor sends who it is for
+        // now. Looked up rather than referenced, so a stale id is refused here
+        // instead of surfacing as a foreign-key failure at commit.
+        post.getAudience().clear();
+        for (Long classGroupId : draft.getAudienceClassIds()) {
+            if (classGroupId == null) {
+                continue;
+            }
+            mthiebi.sgs.gradebook.model.ClassGroup classGroup =
+                    em.find(mthiebi.sgs.gradebook.model.ClassGroup.class, classGroupId);
+            if (classGroup == null) {
+                throw new SGSException(SGSExceptionCode.BAD_REQUEST, "კლასი ვერ მოიძებნა");
+            }
+            post.getAudience().add(classGroup);
+        }
     }
 
     private void applyTargets(Post post, PostDraft draft) {
@@ -356,6 +363,14 @@ public class PostService {
         view.setCategoryUuid(post.getCategory() == null ? null : post.getCategory().getUuid());
         view.setCategoryName(post.getCategory() == null ? null : post.getCategory().getName());
         view.setImageUuid(post.getImage() == null ? null : post.getImage().getUuid());
+        post.getAudience().stream()
+                .sorted(java.util.Comparator.comparing(
+                        mthiebi.sgs.gradebook.model.ClassGroup::getName,
+                        java.util.Comparator.nullsLast(String::compareTo)))
+                .forEach(c -> {
+                    view.getAudienceClassIds().add(c.getId());
+                    view.getAudienceClassNames().add(c.getName());
+                });
 
         for (PostLine line : post.getLines()) {
             PostDraft.LineDraft one = new PostDraft.LineDraft();

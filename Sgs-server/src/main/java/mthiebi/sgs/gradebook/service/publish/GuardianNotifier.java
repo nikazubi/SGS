@@ -54,8 +54,11 @@ public class GuardianNotifier {
     private void send(List<String> recipients, String subject, String body) {
         int failed = 0;
         for (String recipient : recipients) {
+            // sendOrThrow, not sendSimpleMail: the latter catches every failure
+            // and returns it as a string, so the warning below could never fire
+            // and a release whose emails all bounced looked like one that worked.
             try {
-                emailService.sendSimpleMail(EmailDetails.builder()
+                emailService.sendOrThrow(EmailDetails.builder()
                         .recipient(recipient)
                         .subject(subject)
                         .msgBody(body)

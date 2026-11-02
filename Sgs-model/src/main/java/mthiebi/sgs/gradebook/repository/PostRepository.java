@@ -55,7 +55,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                             @Param("classGroupId") Long classGroupId);
 
     /**
-     * News, which belongs to no class.
+     * Every news item, whoever it is for - the staff list.
      * <p>
      * Newest first by the date on the item, not by when it was written: the
      * school dates a post for when it is about.
@@ -121,26 +121,41 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                                     @Param("to") LocalDate to);
 
     /**
-     * Published news, newest first.
+     * Published news for one child's class, newest first.
      * <p>
-     * No class and no school: the school confirmed news is institution-wide and
-     * every parent sees every item. The category is a label to filter by, not a
-     * visibility rule.
+     * An item with no audience is for everyone - every item written before news
+     * could be aimed, and still the usual case. One with an audience is for
+     * exactly those classes. The same "nobody named, or I am named" shape as
+     * homework's targets, for the same reason: naming the first class must
+     * narrow the item, not leave it visible to the whole school.
+     * <p>
+     * The category is a label to filter by, not a visibility rule.
      */
     @Query("select p from Post p "
             + "where p.kind = mthiebi.sgs.gradebook.model.PostKind.NEWS "
             + "  and p.archived = false "
             + "  and p.status = mthiebi.sgs.gradebook.model.PostStatus.PUBLISHED "
             + "  and (:categoryId is null or p.category.id = :categoryId) "
+            + "  and (p.audience is empty or :classGroupId in "
+            + "        (select c.id from Post q join q.audience c where q.id = p.id)) "
             + "order by p.eventDate desc, p.id desc")
-    List<Post> findPublishedNews(@Param("categoryId") Long categoryId, Pageable pageable);
+    List<Post> findPublishedNews(@Param("categoryId") Long categoryId,
+                                 @Param("classGroupId") Long classGroupId,
+                                 Pageable pageable);
 
+    /**
+     * The same filter as {@link #findPublishedNews}, or the page count would
+     * offer pages of items this child is not shown.
+     */
     @Query("select count(p) from Post p "
             + "where p.kind = mthiebi.sgs.gradebook.model.PostKind.NEWS "
             + "  and p.archived = false "
             + "  and p.status = mthiebi.sgs.gradebook.model.PostStatus.PUBLISHED "
-            + "  and (:categoryId is null or p.category.id = :categoryId)")
-    long countPublishedNews(@Param("categoryId") Long categoryId);
+            + "  and (:categoryId is null or p.category.id = :categoryId) "
+            + "  and (p.audience is empty or :classGroupId in "
+            + "        (select c.id from Post q join q.audience c where q.id = p.id))")
+    long countPublishedNews(@Param("categoryId") Long categoryId,
+                            @Param("classGroupId") Long classGroupId);
 
     /**
      * The class's published schedule or menu.

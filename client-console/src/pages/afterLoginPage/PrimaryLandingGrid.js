@@ -10,6 +10,11 @@ import scheduleIcon from "../../assets/images/primary/schedule.png";
 import menuIcon from "../../assets/images/primary/menu.png";
 import descriptionIcon from "../../assets/images/primary/description.png";
 import absenceIcon from "../../assets/images/primary/absence.png";
+import gradesSubjectIcon from "../../assets/images/primary/grades-subject.svg";
+import gradesSummaryIcon from "../../assets/images/primary/grades-summary.svg";
+import gradesAnnualIcon from "../../assets/images/primary/grades-annual.svg";
+import ethicsIcon from "../../assets/images/primary/ethics.svg";
+import {linkFor} from "./viewLink";
 import "./primaryLanding.css";
 
 /** Everything on the landing page except the two big tiles and the absence journal. */
@@ -33,15 +38,28 @@ const thisMonth = () => new Date().toISOString().slice(0, 7);
  * is drawn, so a module the console does not recognise is still skipped rather
  * than breaking the grid.
  *
- * Only the absence journal (chartKey ABSENCE_BARS) gets a tile here - the brief
- * gives primary no grade journals at all, so any other journal a primary child
- * is offered (assignment today pins a version rather than restricting who sees
- * it - TEST-RESULTS.md 3.A) is a school-side question, not something this page
- * should surface as a seventh box.
+ * **Grades, where the class has them.** The brief gave primary no grade journals;
+ * the school then gave them to grades 5 and 6 (db/038), keeping every primary
+ * page as well. The server decides which views a child gets, so this draws
+ * every view it sent except absence's, which keeps its own tile - for grades
+ * 1-4 that is none, and the page is the six boxes above:
+ *
+ *     news (2)                     homework (1)
+ *     schedule (1)    menu (1)     description (1)
+ *     by subject (1)  summary (1)  trimester+year (1)     <- grades
+ *     ethics (1)      absence (2)                         <- ethics
+ *
+ * Absence closes the grid and takes whatever the last row left, so the rows
+ * stay full whether the school has three grade views, four, or more.
  */
-const PrimaryLandingGrid = ({modules, journals}) => {
+const PrimaryLandingGrid = ({modules, journals, views}) => {
     const present = new Set(modules || []);
     const absenceJournal = (journals || []).find(j => j.chartKey === "ABSENCE_BARS");
+    const gradeViews = (views || []).filter(
+        v => !absenceJournal || v.journalUuid !== absenceJournal.uuid);
+    // What the last grade row leaves free - all of it when they fill their rows.
+    const leftOver = gradeViews.length % 3;
+    const absenceSpan = leftOver === 0 ? 3 : 3 - leftOver;
 
     return (
         <PatternBackground colors={pattern} className="primaryLanding">
@@ -67,9 +85,22 @@ const PrimaryLandingGrid = ({modules, journals}) => {
                         </Link>
                     ))}
 
+                {gradeViews.map(view => {
+                    const look = gradeLookFor(view);
+                    return (
+                        <Link key={view.journalUuid + ":" + view.label} to={linkFor(view)}
+                              className="primaryLanding__tile primaryLanding__tile--small"
+                              style={{background: look.color.tile, color: look.color.label}}>
+                            <img src={look.icon} alt="" className="primaryLanding__icon"/>
+                            <span className="primaryLanding__label">{view.label}</span>
+                        </Link>
+                    );
+                })}
+
                 {absenceJournal ? (
                     <Link to={`/journal/${absenceJournal.uuid}`}
-                          className="primaryLanding__tile primaryLanding__tile--absence"
+                          className={"primaryLanding__tile primaryLanding__tile--absence"
+                              + (absenceSpan < 3 ? ` primaryLanding__tile--span${absenceSpan}` : "")}
                           style={{background: moduleColors.absence.tile, color: moduleColors.absence.label}}>
                         <span className="primaryLanding__label">{absenceJournal.name}</span>
                         <img src={absenceIcon} alt="" className="primaryLanding__icon"/>
@@ -78,6 +109,20 @@ const PrimaryLandingGrid = ({modules, journals}) => {
             </div>
         </PatternBackground>
     );
+};
+
+/**
+ * A grade tile's picture and colours, read off what the view is rather than
+ * where it sits - a view added or removed later still gets the right one.
+ * Ethics is the one class-wide journal among them; of the trimester journal's
+ * three, one subject is the detail, the year is the annual table, and the rest
+ * is the summary.
+ */
+const gradeLookFor = (view) => {
+    if (!view.subjectScoped) return {icon: ethicsIcon, color: moduleColors.ethics};
+    if (view.subjectMode === "ONE") return {icon: gradesSubjectIcon, color: moduleColors.gradesSubject};
+    if (view.periodKind === "YEAR") return {icon: gradesAnnualIcon, color: moduleColors.gradesAnnual};
+    return {icon: gradesSummaryIcon, color: moduleColors.gradesSummary};
 };
 
 /** The homework tile: a graduation cap and how much of this month is unopened. */

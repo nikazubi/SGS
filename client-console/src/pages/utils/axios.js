@@ -50,7 +50,8 @@ const logout = (error, refreshToken) => {
 
 const onError = async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401) {
+    // Optional: a request that never reached the server has no response.
+    if (error.response?.status === 401) {
         // const refreshToken = getRefreshToken();
         //
         // if (originalRequest.url === ENDPOINT_AUTHENTICATION_REFRESH || !refreshToken) {
@@ -83,9 +84,12 @@ const onError = async (error) => {
         //   await logout(error);
         // return Promise.reject(error);
 
-    } else {
-        // return Promise.reject(error);
     }
+    // Always rejected. This used to fall off the end and return undefined, which
+    // resolved every failed request with nothing: the caller's `const {data}`
+    // then threw a TypeError, and the status and the server's own message were
+    // lost on every page - a refused journal could not even say it was refused.
+    return Promise.reject(error);
 };
 
 axiosInstance.interceptors.request.use(

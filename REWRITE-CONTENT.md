@@ -175,7 +175,8 @@ SCHEDULE post and one MENU post per class.
 subject, and each item is a date, **one** student and a rich-text body. No title.
 
 **News** (`NEWS`) is school-wide — no class at all — and is the only one that brings
-something new: a picture and a category.
+something new: a picture and a category. *(November 2026: news can now be aimed at
+particular classes; no classes still means everyone. PROJECT-STATE.md decisions 119–122.)*
 
 ## 8. What the substrate has to grow
 
@@ -221,7 +222,8 @@ while still feeling like free text to whoever types it.
 
 `MANAGE_SCHEDULE`, `MANAGE_MENU`, `MANAGE_CHARACTERIZATION`, `MANAGE_NEWS` — one per
 module, as `MANAGE_HOMEWORK` is. News is school-wide, so it is the one module that does
-**not** go through `ClassScopeGuard`; every other endpoint does.
+**not** go through `ClassScopeGuard`; every other endpoint does. *(Since November 2026 the
+classes a news item is aimed at are checked against it; writing for every class is not.)*
 
 Each must be registered in the console's permission catalogue as well as the server's, or
 it cannot be granted and the module is unreachable — the failure that hid the journal

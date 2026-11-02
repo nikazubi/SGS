@@ -1,24 +1,45 @@
 import React, {useEffect, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {
-    Autocomplete, Button, Chip, Dialog, DialogActions, DialogContent,
-    DialogTitle, IconButton, TextField, Tooltip, Typography
+    Autocomplete,
+    Button,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControlLabel,
+    IconButton,
+    Radio,
+    RadioGroup,
+    TextField,
+    Tooltip,
+    Typography
 } from "@mui/material";
 import {Add, Delete, Edit} from "@mui/icons-material";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {useNotification} from "../../../contexts/notification-context";
 import {
-    addCategory, archiveNews, fetchCategories, fetchNews, fetchNewsItem,
-    publishNews, saveNews, uploadImage
+    addCategory,
+    archiveNews,
+    fetchCategories,
+    fetchNews,
+    fetchNewsItem,
+    publishNews,
+    saveNews,
+    uploadImage
 } from "./contentApi";
 import NewsImage from "./NewsImage";
+import {fetchClasses} from "../gradebook/gradebookApi";
+import ClassPicker from "../../components/ClassPicker";
 
 /**
  * School news.
  *
- * The one content module with no class — so no class filter, and the only one
- * that does not go through class scoping on the server either.
+ * For every class unless the author picks classes. The list shows every item
+ * whoever it is for; the server checks that the classes picked are ones this
+ * person may see, as every other class picker does.
  */
 
 const TOOLBAR = [
@@ -128,6 +149,7 @@ const NewsPage = () => {
                     {item.categoryName ? (
                         <Chip size="small" variant="outlined" label={item.categoryName}/>
                     ) : null}
+                    <AudienceChip names={item.audienceClassNames || []}/>
                     <StateChip item={item}/>
                     <IconButton size="small" onClick={() => setEditing({uuid: item.uuid})}>
                         <Edit fontSize="small"/>
@@ -154,9 +176,15 @@ const Editor = ({open, uuid, categories, onClose, onError}) => {
     const queryClient = useQueryClient();
     const [draft, setDraft] = useState({});
     const [uploading, setUploading] = useState(false);
+    // Every class, or the ones ticked. Kept apart from the ids so switching to
+    // "every class" and back does not lose what was ticked.
+    const [forEveryClass, setForEveryClass] = useState(true);
 
     const {data: existing} = useQuery(["NEWS_ITEM", uuid], () => fetchNewsItem(uuid),
         {enabled: open && Boolean(uuid)});
+
+    const {data: classes} = useQuery(["NEWS_CLASSES"], fetchClasses,
+        {enabled: open, refetchOnWindowFocus: false, onError});
 
     useEffect(() => {
         if (!open) return;
@@ -167,8 +195,10 @@ const Editor = ({open, uuid, categories, onClose, onError}) => {
                 title: existing.title || "",
                 bodyHtml: existing.bodyHtml || "",
                 categoryUuid: existing.categoryUuid || null,
-                imageUuid: existing.imageUuid || null
+                imageUuid: existing.imageUuid || null,
+                audienceClassIds: existing.audienceClassIds || []
             });
+            setForEveryClass((existing.audienceClassIds || []).length === 0);
         } else if (!uuid) {
             setDraft({
                 uuid: null,
@@ -176,8 +206,10 @@ const Editor = ({open, uuid, categories, onClose, onError}) => {
                 title: "",
                 bodyHtml: "",
                 categoryUuid: null,
-                imageUuid: null
+                imageUuid: null,
+                audienceClassIds: []
             });
+            setForEveryClass(true);
         }
     }, [open, uuid, existing]);
 
@@ -242,6 +274,11 @@ const Editor = ({open, uuid, categories, onClose, onError}) => {
     };
 
     const busy = save.isLoading || saveAndPublish.isLoading || uploading;
+    // No classes means every class, so "chosen classes" with none ticked would
+    // send the item to the whole school. Refused here rather than guessed at.
+    const audienceIds = draft.audienceClassIds || [];
+    const noClassPicked = !forEveryClass && audienceIds.length === 0;
+    const toSend = () => ({...draft, audienceClassIds: forEveryClass ? [] : audienceIds});
     const selectedCategory = (categories || []).find(c => c.uuid === draft.categoryUuid) || null;
     const published = existing && existing.status === "PUBLISHED";
 
@@ -316,16 +353,54 @@ const Editor = ({open, uuid, categories, onClose, onError}) => {
                         style={{height: 220}}
                     />
                 </div>
+
+                <Typography variant="subtitle2">კლასები</Typography>
+                <RadioGroup row value={forEveryClass ? "every" : "chosen"}
+                            onChange={(e) => setForEveryClass(e.target.value === "every")}>
+                    <FormControlLabel value="every" control={<Radio size="small"/>}
+                                      label="ყველა კლასი"/>
+                    <FormControlLabel value="chosen" control={<Radio size="small"/>}
+                                      label="არჩეული კლასები"/>
+                </RadioGroup>
+                {forEveryClass ? null : (
+                    <div style={{maxHeight: 260, overflowY: "auto"}}>
+                        <ClassPicker classes={classes || []} value={audienceIds}
+                                     onChange={(ids) => setDraft(d => ({...d, audienceClassIds: ids}))}/>
+                    </div>
+                )}
+                {noClassPicked ? (
+                    <Typography variant="caption" style={{display: "block", color: "#c0392b"}}>
+                        აირჩიეთ ერთი კლასი მაინც.
+                    </Typography>
+                ) : null}
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} disabled={busy}>გაუქმება</Button>
-                <Button disabled={busy} onClick={() => save.mutate(draft)}>შენახვა</Button>
-                <Button variant="contained" disabled={busy}
-                        onClick={() => saveAndPublish.mutate(draft)}>
+                <Button disabled={busy || noClassPicked}
+                        onClick={() => save.mutate(toSend())}>შენახვა</Button>
+                <Button variant="contained" disabled={busy || noClassPicked}
+                        onClick={() => saveAndPublish.mutate(toSend())}>
                     გამოქვეყნება
                 </Button>
             </DialogActions>
         </Dialog>
+    );
+};
+
+/**
+ * Who an item is for. The first few class names, and the rest on hover - an
+ * item for a whole school's classes would otherwise push the row apart.
+ */
+const AudienceChip = ({names}) => {
+    if (names.length === 0) {
+        return <Chip size="small" variant="outlined" label="ყველა კლასი"
+                     style={{color: "#5b7c8d"}}/>;
+    }
+    const shown = names.slice(0, 3).join(", ") + (names.length > 3 ? ` +${names.length - 3}` : "");
+    return (
+        <Tooltip title={names.join(", ")}>
+            <Chip size="small" label={shown} style={{backgroundColor: "#e3f0fa", color: "#1f5f8b"}}/>
+        </Tooltip>
     );
 };
 

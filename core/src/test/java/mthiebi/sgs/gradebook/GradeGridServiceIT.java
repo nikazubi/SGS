@@ -3,16 +3,7 @@ package mthiebi.sgs.gradebook;
 import mthiebi.sgs.db.QueryFactoryProvider;
 import mthiebi.sgs.gradebook.model.GradeEntry;
 import mthiebi.sgs.gradebook.repository.GradeEntryRepository;
-import mthiebi.sgs.gradebook.service.CellRejectionReason;
-import mthiebi.sgs.gradebook.service.GradeEntryUpdate;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeWriteRequest;
-import mthiebi.sgs.gradebook.service.GradeWriteResult;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.PeriodTreeLoader;
-import mthiebi.sgs.gradebook.service.SpecialValueRegistry;
-import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
-import mthiebi.sgs.gradebook.service.TemplateVersionResolver;
+import mthiebi.sgs.gradebook.service.*;
 import mthiebi.sgs.gradebook.service.grid.GradeGrid;
 import mthiebi.sgs.gradebook.service.grid.GradeGridService;
 import mthiebi.sgs.gradebook.service.grid.GridCell;
@@ -30,16 +21,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The read path, against a real SQL Server.
@@ -51,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({GradeGridService.class, GradeWriteService.class, GradeExplainService.class,
+@Import({GradeGridService.class, mthiebi.sgs.gradebook.service.grid.SummaryBreakdown.class,
+        GradeWriteService.class, GradeExplainService.class,
         TemplateGraphLoader.class, PeriodTreeLoader.class, TemplateVersionResolver.class,
         SpecialValueRegistry.class, QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.conversion.GradeConversionService.class})
@@ -119,6 +104,56 @@ class GradeGridServiceIT {
                 .filter(c -> c.getEnrollmentId().equals(enrollmentId)
                         && c.getComponentCode().equals(code))
                 .findFirst();
+    }
+
+    @Test
+    @DisplayName("the year shows each trimester's assessment beside it, read-only")
+    void yearShowsTheTrimestersReadOnly() throws Exception {
+        data.components.get("TRIMESTER_GRADE").setSummaryColumn(true);
+        Long student = data.enrollments.get(0).getId();
+
+        // Trimester I at 8 and trimester II at 6 - all three inputs equal, so
+        // each assessment is exactly that number whatever the weights.
+        writeService.apply(request(Arrays.asList(
+                update(student, "ONGOING_1", "8"),
+                update(student, "INITIAL_KNOWLEDGE", "8"),
+                update(student, "FINAL_TEST", "8"))), 1L);
+        GradeWriteRequest second = request(Arrays.asList(
+                update(student, "ONGOING_1", "6"),
+                update(student, "INITIAL_KNOWLEDGE", "6"),
+                update(student, "FINAL_TEST", "6")));
+        second.setPeriodId(data.trimester2.getId());
+        writeService.apply(second, 1L);
+        em.flush();
+        em.clear();
+
+        GradeGrid year = gridService.load(data.classGroup.getId(), data.subject.getId(),
+                data.year.getId(), data.template.getUuid());
+
+        String first = "TRIMESTER_GRADE@" + data.trimester1.getId();
+        String other = "TRIMESTER_GRADE@" + data.trimester2.getId();
+
+        // The brief's order: the trimesters, then the year's own columns.
+        assertEquals(first, year.getColumns().get(0).getCode());
+        assertEquals(other, year.getColumns().get(1).getCode());
+        assertEquals("ANNUAL", year.getColumns().get(2).getCode());
+
+        GridColumn borrowed = column(year, first).orElseThrow(AssertionError::new);
+        assertEquals("I ტრიმესტრი", borrowed.getLabel());
+        assertEquals("ტრიმესტრის შეფასება", borrowed.getGroupLabel());
+        assertTrue(borrowed.isReference());
+        assertFalse(borrowed.isEditable(), "read here, entered on the trimester's own screen");
+
+        assertEquals(0, new BigDecimal("8").compareTo(
+                cell(year, student, first).orElseThrow(AssertionError::new).getValue()));
+        assertEquals(0, new BigDecimal("6").compareTo(
+                cell(year, student, other).orElseThrow(AssertionError::new).getValue()));
+        // And the annual grade they produce, in the same grid.
+        assertEquals(0, new BigDecimal("7").compareTo(
+                cell(year, student, "ANNUAL").orElseThrow(AssertionError::new).getValue()));
+
+        // A trimester's own screen borrows nothing: nothing below it here.
+        assertTrue(grid().getColumns().stream().noneMatch(GridColumn::isReference));
     }
 
     @Test

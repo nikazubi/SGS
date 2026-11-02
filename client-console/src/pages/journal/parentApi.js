@@ -28,7 +28,7 @@ export const fetchParentJournals = async () => {
  * A journal nobody has configured stands in for itself, so this is a superset
  * of the journal list and never returns fewer boxes than there are journals.
  */
-export const fetchParentMenu = async () => {
+export const fetchParentViews = async () => {
     const {data} = await axios.get("/api/parent/views");
     return data;
 };
@@ -166,13 +166,19 @@ export const fetchNewsCategories = async () => {
 // ---- schedule, menu, the child's description -------------------------------
 
 /**
- * Which boxes this child's school shows.
+ * Which boxes this child's class shows.
  *
- * From the server, not decided here: the primary/basic/secondary rule is about
- * the school, and the school is in the data. The console maps a name to a route.
+ * From the server, not decided here: which class gets what is rows in the
+ * database (sgs.parent_module_grant). The console maps a name to a route.
  */
 export const fetchParentModules = async () => {
     const {data} = await axios.get("/api/parent/modules");
+    return data;
+};
+
+/** The child's school, {code, name}. See usePrimarySchool. */
+export const fetchParentSchool = async () => {
+    const {data} = await axios.get("/api/parent/school");
     return data;
 };
 

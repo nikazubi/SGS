@@ -113,7 +113,9 @@ one for a term, this is the thing to close first.
   own container rather than reflow. Written up screen by screen in
   `PARENT-COMPONENTS.md`. It applies to the shared components, so it is not part
   of the primary theme and should not wait for it.
-* **A primary child is offered the ethics journal.** `ParentViewService.journals`
+* ~~**A primary child is offered the ethics journal.**~~ **Closed by `db/039`:**
+  each journal now names the module that shows it, and ethics names GRADES. The
+  original note follows. `ParentViewService.journals`
   narrows a primary child to registers, and decides what a register is by grid
   shape - `gridMode == PERIODS`. Ethics is `MONTH` + `PERIODS` + parent-visible,
   so it passes: the endpoint returns it, and `/journal/<ethics-uuid>` renders for
@@ -229,6 +231,12 @@ up.
   tried and each ignored. What works is clearing the two fields a beat after the dialog
   opens — state written after autofill has finished. Worth knowing before adding any
   other credential field to this console.
+* **`EmailService.sendSimpleMail` swallows failures.** It catches every exception and
+  returns the string "Error while Sending Mail", which no caller reads. Anything that should
+  notice a failed send calls `sendOrThrow` and catches itself. The absence notices always
+  did. The grade emails (`GuardianNotifier`) did not until November 2026, so their "could
+  not notify" warning never fired: a release whose emails all bounced logged nothing.
+  `GuardianNotifierTest` now holds them to `sendOrThrow`.
 * **A demo database exists**: `db/demo/reset.sh` builds `SGS_DEMO` from nothing
   in about half a minute - schema, migrations, two classes, four students, three
   journals and an administrator. `db/demo/README.md` says what is in it. The

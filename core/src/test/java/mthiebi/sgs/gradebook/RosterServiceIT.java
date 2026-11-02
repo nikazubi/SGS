@@ -5,13 +5,7 @@ import mthiebi.sgs.db.QueryFactoryProvider;
 import mthiebi.sgs.gradebook.model.AcademicYear;
 import mthiebi.sgs.gradebook.model.ClassGroup;
 import mthiebi.sgs.gradebook.model.Student;
-import mthiebi.sgs.gradebook.service.roster.AcademicYearService;
-import mthiebi.sgs.gradebook.service.roster.ClassService;
-import mthiebi.sgs.gradebook.service.roster.EnrollmentService;
-import mthiebi.sgs.gradebook.service.roster.RosterDraft;
-import mthiebi.sgs.gradebook.service.roster.RosterView;
-import mthiebi.sgs.gradebook.service.roster.StudentService;
-import mthiebi.sgs.gradebook.service.roster.SubjectService;
+import mthiebi.sgs.gradebook.service.roster.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,12 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The roster screens' service layer.
@@ -234,6 +223,29 @@ class RosterServiceIT {
     }
 
     @Test
+    @DisplayName("deleting a class archives news that was only for it")
+    void deletedClassTakesItsNewsWithIt() throws Exception {
+        ClassGroup empty = secondClass();
+        mthiebi.sgs.gradebook.model.Post onlyHere = news(empty);
+        mthiebi.sgs.gradebook.model.Post shared = news(empty, data.classGroup);
+        em.flush();
+
+        classes.delete(empty.getId());
+        em.flush();
+        em.clear();
+
+        // Not merely unlinked: an item with no classes is for every class, so
+        // the one that was for this class alone would have gone to the school.
+        mthiebi.sgs.gradebook.model.Post gone =
+                em.find(mthiebi.sgs.gradebook.model.Post.class, onlyHere.getId());
+        assertTrue(gone.isArchived());
+        mthiebi.sgs.gradebook.model.Post kept =
+                em.find(mthiebi.sgs.gradebook.model.Post.class, shared.getId());
+        assertFalse(kept.isArchived());
+        assertEquals(1, kept.getAudience().size(), "the other class keeps it");
+    }
+
+    @Test
     @DisplayName("subjects are added to a class in order, and reordered")
     void classSubjectsAreOrdered() throws Exception {
         ClassGroup target = secondClass();
@@ -384,6 +396,16 @@ class RosterServiceIT {
         draft.setPersonalNumber(personalNumber);
         draft.setActive(true);
         return draft;
+    }
+
+    private mthiebi.sgs.gradebook.model.Post news(ClassGroup... audience) {
+        mthiebi.sgs.gradebook.model.Post post = new mthiebi.sgs.gradebook.model.Post();
+        post.setUuid(UUID.randomUUID().toString());
+        post.setKind(mthiebi.sgs.gradebook.model.PostKind.NEWS);
+        post.setTitle("სიახლე-" + suffix);
+        post.getAudience().addAll(Arrays.asList(audience));
+        em.persist(post);
+        return post;
     }
 
     private ClassGroup secondClass() throws Exception {

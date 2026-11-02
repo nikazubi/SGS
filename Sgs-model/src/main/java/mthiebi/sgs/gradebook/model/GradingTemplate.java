@@ -95,6 +95,26 @@ public class GradingTemplate extends AuditableEntity {
     private boolean parentVisible;
 
     /**
+     * The module a child's class needs before this journal is shown to their
+     * parent ({@code sgs.parent_module_grant}), or null for every child.
+     * <p>
+     * Null is the absence register: every parent sees it. The trimester
+     * gradebook and ethics name GRADES, so they reach the classes that grade.
+     * <p>
+     * Stated rather than inferred. It used to be read off the grid's shape -
+     * a register is drawn periods-across - and ethics is drawn periods-across
+     * too, so it went to every primary child as if it were absence.
+     * <p>
+     * GRADES by default, so a journal the school creates later stays away from
+     * classes that do not grade until someone decides otherwise - the same
+     * reasoning as parentVisible being off by default. db/039 sets the database
+     * default to match, for journals inserted by script.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "parent_module", length = 32)
+    private ParentModule parentModule = ParentModule.GRADES;
+
+    /**
      * Which chart the parent view draws, if any.
      * <p>
      * A chart has to know what is an axis and what is a series, so the chart

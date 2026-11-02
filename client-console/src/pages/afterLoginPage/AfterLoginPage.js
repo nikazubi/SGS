@@ -1,15 +1,15 @@
 import PrimaryLandingGrid from "./PrimaryLandingGrid";
 import StandardLandingGrid from "./StandardLandingGrid";
 import {useQuery} from "react-query";
-import {fetchParentJournals, fetchParentMenu, fetchParentModules} from "../journal/parentApi";
+import {fetchParentJournals, fetchParentModules, fetchParentViews} from "../journal/parentApi";
+import usePrimarySchool from "../../hooks/usePrimarySchool";
 
 /**
  * The landing page.
  *
- * Two grids, one decision. Which modules a school shows is a rule about the
- * school and the school is in the data, so the console maps a name to a route
- * and does not decide; primary gets the meals, the daily schedule and the
- * child's description, and basic and secondary do not.
+ * Two grids, one decision: which school the child is in. Which modules a class
+ * shows is decided on the server, from rows (sgs.parent_module_grant), so the
+ * console maps a name to a route and does not decide.
  *
  * The buttons below them are `parent_view` rows rather than journals, because
  * three of the school's five parent screens are one journal at different
@@ -30,19 +30,22 @@ const AfterLoginPage = () => {
     const {data: modules, isLoading: modulesLoading} = useQuery(
         ["PARENT_MODULES"], fetchParentModules, {refetchOnWindowFocus: false});
 
+    // Not "PARENT_MENU" - that is the meals page's key. Sharing it served this
+    // list to the meals page from cache, which then crashed on `doc.days`.
     const {data: views, isLoading: viewsLoading} = useQuery(
-        ["PARENT_MENU"], fetchParentMenu, {refetchOnWindowFocus: false});
+        ["PARENT_VIEWS"], fetchParentViews, {refetchOnWindowFocus: false});
 
-    if (isLoading || modulesLoading || viewsLoading) {
+    const {primary, isLoading: schoolLoading} = usePrimarySchool();
+
+    if (isLoading || modulesLoading || viewsLoading || schoolLoading) {
         return <></>;
     }
 
-    // Primary has its own visual, sent by the school. There is no explicit
-    // "school" field on this response - SCHEDULE only ever appears for a
-    // primary child (ParentContentService.modulesFor), so its presence is the
-    // same signal the backend already keys the rule on, not a guess of our own.
-    if ((modules || []).includes("SCHEDULE")) {
-        return <PrimaryLandingGrid modules={modules} journals={journals}/>;
+    // Primary has its own visual, sent by the school. Keyed on the school
+    // itself: this used to read "SCHEDULE is in the list" as "primary", which
+    // stopped being true once the module list became configuration.
+    if (primary) {
+        return <PrimaryLandingGrid modules={modules} journals={journals} views={views}/>;
     }
 
     return <StandardLandingGrid modules={modules} views={views}/>;

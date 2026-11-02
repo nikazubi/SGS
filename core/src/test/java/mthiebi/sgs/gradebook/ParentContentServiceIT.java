@@ -2,6 +2,8 @@ package mthiebi.sgs.gradebook;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.db.QueryFactoryProvider;
+import mthiebi.sgs.gradebook.model.ParentModule;
+import mthiebi.sgs.gradebook.model.ParentModuleGrant;
 import mthiebi.sgs.gradebook.model.PostKind;
 import mthiebi.sgs.gradebook.service.content.HtmlSanitizer;
 import mthiebi.sgs.gradebook.service.content.PostDraft;
@@ -9,6 +11,7 @@ import mthiebi.sgs.gradebook.service.content.PostService;
 import mthiebi.sgs.gradebook.service.content.PostView;
 import mthiebi.sgs.gradebook.service.parent.ParentContentService;
 import mthiebi.sgs.gradebook.service.parent.ParentContentView;
+import mthiebi.sgs.gradebook.service.parent.ParentModuleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({ParentContentService.class, PostService.class, HtmlSanitizer.class,
+@Import({ParentContentService.class, ParentModuleService.class, PostService.class,
+        HtmlSanitizer.class,
         QueryFactoryProvider.class,
         mthiebi.sgs.gradebook.service.content.CategoryService.class})
 @TestPropertySource(properties = {
@@ -263,6 +267,11 @@ class ParentContentServiceIT {
 
     // ---- news ---------------------------------------------------------------
 
+    /**
+     * The second class, once {@link #moveSecondChildToAnotherClass} has made it.
+     */
+    private mthiebi.sgs.gradebook.model.ClassGroup other;
+
     @Test
     @DisplayName("only published news reaches a parent, newest first")
     void newsIsPublishedAndOrdered() throws Exception {
@@ -271,7 +280,7 @@ class ParentContentServiceIT {
         // database holds is in this same listing. Asserting a total of two only
         // held while nobody had seeded any, which made a demo fixture look like
         // a broken build.
-        long before = parentContentService.news(null, 0, 1).getTotal();
+        long before = parentContentService.news(studentOf(0), null, 0, 1).getTotal();
         String tag = UUID.randomUUID().toString().substring(0, 6);
 
         publishNews("ძველი-" + tag, LocalDate.of(2026, 1, 5));
@@ -281,7 +290,7 @@ class ParentContentServiceIT {
         em.flush();
         em.clear();
 
-        ParentContentView.NewsPage page = parentContentService.news(null, 0, 500);
+        ParentContentView.NewsPage page = parentContentService.news(studentOf(0), null, 0, 500);
 
         assertEquals(before + 2, page.getTotal(), "the draft is not counted");
         assertEquals(Arrays.asList("ახალი-" + tag, "ძველი-" + tag),
@@ -290,6 +299,42 @@ class ParentContentServiceIT {
                         .filter(t -> t.endsWith(tag))
                         .collect(java.util.stream.Collectors.toList()),
                 "published only, and the newer of the two first");
+    }
+
+    @Test
+    @DisplayName("news aimed at a class reaches that class and no other")
+    void newsReachesItsClasses() throws Exception {
+        moveSecondChildToAnotherClass();
+        long before0 = parentContentService.news(studentOf(0), null, 0, 1).getTotal();
+        long before1 = parentContentService.news(studentOf(1), null, 0, 1).getTotal();
+        String tag = UUID.randomUUID().toString().substring(0, 6);
+
+        publishNews("ყველასთვის-" + tag, DAY);
+        publishNews("პირველისთვის-" + tag, DAY.minusDays(1), data.classGroup.getId());
+        publishNews("მეორისთვის-" + tag, DAY.minusDays(1), other.getId());
+        em.clear();
+
+        assertEquals(Arrays.asList("ყველასთვის-" + tag, "პირველისთვის-" + tag),
+                titles(studentOf(0), tag));
+        assertEquals(Arrays.asList("ყველასთვის-" + tag, "მეორისთვის-" + tag),
+                titles(studentOf(1), tag));
+
+        // The count follows the same rule, or the page offers pages of items
+        // this child is not shown.
+        assertEquals(before0 + 2, parentContentService.news(studentOf(0), null, 0, 1).getTotal());
+        assertEquals(before1 + 2, parentContentService.news(studentOf(1), null, 0, 1).getTotal());
+    }
+
+    @Test
+    @DisplayName("news for several classes reaches each of them")
+    void newsForSeveralClasses() throws Exception {
+        moveSecondChildToAnotherClass();
+        String tag = UUID.randomUUID().toString().substring(0, 6);
+        publishNews("ორივესთვის-" + tag, DAY, data.classGroup.getId(), other.getId());
+        em.clear();
+
+        assertEquals(Collections.singletonList("ორივესთვის-" + tag), titles(studentOf(0), tag));
+        assertEquals(Collections.singletonList("ორივესთვის-" + tag), titles(studentOf(1), tag));
     }
 
     // ---- schedule, menu, description ----------------------------------------
@@ -411,18 +456,52 @@ class ParentContentServiceIT {
     }
 
     @Test
-    @DisplayName("the module list follows the child's school")
+    @DisplayName("the module list follows the seeded rules")
     void modulesFollowTheSchool() throws Exception {
-        // GradebookTestData builds a school of its own; whatever its code is, it
-        // is not PRIMARY, so this is the basic/secondary answer.
+        // GradebookTestData builds a school of its own, which no seeded rule
+        // names, so it gets only what db/038 gives every school.
         List<String> modules = parentContentService.modules(studentOf(0));
         assertEquals(Arrays.asList("HOMEWORK", "NEWS"), modules);
 
         asPrimary();
 
+        // The fixture's class is level 9.
         assertEquals(Arrays.asList("HOMEWORK", "NEWS", "SCHEDULE", "MENU", "CHARACTERIZATION"),
                 parentContentService.modules(studentOf(0)),
                 "primary adds the three modules the brief gives it");
+
+        em.find(mthiebi.sgs.gradebook.model.ClassGroup.class, data.classGroup.getId())
+                .setLevel((short) 5);
+        em.flush();
+        em.clear();
+
+        assertEquals(Arrays.asList("HOMEWORK", "NEWS", "SCHEDULE", "MENU", "CHARACTERIZATION",
+                        "GRADES"),
+                parentContentService.modules(studentOf(0)),
+                "and grades 5 and 6 of primary keep all of it and grade as well");
+    }
+
+    @Test
+    @DisplayName("a row opens its page, not just its box")
+    void aGrantOpensTheEndpoint() throws Exception {
+        // The fixture school is refused the schedule (above). One row later it
+        // is served one - null, because nobody has written it yet.
+        assertThrows(SGSException.class,
+                () -> parentContentService.standingDoc(studentOf(0), PostKind.SCHEDULE));
+
+        ParentModuleGrant grant = new ParentModuleGrant();
+        grant.setSchool(data.classGroup.getSchool());
+        grant.setModule(ParentModule.SCHEDULE);
+        em.persist(grant);
+        em.flush();
+
+        assertNull(parentContentService.standingDoc(studentOf(0), PostKind.SCHEDULE));
+        assertTrue(parentContentService.modules(studentOf(0)).contains("SCHEDULE"));
+        // Which is why the console stopped reading SCHEDULE as "primary".
+        assertNotEquals("PRIMARY", parentContentService.school(studentOf(0)).getCode());
+
+        asPrimary();
+        assertEquals("PRIMARY", parentContentService.school(studentOf(0)).getCode());
     }
 
     // ---- the child's description, as a calendar ------------------------------
@@ -634,10 +713,54 @@ class ParentContentServiceIT {
         return sent;
     }
 
-    private void publishNews(String title, LocalDate date) throws Exception {
-        PostView saved = postService.save(PostKind.NEWS, news(title, date), 1L);
+    @Test
+    @DisplayName("another class's news does not open by its link")
+    void anotherClassesArticleIsRefused() throws Exception {
+        moveSecondChildToAnotherClass();
+        String uuid = publishNews("მხოლოდ პირველისთვის", DAY, data.classGroup.getId());
+        em.clear();
+
+        // Forwarded by a parent in the class it is for, or guessed at: the
+        // article address applies the list's rule, not just "is it published".
+        assertNotNull(parentContentService.newsItem(studentOf(0), uuid));
+        assertNull(parentContentService.newsItem(studentOf(1), uuid));
+    }
+
+    private String publishNews(String title, LocalDate date, Long... classGroupIds)
+            throws Exception {
+        PostDraft draft = news(title, date);
+        draft.setAudienceClassIds(Arrays.asList(classGroupIds));
+        PostView saved = postService.save(PostKind.NEWS, draft, 1L);
         postService.publish(saved.getUuid(), 1L);
         em.flush();
+        return saved.getUuid();
+    }
+
+    /**
+     * Child 1 into a second class in the same school and year, so the two
+     * children are in different classes.
+     */
+    private void moveSecondChildToAnotherClass() {
+        other = new mthiebi.sgs.gradebook.model.ClassGroup();
+        other.setSchool(data.classGroup.getSchool());
+        other.setAcademicYear(data.classGroup.getAcademicYear());
+        other.setPeriodScheme(data.classGroup.getPeriodScheme());
+        other.setLevel((short) 9);
+        other.setName(data.classGroup.getName() + "-ბ");
+        em.persist(other);
+        em.find(mthiebi.sgs.gradebook.model.Enrollment.class, data.enrollments.get(1).getId())
+                .setClassGroup(other);
+        em.flush();
+    }
+
+    /**
+     * This child's news titles carrying the tag, in the order served.
+     */
+    private List<String> titles(Long studentId, String tag) throws Exception {
+        return parentContentService.news(studentId, null, 0, 500).getItems().stream()
+                .map(ParentContentView.NewsItem::getTitle)
+                .filter(t -> t.endsWith(tag))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     private PostDraft standing(String title) {

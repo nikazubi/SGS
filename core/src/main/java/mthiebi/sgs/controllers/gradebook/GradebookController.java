@@ -1,28 +1,12 @@
 package mthiebi.sgs.controllers.gradebook;
 
 import mthiebi.sgs.SGSException;
-import mthiebi.sgs.gradebook.service.GradeExplainService;
-import mthiebi.sgs.gradebook.service.GradeExplanation;
-import mthiebi.sgs.gradebook.service.GradeWriteRequest;
-import mthiebi.sgs.gradebook.service.GradeWriteResult;
-import mthiebi.sgs.gradebook.service.GradeWriteService;
-import mthiebi.sgs.gradebook.service.grid.GradeGrid;
-import mthiebi.sgs.gradebook.service.grid.GradeGridService;
-import mthiebi.sgs.gradebook.service.grid.GradebookLookupService;
-import mthiebi.sgs.gradebook.service.grid.ClassGroupOption;
-import mthiebi.sgs.gradebook.service.grid.PeriodOption;
-import mthiebi.sgs.gradebook.service.grid.SubjectOption;
+import mthiebi.sgs.gradebook.service.*;
+import mthiebi.sgs.gradebook.service.grid.*;
 import mthiebi.sgs.utils.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -74,7 +58,7 @@ public class GradebookController {
     @Secured({AuthConstants.ADD_GRADES, AuthConstants.MANAGE_GRADES,
             AuthConstants.MANAGE_HOMEWORK, AuthConstants.MANAGE_SCHEDULE,
             AuthConstants.MANAGE_MENU, AuthConstants.MANAGE_CHARACTERIZATION,
-            AuthConstants.MANAGE_TEMPLATES})
+            AuthConstants.MANAGE_TEMPLATES, AuthConstants.MANAGE_NEWS})
     public List<ClassGroupOption> classes(@RequestHeader("authorization") String authHeader)
             throws SGSException {
         // A permission says what someone may do, never where. Without this the

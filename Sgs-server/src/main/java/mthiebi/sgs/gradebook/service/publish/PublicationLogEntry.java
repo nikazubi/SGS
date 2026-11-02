@@ -18,6 +18,10 @@ public class PublicationLogEntry {
      * Null when the whole class was released, which is the usual case.
      */
     private String subjectName;
+    /**
+     * Null on releases logged before the log recorded it.
+     */
+    private String journalName;
     private Instant publishedAt;
     private int cellCount;
 }
