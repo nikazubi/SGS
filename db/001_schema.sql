@@ -249,6 +249,7 @@ create table sgs.grading_template
     description       nvarchar(512),
     frequency         varchar(16) not null,
     grid_mode         varchar(16) not null,
+    is_absence_register bit       not null,
     locks_on_publish  bit         not null,
     name              nvarchar(128) not null,
     parent_module varchar(32),
