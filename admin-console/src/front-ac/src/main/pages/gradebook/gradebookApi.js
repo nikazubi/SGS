@@ -112,6 +112,27 @@ export const publish = async ({classGroupId, periodId, subjectId, journalUuid}) 
     return data;
 };
 
+/**
+ * Releasing several classes and journals at once, from the history page.
+ *
+ * `targets` are (classGroupId, journalUuid) pairs rather than two lists, so a
+ * retry can send back only the pairs that failed.
+ */
+export const fetchBulkPublishOptions = async () => {
+    const {data} = await axios.get("/api/gradebook/publish/bulk/options");
+    return data;
+};
+
+export const previewBulkPublish = async ({periodId, targets}) => {
+    const {data} = await axios.post("/api/gradebook/publish/bulk/preview", {periodId, targets});
+    return data;
+};
+
+export const bulkPublish = async ({periodId, targets}) => {
+    const {data} = await axios.post("/api/gradebook/publish/bulk", {periodId, targets});
+    return data;
+};
+
 export const fetchPublications = async (classGroupId) => {
     const {data} = await axios.get("/api/gradebook/publications", {
         params: {classGroupId}

@@ -2,13 +2,8 @@ package mthiebi.sgs.gradebook.service.publish;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.gradebook.model.ClassGroup;
-import mthiebi.sgs.gradebook.model.Enrollment;
 import mthiebi.sgs.gradebook.engine.PeriodReach;
-import mthiebi.sgs.gradebook.model.GradeEntry;
-import mthiebi.sgs.gradebook.model.Period;
-import mthiebi.sgs.gradebook.model.Publication;
-import mthiebi.sgs.gradebook.model.Subject;
+import mthiebi.sgs.gradebook.model.*;
 import mthiebi.sgs.gradebook.repository.EnrollmentRepository;
 import mthiebi.sgs.gradebook.repository.GradeEntryRepository;
 import mthiebi.sgs.gradebook.repository.PeriodRepository;
@@ -98,36 +93,26 @@ public class PublicationService {
     @Transactional(rollbackFor = Exception.class)
     public PublicationResult publish(Long classGroupId, Long periodId, Long subjectId,
                                      String journalUuid, Long actorUserId) throws SGSException {
+        return publish(classGroupId, periodId, subjectId, journalUuid, actorUserId, true);
+    }
 
-        List<Enrollment> enrollments = enrollmentRepository.findActiveByClassGroup(classGroupId);
-        if (enrollments.isEmpty()) {
-            throw new SGSException(SGSExceptionCode.BAD_REQUEST, "კლასში მოსწავლეები ვერ მოიძებნა");
-        }
-        ClassGroup classGroup = enrollments.get(0).getClassGroup();
+    /**
+     * @param notifyGuardians false when the caller emails families itself - a
+     *                        release of several classes and journals at once
+     *                        sends each family one message, not one per journal.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public PublicationResult publish(Long classGroupId, Long periodId, Long subjectId,
+                                     String journalUuid, Long actorUserId,
+                                     boolean notifyGuardians) throws SGSException {
 
-        Period period = periodRepository.findById(periodId)
-                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
-                        "პერიოდი ვერ მოიძებნა"));
-        if (!period.getScheme().getId().equals(classGroup.getPeriodScheme().getId())) {
-            throw new SGSException(SGSExceptionCode.BAD_REQUEST,
-                    "პერიოდი არ ეკუთვნის კლასის სასწავლო სქემას");
-        }
-
-        // The period and everything under it. Publishing a trimester of grades
-        // needs only the trimester, but the absence register's marks live on
-        // days - so publishing the month has to reach them, or it releases
-        // nothing and reports success.
-        List<Long> periodIds = periodAndDescendants(classGroup, periodId);
-
-        // Narrowed to one journal where the caller named one. Without it the
-        // subtree walk above releases every journal's cells beneath the period -
-        // publishing the absence register's year would release the whole class's
-        // grades for the year and email every guardian about it.
-        Long templateId = journalUuid == null || journalUuid.isEmpty() ? null
-                : templateVersionResolver.journalByUuid(journalUuid).getId();
-
-        List<GradeEntry> entries = gradeEntryRepository.findPublishableIn(
-                classGroupId, periodIds, subjectId, templateId);
+        Scope scope = scopeOf(classGroupId, periodId, subjectId, journalUuid);
+        List<Enrollment> enrollments = scope.enrollments;
+        ClassGroup classGroup = scope.classGroup;
+        Period period = scope.period;
+        List<Long> periodIds = scope.periodIds;
+        Long templateId = scope.templateId;
+        List<GradeEntry> entries = scope.entries;
 
         Instant now = Instant.now();
         int released = 0;
@@ -172,6 +157,8 @@ public class PublicationService {
         publication.setClassGroup(classGroup);
         publication.setPeriod(period);
         publication.setSubject(subjectId == null ? null : em.getReference(Subject.class, subjectId));
+        publication.setTemplate(templateId == null ? null
+                : em.getReference(mthiebi.sgs.gradebook.model.GradingTemplate.class, templateId));
         publication.setPublishedAt(now);
         publication.setPublishedBy(actorUserId);
         publication.setCellCount(released);
@@ -184,11 +171,135 @@ public class PublicationService {
         // "grades" had been released, for a period label that is the academic
         // year. Dropping the lock made republication the ordinary path; the
         // notification had not been revisited to match.
-        if (locksOnPublish(templateId)) {
+        if (notifyGuardians && locksOnPublish(templateId)) {
             notifyAfterCommit(enrollments, classGroup, period, released);
         }
 
         return new PublicationResult(publication.getId(), released, entries.size(), now);
+    }
+
+    /**
+     * How many cells a publish of this scope would release, writing nothing.
+     * <p>
+     * The same selection and the same "already current" test as publish itself,
+     * so a preview cannot promise something the release then does differently.
+     */
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public int pending(Long classGroupId, Long periodId, String journalUuid) throws SGSException {
+        return (int) scopeOf(classGroupId, periodId, null, journalUuid).entries.stream()
+                .filter(entry -> !isAlreadyCurrent(entry))
+                .count();
+    }
+
+    /**
+     * Whether a journal freezes what it publishes - grades do, the absence
+     * register does not. Decides whether a release is worth emailing about.
+     */
+    @Transactional(readOnly = true)
+    public boolean journalLocks(String journalUuid) throws SGSException {
+        return templateVersionResolver.journalByUuid(journalUuid).isLocksOnPublish();
+    }
+
+    /**
+     * The chosen period, in this class's own scheme.
+     * <p>
+     * A year's classes normally share one scheme, and then this is the period
+     * itself. A class on another scheme gets its period of the same code - the
+     * first trimester is T1 in every scheme - or a refusal naming the class.
+     */
+    @Transactional(readOnly = true, rollbackFor = Exception.class)
+    public Long periodFor(Long chosenPeriodId, Long classGroupId) throws SGSException {
+        Period chosen = periodRepository.findById(chosenPeriodId)
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
+                        "პერიოდი ვერ მოიძებნა"));
+        ClassGroup classGroup = em.find(ClassGroup.class, classGroupId);
+        if (classGroup == null) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, "კლასი ვერ მოიძებნა");
+        }
+        Long schemeId = classGroup.getPeriodScheme().getId();
+        if (chosen.getScheme().getId().equals(schemeId)) {
+            return chosen.getId();
+        }
+        return periodRepository.findByScheme(schemeId).stream()
+                .filter(p -> p.getCode().equals(chosen.getCode()))
+                .map(Period::getId)
+                .findFirst()
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
+                        "ამ კლასის სასწავლო სქემაში ასეთი პერიოდი არ არის"));
+    }
+
+    /**
+     * Every guardian address of these classes, each once - siblings in two
+     * classes share one, and their family should hear about it once.
+     */
+    @Transactional(readOnly = true)
+    public List<String> guardianEmailsOf(java.util.Collection<Long> classGroupIds) {
+        return classGroupIds.stream()
+                .flatMap(id -> enrollmentRepository.findActiveByClassGroup(id).stream())
+                .map(e -> e.getStudent().getGuardianEmail())
+                .filter(mail -> mail != null && mail.length() > 5)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * What one release covers, worked out once for publishing and for counting.
+     */
+    private Scope scopeOf(Long classGroupId, Long periodId, Long subjectId, String journalUuid)
+            throws SGSException {
+        Scope scope = new Scope();
+        scope.enrollments = enrollmentRepository.findActiveByClassGroup(classGroupId);
+        if (scope.enrollments.isEmpty()) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, "კლასში მოსწავლეები ვერ მოიძებნა");
+        }
+        scope.classGroup = scope.enrollments.get(0).getClassGroup();
+
+        scope.period = periodRepository.findById(periodId)
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
+                        "პერიოდი ვერ მოიძებნა"));
+        if (!scope.period.getScheme().getId().equals(scope.classGroup.getPeriodScheme().getId())) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST,
+                    "პერიოდი არ ეკუთვნის კლასის სასწავლო სქემას");
+        }
+
+        // The period and everything under it. Publishing a trimester of grades
+        // needs only the trimester, but the absence register's marks live on
+        // days - so publishing the month has to reach them, or it releases
+        // nothing and reports success.
+        scope.periodIds = periodAndDescendants(scope.classGroup, periodId);
+
+        // Narrowed to one journal where the caller named one. Without it the
+        // subtree walk above releases every journal's cells beneath the period -
+        // publishing the absence register's year would release the whole class's
+        // grades for the year and email every guardian about it.
+        scope.templateId = journalUuid == null || journalUuid.isEmpty() ? null
+                : templateVersionResolver.journalByUuid(journalUuid).getId();
+
+        scope.entries = gradeEntryRepository.findPublishableIn(
+                classGroupId, scope.periodIds, subjectId, scope.templateId);
+        return scope;
+    }
+
+    @Transactional(readOnly = true)
+    /**
+     * @param allowedClassGroupIds empty means unrestricted. Otherwise the log is
+     *                             filtered to those classes: the console asks for
+     *                             every class, so without this a class-scoped
+     *                             user saw the whole school's release history.
+     */
+    public List<PublicationLogEntry> log(Long classGroupId, Set<Long> allowedClassGroupIds) {
+        return publicationRepository.findLog(classGroupId).stream()
+                .filter(p -> allowedClassGroupIds.isEmpty()
+                        || allowedClassGroupIds.contains(p.getClassGroup().getId()))
+                .map(p -> new PublicationLogEntry(
+                        p.getId(),
+                        p.getClassGroup().getName(),
+                        p.getPeriod().getLabel(),
+                        p.getSubject() == null ? null : p.getSubject().getName(),
+                        p.getTemplate() == null ? null : p.getTemplate().getName(),
+                        p.getPublishedAt(),
+                        p.getCellCount()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -260,24 +371,12 @@ public class PublicationService {
         });
     }
 
-    @Transactional(readOnly = true)
-    /**
-     * @param allowedClassGroupIds empty means unrestricted. Otherwise the log is
-     *                             filtered to those classes: the console asks for
-     *                             every class, so without this a class-scoped
-     *                             user saw the whole school's release history.
-     */
-    public List<PublicationLogEntry> log(Long classGroupId, Set<Long> allowedClassGroupIds) {
-        return publicationRepository.findLog(classGroupId).stream()
-                .filter(p -> allowedClassGroupIds.isEmpty()
-                        || allowedClassGroupIds.contains(p.getClassGroup().getId()))
-                .map(p -> new PublicationLogEntry(
-                        p.getId(),
-                        p.getClassGroup().getName(),
-                        p.getPeriod().getLabel(),
-                        p.getSubject() == null ? null : p.getSubject().getName(),
-                        p.getPublishedAt(),
-                        p.getCellCount()))
-                .collect(Collectors.toList());
+    private static final class Scope {
+        private List<Enrollment> enrollments;
+        private ClassGroup classGroup;
+        private Period period;
+        private List<Long> periodIds;
+        private Long templateId;
+        private List<GradeEntry> entries;
     }
 }

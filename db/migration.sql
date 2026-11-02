@@ -1,6 +1,7 @@
 -- =============================================================================
 -- migration.sql - bring a production database up to date for the October 2026
--- parent-portal work.
+-- parent-portal work, the November 2026 bulk release of grades, news for
+-- particular classes, and the removal of the "საბავშვო ბაღი" news category.
 --
 -- WHAT IT DOES
 --
@@ -14,15 +15,23 @@
 --   3. Which module shows each journal (db/039). grading_template.parent_module:
 --      the absence register for every child, the gradebook and ethics only for
 --      classes with GRADES. Stops ethics reaching primary 1-4.
---   4. Class levels. Grades 5 and 6 are recognised by class_group.level. A class
+--   4. The release log names its journal (db/040). publication.template_id, so
+--      a release of several journals at once - the history page's bulk
+--      release - logs which journal each row was. Older rows stay without one.
+--   5. News for particular classes (db/041). sgs.post_audience: the classes a
+--      news item is for. Existing news has none and stays for every class.
+--   6. The "საბავშვო ბაღი" news category goes (db/042). News filed under it
+--      keeps everything but the label; the output says how many.
+--   7. Class levels. Grades 5 and 6 are recognised by class_group.level. A class
 --      saved on the Classes screen with საფეხური left blank has level 0 and
 --      would never match; this fills it from the class name ("5ა" -> 5), the
 --      rule db/006 used, for those classes only.
---   5. A report to read before deploying - see "CHECK THE OUTPUT" below.
+--   8. A report to read before deploying - see "CHECK THE OUTPUT" below.
 --
 -- WHAT IT DOES NOT DO
 --
---   It deletes nothing and changes no grade, student, enrollment or account.
+--   It deletes nothing but that one category, and changes no grade, student,
+--   enrollment or account.
 --   It does not run db/037 (which deletes every class) or anything else from
 --   the numbered chain. It assumes the rewrite is already in place: the sgs
 --   schema, the three schools, the journals.
@@ -39,7 +48,8 @@
 --   sqlcmd -S <server> -d <database> -U <user> -P <password> -b -f 65001 -i db/migration.sql
 --
 --   or open it in SSMS and execute (no SQLCMD mode needed). Safe to run again:
---   every step checks before it writes, and a second run changes nothing.
+--   every step checks before it writes, and a second run changes nothing - so
+--   a database that ran an earlier version of this file simply runs it again.
 --
 -- CHECK THE OUTPUT
 --
@@ -48,9 +58,10 @@
 --   - Classes: every 5th and 6th grade class must say "yes" under
 --     parents_see_grades, and no class should show level 0.
 --
--- Assembled from db/035_parent_menu.sql, db/038_parent_module_grant.sql and
--- db/039_journal_parent_module.sql, unchanged. A fresh install runs those
--- through the normal chain instead (PROJECT-STATE.md section 7).
+-- Assembled from db/035_parent_menu.sql, db/038_parent_module_grant.sql,
+-- db/039_journal_parent_module.sql, db/040_publication_journal.sql,
+-- db/041_news_audience.sql and db/042_drop_kindergarten_category.sql, unchanged. A fresh install runs those through the normal chain instead
+-- (PROJECT-STATE.md section 7).
 -- =============================================================================
 
 SET
@@ -78,6 +89,7 @@ BEGIN
 NOEXEC ON;
 END
 GO
+
 
 
 -- =============================================================================
@@ -470,8 +482,177 @@ FROM sgs.grading_template
 ORDER BY id;
 GO
 
+
 -- =============================================================================
--- 4. Class levels
+-- 4. The release log names its journal - db/040_publication_journal.sql
+-- =============================================================================
+
+-- The release log names the journal it released.
+--
+-- sgs.publication recorded the class, the period and the subject of a release,
+-- but not which journal: every release went through one journal's own button,
+-- so the screen it was pressed on said it. Once one action can release several
+-- journals of a class at once - the history page's bulk release - a log of
+-- "8ბ, I ტრიმესტრი, 48" cannot say whether those were grades or hours.
+--
+-- Nullable. Rows written before this have no journal and are left that way:
+-- nothing recorded which one they were, and guessing one from the cells would
+-- be wrong whenever two journals shared a period. They show as "—".
+--
+-- Idempotent. Run after 009_publication.sql.
+
+SET
+XACT_ABORT ON;
+SET
+NOCOUNT ON;
+SET
+QUOTED_IDENTIFIER ON;
+SET
+ANSI_NULLS ON;
+GO
+
+-- 001_schema.sql already has the column on a fresh install, generated from the
+-- entity.
+IF COL_LENGTH('sgs.publication', 'template_id') IS NULL
+ALTER TABLE sgs.publication
+    ADD template_id bigint NULL;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'fk_publication_template')
+ALTER TABLE sgs.publication
+    ADD CONSTRAINT fk_publication_template
+        FOREIGN KEY (template_id) REFERENCES sgs.grading_template (id);
+GO
+
+SELECT COUNT(*)                                             AS releases,
+       SUM(CASE WHEN template_id IS NULL THEN 1 ELSE 0 END) AS without_journal
+FROM sgs.publication;
+GO
+
+-- =============================================================================
+-- 5. News for particular classes - db/041_news_audience.sql
+-- =============================================================================
+
+-- News for particular classes.
+--
+-- News was school-wide: every parent saw every item, which the school confirmed
+-- when the module was built. They then asked for news aimed at one class or a
+-- few. sgs.post_audience lists the classes an item is for, one row each. An item
+-- with no rows is for every class, so every item written before this keeps
+-- reaching everyone and nothing existing needs touching.
+--
+-- Classes rather than children: a child who joins the class later sees its
+-- news. Classes are per academic year, so an item aimed at a class stops
+-- reaching those children when the year rolls over - agreed with the school.
+--
+-- Idempotent. Run after 001_schema.sql has created sgs.post and
+-- sgs.class_group. Deploying the backend first is harmless too: ddl-auto: update
+-- creates the same table, and each step below checks before it writes.
+
+SET
+XACT_ABORT ON;
+SET
+NOCOUNT ON;
+SET
+QUOTED_IDENTIFIER ON;
+SET
+ANSI_NULLS ON;
+GO
+
+-- 001_schema.sql already has the table on a fresh install, generated from the
+-- entity.
+IF OBJECT_ID('sgs.post_audience') IS NULL
+CREATE TABLE sgs.post_audience
+(
+    post_id        bigint NOT NULL,
+    class_group_id bigint NOT NULL,
+    CONSTRAINT pk_post_audience PRIMARY KEY (post_id, class_group_id)
+);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'fk_post_audience_post')
+ALTER TABLE sgs.post_audience
+    ADD CONSTRAINT fk_post_audience_post
+        FOREIGN KEY (post_id) REFERENCES sgs.post (id);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'fk_post_audience_class')
+ALTER TABLE sgs.post_audience
+    ADD CONSTRAINT fk_post_audience_class
+        FOREIGN KEY (class_group_id) REFERENCES sgs.class_group (id);
+GO
+
+-- A parent's news list asks "is my class among them?"; the primary key leads
+-- with the post, so the class needs its own.
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = 'ix_post_audience_class'
+                 AND object_id = OBJECT_ID('sgs.post_audience'))
+CREATE INDEX ix_post_audience_class ON sgs.post_audience (class_group_id);
+GO
+
+SELECT (SELECT COUNT(*) FROM sgs.post WHERE kind = 'NEWS')     AS news_items,
+       (SELECT COUNT(DISTINCT post_id) FROM sgs.post_audience) AS aimed_at_classes;
+GO
+
+-- =============================================================================
+-- 6. The "საბავშვო ბაღი" news category goes - db/042_drop_kindergarten_category.sql
+-- =============================================================================
+
+-- Removes the news category "საბავშვო ბაღი".
+--
+-- db/020 seeded it as the one category the school had named. In November 2026
+-- the school asked for it to go. 020 no longer seeds it; this takes it out of a
+-- database that already has it.
+--
+-- News filed under it is kept and loses only the label: category_id is cleared,
+-- so those items show with no category and drop out of no list. The report
+-- below says how many. The published snapshot also names the category, but
+-- nothing reads that field - the label shown comes from category_id - so it is
+-- left alone.
+--
+-- Matched on the exact name. A category the school renamed it to is theirs and
+-- is not touched.
+--
+-- Idempotent: a second run finds nothing to do.
+
+SET
+XACT_ABORT ON;
+SET
+NOCOUNT ON;
+SET
+QUOTED_IDENTIFIER ON;
+SET
+ANSI_NULLS ON;
+GO
+
+DECLARE
+@category bigint = (SELECT id FROM sgs.post_category WHERE name = N'საბავშვო ბაღი');
+DECLARE
+@unlabelled int = 0;
+
+IF
+@category IS NOT NULL
+BEGIN
+BEGIN
+TRANSACTION;
+UPDATE sgs.post
+SET category_id = NULL
+WHERE category_id = @category;
+SET
+@unlabelled = @@ROWCOUNT;
+DELETE
+FROM sgs.post_category
+WHERE id = @category;
+COMMIT TRANSACTION;
+END
+
+SELECT CASE WHEN @category IS NULL THEN N'not there - nothing to do' ELSE N'removed' END
+                   AS kindergarten_category,
+       @unlabelled AS news_left_without_category;
+GO
+
+-- =============================================================================
+-- 7. Class levels
 -- =============================================================================
 --
 -- Only classes whose level is unset (0, or anything outside 1-12), and only
@@ -492,7 +673,7 @@ SELECT @@ROWCOUNT AS class_levels_filled_in;
 GO
 
 -- =============================================================================
--- 5. Report
+-- 8. Report
 -- =============================================================================
 
 -- This year's classes, and whether their parents see grades. Every 5th and 6th

@@ -76,13 +76,9 @@ CREATE TABLE sgs.post_category
 );
 GO
 
--- The one the school named. Anything else they add from the console.
-IF NOT EXISTS (SELECT 1 FROM sgs.post_category)
-INSERT INTO sgs.post_category (id, uuid, name, is_archived, created_at, updated_at)
-VALUES (NEXT VALUE FOR sgs.post_category_seq,
-        LOWER(CONVERT(nvarchar(36), NEWID())), N'საბავშვო ბაღი', 0,
-        SYSUTCDATETIME(), SYSUTCDATETIME());
-GO
+-- No category is seeded. This used to insert "საბავშვო ბაღი", the one name the
+-- school gave early on; in November 2026 they asked for it to go (db/042 removes
+-- it from databases that have it). Categories are added from the news editor.
 
 -- ---- news pictures -------------------------------------------------------
 --

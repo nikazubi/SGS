@@ -5,11 +5,7 @@ import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.gradebook.model.PostCategory;
 import mthiebi.sgs.gradebook.model.PostImage;
 import mthiebi.sgs.gradebook.model.PostKind;
-import mthiebi.sgs.gradebook.service.content.CategoryService;
-import mthiebi.sgs.gradebook.service.content.ImageService;
-import mthiebi.sgs.gradebook.service.content.PostDraft;
-import mthiebi.sgs.gradebook.service.content.PostService;
-import mthiebi.sgs.gradebook.service.content.PostView;
+import mthiebi.sgs.gradebook.service.content.*;
 import mthiebi.sgs.utils.AuthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,15 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -57,6 +45,9 @@ public class NewsController {
     @Autowired
     private ActorResolver actorResolver;
 
+    @Autowired
+    private ClassScopeGuard classScope;
+
     @GetMapping
     @Secured({AuthConstants.MANAGE_NEWS})
     public List<PostView> list(@RequestParam(required = false) Long categoryId,
@@ -80,6 +71,12 @@ public class NewsController {
                          @RequestHeader("authorization") String authHeader) throws SGSException {
         if (draft.getUuid() != null && !draft.getUuid().isEmpty()) {
             require(draft.getUuid());
+        }
+        // Aimed only at classes this person can see, as every other class
+        // picker is. Anyone with MANAGE_NEWS may still write for every class -
+        // an empty audience - as before.
+        for (Long classGroupId : draft.getAudienceClassIds()) {
+            classScope.check(authHeader, classGroupId);
         }
         return postService.save(PostKind.NEWS, draft, actorResolver.idOf(authHeader));
     }
@@ -171,8 +168,9 @@ public class NewsController {
 
     private PostView require(String uuid) throws SGSException {
         PostView view = postService.get(uuid);
-        // No class check: news has no class. The kind check still matters, or
-        // MANAGE_NEWS would edit a class's homework through a news URL.
+        // No class check on reading: the staff list is every item, whoever it
+        // is for. The kind check still matters, or MANAGE_NEWS would edit a
+        // class's homework through a news URL.
         if (!PostKind.NEWS.name().equals(view.getKind())) {
             throw new SGSException(SGSExceptionCode.BAD_REQUEST, "ჩანაწერი სხვა ტიპისაა");
         }

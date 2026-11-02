@@ -124,6 +124,9 @@ run_sql db/038_parent_module_grant.sql   # which classes see which parent pages
 run_sql db/demo/120_absence_settings.sql
 run_sql db/demo/130_ethics_journal.sql
 run_sql db/039_journal_parent_module.sql # after every journal: which module shows each
+run_sql db/040_publication_journal.sql   # the release log names its journal
+run_sql db/041_news_audience.sql         # news aimed at particular classes
+run_sql db/042_drop_kindergarten_category.sql  # the school asked for it to go
 run_sql db/demo/140_parent_content.sql  # schedule, menu, news and a test login
 
 echo

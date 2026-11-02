@@ -213,10 +213,9 @@ GO
 
 -- ---- 5. news --------------------------------------------------------------
 --
--- School-wide, not scoped to a class: ParentController.news says so plainly -
--- "news is institution-wide by the school's decision, and the category is a
--- label to filter on rather than a visibility rule". So no class_group_id, and
--- every parent sees all of it whatever school their child is in.
+-- For every class: no rows in sgs.post_audience (db/041), so every parent sees
+-- all of it whatever school their child is in. The category is a label to
+-- filter on rather than a visibility rule.
 --
 -- Matched on title rather than uuid, because a uuid generated here would never
 -- match one generated on a previous run and the point is to not double them.

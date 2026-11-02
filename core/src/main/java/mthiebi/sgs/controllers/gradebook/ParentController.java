@@ -214,11 +214,9 @@ public class ParentController {
     // ---- news ---------------------------------------------------------------
 
     /**
-     * Published news, newest first.
-     * <p>
-     * No student scoping: news is institution-wide by the school's decision, and
-     * the category is a label to filter on rather than a visibility rule. The
-     * token is still required - this is behind the parent portal, not open.
+     * Published news for this child, newest first: items for every class and
+     * items aimed at the child's own. The category is a label to filter on
+     * rather than a visibility rule.
      */
     @GetMapping("/news")
     public ParentContentView.NewsPage news(
@@ -226,8 +224,9 @@ public class ParentController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) throws Exception {
-        parentContentService.requireModule(studentOf(authHeader), ParentModule.NEWS);
-        return parentContentService.news(categoryId, page, size);
+        Long studentId = studentOf(authHeader);
+        parentContentService.requireModule(studentId, ParentModule.NEWS);
+        return parentContentService.news(studentId, categoryId, page, size);
     }
 
     /**
@@ -247,8 +246,9 @@ public class ParentController {
     public ParentContentView.NewsItem newsItem(
             @RequestHeader("authorization") String authHeader,
             @PathVariable String uuid) throws Exception {
-        parentContentService.requireModule(studentOf(authHeader), ParentModule.NEWS);
-        return parentContentService.newsItem(uuid);
+        Long studentId = studentOf(authHeader);
+        parentContentService.requireModule(studentId, ParentModule.NEWS);
+        return parentContentService.newsItem(studentId, uuid);
     }
 
     @GetMapping("/news/categories")

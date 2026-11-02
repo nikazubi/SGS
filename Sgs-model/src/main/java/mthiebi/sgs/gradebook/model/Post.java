@@ -3,28 +3,13 @@ package mthiebi.sgs.gradebook.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * One piece of staff-authored content: an assignment, a menu, a news item.
@@ -68,7 +53,7 @@ public class Post extends AuditableEntity {
     private PostKind kind;
 
     /**
-     * Null only for NEWS, which the school confirmed is school-wide.
+     * Null only for NEWS, which is addressed through {@link #audience} instead.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_group_id", foreignKey = @ForeignKey(name = "fk_post_class"))
@@ -182,6 +167,29 @@ public class Post extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "fk_post_category"))
     private PostCategory category;
+
+    /**
+     * News only. The classes it is for; empty means every class.
+     * <p>
+     * News began school-wide, which the school confirmed at the time. They later
+     * asked for items aimed at one class or a few, so this is a set rather than
+     * the single {@link #classGroup} homework uses. Empty stays "everyone", which
+     * is what every item written before it already means.
+     * <p>
+     * Classes rather than children, unlike {@link #targets}: a child who joins
+     * the class later should see its news, and a list of enrollments frozen at
+     * save time would leave them out. Classes are per academic year, so an item
+     * aimed at a class stops reaching those children when the year rolls over -
+     * which the school was told and accepted.
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "post_audience", schema = "sgs",
+            joinColumns = @JoinColumn(name = "post_id",
+                    foreignKey = @ForeignKey(name = "fk_post_audience_post")),
+            inverseJoinColumns = @JoinColumn(name = "class_group_id",
+                    foreignKey = @ForeignKey(name = "fk_post_audience_class")),
+            indexes = @Index(name = "ix_post_audience_class", columnList = "class_group_id"))
+    private Set<ClassGroup> audience = new HashSet<>();
 
     /**
      * News only. Nullable - the school's grid shows a placeholder where an item

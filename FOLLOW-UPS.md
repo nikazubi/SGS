@@ -231,6 +231,12 @@ up.
   tried and each ignored. What works is clearing the two fields a beat after the dialog
   opens — state written after autofill has finished. Worth knowing before adding any
   other credential field to this console.
+* **`EmailService.sendSimpleMail` swallows failures.** It catches every exception and
+  returns the string "Error while Sending Mail", which no caller reads. Anything that should
+  notice a failed send calls `sendOrThrow` and catches itself. The absence notices always
+  did. The grade emails (`GuardianNotifier`) did not until November 2026, so their "could
+  not notify" warning never fired: a release whose emails all bounced logged nothing.
+  `GuardianNotifierTest` now holds them to `sendOrThrow`.
 * **A demo database exists**: `db/demo/reset.sh` builds `SGS_DEMO` from nothing
   in about half a minute - schema, migrations, two classes, four students, three
   journals and an administrator. `db/demo/README.md` says what is in it. The

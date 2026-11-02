@@ -347,6 +347,13 @@ create table sgs.post
     primary key (id)
 );
 
+create table sgs.post_audience
+(
+    post_id        bigint not null,
+    class_group_id bigint not null,
+    primary key (post_id, class_group_id)
+);
+
 create table sgs.post_category
 (
     id          bigint    not null,
@@ -415,6 +422,7 @@ create table sgs.publication
     class_group_id      bigint    not null,
     period_id           bigint    not null,
     subject_id          bigint,
+    template_id bigint,
     primary key (id)
 );
 
@@ -562,6 +570,7 @@ create index ix_post_published on sgs.post (kind, status, event_date);
 
 alter table sgs.post
     add constraint uq_post_uuid unique (uuid);
+create index ix_post_audience_class on sgs.post_audience (class_group_id);
 
 alter table sgs.post_category
     add constraint uq_post_category_name unique (name);
@@ -795,6 +804,16 @@ alter table sgs.post
         foreign key (subject_id)
             references sgs.subject;
 
+alter table sgs.post_audience
+    add constraint fk_post_audience_class
+        foreign key (class_group_id)
+            references sgs.class_group;
+
+alter table sgs.post_audience
+    add constraint fk_post_audience_post
+        foreign key (post_id)
+            references sgs.post;
+
 alter table sgs.post_line
     add constraint fk_post_line_post
         foreign key (post_id)
@@ -829,6 +848,11 @@ alter table sgs.publication
     add constraint fk_publication_subject
         foreign key (subject_id)
             references sgs.subject;
+
+alter table sgs.publication
+    add constraint fk_publication_template
+        foreign key (template_id)
+            references sgs.grading_template;
 
 alter table sgs.staff_class_grant
     add constraint fk_staff_grant_class

@@ -327,20 +327,21 @@ public class ParentContentService {
     // ---- news ---------------------------------------------------------------
 
     /**
-     * Published news, newest first.
+     * Published news for this child, newest first.
      * <p>
-     * Institution-wide: no class, no school, no enrollment. Every parent sees
-     * every item, which the school confirmed - the category is a label to filter
-     * on rather than a visibility rule.
+     * Items for every class, and items aimed at the child's own class this
+     * year. The category is a label to filter on rather than a visibility rule.
      */
     @Transactional(readOnly = true)
-    public ParentContentView.NewsPage news(Long categoryId, int page, int size) {
+    public ParentContentView.NewsPage news(Long studentId, Long categoryId, int page, int size)
+            throws SGSException {
+        Long classGroupId = enrollmentOf(studentId).getClassGroup().getId();
         int bounded = Math.min(Math.max(size, 1), 50);
         List<Post> posts = postRepository.findPublishedNews(
-                categoryId, PageRequest.of(Math.max(page, 0), bounded));
+                categoryId, classGroupId, PageRequest.of(Math.max(page, 0), bounded));
 
         ParentContentView.NewsPage view = new ParentContentView.NewsPage(
-                postRepository.countPublishedNews(categoryId));
+                postRepository.countPublishedNews(categoryId, classGroupId));
 
         for (Post post : posts) {
             view.getItems().add(toNewsItem(post));
@@ -356,16 +357,20 @@ public class ParentContentService {
      * read from. An article with its own address needs it; an article that is
      * only ever a dialog does not, which is why it did not exist before.
      * <p>
-     * The same three checks the list applies: published, not archived, and news
-     * rather than homework. A uuid is easy to guess at, and a draft is not a
-     * parent's to read.
+     * The same checks the list applies: published, not archived, news rather
+     * than homework, and for this child's class. A uuid is easy to guess at, or
+     * forwarded by a parent in another class, and neither a draft nor another
+     * class's item is this parent's to read.
      */
     @Transactional(readOnly = true)
-    public ParentContentView.NewsItem newsItem(String uuid) {
+    public ParentContentView.NewsItem newsItem(Long studentId, String uuid) throws SGSException {
+        Long classGroupId = enrollmentOf(studentId).getClassGroup().getId();
         return postRepository.findByUuid(uuid)
                 .filter(p -> p.getKind() == mthiebi.sgs.gradebook.model.PostKind.NEWS)
                 .filter(p -> !p.isArchived())
                 .filter(p -> p.getStatus() == mthiebi.sgs.gradebook.model.PostStatus.PUBLISHED)
+                .filter(p -> p.getAudience().isEmpty() || p.getAudience().stream()
+                        .anyMatch(c -> c.getId().equals(classGroupId)))
                 .map(this::toNewsItem)
                 .orElse(null);
     }
@@ -522,8 +527,8 @@ public class ParentContentService {
     /**
      * Refuses a module this child's class does not have.
      * <p>
-     * For the endpoints that do not otherwise look at the child - news is
-     * school-wide - so the controller asks before serving.
+     * For the endpoints that do not otherwise look at the child - the news
+     * categories and pictures - so the controller asks before serving.
      */
     @Transactional(readOnly = true)
     public void requireModule(Long studentId, ParentModule module) throws SGSException {

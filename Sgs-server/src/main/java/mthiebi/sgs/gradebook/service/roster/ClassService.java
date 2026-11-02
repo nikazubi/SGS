@@ -2,13 +2,7 @@ package mthiebi.sgs.gradebook.service.roster;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.gradebook.model.AcademicYear;
-import mthiebi.sgs.gradebook.model.ClassGroup;
-import mthiebi.sgs.gradebook.model.ClassSubject;
-import mthiebi.sgs.gradebook.model.PeriodScheme;
-import mthiebi.sgs.gradebook.model.School;
-import mthiebi.sgs.gradebook.model.Subject;
-import mthiebi.sgs.gradebook.model.TeachingAssignment;
+import mthiebi.sgs.gradebook.model.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,6 +106,22 @@ public class ClassService {
                 .setParameter("id", id).executeUpdate();
         em.createQuery("delete from StaffClassGrant g where g.classGroup.id = :id")
                 .setParameter("id", id).executeUpdate();
+        // News aimed at this class. Dropping the class from its audience alone
+        // would turn an item for this class only into one for every class - an
+        // empty audience means everyone - so an item left with no class is
+        // archived instead: it was for nobody who still exists.
+        List<mthiebi.sgs.gradebook.model.Post> aimed = em.createQuery(
+                        "select p from Post p join p.audience c where c.id = :id",
+                        mthiebi.sgs.gradebook.model.Post.class)
+                .setParameter("id", id)
+                .getResultList();
+        for (mthiebi.sgs.gradebook.model.Post post : aimed) {
+            post.getAudience().removeIf(c -> c.getId().equals(id));
+            if (post.getAudience().isEmpty()) {
+                post.setArchived(true);
+            }
+        }
+        em.flush();
         em.remove(classGroup);
     }
 

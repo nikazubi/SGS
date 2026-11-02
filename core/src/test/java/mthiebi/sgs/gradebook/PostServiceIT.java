@@ -26,12 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Staff-authored content, against a real database.
@@ -268,7 +263,7 @@ class PostServiceIT {
     @Test
     @DisplayName("news saves with no class at all")
     void newsHasNoClass() throws Exception {
-        // The one module that is school-wide. Phase 8 made class_group_id
+        // The one module with no class of its own. Phase 8 made class_group_id
         // nullable for exactly this and then required it in the service anyway.
         PostDraft d = new PostDraft();
         d.setTitle("სკოლის სიახლე");
@@ -278,6 +273,50 @@ class PostServiceIT {
         PostView saved = postService.save(PostKind.NEWS, d, 1L);
         assertNull(saved.getClassGroupId());
         assertEquals("NEWS", saved.getKind());
+    }
+
+    @Test
+    @DisplayName("news keeps the classes it is for, replaced on edit")
+    void newsKeepsItsClasses() throws Exception {
+        mthiebi.sgs.gradebook.model.ClassGroup other = otherClass();
+        PostDraft d = new PostDraft();
+        d.setTitle("მხოლოდ ორი კლასისთვის");
+        d.setEventDate(LocalDate.of(2026, 3, 10));
+        d.setAudienceClassIds(Arrays.asList(data.classGroup.getId(), other.getId()));
+
+        PostView saved = postService.save(PostKind.NEWS, d, 1L);
+        em.flush();
+        em.clear();
+        PostView reread = postService.get(saved.getUuid());
+        assertEquals(2, reread.getAudienceClassIds().size());
+        assertTrue(reread.getAudienceClassNames().contains(other.getName()),
+                "names come with the ids, for the list");
+
+        // The editor sends who it is for now, so one class replaces two.
+        d.setUuid(saved.getUuid());
+        d.setAudienceClassIds(Collections.singletonList(other.getId()));
+        postService.save(PostKind.NEWS, d, 1L);
+        em.flush();
+        em.clear();
+        assertEquals(Collections.singletonList(other.getId()),
+                postService.get(saved.getUuid()).getAudienceClassIds());
+
+        // And none means every class again.
+        d.setAudienceClassIds(Collections.emptyList());
+        postService.save(PostKind.NEWS, d, 1L);
+        em.flush();
+        em.clear();
+        assertTrue(postService.get(saved.getUuid()).getAudienceClassIds().isEmpty());
+    }
+
+    @Test
+    @DisplayName("news aimed at a class that does not exist is refused")
+    void unknownClassIsRefused() {
+        PostDraft d = new PostDraft();
+        d.setTitle("x");
+        d.setAudienceClassIds(Collections.singletonList(-42L));
+        assertThrows(mthiebi.sgs.SGSException.class,
+                () -> postService.save(PostKind.NEWS, d, 1L));
     }
 
     @Test
@@ -398,5 +437,20 @@ class PostServiceIT {
         em.flush();
         return em.createQuery("select p from Post p where p.uuid = :u", Post.class)
                 .setParameter("u", uuid).getSingleResult();
+    }
+
+    /**
+     * A second class in the fixture's school and year.
+     */
+    private mthiebi.sgs.gradebook.model.ClassGroup otherClass() {
+        mthiebi.sgs.gradebook.model.ClassGroup other = new mthiebi.sgs.gradebook.model.ClassGroup();
+        other.setSchool(data.classGroup.getSchool());
+        other.setAcademicYear(data.classGroup.getAcademicYear());
+        other.setPeriodScheme(data.classGroup.getPeriodScheme());
+        other.setLevel((short) 9);
+        other.setName(data.classGroup.getName() + "-ბ");
+        em.persist(other);
+        em.flush();
+        return other;
     }
 }
