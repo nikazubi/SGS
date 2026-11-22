@@ -214,22 +214,30 @@ const GradebookDashBoard = ({journalUuid, journalName}) => {
                         </div>
                     ) : null}
 
-                    <DataGridSGS
-                        queryKey="GRADEBOOK_GRID"
-                        rows={rows}
-                        columns={columns}
-                        loading={isLoading}
-                        experimentalFeatures={{columnGrouping: true}}
-                        columnGroupingModel={columnGroupingModel}
-                        editMode="cell"
-                        processRowUpdate={processRowUpdate}
-                        onProcessRowUpdateError={onProcessRowUpdateError}
-                        getRowHeight={() => 46}
-                        disableColumnMenu
-                        disableSelectionOnClick
-                        fullyHideFooter
-                        sx={gradebookGridSx}
-                    />
+                    {/* The grid takes the height the title leaves, not 100% of
+                        the box the title is also in: sized that way it hung
+                        below the box by the title's height, the tab panel
+                        clipped it, and the last students and the horizontal
+                        scrollbar could not be reached. minHeight 0 lets a
+                        flex child shrink below its content's height. */}
+                    <div style={{flex: 1, minHeight: 0}}>
+                        <DataGridSGS
+                            queryKey="GRADEBOOK_GRID"
+                            rows={rows}
+                            columns={columns}
+                            loading={isLoading}
+                            experimentalFeatures={{columnGrouping: true}}
+                            columnGroupingModel={columnGroupingModel}
+                            editMode="cell"
+                            processRowUpdate={processRowUpdate}
+                            onProcessRowUpdateError={onProcessRowUpdateError}
+                            getRowHeight={() => 46}
+                            disableColumnMenu
+                            disableSelectionOnClick
+                            fullyHideFooter
+                            sx={gradebookGridSx}
+                        />
+                    </div>
                 </DataGridPaper>
             </div>
 

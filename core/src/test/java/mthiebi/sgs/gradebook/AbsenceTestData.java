@@ -1,30 +1,6 @@
 package mthiebi.sgs.gradebook;
 
-import mthiebi.sgs.gradebook.model.AcademicYear;
-import mthiebi.sgs.gradebook.model.ClassGroup;
-import mthiebi.sgs.gradebook.model.ComponentKind;
-import mthiebi.sgs.gradebook.model.DailyAbsence;
-import mthiebi.sgs.gradebook.model.DerivationRule;
-import mthiebi.sgs.gradebook.model.DerivationSource;
-import mthiebi.sgs.gradebook.model.DerivationTerm;
-import mthiebi.sgs.gradebook.model.Enrollment;
-import mthiebi.sgs.gradebook.model.GradeComponent;
-import mthiebi.sgs.gradebook.model.GradingTemplate;
-import mthiebi.sgs.gradebook.model.GridMode;
-import mthiebi.sgs.gradebook.model.JournalFrequency;
-import mthiebi.sgs.gradebook.model.NullPolicy;
-import mthiebi.sgs.gradebook.model.Period;
-import mthiebi.sgs.gradebook.model.PeriodKind;
-import mthiebi.sgs.gradebook.model.PeriodRef;
-import mthiebi.sgs.gradebook.model.PeriodScheme;
-import mthiebi.sgs.gradebook.model.ReduceType;
-import mthiebi.sgs.gradebook.model.RuleType;
-import mthiebi.sgs.gradebook.model.School;
-import mthiebi.sgs.gradebook.model.SourceKind;
-import mthiebi.sgs.gradebook.model.Student;
-import mthiebi.sgs.gradebook.model.TemplateAssignment;
-import mthiebi.sgs.gradebook.model.TemplateVersion;
-import mthiebi.sgs.gradebook.model.TemplateVersionStatus;
+import mthiebi.sgs.gradebook.model.*;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -182,6 +158,10 @@ public class AbsenceTestData {
     private void buildMonthly(String suffix) {
         monthlyJournal = journal("გაცდენილი საათები " + suffix, JournalFrequency.MONTH);
         monthlyJournal.setLocksOnPublish(false);
+        // Named, as db/044 names production's: the settings rows are drawn only
+        // on the journal flagged as the register, so a fixture left unflagged
+        // failed both settings tests once 133bed9 stopped inferring it.
+        monthlyJournal.setAbsenceRegister(true);
         monthlyVersion = version(monthlyJournal);
         // REPORTING, because that is the kind of period the hours are typed
         // against. It said ROLLUP while period_kind was read as a binary - YEAR

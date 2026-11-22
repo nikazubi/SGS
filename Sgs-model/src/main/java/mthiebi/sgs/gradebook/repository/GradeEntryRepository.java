@@ -118,6 +118,24 @@ public interface GradeEntryRepository extends JpaRepository<GradeEntry, Long> {
                                 @Param("journalId") Long journalId);
 
     /**
+     * loadMatrix's subject-less twin: one class-wide component for a whole
+     * class - a rating, an ethics average, a month's absence total.
+     * <p>
+     * By code and journal rather than by component id, so a class whose
+     * periods sit on different versions of the journal still reads as one.
+     */
+    @Query("select g from GradeEntry g "
+            + "where g.enrollment.classGroup.id = :classGroupId "
+            + "  and g.period.id = :periodId "
+            + "  and g.component.code = :componentCode "
+            + "  and g.templateVersion.template.id = :journalId "
+            + "  and g.subject is null")
+    List<GradeEntry> loadClassWide(@Param("classGroupId") Long classGroupId,
+                                   @Param("periodId") Long periodId,
+                                   @Param("componentCode") String componentCode,
+                                   @Param("journalId") Long journalId);
+
+    /**
      * Which template version the marks in this period were entered against.
      * <p>
      * A period stays on the version it started under. Activating a new version

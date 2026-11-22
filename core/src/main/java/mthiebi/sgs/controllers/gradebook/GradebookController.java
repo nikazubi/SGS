@@ -40,6 +40,9 @@ public class GradebookController {
     @Autowired
     private ClassScopeGuard classScope;
 
+    @Autowired
+    private ClassSummaryService classSummaryService;
+
     private boolean has(String permission) {
         org.springframework.security.core.Authentication auth =
                 org.springframework.security.core.context.SecurityContextHolder
@@ -159,6 +162,24 @@ public class GradebookController {
                         has(AuthConstants.ADD_GRADES),
                         has(AuthConstants.ADD_GRADES),
                         has(AuthConstants.MANAGE_GRADES)));
+    }
+
+    /**
+     * Every subject's mark for one class and period, beside the rating, ethics
+     * and absence hours: the old monthly page, by trimester. Read-only.
+     * <p>
+     * Open to whoever can open the class's journals. A grant is per class, not
+     * per subject, so this shows nobody a mark they could not already reach.
+     */
+    @GetMapping("/class-summary")
+    @Secured({AuthConstants.ADD_GRADES, AuthConstants.MANAGE_GRADES})
+    public ClassSummary classSummary(@RequestHeader("authorization") String authHeader,
+                                     @RequestParam Long classGroupId,
+                                     @RequestParam Long periodId,
+                                     @RequestParam(required = false) String journalUuid)
+            throws SGSException {
+        classScope.check(authHeader, classGroupId);
+        return classSummaryService.build(classGroupId, periodId, journalUuid);
     }
 
     @PostMapping("/grades/batch")

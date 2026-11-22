@@ -61,6 +61,18 @@ export const fetchGrid = async ({classGroupId, subjectId, periodId, journalUuid}
 };
 
 /**
+ * Every subject's mark for one class and period, with the rating, ethics and
+ * absence hours beside them. Read-only.
+ */
+export const fetchClassSummary = async ({classGroupId, periodId, journalUuid}) => {
+    if (!classGroupId || !periodId) return null;
+    const {data} = await axios.get("/api/gradebook/class-summary", {
+        params: {classGroupId, periodId, journalUuid}
+    });
+    return data;
+};
+
+/**
  * One flush. Every dirty cell goes in a single request and the recomputed
  * values come back on the response, so the client patches its own state rather
  * than invalidating and refetching.
@@ -211,6 +223,12 @@ export const exportMatrix = ({
             classGroupId, periodId, componentCode, splitByChildPeriod, className,
             journalUuid, converted
         },
+        "export.xlsx");
+
+/** The class summary page as a spreadsheet: the same columns as the screen. */
+export const exportClassSummary = ({classGroupId, periodId, journalUuid, className, converted}) =>
+    downloadWorkbook("/api/gradebook/export/class-summary",
+        {classGroupId, periodId, journalUuid, className, converted},
         "export.xlsx");
 
 /**

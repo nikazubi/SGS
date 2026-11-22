@@ -27,5 +27,18 @@ public class VersionStructure {
      */
     private boolean editableInPlace;
 
+    /**
+     * The journal holds marks this school year, so only how its columns look
+     * may change - names, group headings, order, the summary tick. The editor
+     * locks everything else; JournalService refuses it regardless.
+     */
+    private boolean holdsMarks;
+
+    /**
+     * Marks this school year per column code, so the editor can warn before a
+     * column holding marks is renamed: renaming keeps them, under the new name.
+     */
+    private java.util.Map<String, Long> marksByCode = new java.util.HashMap<>();
+
     private List<ComponentDraft> components = new ArrayList<>();
 }

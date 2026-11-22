@@ -237,6 +237,30 @@ up.
   did. The grade emails (`GuardianNotifier`) did not until November 2026, so their "could
   not notify" warning never fired: a release whose emails all bounced logged nothing.
   `GuardianNotifierTest` now holds them to `sendOrThrow`.
+* **`db/demo/reset.sh` and a fresh install fail at `007` since `800a73e`.**
+  `db/001_schema.sql` gained `is_absence_register bit not null` with no default,
+  and every journal seed (`007`, `022`, `demo/130`) inserts without naming it.
+  `db/044` adds the column nullable, backfills and tightens - right for
+  production, but `reset.sh` never runs it and `001` already made it NOT NULL.
+  Either give the column a default in the entity or have the fresh path relax
+  it after `001` and run `044` last. (Found 2026-11-18 rebuilding `SGS_DEMO`;
+  worked around in a scratch copy of the script, not fixed in the repo.)
+* **`admin` is restricted to exactly the 58 classes of 2026-27.** Its grant was
+  rewritten on 2026-11-18 to tick every class, which is what made grades 10-12
+  visible again - but a grant is a narrowing, so a class created later, and
+  every class next September, will not appear for `admin` until it is ticked
+  too. An empty grant is how "every class" is expressed (`ClassScopeGuard`).
+* **Staff passwords are stored and logged in plain text.** Staff log in through
+  `NoOpPasswordEncoder` against `dbo.system_user_table.password`, and
+  `AuthController.authenticate` logs the username and password of every attempt
+  at INFO. Worse than §2's unsalted MD5 for parents.
+* **The older Excel exports print ჩთ as `CHT`.** `GradeExportService.render`
+  prints the stored code, and `GradeExportServiceIT` asserts it. The class
+  summary export (decision 133) prints the label. Switching the others is one
+  line plus those assertions, if the school would rather see ჩთ.
+* **`sgs.grade_entry_bak_20261118` on production** - the trimester journal's
+  marks before they were moved onto one version (`PROJECT-STATE.md` §7). Drop it
+  once the school confirms the result.
 * **A demo database exists**: `db/demo/reset.sh` builds `SGS_DEMO` from nothing
   in about half a minute - schema, migrations, two classes, four students, three
   journals and an administrator. `db/demo/README.md` says what is in it. The

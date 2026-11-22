@@ -67,4 +67,10 @@ public class GridColumn {
      * own screen.
      */
     private boolean reference;
+
+    /**
+     * component.summary_column: the column the summary export should take on
+     * this screen even when it is typed in rather than calculated.
+     */
+    private boolean summary;
 }

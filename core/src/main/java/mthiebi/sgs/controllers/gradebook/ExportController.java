@@ -6,17 +6,12 @@ import mthiebi.sgs.utils.AuthConstants;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -41,6 +36,9 @@ public class ExportController {
 
     @Autowired
     private mthiebi.sgs.gradebook.service.export.BulkExportService bulkExportService;
+
+    @Autowired
+    private mthiebi.sgs.gradebook.service.grid.ClassSummaryService classSummaryService;
 
     /**
      * Students down, subjects across, one component per cell.
@@ -80,6 +78,24 @@ public class ExportController {
                        HttpServletResponse response) throws SGSException, IOException {
         classScope.check(authHeader, classGroupId);
         write(exportService.detail(classGroupId, subjectId, periodId, journalUuid, converted),
+                response, className);
+    }
+
+    /**
+     * The class summary page as a spreadsheet, built from the same data.
+     */
+    @GetMapping("/class-summary")
+    @Secured({AuthConstants.MANAGE_GRADES})
+    public void classSummary(@RequestParam Long classGroupId,
+                             @RequestParam Long periodId,
+                             @RequestParam(required = false) String journalUuid,
+                             @RequestParam(required = false) String className,
+                             @RequestParam(defaultValue = "false") boolean converted,
+                             @RequestHeader("authorization") String authHeader,
+                             HttpServletResponse response) throws SGSException, IOException {
+        classScope.check(authHeader, classGroupId);
+        write(exportService.classSummary(
+                        classSummaryService.build(classGroupId, periodId, journalUuid), converted),
                 response, className);
     }
 

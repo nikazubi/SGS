@@ -1,11 +1,7 @@
 import React, {useState} from "react";
-import {
-    Button, Checkbox, Divider, ListItemIcon, ListItemText, ListSubheader, Menu,
-    MenuItem
-} from "@mui/material";
+import {Button, Checkbox, Divider, ListItemIcon, ListItemText, ListSubheader, Menu, MenuItem} from "@mui/material";
 import {FileDownload} from "@mui/icons-material";
-import {exportBulkDetail, exportBulkMatrix, exportDetail, exportMatrix}
-    from "./gradebookApi";
+import {exportBulkDetail, exportBulkMatrix, exportDetail, exportMatrix} from "./gradebookApi";
 
 /**
  * Excel exports for what is currently on screen, and for every class at once.
@@ -35,9 +31,14 @@ const ExportMenu = ({
      */
     const [converted, setConverted] = useState(false);
 
-    // The column a summary matrix is most likely to want: the last calculated
-    // one the template defines for this period.
-    const summaryColumn = (columns || []).filter(c => c.kind === "DERIVED").slice(-1)[0];
+    // The column a summary matrix is most likely to want: the last of this
+    // screen's own columns that is calculated or marked as the summary. "Last
+    // calculated" alone went blank when the school made the trimester grade a
+    // typed column, and greyed out the summary and bulk exports. The year's
+    // borrowed trimester columns are never it - they belong to another period.
+    const summaryColumn = (columns || [])
+        .filter(c => !c.reference && (c.kind === "DERIVED" || c.summary))
+        .slice(-1)[0];
 
     const run = async (fn) => {
         setBusy(true);

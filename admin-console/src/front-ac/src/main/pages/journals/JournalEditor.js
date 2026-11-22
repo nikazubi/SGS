@@ -1,6 +1,17 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useQuery} from "react-query";
-import {AppBar, Button, Chip, Dialog, IconButton, Toolbar, Typography} from "@mui/material";
+import {
+    AppBar,
+    Button,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Toolbar,
+    Typography
+} from "@mui/material";
 import {Close, PublishedWithChanges, Save} from "@mui/icons-material";
 import ColumnEditor from "./ColumnEditor";
 import MigrationPrompt from "./MigrationPrompt";
@@ -15,6 +26,12 @@ import {fetchClasses, fetchPeriods} from "../gradebook/gradebookApi";
  * under it, which is the failure the whole versioning scheme exists to prevent.
  * The word "version" only surfaces when that happens, or when a period is
  * pinned and someone is being asked about recalculating.
+ *
+ * Once the journal holds marks this school year, only how the columns look can
+ * change - names, group headings, order, the summary tick - and the server
+ * applies that in place to every class. Everything else is locked here and
+ * refused there. Mid-term restructuring split the school's classes across five
+ * versions in November 2026.
  */
 const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
 
@@ -40,14 +57,39 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
     const [versionId, setVersionId] = useState(null);
     const [activatable, setActivatable] = useState(false);
     const [migrationOpen, setMigrationOpen] = useState(false);
+    // What the server last said: which columns hold marks, under which names.
+    const [saved, setSaved] = useState(null);
+    const [confirmRename, setConfirmRename] = useState(false);
 
     useEffect(() => {
         if (!structure) return;
         setColumns(structure.components || []);
         setVersionId(structure.versionId);
+        setSaved(structure);
         setIssues([]);
         setDirty(false);
     }, [structure]);
+
+    const locked = Boolean(saved?.holdsMarks);
+    const marksByCode = useMemo(() => saved?.marksByCode || {}, [saved]);
+    const savedLabels = useMemo(() => {
+        const map = {};
+        (saved?.components || []).forEach(c => {
+            map[c.code] = c.label || "";
+        });
+        return map;
+    }, [saved]);
+
+    // Renaming keeps a column's marks, under the new name - which is how a
+    // column can quietly come to mean something else. Allowed, after a warning.
+    const renamed = useMemo(() => columns
+        .filter(c => c.code && (marksByCode[c.code] || 0) > 0
+            && savedLabels[c.code] !== undefined
+            && (c.label || "") !== savedLabels[c.code])
+        .map(c => ({
+            code: c.code, from: savedLabels[c.code], to: c.label || "",
+            marks: marksByCode[c.code]
+        })), [columns, marksByCode, savedLabels]);
 
     const issuesByCode = useMemo(() => {
         const map = {};
@@ -61,7 +103,8 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
     const errors = issues.filter(i => i.severity === "ERROR");
     const warnings = issues.filter(i => i.severity === "WARNING");
 
-    const save = useCallback(async () => {
+    const doSave = useCallback(async () => {
+        setConfirmRename(false);
         setBusy(true);
         try {
             const result = await saveStructure({uuid, versionId, components: columns});
@@ -69,6 +112,7 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
             setActivatable(result.activatable);
             setVersionId(result.version.versionId);
             setColumns(result.version.components || []);
+            setSaved(result.version);
             setDirty(false);
             // Columns added in this sitting have to become referenceable now,
             // not after the editor is closed and reopened.
@@ -78,7 +122,9 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
                 message: result.forked
                     ? `შენახულია ახალ ვერსიად (${result.version.versionNo}) — `
                     + "არსებული შეფასებები ხელუხლებელი დარჩა"
-                    : "შენახულია",
+                    : result.version.holdsMarks
+                        ? "შენახულია — ცვლილება ყველა კლასში გამოჩნდა"
+                        : "შენახულია",
                 severity: "success"
             });
             onSaved();
@@ -88,6 +134,14 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
             setBusy(false);
         }
     }, [uuid, versionId, columns, onNotify, onSaved, onError, refetchPickable]);
+
+    const save = useCallback(() => {
+        if (renamed.length) {
+            setConfirmRename(true);
+        } else {
+            doSave();
+        }
+    }, [renamed, doSave]);
 
     const activate = useCallback(async () => {
         setBusy(true);
@@ -120,7 +174,7 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
                             {structure
                                 ? `ვერსია ${structure.versionNo} · ${structure.status}`
                                 : ""}
-                            {structure && !structure.editableInPlace
+                            {structure && !structure.editableInPlace && !locked
                                 ? " · შენახვა შექმნის ახალ ვერსიას"
                                 : ""}
                         </Typography>
@@ -142,7 +196,7 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
                     </Button>
                     <Button
                         variant="contained" startIcon={<PublishedWithChanges/>}
-                        disabled={busy || dirty || !activatable}
+                        disabled={busy || dirty || !activatable || locked}
                         onClick={activate}
                         style={{textTransform: "none"}}
                     >
@@ -152,6 +206,20 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
             </AppBar>
 
             <div style={{padding: 24, maxWidth: 1100, margin: "0 auto", width: "100%"}}>
+                {locked ? (
+                    <div style={{
+                        background: "#eef6fb", border: "1px solid #9cc7e0",
+                        borderRadius: 4, padding: 12, marginBottom: 16
+                    }}>
+                        <Typography variant="body2" style={{color: "#31708f"}}>
+                            ამ სასწავლო წელს ჟურნალში უკვე შეყვანილია ნიშნები. სვეტების
+                            დამატება, წაშლა და ტიპის, შკალის ან ფორმულის შეცვლა აღარ
+                            შეიძლება. შეგიძლიათ შეცვალოთ დასახელება, ჯგუფი, რიგი და
+                            შემაჯამებელი სვეტი — ცვლილება ყველა კლასში მაშინვე გამოჩნდება.
+                        </Typography>
+                    </div>
+                ) : null}
+
                 {errors.length ? (
                     <div style={{
                         background: "#fdf2f2", border: "1px solid #d9534f",
@@ -191,9 +259,32 @@ const JournalEditor = ({journal, onClose, onSaved, onError, onNotify}) => {
                         pickable={pickable}
                         periods={periods}
                         issuesByCode={issuesByCode}
+                        locked={locked}
+                        marksByCode={marksByCode}
+                        savedLabels={savedLabels}
                     />
                 ) : null}
             </div>
+
+            <Dialog open={confirmRename} onClose={() => setConfirmRename(false)}
+                    maxWidth="sm" fullWidth>
+                <DialogTitle>სვეტის სახელის შეცვლა</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" style={{marginBottom: 12}}>
+                        ამ სვეტებში უკვე შეყვანილი ნიშნები დარჩება და ახალი სახელით
+                        გამოჩნდება, ყველა კლასში:
+                    </Typography>
+                    {renamed.map(r => (
+                        <Typography key={r.code} variant="body2" style={{marginBottom: 4}}>
+                            „{r.from}“ → „{r.to}“ — {r.marks} შეფასება
+                        </Typography>
+                    ))}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmRename(false)}>გაუქმება</Button>
+                    <Button variant="contained" onClick={doSave}>შენახვა</Button>
+                </DialogActions>
+            </Dialog>
 
             <MigrationPrompt
                 journal={migrationOpen ? journal : null}

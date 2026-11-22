@@ -322,25 +322,84 @@ class JournalServiceIT {
 
     // ---- versions --------------------------------------------------------
 
+    private static ComponentDraft byCode(List<ComponentDraft> columns, String code) {
+        return columns.stream().filter(c -> c.getCode().equals(code)).findFirst()
+                .orElseThrow(() -> new AssertionError("no column " + code));
+    }
+
+    /**
+     * Deep enough that changing one column's rule leaves the structure the
+     * service hands back - and compares against - untouched.
+     */
+    private static List<ComponentDraft> copies(List<ComponentDraft> columns) {
+        List<ComponentDraft> out = new ArrayList<>();
+        for (ComponentDraft c : columns) {
+            ComponentDraft d = new ComponentDraft();
+            d.setCode(c.getCode());
+            d.setLabel(c.getLabel());
+            d.setOrdinal(c.getOrdinal());
+            d.setGroupLabel(c.getGroupLabel());
+            d.setKind(c.getKind());
+            d.setPeriodKind(c.getPeriodKind());
+            d.setSubjectScoped(c.isSubjectScoped());
+            d.setScaleMin(c.getScaleMin());
+            d.setScaleMax(c.getScaleMax());
+            d.setDecimals(c.getDecimals());
+            d.setAllowSpecialValues(c.isAllowSpecialValues());
+            d.setAllowOverride(c.isAllowOverride());
+            d.setParentVisible(c.isParentVisible());
+            d.setSummaryColumn(c.getSummaryColumn());
+            if (c.getRule() != null) {
+                RuleDraft r = new RuleDraft();
+                r.setType(c.getRule().getType());
+                r.setNullPolicy(c.getRule().getNullPolicy());
+                r.setRenormalizeWeights(c.getRule().isRenormalizeWeights());
+                r.setRoundingMode(c.getRule().getRoundingMode());
+                r.setDecimals(c.getRule().getDecimals());
+                for (TermDraft t : c.getRule().getTerms()) {
+                    TermDraft u = new TermDraft();
+                    u.setWeight(t.getWeight());
+                    u.setSourceKind(t.getSourceKind());
+                    u.setReduce(t.getReduce());
+                    u.setPeriodRef(t.getPeriodRef());
+                    u.setPeriodId(t.getPeriodId());
+                    u.setLabel(t.getLabel());
+                    for (SourceDraft s : t.getSources()) {
+                        SourceDraft x = new SourceDraft();
+                        x.setJournalUuid(s.getJournalUuid());
+                        x.setComponentCode(s.getComponentCode());
+                        u.getSources().add(x);
+                    }
+                    r.getTerms().add(u);
+                }
+                d.setRule(r);
+            }
+            out.add(d);
+        }
+        return out;
+    }
+
+    /**
+     * A mark typed and then emptied: the version is referenced, so it is not
+     * edited in place, but the journal holds no mark this year, so it is not
+     * locked either - the state of a journal between school years.
+     */
+    private void leaveAnEmptiedCell() throws Exception {
+        Long enrollment = data.enrollments.get(0).getId();
+        put(data.subject.getId(), enrollment, "ONGOING_1", "7");
+        put(data.subject.getId(), enrollment, "ONGOING_1", null);
+    }
+
+    // ---- the lock once marks exist (November 2026) ------------------------
+
     @Test
-    @DisplayName("editing a version that holds marks forks a draft instead")
+    @DisplayName("before any marks this year, editing a version that holds cells forks a draft")
     void editingAVersionWithDataForks() throws Exception {
-        // The fixture's journal already has marks entered against version 1.
-        GradeWriteRequest write = new GradeWriteRequest();
-        write.setJournalUuid(data.template.getUuid());
-        write.setClassGroupId(data.classGroup.getId());
-        write.setSubjectId(data.subject.getId());
-        write.setPeriodId(data.trimester1.getId());
-        GradeEntryUpdate u = new GradeEntryUpdate();
-        u.setEnrollmentId(data.enrollments.get(0).getId());
-        u.setComponentCode("ONGOING_1");
-        u.setValue(new BigDecimal("7"));
-        write.setEntries(Collections.singletonList(u));
-        writeService.apply(write, 1L);
-        em.flush();
+        leaveAnEmptiedCell();
 
         VersionStructure before = journalService.currentStructure(data.template.getUuid());
-        assertFalse(before.isEditableInPlace(), "a version with marks is not edited in place");
+        assertFalse(before.isEditableInPlace(), "a version with cells is not edited in place");
+        assertFalse(before.isHoldsMarks(), "an emptied cell is not a mark");
 
         List<ComponentDraft> columns = new ArrayList<>(before.getComponents());
         columns.add(input("EXTRA", "დამატებითი", 99));
@@ -356,20 +415,9 @@ class JournalServiceIT {
     }
 
     @Test
-    @DisplayName("activating leaves existing marks on the version they were entered under")
+    @DisplayName("activating leaves existing cells on the version they were entered under")
     void activationDoesNotDisturbExistingPeriods() throws Exception {
-        GradeWriteRequest write = new GradeWriteRequest();
-        write.setJournalUuid(data.template.getUuid());
-        write.setClassGroupId(data.classGroup.getId());
-        write.setSubjectId(data.subject.getId());
-        write.setPeriodId(data.trimester1.getId());
-        GradeEntryUpdate u = new GradeEntryUpdate();
-        u.setEnrollmentId(data.enrollments.get(0).getId());
-        u.setComponentCode("ONGOING_1");
-        u.setValue(new BigDecimal("7"));
-        write.setEntries(Collections.singletonList(u));
-        writeService.apply(write, 1L);
-        em.flush();
+        leaveAnEmptiedCell();
 
         Long originalVersion = data.version.getId();
 
@@ -382,7 +430,7 @@ class JournalServiceIT {
         em.flush();
         em.clear();
 
-        // The mark stays pinned. Activation reaches future periods only;
+        // The cell stays pinned. Activation reaches future periods only;
         // moving this one is a separate act with a recalculation attached.
         GradeEntry entry = em.createQuery(
                         "select g from GradeEntry g where g.enrollment.id = :e "
@@ -393,6 +441,202 @@ class JournalServiceIT {
                 .getSingleResult();
 
         assertEquals(originalVersion, entry.getTemplateVersion().getId());
+    }
+
+    @Test
+    @DisplayName("with marks this year, a rename and the summary tick save in place, with no new version")
+    void withMarksVisualChangesSaveInPlace() throws Exception {
+        Long enrollment = data.enrollments.get(0).getId();
+        put(data.subject.getId(), enrollment, "ONGOING_1", "7");
+        long versionsBefore = versionCount();
+
+        VersionStructure before = journalService.currentStructure(data.template.getUuid());
+        assertTrue(before.isHoldsMarks());
+        assertEquals(Long.valueOf(1), before.getMarksByCode().get("ONGOING_1"),
+                "the editor is told how many marks a column holds, to warn before a rename");
+
+        List<ComponentDraft> columns = new ArrayList<>(before.getComponents());
+        ComponentDraft ongoing1 = byCode(columns, "ONGOING_1");
+        ongoing1.setLabel("საწყისი ტესტი");
+        ongoing1.setGroupLabel("ახალი ჯგუფი");
+        byCode(columns, "PROGRESS").setSummaryColumn(true);
+
+        SaveResult saved = journalService.save(data.template.getUuid(), before.getVersionId(), columns);
+        em.flush();
+        em.clear();
+
+        assertFalse(saved.isForked(), "a visual change is not a new version");
+        assertFalse(saved.isActivatable(), "nothing to activate: it is already live");
+        assertEquals(versionsBefore, versionCount());
+
+        GradeComponent renamed = em.find(GradeComponent.class, componentId(data.version.getId(), "ONGOING_1"));
+        assertEquals("საწყისი ტესტი", renamed.getLabel());
+        assertEquals("ახალი ჯგუფი", renamed.getGroupLabel());
+        assertTrue(em.find(GradeComponent.class, componentId(data.version.getId(), "PROGRESS")).isSummaryColumn());
+
+        // The mark is untouched: same version, same column, same value.
+        GradeEntry mark = markOf(enrollment, "ONGOING_1");
+        assertEquals(data.version.getId(), mark.getTemplateVersion().getId());
+        assertEquals(0, new BigDecimal("7").compareTo(mark.getValue()));
+    }
+
+    @Test
+    @DisplayName("with marks this year, adding, removing or changing a column is refused")
+    void withMarksStructuralChangesAreRefused() throws Exception {
+        put(data.subject.getId(), data.enrollments.get(0).getId(), "ONGOING_1", "7");
+        VersionStructure before = journalService.currentStructure(data.template.getUuid());
+        long versionsBefore = versionCount();
+
+        List<ComponentDraft> added = new ArrayList<>(before.getComponents());
+        added.add(input("EXTRA", "დამატებითი", 99));
+        assertRefused(before, added, "დაემატა სვეტი");
+
+        List<ComponentDraft> removed = new ArrayList<>(before.getComponents());
+        removed.removeIf(c -> c.getCode().equals("FINAL_TEST"));
+        assertRefused(before, removed, "წაიშალა სვეტი");
+
+        List<ComponentDraft> retyped = copies(before.getComponents());
+        byCode(retyped, "TRIMESTER_GRADE").setKind(ComponentKind.INPUT);
+        byCode(retyped, "TRIMESTER_GRADE").setRule(null);
+        assertRefused(before, retyped, "ტიპი");
+
+        List<ComponentDraft> rescaled = copies(before.getComponents());
+        byCode(rescaled, "PROGRESS").setScaleMax(new BigDecimal("7"));
+        assertRefused(before, rescaled, "შკალა");
+
+        List<ComponentDraft> reweighted = copies(before.getComponents());
+        byCode(reweighted, "TRIMESTER_GRADE").getRule().getTerms().get(0).setWeight(new BigDecimal("0.9"));
+        assertRefused(before, reweighted, "ფორმულა");
+
+        assertEquals(versionsBefore, versionCount(), "a refused save leaves no draft behind");
+    }
+
+    @Test
+    @DisplayName("with marks this year, a draft made before them cannot be activated")
+    void withMarksNoOtherVersionIsActivated() throws Exception {
+        leaveAnEmptiedCell();
+        VersionStructure before = journalService.currentStructure(data.template.getUuid());
+        List<ComponentDraft> columns = new ArrayList<>(before.getComponents());
+        columns.add(input("EXTRA", "დამატებითი", 99));
+        SaveResult draft = journalService.save(data.template.getUuid(), before.getVersionId(), columns);
+        em.flush();
+        assertTrue(draft.isForked());
+
+        // Marks arrive on the live version before anyone activates the draft.
+        put(data.subject.getId(), data.enrollments.get(1).getId(), "PROGRESS", "8");
+
+        SGSException refused = assertThrows(SGSException.class, () ->
+                journalService.activate(data.template.getUuid(), draft.getVersion().getVersionId()));
+        assertTrue(refused.getMessage().contains("შეყვანილია ნიშნები"), refused.getMessage());
+    }
+
+    @Test
+    @DisplayName("the summary tick round-trips through the editor and survives a fork")
+    void theSummaryTickSurvivesAFork() throws Exception {
+        em.find(GradeComponent.class, data.components.get("TRIMESTER_GRADE").getId()).setSummaryColumn(true);
+        em.flush();
+        leaveAnEmptiedCell();
+
+        VersionStructure before = journalService.currentStructure(data.template.getUuid());
+        assertEquals(Boolean.TRUE, byCode(before.getComponents(), "TRIMESTER_GRADE").getSummaryColumn());
+
+        // An older console sends no summary tick at all.
+        List<ComponentDraft> columns = copies(before.getComponents());
+        columns.forEach(c -> c.setSummaryColumn(null));
+        columns.add(input("EXTRA", "დამატებითი", 99));
+        SaveResult forked = journalService.save(data.template.getUuid(), before.getVersionId(), columns);
+        em.flush();
+        em.clear();
+
+        assertTrue(forked.isForked());
+        GradeComponent copied = em.find(GradeComponent.class,
+                componentId(forked.getVersion().getVersionId(), "TRIMESTER_GRADE"));
+        assertTrue(copied.isSummaryColumn(),
+                "a fork used to start empty and drop every setting the editor did not send");
+    }
+
+    @Test
+    @DisplayName("a subject starting on a new version keeps every mark on it while another subject stays pinned")
+    void aFreshSubjectIsNotFiledUnderAnotherSubjectsVersion() throws Exception {
+        // The 7/5 case. Mathematics has a cell on version 1; the journal is then
+        // edited and the new version activated; chemistry, with no marks yet,
+        // starts on the new version. Its first mark landed there and its second
+        // was filed under version 1 - because mathematics held that code there -
+        // and the grid refused to open the period.
+        Subject chemistry = new Subject();
+        chemistry.setName("ქიმია " + UUID.randomUUID().toString().substring(0, 6));
+        chemistry.setShortName("ქიმ");
+        em.persist(chemistry);
+        ClassSubject taught = new ClassSubject();
+        taught.setClassGroup(data.classGroup);
+        taught.setSubject(chemistry);
+        taught.setSortIndex(2);
+        em.persist(taught);
+        em.flush();
+
+        leaveAnEmptiedCell();
+        VersionStructure before = journalService.currentStructure(data.template.getUuid());
+        List<ComponentDraft> columns = copies(before.getComponents());
+        byCode(columns, "PROGRESS").setLabel("პროგრესი");
+        SaveResult draft = journalService.save(data.template.getUuid(), before.getVersionId(), columns);
+        journalService.activate(data.template.getUuid(), draft.getVersion().getVersionId());
+        em.flush();
+        Long v2 = draft.getVersion().getVersionId();
+
+        Long student = data.enrollments.get(0).getId();
+        put(data.subject.getId(), student, "PROGRESS", "6");          // mathematics, pinned to v1
+        put(chemistry.getId(), student, "ONGOING_1", "9");             // chemistry, first mark: v2
+        put(chemistry.getId(), student, "PROGRESS", "9");              // the one that went to v1
+
+        List<Long> versions = em.createQuery(
+                        "select distinct g.templateVersion.id from GradeEntry g "
+                                + "where g.enrollment.id = :e and g.subject.id = :s and g.period.id = :p",
+                        Long.class)
+                .setParameter("e", student).setParameter("s", chemistry.getId())
+                .setParameter("p", data.trimester1.getId())
+                .getResultList();
+        assertEquals(Collections.singletonList(v2), versions);
+
+        // And the grid opens.
+        assertDoesNotThrow(() -> gridService.load(data.classGroup.getId(), chemistry.getId(),
+                data.trimester1.getId(), data.template.getUuid()));
+        assertDoesNotThrow(() -> gridService.load(data.classGroup.getId(), data.subject.getId(),
+                data.trimester1.getId(), data.template.getUuid()));
+    }
+
+    private void assertRefused(VersionStructure before, List<ComponentDraft> columns, String naming) {
+        SGSException refused = assertThrows(SGSException.class, () ->
+                journalService.save(data.template.getUuid(), before.getVersionId(), columns));
+        assertTrue(refused.getMessage().contains(naming), refused.getMessage());
+    }
+
+    private void put(Long subjectId, Long enrollment, String code, String value) throws Exception {
+        GradeWriteRequest request = new GradeWriteRequest();
+        request.setJournalUuid(data.template.getUuid());
+        request.setClassGroupId(data.classGroup.getId());
+        request.setSubjectId(subjectId);
+        request.setPeriodId(data.trimester1.getId());
+        GradeEntryUpdate u = new GradeEntryUpdate();
+        u.setEnrollmentId(enrollment);
+        u.setComponentCode(code);
+        u.setValue(value == null ? null : new BigDecimal(value));
+        request.setEntries(Collections.singletonList(u));
+        GradeWriteResult result = writeService.apply(request, 1L);
+        assertTrue(result.getConflicts().isEmpty(), result.getConflicts().toString());
+        em.flush();
+    }
+
+    private GradeEntry markOf(Long enrollment, String code) {
+        return em.createQuery("select g from GradeEntry g where g.enrollment.id = :e "
+                        + "and g.component.code = :c and g.period.id = :p", GradeEntry.class)
+                .setParameter("e", enrollment).setParameter("c", code)
+                .setParameter("p", data.trimester1.getId())
+                .getSingleResult();
+    }
+
+    private long versionCount() {
+        return em.createQuery("select count(v) from TemplateVersion v where v.template.id = :t", Long.class)
+                .setParameter("t", data.template.getId()).getSingleResult();
     }
 
     @Test

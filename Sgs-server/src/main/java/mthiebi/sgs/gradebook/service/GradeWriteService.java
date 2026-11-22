@@ -2,23 +2,8 @@ package mthiebi.sgs.gradebook.service;
 
 import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
-import mthiebi.sgs.gradebook.engine.CellKey;
-import mthiebi.sgs.gradebook.engine.CellValue;
-import mthiebi.sgs.gradebook.engine.ComponentDef;
-import mthiebi.sgs.gradebook.engine.EvaluationContext;
-import mthiebi.sgs.gradebook.engine.PeriodReach;
-import mthiebi.sgs.gradebook.engine.PeriodTree;
-import mthiebi.sgs.gradebook.engine.RecomputeEngine;
-import mthiebi.sgs.gradebook.engine.TemplateGraph;
-import mthiebi.sgs.gradebook.engine.WorkingSet;
-import mthiebi.sgs.gradebook.model.ClassGroup;
-import mthiebi.sgs.gradebook.model.Enrollment;
-import mthiebi.sgs.gradebook.model.GradeComponent;
-import mthiebi.sgs.gradebook.model.GradeEntry;
-import mthiebi.sgs.gradebook.model.GradeSource;
-import mthiebi.sgs.gradebook.model.Period;
-import mthiebi.sgs.gradebook.model.Subject;
-import mthiebi.sgs.gradebook.model.TemplateVersion;
+import mthiebi.sgs.gradebook.engine.*;
+import mthiebi.sgs.gradebook.model.*;
 import mthiebi.sgs.gradebook.repository.EnrollmentRepository;
 import mthiebi.sgs.gradebook.repository.GradeEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -254,27 +234,58 @@ public class GradeWriteService {
     }
 
     /**
-     * Which version already owns cells at this period, if any.
+     * Which version of this cell's journal already owns cells at its period, in
+     * the scope the resolver pins on - class, period and subject, where a
+     * subject's scope also takes in the class-wide cells, as
+     * GradeEntryRepository.findTemplateVersionIdsInPeriod does. A class-wide
+     * cell (rating) sits in every subject's scope, so it looks at all of them.
+     * <p>
+     * It used to match on class, period and component code only: no subject, no
+     * journal, and an arbitrary pick when several versions were present.
      */
-    private Long versionAlreadyAt(CellKey key, Map<Long, Enrollment> enrollmentsById) {
+    private Long versionAlreadyAt(CellKey key, Map<Long, Enrollment> enrollmentsById,
+                                  Long stampedVersionId) {
         Enrollment enrollment = enrollmentsById.get(key.getEnrollmentId());
         if (enrollment == null) {
             return null;
         }
-        List<Long> found = em.createQuery(
+        Long journalId = em.find(TemplateVersion.class, stampedVersionId).getTemplate().getId();
+        String subjectClause = key.getSubjectId() == null
+                ? ""
+                : "  and (g.subject.id = :s or g.subject is null) ";
+        javax.persistence.TypedQuery<Long> query = em.createQuery(
                         "select distinct g.templateVersion.id from GradeEntry g "
                                 + "where g.enrollment.classGroup.id = :c and g.period.id = :p "
-                                + "  and g.component.code = :code", Long.class)
+                                + "  and g.templateVersion.template.id = :t "
+                                + subjectClause
+                                + "order by g.templateVersion.id", Long.class)
                 .setParameter("c", enrollment.getClassGroup().getId())
                 .setParameter("p", key.getPeriodId())
-                .setParameter("code", componentCodeOf(key.getComponentId()))
-                .setMaxResults(1)
-                .getResultList();
+                .setParameter("t", journalId);
+        if (key.getSubjectId() != null) {
+            query.setParameter("s", key.getSubjectId());
+        }
+        List<Long> found = query.getResultList();
         return found.isEmpty() ? null : found.get(0);
     }
 
-    private String componentCodeOf(Long componentId) {
-        return em.find(GradeComponent.class, componentId).getCode();
+    /**
+     * The stored row for this cell's enrollment, subject and period under a
+     * given component, if there is one.
+     */
+    private GradeEntry rowAt(CellKey key, Long componentId) {
+        String subjectClause = key.getSubjectId() == null ? "g.subject is null" : "g.subject.id = :s";
+        javax.persistence.TypedQuery<GradeEntry> query = em.createQuery(
+                        "select g from GradeEntry g where g.enrollment.id = :e and g.period.id = :p "
+                                + "and g.component.id = :c and " + subjectClause, GradeEntry.class)
+                .setParameter("e", key.getEnrollmentId())
+                .setParameter("p", key.getPeriodId())
+                .setParameter("c", componentId);
+        if (key.getSubjectId() != null) {
+            query.setParameter("s", key.getSubjectId());
+        }
+        List<GradeEntry> found = query.getResultList();
+        return found.isEmpty() ? null : found.get(0);
     }
 
     private GradeComponent componentAt(Long versionId, String code) {
@@ -470,6 +481,7 @@ public class GradeWriteService {
             GradeEntry entry = existing.get(key);
             if (entry == null) {
                 entry = new GradeEntry();
+                entry.setCreatedBy(actorUserId);
                 entry.setEnrollment(enrollmentsById.get(key.getEnrollmentId()));
                 entry.setSubject(key.getSubjectId() == null
                         ? null : em.getReference(Subject.class, key.getSubjectId()));
@@ -491,16 +503,40 @@ public class GradeWriteService {
                 // different component ids, and the resolver would then see two
                 // versions in that period and refuse it forever. It takes the
                 // version already present there instead.
-                Long settled = versionAlreadyAt(key, enrollmentsById);
-                if (settled != null && !settled.equals(entry.getTemplateVersion().getId())) {
-                    entry.setTemplateVersion(em.getReference(TemplateVersion.class, settled));
-                    GradeComponent sameCode = componentAt(settled,
-                            graph.byId(key.getComponentId()).getCode());
-                    if (sameCode != null) {
-                        entry.setComponent(sameCode);
+                //
+                // Only above, never at the period being written: there the
+                // resolver has already chosen per class, period and subject, and
+                // overruling it is what broke 7/5 chemistry and history in
+                // November 2026. This used to run for every new cell and match
+                // on class, period and code alone, so a fresh subject on the new
+                // version had its second mark filed under the old version
+                // because another subject in the class held that code there -
+                // two versions in one period, and the grid refused to open.
+                if (!key.getPeriodId().equals(request.getPeriodId())) {
+                    Long stamped = entry.getTemplateVersion().getId();
+                    Long settled = versionAlreadyAt(key, enrollmentsById, stamped);
+                    if (settled != null && !settled.equals(stamped)) {
+                        // Only onto a version that has this column; otherwise the
+                        // row would name one version and another's component.
+                        GradeComponent sameCode = componentAt(settled,
+                                graph.byId(key.getComponentId()).getCode());
+                        if (sameCode != null) {
+                            GradeEntry already = rowAt(key, sameCode.getId());
+                            if (already != null) {
+                                // The cell exists on that version under that
+                                // version's component id, which the working set -
+                                // keyed by this version's ids - could not see.
+                                // Updating it is the write; inserting beside it
+                                // broke uq_grade_cell (a class's rating, reached
+                                // from a subject on a newer version).
+                                entry = already;
+                            } else {
+                                entry.setTemplateVersion(em.getReference(TemplateVersion.class, settled));
+                                entry.setComponent(sameCode);
+                            }
+                        }
                     }
                 }
-                entry.setCreatedBy(actorUserId);
             }
 
             entry.setValue(value.getValue());

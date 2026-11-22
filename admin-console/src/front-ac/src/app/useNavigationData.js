@@ -1,17 +1,8 @@
 import React, {useMemo} from 'react';
 import {useQuery} from 'react-query';
 import {useUserContext} from "../contexts/user-context";
-import {Grading, SwitchAccount} from "@mui/icons-material";
-import {Description, Feed, Restaurant, Schedule} from "@mui/icons-material";
-import {
-    Assignment,
-    ChangeHistory,
-    Class,
-    EventAvailable,
-    EventBusy,
-    MenuBook,
-    Person
-} from "@material-ui/icons";
+import {Description, Feed, Grading, Restaurant, Schedule, SwitchAccount, TableChart} from "@mui/icons-material";
+import {Assignment, ChangeHistory, Class, EventAvailable, EventBusy, MenuBook, Person} from "@material-ui/icons";
 import SubjectsPage from "../main/pages/roster/SubjectsPage";
 import StudentsPage from "../main/pages/roster/StudentsPage";
 import ClassesPage from "../main/pages/roster/ClassesPage";
@@ -19,6 +10,7 @@ import SystemUserDashBoard from "../main/pages/systemUserPage/SystemUserDashBoar
 import {TimeIcon} from "@material-ui/pickers/_shared/icons/TimeIcon";
 import SystemUserGroupDashBoard from "../main/pages/systemUserGroup/SystemUserGroupDashBoard";
 import GradebookDashBoard from "../main/pages/gradebook/GradebookDashBoard";
+import ClassSummaryPage from "../main/pages/gradebook/ClassSummaryPage";
 import JournalsDashBoard from "../main/pages/journals/JournalsDashBoard";
 import HomeworkDashBoard from '../main/pages/homework/HomeworkDashBoard';
 import AbsenceRegisterPage from '../main/pages/absence/AbsenceRegisterPage';
@@ -101,6 +93,17 @@ const useNavigationData = () => {
 
     const pages = useMemo(() => ({
         ...journalPages(journals),
+        CLASS_SUMMARY: {
+            id: 'CLASS_SUMMARY',
+            // The school's own words for it: every subject's trimester grade
+            // for a class, as the old monthly page showed the months.
+            name: 'ტრიმესტრული შეფასება კლასების მიხედვით',
+            component: <ClassSummaryPage/>,
+            icon: <TableChart/>,
+            show: false,
+            permissions: ["ADD_GRADES", "MANAGE_GRADES"],
+            collapsible: false
+        },
         JOURNALS: {
             id: 'JOURNALS',
             name: 'ჟურნალები',

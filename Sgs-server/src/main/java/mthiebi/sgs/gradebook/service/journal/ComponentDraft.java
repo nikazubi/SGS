@@ -34,6 +34,14 @@ public class ComponentDraft {
     private boolean parentVisible = true;
 
     /**
+     * Shown on the year screen beside the year's columns and in the parents'
+     * summary (component.summary_column). A Boolean, not a boolean: null means
+     * "not sent, leave it as it is", so a console that predates the field can
+     * never switch it off by saving.
+     */
+    private Boolean summaryColumn;
+
+    /**
      * Null for a column that is typed in.
      */
     private RuleDraft rule;

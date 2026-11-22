@@ -324,6 +324,81 @@ public class GradeExportService {
         }
     }
 
+    // ---- class summary --------------------------------------------------
+
+    /**
+     * The class summary page as a spreadsheet: the same columns, in the same
+     * order, from the same data - so the sheet can never disagree with the
+     * screen it was downloaded from.
+     * <p>
+     * ჩთ prints as ჩთ here, as on the screen, rather than as its stored code.
+     */
+    public Workbook classSummary(mthiebi.sgs.gradebook.service.grid.ClassSummary summary,
+                                 boolean converted) {
+        Map<String, String> specialLabels = new HashMap<>();
+        summary.getSpecialValues().forEach(sv -> specialLabels.put(sv.getCode(), sv.getLabel()));
+
+        List<mthiebi.sgs.gradebook.service.grid.ClassSummary.Column> columns = summary.getColumns();
+
+        Workbook workbook = new XSSFWorkbook();
+        SheetStyles styles = new SheetStyles(workbook);
+        Sheet sheet = workbook.createSheet(safeSheetName(summary.getClassName()));
+
+        int width = 1 + columns.size();
+        titleRow(sheet, styles, width,
+                SCHOOL + " - კლასი " + summary.getClassName()
+                        + " - " + summary.getPeriodLabel() + " - შემაჯამებელი");
+
+        Row header = sheet.createRow(1);
+        cell(header, 0, "მოსწავლის გვარი, სახელი", styles.header);
+        int col = 1;
+        for (mthiebi.sgs.gradebook.service.grid.ClassSummary.Column column : columns) {
+            cell(header, col++, column.getLabel(), styles.header);
+        }
+
+        int rowIndex = 2;
+        for (mthiebi.sgs.gradebook.service.grid.ClassSummary.Row source : summary.getRows()) {
+            Row row = sheet.createRow(rowIndex++);
+            cell(row, 0, source.getIndex() + ". " + source.getLastName() + " " + source.getFirstName(),
+                    styles.studentName);
+            int c = 1;
+            for (mthiebi.sgs.gradebook.service.grid.ClassSummary.Column column : columns) {
+                mthiebi.sgs.gradebook.service.grid.ClassSummary.Cell value =
+                        source.getCells().get(column.getKey());
+                cell(row, c++, summaryText(value, column, converted, specialLabels), styles.cell);
+            }
+        }
+
+        Row teachers = sheet.createRow(rowIndex);
+        cell(teachers, 0, "პედაგოგი", styles.teacher);
+        int tc = 1;
+        for (mthiebi.sgs.gradebook.service.grid.ClassSummary.Column column : columns) {
+            cell(teachers, tc++, column.getTeacherName() == null ? "" : column.getTeacherName(),
+                    styles.teacher);
+        }
+
+        sizeColumns(sheet, width);
+        return workbook;
+    }
+
+    private String summaryText(mthiebi.sgs.gradebook.service.grid.ClassSummary.Cell value,
+                               mthiebi.sgs.gradebook.service.grid.ClassSummary.Column column,
+                               boolean converted, Map<String, String> specialLabels) {
+        if (value == null) {
+            return "";
+        }
+        if (value.getSpecialValue() != null) {
+            return specialLabels.getOrDefault(value.getSpecialValue(), value.getSpecialValue());
+        }
+        if (value.getValue() == null) {
+            return "";
+        }
+        if (converted && column.isConverts() && value.getConvertedValue() != null) {
+            return gradeConversionService.text(value.getConvertedValue());
+        }
+        return value.getValue().setScale(column.getDecimals(), RoundingMode.HALF_UP).toPlainString();
+    }
+
     // ---- shared ---------------------------------------------------------
 
     /**

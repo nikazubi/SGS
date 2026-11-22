@@ -4,20 +4,10 @@ import mthiebi.sgs.SGSException;
 import mthiebi.sgs.SGSExceptionCode;
 import mthiebi.sgs.gradebook.engine.ComponentDef;
 import mthiebi.sgs.gradebook.engine.TemplateValidator;
-import mthiebi.sgs.gradebook.engine.ValidationIssue;
 import mthiebi.sgs.gradebook.engine.ValidationResult;
-import mthiebi.sgs.gradebook.model.DerivationRule;
-import mthiebi.sgs.gradebook.model.DerivationSource;
-import mthiebi.sgs.gradebook.model.DerivationTerm;
-import mthiebi.sgs.gradebook.model.GradeComponent;
-import mthiebi.sgs.gradebook.model.ClassGroup;
-import mthiebi.sgs.gradebook.model.GradingTemplate;
-import mthiebi.sgs.gradebook.model.TemplateAssignment;
-import mthiebi.sgs.gradebook.model.Period;
-import mthiebi.sgs.gradebook.model.TemplateVersion;
-import mthiebi.sgs.gradebook.model.TemplateVersionStatus;
-import mthiebi.sgs.gradebook.repository.GradeComponentRepository;
+import mthiebi.sgs.gradebook.model.*;
 import mthiebi.sgs.gradebook.repository.ClassGroupRepository;
+import mthiebi.sgs.gradebook.repository.GradeComponentRepository;
 import mthiebi.sgs.gradebook.repository.GradingTemplateRepository;
 import mthiebi.sgs.gradebook.repository.TemplateVersionRepository;
 import mthiebi.sgs.gradebook.service.TemplateGraphLoader;
@@ -28,12 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -153,91 +138,12 @@ public class JournalService {
         return structureOf(version);
     }
 
-    /**
-     * Save a whole version.
-     * <p>
-     * If any grade references the version, the save forks a draft instead of
-     * editing in place: changing a live version would silently re-render marks
-     * already entered under it, which is the failure the whole versioning
-     * scheme exists to prevent.
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public SaveResult save(String uuid, Long versionId, List<ComponentDraft> components)
-            throws SGSException {
+    static final String LOCKED_MESSAGE = "ამ სასწავლო წელს ჟურნალში უკვე შეყვანილია ნიშნები, "
+            + "ამიტომ შეიძლება მხოლოდ სვეტების დასახელების, ჯგუფის, რიგის და "
+            + "შემაჯამებლობის შეცვლა.";
 
-        GradingTemplate journal = journal(uuid);
-        TemplateVersion version = versionRepository.findById(versionId)
-                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
-                        "ვერსია ვერ მოიძებნა"));
-
-        requireBelongsTo(journal, version);
-
-        boolean forked = false;
-        if (!isEditableInPlace(version)) {
-            version = fork(journal, version);
-            forked = true;
-        }
-
-        applyComponents(version, components);
-        em.flush();
-        // Every journal that reads this one has its structure baked into a
-        // cached graph, so evicting only this version would leave them
-        // computing against the old shape until a restart.
-        templateGraphLoader.evictAll();
-
-        ValidationResult result = validate(version);
-
-        // A draft may be saved broken - an editor has to be closable mid-thought
-        // - but a version that is already live must never be. Decision 28 says a
-        // teacher entering marks can never be shown a configuration error, and
-        // an ACTIVE version with a cycle throws on every grid load.
-        if (!result.isActivatable() && version.getStatus() == TemplateVersionStatus.ACTIVE) {
-            throw new SGSException(SGSExceptionCode.BAD_REQUEST,
-                    "აქტიურ ჟურნალში შეცდომის შენახვა შეუძლებელია: "
-                            + result.errors().get(0).getMessage());
-        }
-        return new SaveResult(structureOf(version), forked, result.issues(),
-                result.isActivatable());
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public SaveResult activate(String uuid, Long versionId) throws SGSException {
-        GradingTemplate journal = journal(uuid);
-        TemplateVersion version = versionRepository.findById(versionId)
-                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
-                        "ვერსია ვერ მოიძებნა"));
-        requireBelongsTo(journal, version);
-
-        ValidationResult result = validate(version);
-        if (!result.isActivatable()) {
-            throw new SGSException(SGSExceptionCode.BAD_REQUEST,
-                    "ჟურნალში არის შეცდომები და ვერ გააქტიურდება");
-        }
-
-        // Existing periods stay pinned to whatever they were entered under.
-        // Activation reaches future periods only; moving an existing one is a
-        // separate, deliberate act with a recalculation attached.
-        for (TemplateVersion other : versionRepository.findByTemplate(journal.getId())) {
-            if (!other.getId().equals(version.getId())
-                    && other.getStatus() == TemplateVersionStatus.ACTIVE) {
-                other.setStatus(TemplateVersionStatus.ARCHIVED);
-            }
-        }
-        version.setStatus(TemplateVersionStatus.ACTIVE);
-        version.setActivatedAt(Instant.now());
-
-        // Other journals move onto this version now, not when it was a draft.
-        // Repointing on save sent them at components nobody writes to yet, and
-        // an abandoned draft would have stranded them there.
-        Map<String, GradeComponent> live = componentRepository
-                .findByTemplateVersion(version.getId()).stream()
-                .collect(Collectors.toMap(GradeComponent::getCode, c -> c,
-                        (a, b) -> a, LinkedHashMap::new));
-        repointExternalReferences(version, live);
-
-        syncAssignments(journal, version);
-
-        return new SaveResult(structureOf(version), false, result.issues(), true);
+    private static String nameOf(ComponentDraft d) {
+        return d.getLabel() == null || d.getLabel().trim().isEmpty() ? d.getCode() : d.getLabel().trim();
     }
 
     /**
@@ -331,80 +237,46 @@ public class JournalService {
         return used == 0;
     }
 
-    private TemplateVersion fork(GradingTemplate journal, TemplateVersion from) {
-        int next = versionRepository.findByTemplate(journal.getId()).stream()
-                .mapToInt(TemplateVersion::getVersionNo).max().orElse(0) + 1;
-
-        TemplateVersion draft = new TemplateVersion();
-        draft.setTemplate(journal);
-        draft.setVersionNo(next);
-        draft.setStatus(TemplateVersionStatus.DRAFT);
-        draft.setPeriodScheme(from.getPeriodScheme());
-        versionRepository.save(draft);
-        em.flush();
-        return draft;
+    private static boolean sameNumber(java.math.BigDecimal a, java.math.BigDecimal b) {
+        return a == null ? b == null : b != null && a.compareTo(b) == 0;
     }
 
     /**
-     * Diffs by code rather than replacing wholesale.
-     * <p>
-     * A column keeps its identity when it is renamed or moved, which matters
-     * because another journal's formula may point at it - and because a
-     * delete-and-recreate would orphan every such reference.
+     * Whether two formulas compute the same thing. Weights compare by value
+     * (0.5 and 0.5000 are one weight), a source in this journal may arrive with
+     * or without its journal's uuid, and a term's label is ignored - it names
+     * the term and computes nothing.
      */
-    private void applyComponents(TemplateVersion version, List<ComponentDraft> drafts)
-            throws SGSException {
-
-        Map<String, GradeComponent> existing = componentRepository
-                .findByTemplateVersion(version.getId()).stream()
-                .collect(Collectors.toMap(GradeComponent::getCode, c -> c,
-                        (a, b) -> a, LinkedHashMap::new));
-
-        Map<String, GradeComponent> kept = new LinkedHashMap<>();
-        for (ComponentDraft draft : drafts) {
-            if (draft.getCode() == null || draft.getCode().trim().isEmpty()) {
-                throw new SGSException(SGSExceptionCode.BAD_REQUEST, "სვეტს კოდი სჭირდება");
-            }
-            GradeComponent component = existing.get(draft.getCode());
-            if (component == null) {
-                component = new GradeComponent();
-                component.setTemplateVersion(version);
-                component.setCode(draft.getCode().trim());
-            }
-            component.setLabel(draft.getLabel());
-            component.setOrdinal(draft.getOrdinal());
-            component.setGroupLabel(emptyToNull(draft.getGroupLabel()));
-            component.setKind(draft.getKind());
-            component.setPeriodKind(draft.getPeriodKind());
-            component.setSubjectScoped(draft.isSubjectScoped());
-            component.setScaleMin(draft.getScaleMin());
-            component.setScaleMax(draft.getScaleMax());
-            component.setDecimals(draft.getDecimals());
-            component.setAllowSpecialValues(draft.isAllowSpecialValues());
-            component.setAllowOverride(draft.isAllowOverride());
-            component.setParentVisible(draft.isParentVisible());
-            em.persist(component);
-            kept.put(component.getCode(), component);
+    private static boolean sameRule(RuleDraft a, RuleDraft b, String ownJournal) {
+        if (a == null || b == null) {
+            return a == b;
         }
-
-        for (Map.Entry<String, GradeComponent> gone : existing.entrySet()) {
-            if (!kept.containsKey(gone.getKey())) {
-                deleteRules(gone.getValue());
-                em.remove(gone.getValue());
+        if (a.getType() != b.getType() || a.getNullPolicy() != b.getNullPolicy()
+                || a.isRenormalizeWeights() != b.isRenormalizeWeights()
+                || a.getRoundingMode() != b.getRoundingMode()
+                || a.getDecimals() != b.getDecimals()
+                || a.getTerms().size() != b.getTerms().size()) {
+            return false;
+        }
+        for (int i = 0; i < a.getTerms().size(); i++) {
+            TermDraft x = a.getTerms().get(i);
+            TermDraft y = b.getTerms().get(i);
+            if (!sameNumber(x.getWeight(), y.getWeight()) || x.getSourceKind() != y.getSourceKind()
+                    || x.getReduce() != y.getReduce() || x.getPeriodRef() != y.getPeriodRef()
+                    || !java.util.Objects.equals(x.getPeriodId(), y.getPeriodId())
+                    || x.getSources().size() != y.getSources().size()) {
+                return false;
+            }
+            for (int j = 0; j < x.getSources().size(); j++) {
+                SourceDraft s = x.getSources().get(j);
+                SourceDraft t = y.getSources().get(j);
+                if (!java.util.Objects.equals(s.getComponentCode(), t.getComponentCode())
+                        || !java.util.Objects.equals(journalOf(s, ownJournal), journalOf(t, ownJournal))) {
+                    return false;
+                }
             }
         }
-        em.flush();
-
-        // Rules are rebuilt rather than diffed: nothing outside a component
-        // references a term or a source, so their identity buys nothing.
-        for (ComponentDraft draft : drafts) {
-            GradeComponent component = kept.get(draft.getCode());
-            deleteRules(component);
-            if (draft.getRule() != null) {
-                writeRule(component, draft.getRule(), kept);
-            }
-        }
-        em.flush();
+        return true;
     }
 
     /**
@@ -551,13 +423,259 @@ public class JournalService {
         return validator.validate(reachable);
     }
 
+    private static String journalOf(SourceDraft source, String ownJournal) {
+        String uuid = source.getJournalUuid();
+        return uuid == null || uuid.isEmpty() || uuid.equals(ownJournal) ? null : uuid;
+    }
+
+    /**
+     * Save a whole version.
+     * <p>
+     * <b>Once the journal holds marks this school year, only how its columns
+     * look may change</b> - names, group headings, order, the summary tick - and
+     * that is applied in place, by code, to every version of the journal, so
+     * every class shows it at once. Anything else is refused. The school edited
+     * the trimester journal mid-term in November 2026: each save forked a
+     * version, classes with marks stayed on the old one and the rest moved, and
+     * the split left two subjects unopenable and the year screen without its
+     * trimester columns. A rename used to fork too, which is how "the journal
+     * didn't change" for the classes that had marks.
+     * <p>
+     * Before any marks exist, it is as it was: if a grade references the
+     * version the save forks a draft instead of editing in place, because
+     * changing a live version would silently re-render marks entered under it.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public SaveResult save(String uuid, Long versionId, List<ComponentDraft> components)
+            throws SGSException {
+
+        GradingTemplate journal = journal(uuid);
+        TemplateVersion version = versionRepository.findById(versionId)
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
+                        "ვერსია ვერ მოიძებნა"));
+
+        requireBelongsTo(journal, version);
+
+        if (holdsMarksThisYear(journal)) {
+            List<String> structural = structuralChanges(liveVersionOf(journal), components);
+            if (!structural.isEmpty()) {
+                throw new SGSException(SGSExceptionCode.BAD_REQUEST,
+                        LOCKED_MESSAGE + " შეცვლილია: " + String.join("; ", structural));
+            }
+            applyVisualChanges(journal, components);
+            em.flush();
+            templateGraphLoader.evictAll();
+            ValidationResult result = validate(version);
+            // Nothing to activate: the change is already live everywhere.
+            return new SaveResult(structureOf(version), false, result.issues(), false);
+        }
+
+        boolean forked = false;
+        if (!isEditableInPlace(version)) {
+            version = fork(journal, version);
+            forked = true;
+        }
+
+        applyComponents(version, components);
+        em.flush();
+        // Every journal that reads this one has its structure baked into a
+        // cached graph, so evicting only this version would leave them
+        // computing against the old shape until a restart.
+        templateGraphLoader.evictAll();
+
+        ValidationResult result = validate(version);
+
+        // A draft may be saved broken - an editor has to be closable mid-thought
+        // - but a version that is already live must never be. Decision 28 says a
+        // teacher entering marks can never be shown a configuration error, and
+        // an ACTIVE version with a cycle throws on every grid load.
+        if (!result.isActivatable() && version.getStatus() == TemplateVersionStatus.ACTIVE) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST,
+                    "აქტიურ ჟურნალში შეცდომის შენახვა შეუძლებელია: "
+                            + result.errors().get(0).getMessage());
+        }
+        return new SaveResult(structureOf(version), forked, result.issues(),
+                result.isActivatable());
+    }
+
+    // ---- the lock once marks exist ----------------------------------------
+
+    @Transactional(rollbackFor = Exception.class)
+    public SaveResult activate(String uuid, Long versionId) throws SGSException {
+        GradingTemplate journal = journal(uuid);
+        TemplateVersion version = versionRepository.findById(versionId)
+                .orElseThrow(() -> new SGSException(SGSExceptionCode.BAD_REQUEST,
+                        "ვერსია ვერ მოიძებნა"));
+        requireBelongsTo(journal, version);
+
+        // With marks this year, no other version is activated at all. Visual
+        // changes are saved in place, structural ones are refused, so a version
+        // waiting to be activated can only be a draft from before the marks -
+        // and activating it would split the classes between versions again.
+        if (holdsMarksThisYear(journal)) {
+            TemplateVersion live = liveVersionOf(journal);
+            if (live != null && live.getId().equals(version.getId())) {
+                return new SaveResult(structureOf(version), false, validate(version).issues(), false);
+            }
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST, LOCKED_MESSAGE
+                    + " ახალი ვერსიის გააქტიურება შეუძლებელია.");
+        }
+
+        ValidationResult result = validate(version);
+        if (!result.isActivatable()) {
+            throw new SGSException(SGSExceptionCode.BAD_REQUEST,
+                    "ჟურნალში არის შეცდომები და ვერ გააქტიურდება");
+        }
+
+        // Existing periods stay pinned to whatever they were entered under.
+        // Activation reaches future periods only; moving an existing one is a
+        // separate, deliberate act with a recalculation attached.
+        for (TemplateVersion other : versionRepository.findByTemplate(journal.getId())) {
+            if (!other.getId().equals(version.getId())
+                    && other.getStatus() == TemplateVersionStatus.ACTIVE) {
+                other.setStatus(TemplateVersionStatus.ARCHIVED);
+            }
+        }
+        version.setStatus(TemplateVersionStatus.ACTIVE);
+        version.setActivatedAt(Instant.now());
+
+        // Other journals move onto this version now, not when it was a draft.
+        // Repointing on save sent them at components nobody writes to yet, and
+        // an abandoned draft would have stranded them there.
+        Map<String, GradeComponent> live = componentRepository
+                .findByTemplateVersion(version.getId()).stream()
+                .collect(Collectors.toMap(GradeComponent::getCode, c -> c,
+                        (a, b) -> a, LinkedHashMap::new));
+        repointExternalReferences(version, live);
+
+        syncAssignments(journal, version);
+
+        return new SaveResult(structureOf(version), false, result.issues(), true);
+    }
+
+    private TemplateVersion fork(GradingTemplate journal, TemplateVersion from) {
+        int next = versionRepository.findByTemplate(journal.getId()).stream()
+                .mapToInt(TemplateVersion::getVersionNo).max().orElse(0) + 1;
+
+        TemplateVersion draft = new TemplateVersion();
+        draft.setTemplate(journal);
+        draft.setVersionNo(next);
+        draft.setStatus(TemplateVersionStatus.DRAFT);
+        draft.setPeriodScheme(from.getPeriodScheme());
+        versionRepository.save(draft);
+
+        // A full copy first, then the editor's draft is applied over it. A fork
+        // used to start empty and build every column from the draft alone, so
+        // anything the editor does not send fell back to its default: the
+        // summary tick was switched off by the first save of a journal holding
+        // marks, and the year screen lost its trimester columns. Copied here,
+        // a setting the editor knows nothing about survives.
+        for (GradeComponent source : componentRepository.findByTemplateVersion(from.getId())) {
+            GradeComponent copy = new GradeComponent();
+            copy.setTemplateVersion(draft);
+            copy.setCode(source.getCode());
+            copy.setLabel(source.getLabel());
+            copy.setOrdinal(source.getOrdinal());
+            copy.setGroupLabel(source.getGroupLabel());
+            copy.setPeriodKind(source.getPeriodKind());
+            copy.setSubjectScoped(source.isSubjectScoped());
+            copy.setKind(source.getKind());
+            copy.setScaleMin(source.getScaleMin());
+            copy.setScaleMax(source.getScaleMax());
+            copy.setDecimals(source.getDecimals());
+            copy.setAllowSpecialValues(source.isAllowSpecialValues());
+            copy.setParentVisible(source.isParentVisible());
+            copy.setSummaryColumn(source.isSummaryColumn());
+            copy.setAllowOverride(source.isAllowOverride());
+            em.persist(copy);
+        }
+        em.flush();
+        return draft;
+    }
+
+    /**
+     * Diffs by code rather than replacing wholesale.
+     * <p>
+     * A column keeps its identity when it is renamed or moved, which matters
+     * because another journal's formula may point at it - and because a
+     * delete-and-recreate would orphan every such reference.
+     */
+    private void applyComponents(TemplateVersion version, List<ComponentDraft> drafts)
+            throws SGSException {
+
+        Map<String, GradeComponent> existing = componentRepository
+                .findByTemplateVersion(version.getId()).stream()
+                .collect(Collectors.toMap(GradeComponent::getCode, c -> c,
+                        (a, b) -> a, LinkedHashMap::new));
+
+        Map<String, GradeComponent> kept = new LinkedHashMap<>();
+        for (ComponentDraft draft : drafts) {
+            if (draft.getCode() == null || draft.getCode().trim().isEmpty()) {
+                throw new SGSException(SGSExceptionCode.BAD_REQUEST, "სვეტს კოდი სჭირდება");
+            }
+            GradeComponent component = existing.get(draft.getCode());
+            if (component == null) {
+                component = new GradeComponent();
+                component.setTemplateVersion(version);
+                component.setCode(draft.getCode().trim());
+            }
+            component.setLabel(draft.getLabel());
+            component.setOrdinal(draft.getOrdinal());
+            component.setGroupLabel(emptyToNull(draft.getGroupLabel()));
+            component.setKind(draft.getKind());
+            component.setPeriodKind(draft.getPeriodKind());
+            component.setSubjectScoped(draft.isSubjectScoped());
+            component.setScaleMin(draft.getScaleMin());
+            component.setScaleMax(draft.getScaleMax());
+            component.setDecimals(draft.getDecimals());
+            component.setAllowSpecialValues(draft.isAllowSpecialValues());
+            component.setAllowOverride(draft.isAllowOverride());
+            component.setParentVisible(draft.isParentVisible());
+            if (draft.getSummaryColumn() != null) {
+                component.setSummaryColumn(draft.getSummaryColumn());
+            }
+            em.persist(component);
+            kept.put(component.getCode(), component);
+        }
+
+        for (Map.Entry<String, GradeComponent> gone : existing.entrySet()) {
+            if (!kept.containsKey(gone.getKey())) {
+                deleteRules(gone.getValue());
+                em.remove(gone.getValue());
+            }
+        }
+        em.flush();
+
+        // Rules are rebuilt rather than diffed: nothing outside a component
+        // references a term or a source, so their identity buys nothing.
+        for (ComponentDraft draft : drafts) {
+            GradeComponent component = kept.get(draft.getCode());
+            deleteRules(component);
+            if (draft.getRule() != null) {
+                writeRule(component, draft.getRule(), kept);
+            }
+        }
+        em.flush();
+    }
+
     private VersionStructure structureOf(TemplateVersion version) {
         VersionStructure structure = new VersionStructure();
         structure.setVersionId(version.getId());
         structure.setVersionNo(version.getVersionNo());
         structure.setStatus(version.getStatus());
         structure.setEditableInPlace(isEditableInPlace(version));
+        Map<String, Long> marks = marksByCodeThisYear(version.getTemplate());
+        structure.setHoldsMarks(!marks.isEmpty());
+        structure.setMarksByCode(marks);
+        structure.getComponents().addAll(draftsOf(version));
+        return structure;
+    }
 
+    /**
+     * The version's columns as the editor sees them, formulas included.
+     */
+    private List<ComponentDraft> draftsOf(TemplateVersion version) {
+        List<ComponentDraft> drafts = new ArrayList<>();
         Map<Long, String> journalByComponent = new HashMap<>();
         Map<Long, String> codeByComponent = new HashMap<>();
 
@@ -581,10 +699,126 @@ public class JournalService {
             draft.setAllowSpecialValues(c.isAllowSpecialValues());
             draft.setAllowOverride(c.isAllowOverride());
             draft.setParentVisible(c.isParentVisible());
+            draft.setSummaryColumn(c.isSummaryColumn());
             draft.setRule(ruleDraftOf(c, codeByComponent, journalByComponent));
-            structure.getComponents().add(draft);
+            drafts.add(draft);
         }
-        return structure;
+        return drafts;
+    }
+
+    /**
+     * Real marks (a value or a special value) per column code, in the current
+     * school year, across every version of the journal. An emptied cell is not
+     * a mark, and last year's marks do not lock this year's journal - the
+     * summer is when it is safe to restructure.
+     */
+    private Map<String, Long> marksByCodeThisYear(GradingTemplate journal) {
+        Map<String, Long> counts = new LinkedHashMap<>();
+        em.createQuery("select g.component.code, count(g) from GradeEntry g "
+                        + "where g.templateVersion.template.id = :t "
+                        + "  and (g.value is not null or g.specialValue is not null) "
+                        + "  and g.period.scheme.academicYear.current = true "
+                        + "group by g.component.code", Object[].class)
+                .setParameter("t", journal.getId())
+                .getResultList()
+                .forEach(row -> counts.put((String) row[0], (Long) row[1]));
+        return counts;
+    }
+
+    private boolean holdsMarksThisYear(GradingTemplate journal) {
+        return !marksByCodeThisYear(journal).isEmpty();
+    }
+
+    /**
+     * The version classes are actually on, the way the resolver falls back to
+     * it: the active one, else the newest locked (published) one, else the
+     * newest of all.
+     */
+    private TemplateVersion liveVersionOf(GradingTemplate journal) {
+        List<TemplateVersion> versions = versionRepository.findByTemplate(journal.getId());
+        java.util.Comparator<TemplateVersion> byNo =
+                java.util.Comparator.comparingInt(TemplateVersion::getVersionNo);
+        return versions.stream()
+                .filter(v -> v.getStatus() == TemplateVersionStatus.ACTIVE)
+                .max(byNo)
+                .orElseGet(() -> versions.stream()
+                        .filter(v -> v.getStatus() == TemplateVersionStatus.LOCKED)
+                        .max(byNo)
+                        .orElseGet(() -> versions.stream().max(byNo).orElse(null)));
+    }
+
+    /**
+     * Everything a save would change beyond how the columns look, worded for
+     * the person who tried it. Empty means the save is visual only.
+     */
+    private List<String> structuralChanges(TemplateVersion live, List<ComponentDraft> drafts) {
+        List<String> changes = new ArrayList<>();
+        if (live == null) {
+            return changes;
+        }
+        String ownJournal = live.getTemplate().getUuid();
+
+        Map<String, ComponentDraft> before = new LinkedHashMap<>();
+        draftsOf(live).forEach(d -> before.put(d.getCode(), d));
+        Map<String, ComponentDraft> after = new LinkedHashMap<>();
+        for (ComponentDraft d : drafts) {
+            String code = d.getCode() == null ? "" : d.getCode().trim();
+            if (code.isEmpty() || !before.containsKey(code)) {
+                changes.add("დაემატა სვეტი „" + nameOf(d) + "“");
+            } else {
+                after.put(code, d);
+            }
+        }
+        for (ComponentDraft old : before.values()) {
+            if (!after.containsKey(old.getCode())) {
+                changes.add("წაიშალა სვეტი „" + nameOf(old) + "“");
+            }
+        }
+        for (Map.Entry<String, ComponentDraft> e : after.entrySet()) {
+            ComponentDraft was = before.get(e.getKey());
+            ComponentDraft now = e.getValue();
+            List<String> fields = new ArrayList<>();
+            if (was.getKind() != now.getKind()) fields.add("ტიპი");
+            if (was.getPeriodKind() != now.getPeriodKind()) fields.add("დონე");
+            if (was.isSubjectScoped() != now.isSubjectScoped()) fields.add("საგნის მიხედვით");
+            if (!sameNumber(was.getScaleMin(), now.getScaleMin())
+                    || !sameNumber(was.getScaleMax(), now.getScaleMax())) fields.add("შკალა");
+            if (was.getDecimals() != now.getDecimals()) fields.add("ათწილადი");
+            if (was.isAllowSpecialValues() != now.isAllowSpecialValues()) fields.add("ჩთ");
+            if (was.isAllowOverride() != now.isAllowOverride()) fields.add("ხელით შესწორება");
+            if (!sameRule(was.getRule(), now.getRule(), ownJournal)) fields.add("ფორმულა");
+            if (!fields.isEmpty()) {
+                changes.add("„" + nameOf(was) + "“: " + String.join(", ", fields));
+            }
+        }
+        return changes;
+    }
+
+    /**
+     * Names, group headings, order and the summary tick, applied by code to
+     * every version of the journal - including ones a class may still be
+     * pinned to - so every class shows the same thing at once.
+     */
+    private void applyVisualChanges(GradingTemplate journal, List<ComponentDraft> drafts) {
+        Map<String, ComponentDraft> byCode = new HashMap<>();
+        drafts.forEach(d -> byCode.put(d.getCode().trim(), d));
+        List<GradeComponent> all = em.createQuery(
+                        "select c from GradeComponent c where c.templateVersion.template.id = :t",
+                        GradeComponent.class)
+                .setParameter("t", journal.getId())
+                .getResultList();
+        for (GradeComponent c : all) {
+            ComponentDraft d = byCode.get(c.getCode());
+            if (d == null) {
+                continue;
+            }
+            c.setLabel(d.getLabel());
+            c.setGroupLabel(emptyToNull(d.getGroupLabel()));
+            c.setOrdinal(d.getOrdinal());
+            if (d.getSummaryColumn() != null) {
+                c.setSummaryColumn(d.getSummaryColumn());
+            }
+        }
     }
 
     private RuleDraft ruleDraftOf(GradeComponent component, Map<Long, String> localCodes,

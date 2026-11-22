@@ -171,6 +171,7 @@ public class GradeGridService {
             column.setScaleMax(c.getScaleMax());
             column.setAllowSpecialValues(c.isAllowSpecialValues());
             column.setAllowOverride(c.isAllowOverride());
+            column.setSummary(c.isSummaryColumn());
             column.setHasConversion(formulaExists);
 
             // A calculated column is editable only where the template permits

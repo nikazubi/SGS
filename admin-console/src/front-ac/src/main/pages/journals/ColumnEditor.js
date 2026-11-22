@@ -1,7 +1,16 @@
 import React, {useState} from "react";
 import {
-    Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Chip,
-    FormControlLabel, IconButton, MenuItem, TextField, Typography
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Button,
+    Checkbox,
+    Chip,
+    FormControlLabel,
+    IconButton,
+    MenuItem,
+    TextField,
+    Typography
 } from "@mui/material";
 import {Add, ArrowDownward, ArrowUpward, Delete, ExpandMore, Functions} from "@mui/icons-material";
 import FormulaEditor from "./FormulaEditor";
@@ -55,10 +64,19 @@ const emptyColumn = (ordinal, subjectScoped, frequency) => ({
     allowSpecialValues: true,
     allowOverride: true,
     parentVisible: true,
+    summaryColumn: false,
     rule: null
 });
 
-const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCode}) => {
+/**
+ * `locked`: the journal holds marks this school year, so only how a column looks
+ * may change - its name, group heading, order and summary tick. Everything else
+ * is disabled here and refused by the server regardless.
+ */
+const ColumnEditor = ({
+                          columns, onChange, journal, pickable, periods, issuesByCode,
+                          locked = false, marksByCode = {}, savedLabels = {}
+                      }) => {
 
     const [advanced, setAdvanced] = useState(false);
 
@@ -86,6 +104,7 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                 />
                 <Button
                     startIcon={<Add/>}
+                    disabled={locked}
                     onClick={() => onChange([...columns,
                         emptyColumn(columns.length, journal.subjectScoped,
                             journal.frequency)])}
@@ -133,7 +152,7 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                                     e.stopPropagation();
                                     move(index, 1);
                                 }}><ArrowDownward fontSize="small"/></IconButton>
-                                <IconButton size="small" onClick={(e) => {
+                                <IconButton size="small" disabled={locked} onClick={(e) => {
                                     e.stopPropagation();
                                     onChange(columns.filter((c, i) => i !== index)
                                         .map((c, i) => ({...c, ordinal: i})));
@@ -149,6 +168,15 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                                     onChange={(e) => setColumn(index, {
                                         label: e.target.value
                                     })}
+                                    // Renaming keeps the marks, under the new
+                                    // name - say so before it is saved.
+                                    helperText={column.code && (marksByCode[column.code] || 0) > 0
+                                    && savedLabels[column.code] !== undefined
+                                    && (column.label || "") !== savedLabels[column.code]
+                                        ? `ამ სვეტში უკვე ${marksByCode[column.code]} შეფასებაა — `
+                                        + "შენახვის შემდეგ ახალი სახელით გამოჩნდება"
+                                        : undefined}
+                                    FormHelperTextProps={{style: {color: "#b26a00"}}}
                                     // Derived when the label is finished, not
                                     // per keystroke. Deriving it on every
                                     // change took the code from the FIRST
@@ -171,6 +199,7 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                                 />
                                 <TextField
                                     select size="small" label="ტიპი" style={{width: 170}}
+                                    disabled={locked}
                                     value={column.kind}
                                     onChange={(e) => setColumn(index, {
                                         kind: e.target.value,
@@ -186,21 +215,21 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                             <div style={{display: "flex", gap: 12, marginBottom: 12}}>
                                 <TextField
                                     type="number" size="small" label="მინიმუმი"
-                                    style={{width: 110}}
+                                    style={{width: 110}} disabled={locked}
                                     value={column.scaleMin ?? ""}
                                     onChange={(e) =>
                                         setColumn(index, {scaleMin: numberOrNull(e.target.value)})}
                                 />
                                 <TextField
                                     type="number" size="small" label="მაქსიმუმი"
-                                    style={{width: 110}}
+                                    style={{width: 110}} disabled={locked}
                                     value={column.scaleMax ?? ""}
                                     onChange={(e) =>
                                         setColumn(index, {scaleMax: numberOrNull(e.target.value)})}
                                 />
                                 <TextField
                                     type="number" size="small" label="ათწილადი"
-                                    style={{width: 110}}
+                                    style={{width: 110}} disabled={locked}
                                     value={column.decimals}
                                     onChange={(e) =>
                                         setColumn(index, {decimals: Number(e.target.value)})}
@@ -209,6 +238,7 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                                     control={
                                         <Checkbox
                                             checked={column.allowSpecialValues}
+                                            disabled={locked}
                                             onChange={(e) => setColumn(index,
                                                 {allowSpecialValues: e.target.checked})}
                                         />
@@ -217,12 +247,32 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                                 />
                             </div>
 
+                            {/* Visual, so never locked: it decides where a column
+                                is shown, not what it holds. The journal editor
+                                used to drop it on every save. */}
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={Boolean(column.summaryColumn)}
+                                        onChange={(e) => setColumn(index,
+                                            {summaryColumn: e.target.checked})}
+                                    />
+                                }
+                                label="შემაჯამებელი სვეტი"
+                            />
+                            <Typography variant="caption"
+                                        style={{display: "block", color: "#666", marginBottom: 12}}>
+                                ჩანს წლიურ შეფასებაში ტრიმესტრების გვერდით და მშობლის
+                                შემაჯამებელ ცხრილში.
+                            </Typography>
+
                             {column.kind === "DERIVED" ? (
                                 <>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
                                                 checked={column.allowOverride}
+                                                disabled={locked}
                                                 onChange={(e) => setColumn(index,
                                                     {allowOverride: e.target.checked})}
                                             />
@@ -238,14 +288,20 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                                         განზრახ გამონაკლისია.
                                     </Typography>
 
-                                    <FormulaEditor
-                                        rule={column.rule || emptyRule()}
-                                        onChange={(rule) => setColumn(index, {rule})}
-                                        columns={columns}
-                                        pickable={pickable}
-                                        periods={periods}
-                                        advanced={advanced}
-                                    />
+                                    {/* FormulaEditor has no disabled mode; shown but
+                                        not touchable while locked. The server
+                                        refuses a changed formula either way. */}
+                                    <div aria-disabled={locked}
+                                         style={locked ? {pointerEvents: "none", opacity: 0.6} : undefined}>
+                                        <FormulaEditor
+                                            rule={column.rule || emptyRule()}
+                                            onChange={(rule) => setColumn(index, {rule})}
+                                            columns={columns}
+                                            pickable={pickable}
+                                            periods={periods}
+                                            advanced={advanced}
+                                        />
+                                    </div>
                                 </>
                             ) : null}
 
@@ -255,6 +311,7 @@ const ColumnEditor = ({columns, onChange, journal, pickable, periods, issuesByCo
                                         control={
                                             <Checkbox
                                                 checked={column.subjectScoped}
+                                                disabled={locked}
                                                 onChange={(e) => setColumn(index,
                                                     {subjectScoped: e.target.checked})}
                                             />
